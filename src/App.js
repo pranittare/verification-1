@@ -8,13 +8,12 @@ function App() {
   return (
     <div className="App">
       sagar
-      <Button variant="primary">abc</Button>
       <div>
-        <Login/>
-        <SignUp/>
-        <Forget/>
+        <Login />
+        <SignUp />
+        <Button variant="primary">Submit</Button>
+        <Forget />
       </div>
-
     </div>
   );
 }

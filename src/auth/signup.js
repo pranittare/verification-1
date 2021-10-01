@@ -6,6 +6,13 @@ import './auth.styles.css'
 function SignUp() {
 
 const [agentId, setAgentId] = useState('')
+const [agentPassword, setAgentPassword] = useState('')
+const [primaryPincode, setPrimaryPincode] = useState('')
+const [userId, setUserId] = useState('')
+const [name, setName] = useState('')
+const [userPassword, setUserPassword] = useState('')
+const [pincode, setPincode] = useState('')
+const [level, setLevel] = useState('')
 
     return (
         <div>
@@ -30,6 +37,8 @@ const [agentId, setAgentId] = useState('')
                             placeholder="Password"
                             aria-label="Username"
                             aria-describedby="basic-addon1"
+                            value={agentPassword}
+                            onChange={(e)=>setAgentPassword(e.target.value)}
                         />
                     </InputGroup>
 
@@ -39,6 +48,8 @@ const [agentId, setAgentId] = useState('')
                             placeholder="Primary Pincode"
                             aria-label="Username"
                             aria-describedby="basic-addon1"
+                            value={primaryPincode}
+                            onChange={(e)=>setPrimaryPincode(e.target.value)}
                         />
                     </InputGroup>
                     
@@ -51,6 +62,8 @@ const [agentId, setAgentId] = useState('')
                             placeholder="User Id"
                             aria-label="Recipient's username"
                             aria-describedby="basic-addon2"
+                            value={userId}
+                            onChange={(e)=>setUserId(e.target.value)}
                         />
                     </InputGroup>
 
@@ -60,6 +73,8 @@ const [agentId, setAgentId] = useState('')
                             placeholder="Name"
                             aria-label="Recipient's username"
                             aria-describedby="basic-addon2"
+                            value={name}
+                            onChange={(e)=>setName(e.target.value)}
                         />
                     </InputGroup>
 
@@ -69,6 +84,8 @@ const [agentId, setAgentId] = useState('')
                             placeholder="Password"
                             aria-label="Recipient's username"
                             aria-describedby="basic-addon2"
+                            value = {userPassword}
+                            onChange={(e)=>setUserPassword(e.target.value)}
                         />
                     </InputGroup>
 
@@ -78,6 +95,8 @@ const [agentId, setAgentId] = useState('')
                             placeholder="Pincode"
                             aria-label="Recipient's username"
                             aria-describedby="basic-addon2"
+                            value={pincode}
+                            onChange={(e)=>setPincode(e.target.value)}
                         />
                     </InputGroup>
 
@@ -87,6 +106,8 @@ const [agentId, setAgentId] = useState('')
                             placeholder="Level"
                             aria-label="Recipient's username"
                             aria-describedby="basic-addon2"
+                            value={level}
+                            onChange={(e)=>setLevel(e.target.value)}
                         />
                     </InputGroup>
                 </div>
