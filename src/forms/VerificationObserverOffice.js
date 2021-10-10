@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Input } from 'reactstrap'
+import { Input, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap'
 export default function VerificationObserverOffice({ verification, getData }) {
     const [refresh, setRefresh] = useState(0)
     const [formdata, setFormdata] = useState({
@@ -31,6 +31,20 @@ export default function VerificationObserverOffice({ verification, getData }) {
         setRefresh(Math.random())
         // console.log(form)
     }
+    const [verificationObserverOpen, setVerificationObserver] = useState(false);
+    const verificationObservertoggle = () => setVerificationObserver(prevState => !prevState);
+    const [localityofOfficeOpen, setLocalityofOffice] = useState(false);
+    const localityofOfficetoggle = () => setLocalityofOffice(prevState => !prevState);
+    // const [personMetOpen, setPersonMet] = useState(false);
+    // const personMettoggle = () => setPersonMet(prevState => !prevState);
+    // const [personMetOpen, setPersonMet] = useState(false);
+    // const personMettoggle = () => setPersonMet(prevState => !prevState);
+    // const [personMetOpen, setPersonMet] = useState(false);
+    // const personMettoggle = () => setPersonMet(prevState => !prevState);
+    // const [personMetOpen, setPersonMet] = useState(false);
+    // const personMettoggle = () => setPersonMet(prevState => !prevState);
+    // const [personMetOpen, setPersonMet] = useState(false);
+    // const personMettoggle = () => setPersonMet(prevState => !prevState);
     const handleSubmit = (e) => {
         const formdata = new FormData(e.currentTarget)
         e.preventDefault()
@@ -53,11 +67,46 @@ export default function VerificationObserverOffice({ verification, getData }) {
             {(refresh > 0 || true) && <form className='d-flex justify-content-between flex-wrap' onSubmit={handleSubmit} >
                 <div>
                     <label>Type of Office</label>
-                    <Input type="text" name='verificationObserver' value={formdata['verificationObserver']} onChange={(e) => handleOnChange(e.currentTarget)} />
+                    {/* <Input type="text" name='verificationObserver' value={formdata['verificationObserver']} onChange={(e) => handleOnChange(e.currentTarget)} /> */}
+                    <Dropdown isOpen={verificationObserverOpen} toggle={verificationObservertoggle}>
+                        <DropdownToggle caret className='text-capitalize'>
+                            {formdata['verificationObserver'] ? formdata['verificationObserver'] : 'None'}
+                        </DropdownToggle>
+                        <DropdownMenu>
+                            <DropdownItem name='verificationObserver' onClick={(e) => handleOnChange(e.currentTarget)} value=''>None</DropdownItem>
+                            <DropdownItem name='verificationObserver' onClick={(e) => handleOnChange(e.currentTarget)} value='Independent Building'>Independent Building</DropdownItem>
+                            <DropdownItem name='verificationObserver' onClick={(e) => handleOnChange(e.currentTarget)} value='Commercial Gala'>Commercial Gala</DropdownItem>
+                            <DropdownItem name='verificationObserver' onClick={(e) => handleOnChange(e.currentTarget)} value='Industry or Factory'>Industry or Factory</DropdownItem>
+                            <DropdownItem name='verificationObserver' onClick={(e) => handleOnChange(e.currentTarget)} value='Office'>Office</DropdownItem>
+                            <DropdownItem name='verificationObserver' onClick={(e) => handleOnChange(e.currentTarget)} value='Shed'>Shed</DropdownItem>
+                            <DropdownItem name='verificationObserver' onClick={(e) => handleOnChange(e.currentTarget)} value='Shared Office'>Shared Office</DropdownItem>
+                            <DropdownItem name='verificationObserver' onClick={(e) => handleOnChange(e.currentTarget)} value='Shop'>Shop</DropdownItem>
+                            <DropdownItem name='verificationObserver' onClick={(e) => handleOnChange(e.currentTarget)} value='Resi cum Office'>Resi cum Office</DropdownItem>
+                            <DropdownItem name='verificationObserver' onClick={(e) => handleOnChange(e.currentTarget)} value='Clinic'>Clinic</DropdownItem>
+                            <DropdownItem name='verificationObserver' onClick={(e) => handleOnChange(e.currentTarget)} value='Godown'>Godown</DropdownItem>
+                            <DropdownItem name='verificationObserver' onClick={(e) => handleOnChange(e.currentTarget)} value='Hosiptal or Nursing Home'>Hosiptal or Nursing Home</DropdownItem>
+                        </DropdownMenu>
+                    </Dropdown>
                 </div>
                 <div>
                     <label>Locality of Office</label>
-                    <Input type="text" name='localityofOffice' value={formdata['localityofOffice']} onChange={(e) => handleOnChange(e.currentTarget)} />
+                    {/* <Input type="text" name='localityofOffice' value={formdata['localityofOffice']} onChange={(e) => handleOnChange(e.currentTarget)} /> */}
+                    <Dropdown isOpen={localityofOfficeOpen} toggle={localityofOfficetoggle}>
+                        <DropdownToggle caret className='text-capitalize'>
+                            {formdata['localityofOffice'] ? formdata['localityofOffice'] : 'None'}
+                        </DropdownToggle>
+                        <DropdownMenu>
+                            <DropdownItem name='localityofOffice' onClick={(e) => handleOnChange(e.currentTarget)} value=''>None</DropdownItem>
+                            <DropdownItem name='localityofOffice' onClick={(e) => handleOnChange(e.currentTarget)} value='Complex'>Complex</DropdownItem>
+                            <DropdownItem name='localityofOffice' onClick={(e) => handleOnChange(e.currentTarget)} value='Commercial Building'>Commercial Building</DropdownItem>
+                            <DropdownItem name='localityofOffice' onClick={(e) => handleOnChange(e.currentTarget)} value='Business Center/Park'>Business Center/Park</DropdownItem>
+                            <DropdownItem name='localityofOffice' onClick={(e) => handleOnChange(e.currentTarget)} value='Market Area'>Market Area</DropdownItem>
+                            <DropdownItem name='localityofOffice' onClick={(e) => handleOnChange(e.currentTarget)} value='Slum'>Slum</DropdownItem>
+                            <DropdownItem name='localityofOffice' onClick={(e) => handleOnChange(e.currentTarget)} value='Residential'>Residential</DropdownItem>
+                            <DropdownItem name='localityofOffice' onClick={(e) => handleOnChange(e.currentTarget)} value='Factory or Industrail Area'>Factory or Industrail Area</DropdownItem>
+                            <DropdownItem name='localityofOffice' onClick={(e) => handleOnChange(e.currentTarget)} value='Hosiptal/Mall/Commercial Premises'>Hosiptal/Mall/Commercial Premises</DropdownItem>
+                        </DropdownMenu>
+                    </Dropdown>
                 </div>
                 <div>
                     <label>Construction Of Office</label>
