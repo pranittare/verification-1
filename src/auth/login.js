@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { InputGroup, FormControl } from 'react-bootstrap'
+import { InputGroup, Input, Label } from 'reactstrap'
 import './auth.styles.css'
 
 function Login() {
@@ -12,8 +12,8 @@ function Login() {
       Login
       <div className='pe-5 ps-5'>
         <InputGroup className="mb-3">
-          <InputGroup.Text id="basic-addon1">@example.com</InputGroup.Text>
-          <FormControl
+          <Label id="basic-addon1">@example.com</Label>
+          <Input
             placeholder="User Id"
             aria-label="Recipient's username"
             aria-describedby="basic-addon2"
@@ -23,8 +23,8 @@ function Login() {
         </InputGroup>
 
         <InputGroup className="mb-3">
-          <InputGroup.Text id="basic-addon1">abc.123</InputGroup.Text>
-          <FormControl
+          <Label id="basic-addon1">abc.123</Label>
+          <Input
             placeholder="Password"
             aria-label="Recipient's username"
             aria-describedby="basic-addon2"
