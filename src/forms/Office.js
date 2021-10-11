@@ -4,6 +4,7 @@ import ApplicantDetails from './ApplicantDetails'
 import Tpc from './Tpc';
 import VerificationObserverOffice from './VerificationObserverOffice';
 import Geolocation from './Geolocation';
+import DropDownComp from '../components/DropDownComp';
 
 export default function Office() {
     let allData1 = []
@@ -29,7 +30,8 @@ export default function Office() {
         detailsIncomeDesignation: '',
         additionalIncome: '',
         source: '',
-        typeofEntity: ''
+        typeofEntity: '',
+        abc:''
     })
     const [verification, setVerification] = useState()
     const [tpc, setTpc] = useState()
@@ -71,6 +73,7 @@ export default function Office() {
     const onHandleChange = (e) => {
         // name
         let form = formdata
+        console.log(e )
         form[e.name] = e.value
         // console.log(e, form[e.name] )
         setFormdata(form)
@@ -117,10 +120,36 @@ export default function Office() {
             console.log('alldata', alldata)
         }
     }, [alldata])
+
+    let addressConfirmed = [{name:'abc', value:'xyz', label:'123'}, 
+              {name:'abc', value:'1', label:'456'}]
+
+              let businessBoardSeen = [{name:'abc', value:'xyz', label:'123'}, 
+              {name:'abc', value:'1', label:'456'}]
+
+              let personMet = [{name:'abc', value:'xyz', label:'123'}, 
+              {name:'abc', value:'1', label:'456'}]
+
+              let personMetNameDesignation = [{name:'abc', value:'xyz', label:'123'}, 
+              {name:'abc', value:'1', label:'456'}]
+
+              let lessThanYrAtCurrentAddress = [{name:'abc', value:'xyz', label:'123'}, 
+              {name:'abc', value:'1', label:'456'}]
+
+              let natureofBusines = [{name:'abc', value:'xyz', label:'123'}, 
+              {name:'abc', value:'1', label:'456'}]
+
+              let officeOwnership = [{name:'abc', value:'xyz', label:'123'}, 
+              {name:'abc', value:'1', label:'456'}]
+
+              let typeofEntity = [{name:'abc', value:'xyz', label:'123'}, 
+              {name:'abc', value:'1', label:'456'}]
+
     return (
         <div>
             <ApplicantDetails details={test} applicantDetails={(data) => { setApplicantDetails(data) }} getData={getData} test={test} />
             <h1>Verification Details</h1>
+            <DropDownComp onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={addressConfirmed}/>
             {(refresh > 0 || true) && <form className='d-flex justify-content-between flex-wrap' onSubmit={handleSubmit} >
                 <div>
                     <label>Visit Date</label>
@@ -132,7 +161,7 @@ export default function Office() {
                 </div>
                 <div>
                     <label>Address Confirmed</label>
-                    <Dropdown isOpen={addressConfirmedOpen} toggle={addressConfirmedtoggle}>
+                    {/* <Dropdown isOpen={addressConfirmedOpen} toggle={addressConfirmedtoggle}>
                         <DropdownToggle caret className='text-capitalize'>
                             {formdata['addressConfirmed'] ? formdata['addressConfirmed'] : 'None'}
                         </DropdownToggle>
@@ -142,13 +171,14 @@ export default function Office() {
                             <DropdownItem name='addressConfirmed' onClick={(e) => onHandleChange(e.currentTarget)} value='no'>No</DropdownItem>
 
                         </DropdownMenu>
-                    </Dropdown>
+                    </Dropdown> */}
                     {/* <Input type="text" name='addressConfirmed' value={formdata['addressConfirmed']} onChange={(e)=> onHandleChange(e)} /> */}
                 </div>
                 <div>
                     <label>Business Board Seen</label>
+                    <DropDownComp onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={businessBoardSeen}/>
                     {/* <Input type="text" name='businessBoardSeen' value={formdata['businessBoardSeen']} onChange={(e)=> onHandleChange(e)} /> */}
-                    <Dropdown isOpen={businessBoardSeenOpen} toggle={businessBoardSeentoggle}>
+                    {/* <Dropdown isOpen={businessBoardSeenOpen} toggle={businessBoardSeentoggle}>
                         <DropdownToggle caret className='text-capitalize'>
                             {formdata['businessBoardSeen'] ? formdata['businessBoardSeen'] : 'None'}
                         </DropdownToggle>
@@ -158,7 +188,7 @@ export default function Office() {
                             <DropdownItem name='businessBoardSeen' onClick={(e) => onHandleChange(e.currentTarget)} value='no'>No</DropdownItem>
 
                         </DropdownMenu>
-                    </Dropdown>
+                    </Dropdown> */}
                 </div>
                 <div>
                     <label>Business Board Seen</label>
@@ -170,8 +200,9 @@ export default function Office() {
                 </div>
                 <div>
                     <label>Person Met</label>
+                    <DropDownComp onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={personMet}/>
                     {/* <Input type="text" name='personMet' value={formdata['personMet']} onChange={(e)=> onHandleChange(e)} /> */}
-                    <Dropdown isOpen={personMetOpen} toggle={personMettoggle}>
+                    {/* <Dropdown isOpen={personMetOpen} toggle={personMettoggle}>
                         <DropdownToggle caret className='text-capitalize'>
                             {formdata['personMet'] ? formdata['personMet'] : 'None'}
                         </DropdownToggle>
@@ -181,7 +212,7 @@ export default function Office() {
                             <DropdownItem name='personMet' onClick={(e) => onHandleChange(e.currentTarget)} value='no'>No</DropdownItem>
 
                         </DropdownMenu>
-                    </Dropdown>
+                    </Dropdown> */}
                 </div>
                 <div>
                     <label>Person Met Name</label>
@@ -189,8 +220,9 @@ export default function Office() {
                 </div>
                 <div>
                     <label>Person Met Designation</label>
+                    <DropDownComp onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={personMetNameDesignation}/>
                     {/* <Input type="text" name='personMetNameDesignation' value={formdata['personMetNameDesignation']} onChange={(e)=> onHandleChange(e)} /> */}
-                    <Dropdown isOpen={personMetNameDesignationOpen} toggle={personMetNameDesignationtoggle}>
+                    {/* <Dropdown isOpen={personMetNameDesignationOpen} toggle={personMetNameDesignationtoggle}>
                         <DropdownToggle caret className='text-capitalize'>
                             {formdata['personMetNameDesignation'] ? formdata['personMetNameDesignation'] : 'None'}
                         </DropdownToggle>
@@ -206,7 +238,7 @@ export default function Office() {
 
 
                         </DropdownMenu>
-                    </Dropdown>
+                    </Dropdown> */}
                 </div>
                 <div>
                     <label>No of Yrs in present Employment/Business & Total Yrs of Exp</label>
@@ -218,8 +250,9 @@ export default function Office() {
                 </div>
                 <div>
                     <label>Less than 1 yr at Current Address</label>
+                    <DropDownComp onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={lessThanYrAtCurrentAddress}/>
                     {/* <Input type="text" name='lessThanYrAtCurrentAddress' value={formdata['lessThanYrAtCurrentAddress']} onChange={(e)=> onHandleChange(e)} /> */}
-                    <Dropdown isOpen={lessThanYrAtCurrentAddressOpen} toggle={lessThanYrAtCurrentAddresstoggle}>
+                    {/* <Dropdown isOpen={lessThanYrAtCurrentAddressOpen} toggle={lessThanYrAtCurrentAddresstoggle}>
                         <DropdownToggle caret className='text-capitalize'>
                             {formdata['lessThanYrAtCurrentAddress'] ? formdata['lessThanYrAtCurrentAddress'] : 'None'}
                         </DropdownToggle>
@@ -229,7 +262,7 @@ export default function Office() {
                             <DropdownItem name='lessThanYrAtCurrentAddress' onClick={(e) => onHandleChange(e.currentTarget)} value='no'>No</DropdownItem>
 
                         </DropdownMenu>
-                    </Dropdown>
+                    </Dropdown> */}
                 </div>
                 <div>
                     <label>Prev Address/ Prev Employment</label>
@@ -237,8 +270,9 @@ export default function Office() {
                 </div>
                 <div>
                     <label>Nature of Business</label>
+                    <DropDownComp onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={natureofBusines}/>
                     {/* <Input type="text" name='natureofBusines' value={formdata['natureofBusines']} onChange={(e)=> onHandleChange(e)} /> */}
-                    <Dropdown isOpen={natureofBusinesOpen} toggle={natureofBusinestoggle}>
+                    {/* <Dropdown isOpen={natureofBusinesOpen} toggle={natureofBusinestoggle}>
                         <DropdownToggle caret className='text-capitalize'>
                             {formdata['natureofBusines'] ? formdata['natureofBusines'] : 'None'}
                         </DropdownToggle>
@@ -249,7 +283,7 @@ export default function Office() {
                             <DropdownItem name='natureofBusines' onClick={(e) => onHandleChange(e.currentTarget)} value='Trading'>Trading</DropdownItem>
 
                         </DropdownMenu>
-                    </Dropdown>
+                    </Dropdown> */}
                 </div>
                 <div>
                     <label>Nature of Business Other</label>
@@ -257,8 +291,9 @@ export default function Office() {
                 </div>
                 <div>
                     <label>Office Ownership</label>
+                    <DropDownComp onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={officeOwnership}/>
                     {/* <Input type="text" name='officeOwnership' value={formdata['officeOwnership']} onChange={(e)=> onHandleChange(e)} /> */}
-                    <Dropdown isOpen={officeOwnershipOpen} toggle={officeOwnershiptoggle}>
+                    {/* <Dropdown isOpen={officeOwnershipOpen} toggle={officeOwnershiptoggle}>
                         <DropdownToggle caret className='text-capitalize'>
                             {formdata['officeOwnership'] ? formdata['officeOwnership'] : 'None'}
                         </DropdownToggle>
@@ -269,7 +304,7 @@ export default function Office() {
                             <DropdownItem name='officeOwnership' onClick={(e) => onHandleChange(e.currentTarget)} value='Leased'>Leased</DropdownItem>
 
                         </DropdownMenu>
-                    </Dropdown>
+                    </Dropdown> */}
                 </div>
                 <div>
                     <label>if Rented then Rent Amount</label>
@@ -289,8 +324,9 @@ export default function Office() {
                 </div>
                 <div>
                     <label>Type of Entity</label>
+                    <DropDownComp onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={typeofEntity}/>
                     {/* <Input type="text" name='typeofEntity' value={formdata['typeofEntity']} onChange={(e)=> onHandleChange(e)} /> */}
-                    <Dropdown isOpen={typeofEntityOpen} toggle={typeofEntitytoggle}>
+                    {/* <Dropdown isOpen={typeofEntityOpen} toggle={typeofEntitytoggle}>
                         <DropdownToggle caret className='text-capitalize'>
                             {formdata['typeofEntity'] ? formdata['typeofEntity'] : 'None'}
                         </DropdownToggle>
@@ -307,7 +343,7 @@ export default function Office() {
                             <DropdownItem name='typeofEntity' onClick={(e) => onHandleChange(e.currentTarget)} value='Co-op Society'>Co-op Society</DropdownItem>
 
                         </DropdownMenu>
-                    </Dropdown>
+                    </Dropdown> */}
                 </div>
                 <div className='d-none'>
                     <button type='submit' id='officeVerficationDetails' >Submit</button>
