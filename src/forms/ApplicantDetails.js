@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Button, Input, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
+import DropDownComp from '../components/DropDownComp';
 
 export default function ApplicantDetails({ applicantDetails, getData, test }) {
     const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -73,6 +74,12 @@ export default function ApplicantDetails({ applicantDetails, getData, test }) {
         // console.log('getdata',getData)
     }, [getData])
     let mismatchAddress = true
+
+    let type = [
+        { name: 'type', value: 'resident', label: 'Resident' },
+        { name: 'type', value: 'office', label: 'Office' },
+    ]
+
     return (
         <div>
             <h1>Applicant Details</h1>
@@ -127,7 +134,8 @@ export default function ApplicantDetails({ applicantDetails, getData, test }) {
                     }
                     {multi &&
                         <div  className='pt-4'>
-                            <Dropdown isOpen={dropdownOpen} toggle={toggle}>
+                            <DropDownComp handleOnChange={(e)=>handleOnChange()} formdata={formdata} dropDowmArry={type}/>
+                            {/* <Dropdown isOpen={dropdownOpen} toggle={toggle}>
                                 <DropdownToggle caret className='text-capitalize'>
                                     {formdata.type ? formdata.type : 'Type'}
                                 </DropdownToggle>
@@ -136,7 +144,7 @@ export default function ApplicantDetails({ applicantDetails, getData, test }) {
                                     <DropdownItem name='type' onClick={(e) => handleOnChange(e.currentTarget)} value='office'>Office</DropdownItem>
                                     
                                 </DropdownMenu>
-                            </Dropdown>
+                            </Dropdown> */}
                         </div>
                     }
                     <div >

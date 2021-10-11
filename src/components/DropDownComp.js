@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Input, Button, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap'
 
-const DropDownComp = ({onHandleChange, formdata, dropDowmArry})=>{
+const DropDownComp = ({onHandleChange, formdata, dropDowmArry, handleOnChange})=>{
 
     const [addressConfirmedOpen, setAddressConfirmed] = useState(false);
     const addressConfirmedtoggle = () => setAddressConfirmed(prevState => !prevState);

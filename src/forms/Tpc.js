@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Input, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
+import DropDownComp from '../components/DropDownComp';
 
 export default function Tpc({ tpc, getData }) {
     const [formdata, setFormdata] = useState({
@@ -64,6 +65,44 @@ export default function Tpc({ tpc, getData }) {
         }
         console.log('getdata', getData)
     }, [getData])
+
+    let status1 = [
+        {name:'status1', value:'', label:'None'},
+        {name:'status1', value:'positive', label:'Positive'},
+        {name:'status1', value:'negative', label:'Negative'},
+    ]
+
+    let status2 = [
+        {name:'status2', value:'', label:'None'},
+        {name:'status2', value:'positive', label:'Positive'},
+        {name:'status2', value:'negative', label:'Negative'},
+    ]
+
+    let status3 = [
+        {name:'status3', value:'', label:'None'},
+        {name:'status3', value:'positive', label:'Positive'},
+        {name:'status3', value:'negative', label:'Negative'},
+    ]
+
+    let marketReputation = [
+        {name:'marketReputation', value:'', label:'None'},
+        {name:'marketReputation', value:'positive', label:'Positive'},
+        {name:'marketReputation', value:'negative', label:'Negative'},
+    ]
+
+    let TVRStatus = [
+        {name:'TVRStatus', value:'', label:'None'},
+        {name:'TVRStatus', value:'positive', label:'Positive'},
+        {name:'TVRStatus', value:'negative', label:'Negative'},
+    ]
+
+    let overallStatus = [
+        {name:'overallStatus', value:'', label:'None'},
+        {name:'overallStatus', value:'Recomended', label:'Recomended'},
+        {name:'overallStatus', value:'Refer', label:'Refer'},
+        {name:'overallStatus', value:'Not Recomended', label:'Not Recomended'},
+    ]
+
     return (
         <div>
             <h4>TPC Confirmation</h4>
@@ -82,9 +121,11 @@ export default function Tpc({ tpc, getData }) {
                             <th>1</th>
                             <td>
                                 <Input type="text" name="TPCName1" value={formdata['TPCName1']} onChange={(e) => handleOnChange(e.currentTarget)} /></td>
+
+                                <DropDownComp handleOnChange={(e)=>handleOnChange()} formdata={formdata} dropDowmArry={status1} />
                             <td>
                                 {/* <Input type='text' name='status1'  value={formdata['status1']} onChange={(e) => handleOnChange(e.currentTarget)}  /> */}
-                                <Dropdown isOpen={status1Open} toggle={status1toggle}>
+                                {/* <Dropdown isOpen={status1Open} toggle={status1toggle}>
                                     <DropdownToggle caret className='text-capitalize'>
                                         {formdata['status1'] ? formdata['status1'] : 'None'}
                                     </DropdownToggle>
@@ -94,7 +135,7 @@ export default function Tpc({ tpc, getData }) {
                                         <DropdownItem name='status1' onClick={(e) => handleOnChange(e.currentTarget)} value='negative'>Negative</DropdownItem>
 
                                     </DropdownMenu>
-                                </Dropdown>
+                                </Dropdown> */}
                             </td>
                             <td>
                                 <Input type="text" name="TPCRemark1" value={formdata['TPCRemark1']} onChange={(e) => handleOnChange(e.currentTarget)} /></td>
@@ -103,9 +144,11 @@ export default function Tpc({ tpc, getData }) {
                             <th>2</th>
                             <td>
                                 <Input type="text" name="TPCName2" value={formdata['TPCName2']} onChange={(e) => handleOnChange(e.currentTarget)} /></td>
+
+                                <DropDownComp handleOnChange={(e)=>handleOnChange()} formdata={formdata} dropDowmArry={status2} />
                             <td>
                                 {/* <Input type='text' name='status2' value={formdata['status2']} onChange={(e) => handleOnChange(e.currentTarget)} /> */}
-                                <Dropdown isOpen={status2Open} toggle={status2toggle}>
+                                {/* <Dropdown isOpen={status2Open} toggle={status2toggle}>
                                     <DropdownToggle caret className='text-capitalize'>
                                         {formdata['status2'] ? formdata['status2'] : 'None'}
                                     </DropdownToggle>
@@ -115,7 +158,7 @@ export default function Tpc({ tpc, getData }) {
                                         <DropdownItem name='status2' onClick={(e) => handleOnChange(e.currentTarget)} value='negative'>Negative</DropdownItem>
 
                                     </DropdownMenu>
-                                </Dropdown>
+                                </Dropdown> */}
                             </td>
                             <td>
                                 <Input type="text" name="TPCRemark2" value={formdata['TPCRemark2']} onChange={(e) => handleOnChange(e.currentTarget)} /></td>
@@ -124,9 +167,11 @@ export default function Tpc({ tpc, getData }) {
                             <th>3</th>
                             <td>
                                 <Input type="text" name="TPCName3" value={formdata['TPCName3']} onChange={(e) => handleOnChange(e.currentTarget)} /></td>
+
+                                <DropDownComp handleOnChange={(e)=>handleOnChange()} formdata={formdata} dropDowmArry={status3} />
                             <td>
                                 {/* <Input type='text' name='status3' value={formdata['status3']} onChange={(e) => handleOnChange(e.currentTarget)} /> */}
-                                <Dropdown isOpen={status3Open} toggle={status3toggle}>
+                                {/* <Dropdown isOpen={status3Open} toggle={status3toggle}>
                                     <DropdownToggle caret className='text-capitalize'>
                                         {formdata['status3'] ? formdata['status3'] : 'None'}
                                     </DropdownToggle>
@@ -136,7 +181,7 @@ export default function Tpc({ tpc, getData }) {
                                         <DropdownItem name='status3' onClick={(e) => handleOnChange(e.currentTarget)} value='negative'>Negative</DropdownItem>
 
                                     </DropdownMenu>
-                                </Dropdown>
+                                </Dropdown> */}
                             </td>
                             <td>
                                 <Input type="text" name="TPCRemark3" value={formdata['TPCRemark3']} onChange={(e) => handleOnChange(e.currentTarget)} /></td>
@@ -145,7 +190,8 @@ export default function Tpc({ tpc, getData }) {
                 </table>
                 <div>
                     <label>Market Reputation/Dedup Check</label>
-                    <Dropdown isOpen={marketReputationOpen} toggle={marketReputationtoggle}>
+                    <DropDownComp handleOnChange={(e)=>handleOnChange()} formdata={formdata} dropDowmArry={marketReputation} />
+                    {/* <Dropdown isOpen={marketReputationOpen} toggle={marketReputationtoggle}>
                         <DropdownToggle caret className='text-capitalize'>
                             {formdata['marketReputation'] ? formdata['marketReputation'] : 'None'}
                         </DropdownToggle>
@@ -155,7 +201,7 @@ export default function Tpc({ tpc, getData }) {
                             <DropdownItem name='marketReputation' onClick={(e) => handleOnChange(e.currentTarget)} value='negative'>Negative</DropdownItem>
 
                         </DropdownMenu>
-                    </Dropdown>
+                    </Dropdown> */}
                 </div>
                 <div>
                     <label>Remarks</label>
@@ -173,9 +219,11 @@ export default function Tpc({ tpc, getData }) {
                 </div>
                 <div>
                     <label>Status</label>
+
+                    <DropDownComp handleOnChange={(e)=>handleOnChange()} formdata={formdata} dropDowmArry={TVRStatus} />
                     {/* <Input type="text" name='TVRStatus' value={formdata['TVRStatus']} onChange={(e) => handleOnChange(e.currentTarget)} /> */}
                     <div>
-                    <Dropdown isOpen={TVRStatusOpen} toggle={TVRStatustoggle}>
+                    {/* <Dropdown isOpen={TVRStatusOpen} toggle={TVRStatustoggle}>
                         <DropdownToggle caret className='text-capitalize'>
                             {formdata['TVRStatus'] ? formdata['TVRStatus'] : 'None'}
                         </DropdownToggle>
@@ -185,7 +233,7 @@ export default function Tpc({ tpc, getData }) {
                             <DropdownItem name='TVRStatus' onClick={(e) => handleOnChange(e.currentTarget)} value='negative'>Negative</DropdownItem>
 
                         </DropdownMenu>
-                    </Dropdown>
+                    </Dropdown> */}
                 </div>
                 </div>
                 <div>
@@ -209,8 +257,10 @@ export default function Tpc({ tpc, getData }) {
                 </div>
                 <div>
                     <label>Status</label>
+
+                    <DropDownComp handleOnChange={(e)=>handleOnChange()} formdata={formdata} dropDowmArry={overallStatus} />
                     {/* <Input type="text" name='TVRStatus' value={formdata['TVRStatus']} onChange={(e) => handleOnChange(e.currentTarget)} /> */}
-                    <Dropdown isOpen={overallStatusOpen} toggle={overallStatustoggle}>
+                    {/* <Dropdown isOpen={overallStatusOpen} toggle={overallStatustoggle}>
                         <DropdownToggle caret className='text-capitalize'>
                             {formdata['overallStatus'] ? formdata['overallStatus'] : 'None'}
                         </DropdownToggle>
@@ -221,7 +271,7 @@ export default function Tpc({ tpc, getData }) {
                             <DropdownItem name='overallStatus' onClick={(e) => handleOnChange(e.currentTarget)} value='Not Recommended'>Not Recommended</DropdownItem>
 
                         </DropdownMenu>
-                    </Dropdown>
+                    </Dropdown> */}
                 </div>
                 <div>
                     <label>Agency name</label>

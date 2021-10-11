@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Input, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap'
+import DropDownComp from '../components/DropDownComp'
+
 export default function VerificationObserverOffice({ verification, getData }) {
     const [refresh, setRefresh] = useState(0)
     const [formdata, setFormdata] = useState({
@@ -61,14 +63,44 @@ export default function VerificationObserverOffice({ verification, getData }) {
         console.log('getdata', getData)
     }, [getData])
 
+    let verificationObserver = [
+        {name:'verificationObserver', value:'', label:'None'},
+        {name:'verificationObserver', value:'Independent Building', label:'Independent Building'},
+        {name:'verificationObserver', value:'Commercial Gala', label:'Commercial Gala'},
+        {name:'verificationObserver', value:'Industry or Factory', label:'Industry or Factory'},
+        {name:'verificationObserver', value:'Office', label:'Office'},
+        {name:'verificationObserver', value:'Shed', label:'Shed'},
+        {name:'verificationObserver', value:'Shared Office', label:'Shared Office'},
+        {name:'verificationObserver', value:'Shop', label:'Shop'},
+        {name:'verificationObserver', value:'Resi cum Office', label:'Resi cum Office'},
+        {name:'verificationObserver', value:'Clinic', label:'Clinic'},
+        {name:'verificationObserver', value:'Godown', label:'Godown'},
+        {name:'verificationObserver', value:'Hosiptal or Nursing Home', label:'Hosiptal or Nursing Home'},
+    ]
+
+    let localityofOffice = [
+        {name:'localityofOffice', value:'', label:'None'},
+        {name:'localityofOffice', value:'Complex', label:'Complex'},
+        {name:'localityofOffice', value:'Commercial Building', label:'Commercial Building'},
+        {name:'localityofOffice', value:'Business Center/Park', label:'Business Center/Park'},
+        {name:'localityofOffice', value:'Market Area', label:'Market Area'},
+        {name:'localityofOffice', value:'Slum', label:'Slum'},
+        {name:'localityofOffice', value:'Residential', label:'Residential'},
+        {name:'localityofOffice', value:'Factory or Industrail Area', label:'Factory or Industrail Area'},
+        {name:'localityofOffice', value:'Hosiptal/Mall/Commercial Premises', label:'Hosiptal/Mall/Commercial Premises'},
+    ]
+
     return (
         <div>
             <h4>Verification Observer</h4>
             {(refresh > 0 || true) && <form className='d-flex justify-content-between flex-wrap' onSubmit={handleSubmit} >
                 <div>
                     <label>Type of Office</label>
+
+                    <DropDownComp handleOnChange={(e)=>handleOnChange()} formdata={formdata} dropDowmArry={verificationObserver} />
+
                     {/* <Input type="text" name='verificationObserver' value={formdata['verificationObserver']} onChange={(e) => handleOnChange(e.currentTarget)} /> */}
-                    <Dropdown isOpen={verificationObserverOpen} toggle={verificationObservertoggle}>
+                    {/* <Dropdown isOpen={verificationObserverOpen} toggle={verificationObservertoggle}>
                         <DropdownToggle caret className='text-capitalize'>
                             {formdata['verificationObserver'] ? formdata['verificationObserver'] : 'None'}
                         </DropdownToggle>
@@ -86,12 +118,13 @@ export default function VerificationObserverOffice({ verification, getData }) {
                             <DropdownItem name='verificationObserver' onClick={(e) => handleOnChange(e.currentTarget)} value='Godown'>Godown</DropdownItem>
                             <DropdownItem name='verificationObserver' onClick={(e) => handleOnChange(e.currentTarget)} value='Hosiptal or Nursing Home'>Hosiptal or Nursing Home</DropdownItem>
                         </DropdownMenu>
-                    </Dropdown>
+                    </Dropdown> */}
                 </div>
                 <div>
                     <label>Locality of Office</label>
+                    <DropDownComp handleOnChange={(e)=>handleOnChange()} formdata={formdata} dropDowmArry={localityofOffice} />
                     {/* <Input type="text" name='localityofOffice' value={formdata['localityofOffice']} onChange={(e) => handleOnChange(e.currentTarget)} /> */}
-                    <Dropdown isOpen={localityofOfficeOpen} toggle={localityofOfficetoggle}>
+                    {/* <Dropdown isOpen={localityofOfficeOpen} toggle={localityofOfficetoggle}>
                         <DropdownToggle caret className='text-capitalize'>
                             {formdata['localityofOffice'] ? formdata['localityofOffice'] : 'None'}
                         </DropdownToggle>
@@ -106,7 +139,7 @@ export default function VerificationObserverOffice({ verification, getData }) {
                             <DropdownItem name='localityofOffice' onClick={(e) => handleOnChange(e.currentTarget)} value='Factory or Industrail Area'>Factory or Industrail Area</DropdownItem>
                             <DropdownItem name='localityofOffice' onClick={(e) => handleOnChange(e.currentTarget)} value='Hosiptal/Mall/Commercial Premises'>Hosiptal/Mall/Commercial Premises</DropdownItem>
                         </DropdownMenu>
-                    </Dropdown>
+                    </Dropdown> */}
                 </div>
                 <div>
                     <label>Construction Of Office</label>
