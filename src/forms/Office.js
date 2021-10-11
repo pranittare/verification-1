@@ -31,7 +31,7 @@ export default function Office() {
         additionalIncome: '',
         source: '',
         typeofEntity: '',
-        abc:''
+        abc: ''
     })
     const [verification, setVerification] = useState()
     const [tpc, setTpc] = useState()
@@ -73,7 +73,7 @@ export default function Office() {
     const onHandleChange = (e) => {
         // name
         let form = formdata
-        console.log(e )
+        console.log(e)
         form[e.name] = e.value
         // console.log(e, form[e.name] )
         setFormdata(form)
@@ -121,35 +121,73 @@ export default function Office() {
         }
     }, [alldata])
 
-    let addressConfirmed = [{name:'abc', value:'xyz', label:'123'}, 
-              {name:'abc', value:'1', label:'456'}]
+    let addressConfirmed = [
+        { name: 'addressConfirmed', value: '', label: 'None' },
+        { name: 'addressConfirmed', value: 'yes', label: 'Yes' },
+        { name: 'addressConfirmed', value: 'no', label: 'No' }
+    ]
 
-              let businessBoardSeen = [{name:'abc', value:'xyz', label:'123'}, 
-              {name:'abc', value:'1', label:'456'}]
+    let businessBoardSeen = [
+        { name: 'businessBoardSeen', value: '', label: 'None' },
+        { name: 'businessBoardSeen', value: 'yes', label: 'Yes' },
+        { name: 'businessBoardSeen', value: 'no', label: 'No' }
+    ]
 
-              let personMet = [{name:'abc', value:'xyz', label:'123'}, 
-              {name:'abc', value:'1', label:'456'}]
+    let personMet = [
+        { name: 'personMet', value: '', label: 'None' },
+        { name: 'personMet', value: 'yes', label: 'Yes' },
+        { name: 'personMet', value: 'no', label: 'No' }
+    ]
 
-              let personMetNameDesignation = [{name:'abc', value:'xyz', label:'123'}, 
-              {name:'abc', value:'1', label:'456'}]
+    let personMetNameDesignation = [
+        { name: 'personMetNameDesignation', value: '', label: 'None' },
+        { name: 'personMetNameDesignation', value: 'Director', label: 'Director' },
+        { name: 'personMetNameDesignation', value: 'Partner', label: 'Partner' },
+        { name: 'personMetNameDesignation', value: 'Proprietor', label: 'Proprietor' },
+        { name: 'personMetNameDesignation', value: 'Family Member', label: 'Family Member' },
+        { name: 'personMetNameDesignation', value: 'Staff', label: 'Staff' },
+        { name: 'personMetNameDesignation', value: 'Gaurd', label: 'Gaurd' },
+        { name: 'personMetNameDesignation', value: 'Neighbour', label: 'Neighbour' },
+    ]
 
-              let lessThanYrAtCurrentAddress = [{name:'abc', value:'xyz', label:'123'}, 
-              {name:'abc', value:'1', label:'456'}]
+    let lessThanYrAtCurrentAddress = [
+        { name: 'lessThanYrAtCurrentAddress', value: '', label: 'None' },
+        { name: 'lessThanYrAtCurrentAddress', value: 'yes', label: 'Yes' },
+        { name: 'lessThanYrAtCurrentAddress', value: 'no', label: 'No' }
+    ]
 
-              let natureofBusines = [{name:'abc', value:'xyz', label:'123'}, 
-              {name:'abc', value:'1', label:'456'}]
+    let natureofBusines = [
+        { name: 'natureofBusines', value: '', label: 'None' },
+        { name: 'natureofBusines', value: 'Service', label: 'Service' },
+        { name: 'natureofBusines', value: 'Manufacturing', label: 'Manufacturing' },
+        { name: 'natureofBusines', value: 'Trading', label: 'Trading' },
+    ]
 
-              let officeOwnership = [{name:'abc', value:'xyz', label:'123'}, 
-              {name:'abc', value:'1', label:'456'}]
+    let officeOwnership = [
+        { name: 'officeOwnership', value: '', label: 'None' },
+        { name: 'officeOwnership', value: 'Owned', label: 'Owned' },
+        { name: 'officeOwnership', value: 'Rented', label: 'Rented' },
+        { name: 'officeOwnership', value: 'Leased', label: 'Leased' },
+    ]
 
-              let typeofEntity = [{name:'abc', value:'xyz', label:'123'}, 
-              {name:'abc', value:'1', label:'456'}]
+    let typeofEntity = [
+        { name: 'typeofEntity', value: '', label: 'None' },
+        { name: 'typeofEntity', value: 'Proprietor', label: 'Proprietor' },
+        { name: 'typeofEntity', value: 'Pvt Ltd', label: 'Pvt Ltd' },
+        { name: 'typeofEntity', value: 'Public', label: 'Public' },
+        { name: 'typeofEntity', value: 'Individual', label: 'Individual' },
+        { name: 'typeofEntity', value: 'HUF', label: 'HUF' },
+        { name: 'typeofEntity', value: 'Trust', label: 'Trust' },
+        { name: 'typeofEntity', value: 'Partnership', label: 'Partnership' },
+        { name: 'typeofEntity', value: 'LLP', label: 'LLP' },
+        { name: 'typeofEntity', value: 'Co-op Society', label: 'Co-op Society' },
+    ]
 
     return (
         <div>
             <ApplicantDetails details={test} applicantDetails={(data) => { setApplicantDetails(data) }} getData={getData} test={test} />
             <h1>Verification Details</h1>
-            <DropDownComp onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={addressConfirmed}/>
+            <DropDownComp onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={addressConfirmed} />
             {(refresh > 0 || true) && <form className='d-flex justify-content-between flex-wrap' onSubmit={handleSubmit} >
                 <div>
                     <label>Visit Date</label>
@@ -176,7 +214,7 @@ export default function Office() {
                 </div>
                 <div>
                     <label>Business Board Seen</label>
-                    <DropDownComp onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={businessBoardSeen}/>
+                    <DropDownComp onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={businessBoardSeen} />
                     {/* <Input type="text" name='businessBoardSeen' value={formdata['businessBoardSeen']} onChange={(e)=> onHandleChange(e)} /> */}
                     {/* <Dropdown isOpen={businessBoardSeenOpen} toggle={businessBoardSeentoggle}>
                         <DropdownToggle caret className='text-capitalize'>
@@ -200,7 +238,7 @@ export default function Office() {
                 </div>
                 <div>
                     <label>Person Met</label>
-                    <DropDownComp onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={personMet}/>
+                    <DropDownComp onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={personMet} />
                     {/* <Input type="text" name='personMet' value={formdata['personMet']} onChange={(e)=> onHandleChange(e)} /> */}
                     {/* <Dropdown isOpen={personMetOpen} toggle={personMettoggle}>
                         <DropdownToggle caret className='text-capitalize'>
@@ -220,7 +258,7 @@ export default function Office() {
                 </div>
                 <div>
                     <label>Person Met Designation</label>
-                    <DropDownComp onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={personMetNameDesignation}/>
+                    <DropDownComp onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={personMetNameDesignation} />
                     {/* <Input type="text" name='personMetNameDesignation' value={formdata['personMetNameDesignation']} onChange={(e)=> onHandleChange(e)} /> */}
                     {/* <Dropdown isOpen={personMetNameDesignationOpen} toggle={personMetNameDesignationtoggle}>
                         <DropdownToggle caret className='text-capitalize'>
@@ -250,7 +288,7 @@ export default function Office() {
                 </div>
                 <div>
                     <label>Less than 1 yr at Current Address</label>
-                    <DropDownComp onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={lessThanYrAtCurrentAddress}/>
+                    <DropDownComp onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={lessThanYrAtCurrentAddress} />
                     {/* <Input type="text" name='lessThanYrAtCurrentAddress' value={formdata['lessThanYrAtCurrentAddress']} onChange={(e)=> onHandleChange(e)} /> */}
                     {/* <Dropdown isOpen={lessThanYrAtCurrentAddressOpen} toggle={lessThanYrAtCurrentAddresstoggle}>
                         <DropdownToggle caret className='text-capitalize'>
@@ -270,7 +308,7 @@ export default function Office() {
                 </div>
                 <div>
                     <label>Nature of Business</label>
-                    <DropDownComp onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={natureofBusines}/>
+                    <DropDownComp onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={natureofBusines} />
                     {/* <Input type="text" name='natureofBusines' value={formdata['natureofBusines']} onChange={(e)=> onHandleChange(e)} /> */}
                     {/* <Dropdown isOpen={natureofBusinesOpen} toggle={natureofBusinestoggle}>
                         <DropdownToggle caret className='text-capitalize'>
@@ -291,7 +329,7 @@ export default function Office() {
                 </div>
                 <div>
                     <label>Office Ownership</label>
-                    <DropDownComp onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={officeOwnership}/>
+                    <DropDownComp onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={officeOwnership} />
                     {/* <Input type="text" name='officeOwnership' value={formdata['officeOwnership']} onChange={(e)=> onHandleChange(e)} /> */}
                     {/* <Dropdown isOpen={officeOwnershipOpen} toggle={officeOwnershiptoggle}>
                         <DropdownToggle caret className='text-capitalize'>
@@ -324,7 +362,7 @@ export default function Office() {
                 </div>
                 <div>
                     <label>Type of Entity</label>
-                    <DropDownComp onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={typeofEntity}/>
+                    <DropDownComp onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={typeofEntity} />
                     {/* <Input type="text" name='typeofEntity' value={formdata['typeofEntity']} onChange={(e)=> onHandleChange(e)} /> */}
                     {/* <Dropdown isOpen={typeofEntityOpen} toggle={typeofEntitytoggle}>
                         <DropdownToggle caret className='text-capitalize'>
