@@ -104,6 +104,38 @@ export default function VerificationObserverOffice({ verification, getData }) {
         {name:'constructionOfOffice', value:'Semi Strong', label:'Semi Strong'},
         {name:'constructionOfOffice', value:'Temporary', label:'Temporary'},
     ]
+    let easeofLocating =  [
+        {name:'easeofLocating', value:'', label:'None'},
+        {name:'easeofLocating', value:'Easily Traceable', label:'Easily Traceable'},
+        {name:'easeofLocating', value:'Difficult to Trace', label:'Difficult to Trace'},
+        {name:'easeofLocating', value:'Not Traceable', label:'Not Traceable'},
+    ]
+    let businessActivityLevel =  [
+        {name:'businessActivityLevel', value:'', label:'None'},
+        {name:'businessActivityLevel', value:'High', label:'High'},
+        {name:'businessActivityLevel', value:'Medium', label:'Medium'},
+        {name:'businessActivityLevel', value:'Low', label:'Low'},
+    ]
+    let withinMunicipalLimits =  [
+        {name:'withinMunicipalLimits', value:'yes', label:'yes'},
+        {name:'withinMunicipalLimits', value:'no', label:'no'}
+    ]   
+    let picturePoliticalLeader =  [
+        {name:'picturePoliticalLeader', value:'', label:'None'},
+        {name:'picturePoliticalLeader', value:'yes', label:'yes'},
+        {name:'picturePoliticalLeader', value:'no', label:'no'}
+    ]
+    let stockLevel =  [
+        {name:'stockLevel', value:'', label:'None'},
+        {name:'stockLevel', value:'High', label:'High'},
+        {name:'stockLevel', value:'Medium', label:'Medium'},
+        {name:'stockLevel', value:'Low', label:'Low'},
+    ]
+    let docVerified =  [
+        {name:'docVerified', value:'', label:'None'},
+        {name:'docVerified', value:'yes', label:'yes'},
+        {name:'docVerified', value:'no', label:'no'}
+    ]
 
     return (
         <div>
@@ -163,63 +195,69 @@ export default function VerificationObserverOffice({ verification, getData }) {
                 </div>
                 <div>
                     <label>Ease of Locating</label>
-                    <Input type="text" name='easeofLocating' value={formdata['easeofLocating']} onChange={(e) => handleOnChange(e.currentTarget)} />
+                    {/* <Input type="text" name='easeofLocating' value={formdata['easeofLocating']} onChange={(e) => handleOnChange(e.currentTarget)} /> */}
+                    <DropDownComp handleOnChange={(e)=>onHandleChange()} formdata={formdata} dropDowmArry={easeofLocating} />
                 </div>
                 <div>
                     <label>Exterior Condition</label>
-                    <Input type="text" name='exteriorCondition' value={formdata['exteriorCondition']} onChange={(e) => handleOnChange(e.currentTarget)} />
+                    <Input type="text" name='exteriorCondition' value={formdata['exteriorCondition']} onChange={(e) => onHandleChange(e.currentTarget)} />
                 </div>
                 <div>
                     <label>Approx Area of Office (sq.ft)</label>
-                    <Input type="text" name='approxAreaofOffice' value={formdata['approxAreaofOffice']} onChange={(e) => handleOnChange(e.currentTarget)} />
+                    <Input type="text" name='approxAreaofOffice' value={formdata['approxAreaofOffice']} onChange={(e) => onHandleChange(e.currentTarget)} />
                 </div>
                 <div>
                     <label>Business Activity Level</label>
-                    <Input type="text" name='businessActivityLevel' value={formdata['businessActivityLevel']} onChange={(e) => handleOnChange(e.currentTarget)} />
+                    {/* <Input type="text" name='businessActivityLevel' value={formdata['businessActivityLevel']} onChange={(e) => handleOnChange(e.currentTarget)} /> */}
+                    <DropDownComp handleOnChange={(e)=>onHandleChange()} formdata={formdata} dropDowmArry={businessActivityLevel} />
                 </div>
                 <div>
                     <label>No. of Employees Working in Office/ Business or Seen in Premises</label>
-                    <Input type="text" name='noOfEmployeesWorkinginPremises' value={formdata['noOfEmployeesWorkinginPremises']} onChange={(e) => handleOnChange(e.currentTarget)} />
+                    <Input type="text" name='noOfEmployeesWorkinginPremises' value={formdata['noOfEmployeesWorkinginPremises']} onChange={(e) => onHandleChange(e.currentTarget)} />
                 </div>
                 <div>
                     <label>Within Municipal Limits</label>
-                    <Input type="text" name='withinMunicipalLimits' value={formdata['withinMunicipalLimits']} onChange={(e) => handleOnChange(e.currentTarget)} />
+                    {/* <Input type="text" name='withinMunicipalLimits' value={formdata['withinMunicipalLimits']} onChange={(e) => handleOnChange(e.currentTarget)} /> */}
+                    <DropDownComp handleOnChange={(e)=>onHandleChange()} formdata={formdata} dropDowmArry={withinMunicipalLimits} />
                 </div>
                 <div>
                     <label>Distance from Neareast Railway Station</label>
-                    <Input type="text" name='distanceFromRailwayStation' value={formdata['distanceFromRailwayStation']} onChange={(e) => handleOnChange(e.currentTarget)} />
+                    <Input type="text" name='distanceFromRailwayStation' value={formdata['distanceFromRailwayStation']} onChange={(e) => onHandleChange(e.currentTarget)} />
                 </div>
                 <div>
                     <label>Picture Political Leader</label>
-                    <Input type="text" name='picturePoliticalLeader' value={formdata['picturePoliticalLeader']} onChange={(e) => handleOnChange(e.currentTarget)} />
+                    {/* <Input type="text" name='picturePoliticalLeader' value={formdata['picturePoliticalLeader']} onChange={(e) => handleOnChange(e.currentTarget)} /> */}
+                    <DropDownComp handleOnChange={(e)=>onHandleChange()} formdata={formdata} dropDowmArry={picturePoliticalLeader} />
                 </div>
                 <div>
                     <label>Political Leader Details</label>
-                    <Input type="text" name='politicalLeaderDetails' value={formdata['politicalLeaderDetails']} onChange={(e) => handleOnChange(e.currentTarget)} />
+                    <Input type="text" name='politicalLeaderDetails' value={formdata['politicalLeaderDetails']} onChange={(e) => onHandleChange(e.currentTarget)} />
                 </div>
                 <div>
                     <label>Asset Seen At Office</label>
-                    <Input type="text" name='assetSeenAtOffice' value={formdata['assetSeenAtOffice']} onChange={(e) => handleOnChange(e.currentTarget)} />
+                    <Input type="text" name='assetSeenAtOffice' value={formdata['assetSeenAtOffice']} onChange={(e) => onHandleChange(e.currentTarget)} />
                 </div>
                 <div>
                     <label>Interior Conditions</label>
-                    <Input type="text" name='interiorConditions' value={formdata['interiorConditions']} onChange={(e) => handleOnChange(e.currentTarget)} />
+                    <Input type="text" name='interiorConditions' value={formdata['interiorConditions']} onChange={(e) => onHandleChange(e.currentTarget)} />
                 </div>
                 <div>
                     <label>Stock Level</label>
-                    <Input type="text" name='stockLevel' value={formdata['stockLevel']} onChange={(e) => handleOnChange(e.currentTarget)} />
+                    {/* <Input type="text" name='stockLevel' value={formdata['stockLevel']} onChange={(e) => handleOnChange(e.currentTarget)} /> */}
+                    <DropDownComp handleOnChange={(e)=>onHandleChange()} formdata={formdata} dropDowmArry={stockLevel} />
                 </div>
                 <div>
                     <label>Doc Verified</label>
-                    <Input type="text" name='docVerified' value={formdata['docVerified']} onChange={(e) => handleOnChange(e.currentTarget)} />
+                    {/* <Input type="text" name='docVerified' value={formdata['docVerified']} onChange={(e) => handleOnChange(e.currentTarget)} /> */}
+                    <DropDownComp handleOnChange={(e)=>onHandleChange()} formdata={formdata} dropDowmArry={docVerified} />
                 </div>
                 <div>
                     <label>Document Details</label>
-                    <Input type="text" name='documentDetails' value={formdata['documentDetails']} onChange={(e) => handleOnChange(e.currentTarget)} />
+                    <Input type="text" name='documentDetails' value={formdata['documentDetails']} onChange={(e) => onHandleChange(e.currentTarget)} />
                 </div>
                 <div>
                     <label>Negative Area</label>
-                    <Input type="text" name='negativeArea' value={formdata['negativeArea']} onChange={(e) => handleOnChange(e.currentTarget)} />
+                    <Input type="text" name='negativeArea' value={formdata['negativeArea']} onChange={(e) => onHandleChange(e.currentTarget)} />
                 </div>
                 <div className='d-none'>
                     <button type='submit' id='officeVerificationObserver'>Submit</button>
