@@ -121,9 +121,9 @@ export default function Tpc({ tpc, getData }) {
                             <th>1</th>
                             <td>
                                 <Input type="text" name="TPCName1" value={formdata['TPCName1']} onChange={(e) => handleOnChange(e.currentTarget)} /></td>
-
-                                <DropDownComp handleOnChange={(e)=>handleOnChange()} formdata={formdata} dropDowmArry={status1} />
+                            
                             <td>
+                                <DropDownComp handleOnChange={(e)=>handleOnChange()} formdata={formdata} dropDowmArry={status1} />
                                 {/* <Input type='text' name='status1'  value={formdata['status1']} onChange={(e) => handleOnChange(e.currentTarget)}  /> */}
                                 {/* <Dropdown isOpen={status1Open} toggle={status1toggle}>
                                     <DropdownToggle caret className='text-capitalize'>
@@ -145,8 +145,8 @@ export default function Tpc({ tpc, getData }) {
                             <td>
                                 <Input type="text" name="TPCName2" value={formdata['TPCName2']} onChange={(e) => handleOnChange(e.currentTarget)} /></td>
 
-                                <DropDownComp handleOnChange={(e)=>handleOnChange()} formdata={formdata} dropDowmArry={status2} />
                             <td>
+                                <DropDownComp handleOnChange={(e)=>handleOnChange()} formdata={formdata} dropDowmArry={status2} />
                                 {/* <Input type='text' name='status2' value={formdata['status2']} onChange={(e) => handleOnChange(e.currentTarget)} /> */}
                                 {/* <Dropdown isOpen={status2Open} toggle={status2toggle}>
                                     <DropdownToggle caret className='text-capitalize'>
@@ -168,8 +168,8 @@ export default function Tpc({ tpc, getData }) {
                             <td>
                                 <Input type="text" name="TPCName3" value={formdata['TPCName3']} onChange={(e) => handleOnChange(e.currentTarget)} /></td>
 
-                                <DropDownComp handleOnChange={(e)=>handleOnChange()} formdata={formdata} dropDowmArry={status3} />
                             <td>
+                                <DropDownComp handleOnChange={(e)=>handleOnChange()} formdata={formdata} dropDowmArry={status3} />
                                 {/* <Input type='text' name='status3' value={formdata['status3']} onChange={(e) => handleOnChange(e.currentTarget)} /> */}
                                 {/* <Dropdown isOpen={status3Open} toggle={status3toggle}>
                                     <DropdownToggle caret className='text-capitalize'>

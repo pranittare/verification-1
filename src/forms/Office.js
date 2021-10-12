@@ -187,7 +187,7 @@ export default function Office() {
         <div>
             <ApplicantDetails details={test} applicantDetails={(data) => { setApplicantDetails(data) }} getData={getData} test={test} />
             <h1>Verification Details</h1>
-            <DropDownComp onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={addressConfirmed} />
+            
             {(refresh > 0 || true) && <form className='d-flex justify-content-between flex-wrap' onSubmit={handleSubmit} >
                 <div>
                     <label>Visit Date</label>
@@ -199,6 +199,7 @@ export default function Office() {
                 </div>
                 <div>
                     <label>Address Confirmed</label>
+                    <DropDownComp onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={addressConfirmed} />
                     {/* <Dropdown isOpen={addressConfirmedOpen} toggle={addressConfirmedtoggle}>
                         <DropdownToggle caret className='text-capitalize'>
                             {formdata['addressConfirmed'] ? formdata['addressConfirmed'] : 'None'}
