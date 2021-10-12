@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Input, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
+import { Button, Input} from 'reactstrap';
 import DropDownComp from '../components/DropDownComp';
 
 export default function Tpc({ tpc, getData }) {
+    const [refresh, setRefresh] = useState(0)
     const [formdata, setFormdata] = useState({
         TPCName1: '',
         status1: '',
@@ -28,21 +29,9 @@ export default function Tpc({ tpc, getData }) {
         TPCRemarks: '',
         overallStatus: '',
     })
-    const [refresh, setRefresh] = useState(0)
-    const [status1Open, setStatus1] = useState(false);
-    const status1toggle = () => setStatus1(prevState => !prevState);
-    const [status2Open, setStatus2] = useState(false);
-    const status2toggle = () => setStatus2(prevState => !prevState);
-    const [status3Open, setStatus3] = useState(false);
-    const status3toggle = () => setStatus3(prevState => !prevState);
-    const [marketReputationOpen, setMarketReputation] = useState(false);
-    const marketReputationtoggle = () => setMarketReputation(prevState => !prevState);
-    const [TVRStatusOpen, setTVRStatus] = useState(false);
-    const TVRStatustoggle = () => setTVRStatus(prevState => !prevState);
-    const [overallStatusOpen, setOverallStatus] = useState(false);
-    const overallStatustoggle = () => setOverallStatus(prevState => !prevState);
+    
 
-    const handleOnChange = (e) => {
+    const onHandleChange = (e) => {
         // name
         let form = formdata
         form[e.name] = e.value
@@ -120,133 +109,72 @@ export default function Tpc({ tpc, getData }) {
                         <tr>
                             <th>1</th>
                             <td>
-                                <Input type="text" name="TPCName1" value={formdata['TPCName1']} onChange={(e) => handleOnChange(e.currentTarget)} /></td>
+                                <Input type="text" name="TPCName1" value={formdata['TPCName1']} onChange={(e) => onHandleChange(e.currentTarget)} /></td>
                             
                             <td>
-                                <DropDownComp handleOnChange={(e)=>handleOnChange()} formdata={formdata} dropDowmArry={status1} />
-                                {/* <Input type='text' name='status1'  value={formdata['status1']} onChange={(e) => handleOnChange(e.currentTarget)}  /> */}
-                                {/* <Dropdown isOpen={status1Open} toggle={status1toggle}>
-                                    <DropdownToggle caret className='text-capitalize'>
-                                        {formdata['status1'] ? formdata['status1'] : 'None'}
-                                    </DropdownToggle>
-                                    <DropdownMenu>
-                                        <DropdownItem name='status1' onClick={(e) => handleOnChange(e.currentTarget)} value=''>None</DropdownItem>
-                                        <DropdownItem name='status1' onClick={(e) => handleOnChange(e.currentTarget)} value='positive'>Positive</DropdownItem>
-                                        <DropdownItem name='status1' onClick={(e) => handleOnChange(e.currentTarget)} value='negative'>Negative</DropdownItem>
-
-                                    </DropdownMenu>
-                                </Dropdown> */}
+                                <DropDownComp onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={status1} />
                             </td>
                             <td>
-                                <Input type="text" name="TPCRemark1" value={formdata['TPCRemark1']} onChange={(e) => handleOnChange(e.currentTarget)} /></td>
+                                <Input type="text" name="TPCRemark1" value={formdata['TPCRemark1']} onChange={(e) => onHandleChange(e.currentTarget)} /></td>
                         </tr>
                         <tr>
                             <th>2</th>
                             <td>
-                                <Input type="text" name="TPCName2" value={formdata['TPCName2']} onChange={(e) => handleOnChange(e.currentTarget)} /></td>
+                                <Input type="text" name="TPCName2" value={formdata['TPCName2']} onChange={(e) => onHandleChange(e.currentTarget)} /></td>
 
                             <td>
-                                <DropDownComp handleOnChange={(e)=>handleOnChange()} formdata={formdata} dropDowmArry={status2} />
-                                {/* <Input type='text' name='status2' value={formdata['status2']} onChange={(e) => handleOnChange(e.currentTarget)} /> */}
-                                {/* <Dropdown isOpen={status2Open} toggle={status2toggle}>
-                                    <DropdownToggle caret className='text-capitalize'>
-                                        {formdata['status2'] ? formdata['status2'] : 'None'}
-                                    </DropdownToggle>
-                                    <DropdownMenu>
-                                        <DropdownItem name='status2' onClick={(e) => handleOnChange(e.currentTarget)} value=''>None</DropdownItem>
-                                        <DropdownItem name='status2' onClick={(e) => handleOnChange(e.currentTarget)} value='positive'>Positive</DropdownItem>
-                                        <DropdownItem name='status2' onClick={(e) => handleOnChange(e.currentTarget)} value='negative'>Negative</DropdownItem>
-
-                                    </DropdownMenu>
-                                </Dropdown> */}
+                                <DropDownComp onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={status2} />
                             </td>
                             <td>
-                                <Input type="text" name="TPCRemark2" value={formdata['TPCRemark2']} onChange={(e) => handleOnChange(e.currentTarget)} /></td>
+                                <Input type="text" name="TPCRemark2" value={formdata['TPCRemark2']} onChange={(e) => onHandleChange(e.currentTarget)} /></td>
                         </tr>
                         <tr>
                             <th>3</th>
                             <td>
-                                <Input type="text" name="TPCName3" value={formdata['TPCName3']} onChange={(e) => handleOnChange(e.currentTarget)} /></td>
+                                <Input type="text" name="TPCName3" value={formdata['TPCName3']} onChange={(e) => onHandleChange(e.currentTarget)} /></td>
 
                             <td>
-                                <DropDownComp handleOnChange={(e)=>handleOnChange()} formdata={formdata} dropDowmArry={status3} />
-                                {/* <Input type='text' name='status3' value={formdata['status3']} onChange={(e) => handleOnChange(e.currentTarget)} /> */}
-                                {/* <Dropdown isOpen={status3Open} toggle={status3toggle}>
-                                    <DropdownToggle caret className='text-capitalize'>
-                                        {formdata['status3'] ? formdata['status3'] : 'None'}
-                                    </DropdownToggle>
-                                    <DropdownMenu>
-                                        <DropdownItem name='status3' onClick={(e) => handleOnChange(e.currentTarget)} value=''>None</DropdownItem>
-                                        <DropdownItem name='status3' onClick={(e) => handleOnChange(e.currentTarget)} value='positive'>Positive</DropdownItem>
-                                        <DropdownItem name='status3' onClick={(e) => handleOnChange(e.currentTarget)} value='negative'>Negative</DropdownItem>
-
-                                    </DropdownMenu>
-                                </Dropdown> */}
+                                <DropDownComp onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={status3} />
                             </td>
                             <td>
-                                <Input type="text" name="TPCRemark3" value={formdata['TPCRemark3']} onChange={(e) => handleOnChange(e.currentTarget)} /></td>
+                                <Input type="text" name="TPCRemark3" value={formdata['TPCRemark3']} onChange={(e) => onHandleChange(e.currentTarget)} /></td>
                         </tr>
                     </tbody>
                 </table>
                 <div>
                     <label>Market Reputation/Dedup Check</label>
-                    <DropDownComp handleOnChange={(e)=>handleOnChange()} formdata={formdata} dropDowmArry={marketReputation} />
-                    {/* <Dropdown isOpen={marketReputationOpen} toggle={marketReputationtoggle}>
-                        <DropdownToggle caret className='text-capitalize'>
-                            {formdata['marketReputation'] ? formdata['marketReputation'] : 'None'}
-                        </DropdownToggle>
-                        <DropdownMenu>
-                            <DropdownItem name='marketReputation' onClick={(e) => handleOnChange(e.currentTarget)} value=''>None</DropdownItem>
-                            <DropdownItem name='marketReputation' onClick={(e) => handleOnChange(e.currentTarget)} value='positive'>Positive</DropdownItem>
-                            <DropdownItem name='marketReputation' onClick={(e) => handleOnChange(e.currentTarget)} value='negative'>Negative</DropdownItem>
-
-                        </DropdownMenu>
-                    </Dropdown> */}
+                    <DropDownComp onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={marketReputation} />
                 </div>
                 <div>
                     <label>Remarks</label>
-                    <Input type="text" name='TPCRemarks' value={formdata['TPCRemarks']} onChange={(e) => handleOnChange(e.currentTarget)} />
+                    <Input type="text" name='TPCRemarks' value={formdata['TPCRemarks']} onChange={(e) => onHandleChange(e.currentTarget)} />
 
                 </div>
                 <h4 className='w-100'>TVR Comments</h4>
                 <div>
                     <label>Number</label>
-                    <Input type="text" name='TVRNumber' value={formdata['TVRNumber']} onChange={(e) => handleOnChange(e.currentTarget)} />
+                    <Input type="text" name='TVRNumber' value={formdata['TVRNumber']} onChange={(e) => onHandleChange(e.currentTarget)} />
                 </div>
                 <div>
                     <label>Designation</label>
-                    <Input type="text" name='TVRDesignation' value={formdata['TVRDesignation']} onChange={(e) => handleOnChange(e.currentTarget)} />
+                    <Input type="text" name='TVRDesignation' value={formdata['TVRDesignation']} onChange={(e) => onHandleChange(e.currentTarget)} />
                 </div>
                 <div>
                     <label>Status</label>
 
-                    <DropDownComp handleOnChange={(e)=>handleOnChange()} formdata={formdata} dropDowmArry={TVRStatus} />
-                    {/* <Input type="text" name='TVRStatus' value={formdata['TVRStatus']} onChange={(e) => handleOnChange(e.currentTarget)} /> */}
-                    <div>
-                    {/* <Dropdown isOpen={TVRStatusOpen} toggle={TVRStatustoggle}>
-                        <DropdownToggle caret className='text-capitalize'>
-                            {formdata['TVRStatus'] ? formdata['TVRStatus'] : 'None'}
-                        </DropdownToggle>
-                        <DropdownMenu>
-                            <DropdownItem name='TVRStatus' onClick={(e) => handleOnChange(e.currentTarget)} value=''>None</DropdownItem>
-                            <DropdownItem name='TVRStatus' onClick={(e) => handleOnChange(e.currentTarget)} value='positive'>Positive</DropdownItem>
-                            <DropdownItem name='TVRStatus' onClick={(e) => handleOnChange(e.currentTarget)} value='negative'>Negative</DropdownItem>
-
-                        </DropdownMenu>
-                    </Dropdown> */}
-                </div>
+                    <DropDownComp onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={TVRStatus} />
                 </div>
                 <div>
                     <label>Business Name</label>
-                    <Input type="text" name='TVRBusinessName' value={formdata['TVRBusinessName']} onChange={(e) => handleOnChange(e.currentTarget)} />
+                    <Input type="text" name='TVRBusinessName' value={formdata['TVRBusinessName']} onChange={(e) => onHandleChange(e.currentTarget)} />
                 </div>
                 <div>
                     <label>No of years in Business</label>
-                    <Input type="text" name='TVRNoofyearsinBusiness' value={formdata['TVRNoofyearsinBusiness']} onChange={(e) => handleOnChange(e.currentTarget)} />
+                    <Input type="text" name='TVRNoofyearsinBusiness' value={formdata['TVRNoofyearsinBusiness']} onChange={(e) => onHandleChange(e.currentTarget)} />
                 </div>
                 <div>
                     <label>Remarks</label>
-                    <Input type="text" name='TVRRemarks' value={formdata['TVRRemarks']} onChange={(e) => handleOnChange(e.currentTarget)} />
+                    <Input type="text" name='TVRRemarks' value={formdata['TVRRemarks']} onChange={(e) => onHandleChange(e.currentTarget)} />
                 </div>
                 <div className='w-100 mt-2'>
                     <h4>Final FI Status
@@ -258,32 +186,20 @@ export default function Tpc({ tpc, getData }) {
                 <div>
                     <label>Status</label>
 
-                    <DropDownComp handleOnChange={(e)=>handleOnChange()} formdata={formdata} dropDowmArry={overallStatus} />
-                    {/* <Input type="text" name='TVRStatus' value={formdata['TVRStatus']} onChange={(e) => handleOnChange(e.currentTarget)} /> */}
-                    {/* <Dropdown isOpen={overallStatusOpen} toggle={overallStatustoggle}>
-                        <DropdownToggle caret className='text-capitalize'>
-                            {formdata['overallStatus'] ? formdata['overallStatus'] : 'None'}
-                        </DropdownToggle>
-                        <DropdownMenu>
-                            <DropdownItem name='overallStatus' onClick={(e) => handleOnChange(e.currentTarget)} value=''>None</DropdownItem>
-                            <DropdownItem name='overallStatus' onClick={(e) => handleOnChange(e.currentTarget)} value='Recommended'>Recommended</DropdownItem>
-                            <DropdownItem name='overallStatus' onClick={(e) => handleOnChange(e.currentTarget)} value='Refer'>Refer</DropdownItem>
-                            <DropdownItem name='overallStatus' onClick={(e) => handleOnChange(e.currentTarget)} value='Not Recommended'>Not Recommended</DropdownItem>
-
-                        </DropdownMenu>
-                    </Dropdown> */}
+                    <DropDownComp onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={overallStatus} />
+                    
                 </div>
                 <div>
                     <label>Agency name</label>
-                    <Input type="text" name='finalFIAgencyname' value={formdata['finalFIAgencyname']} onChange={(e) => handleOnChange(e.currentTarget)} />
+                    <Input type="text" name='finalFIAgencyname' value={formdata['finalFIAgencyname']} onChange={(e) => onHandleChange(e.currentTarget)} />
                 </div>
                 <div>
                     <label>Standard Remarks</label>
-                    <Input type="text" name='finalFIAnyRemarks' value={formdata['finalFIAnyRemarks']} onChange={(e) => handleOnChange(e.currentTarget)} />
+                    <Input type="text" name='finalFIAnyRemarks' value={formdata['finalFIAnyRemarks']} onChange={(e) => onHandleChange(e.currentTarget)} />
                 </div>
                 <div>
                     <label>Remarks</label>
-                    <Input type="text" name='finalFIRemarks' value={formdata['finalFIRemarks']} onChange={(e) => handleOnChange(e.currentTarget)} />
+                    <Input type="text" name='finalFIRemarks' value={formdata['finalFIRemarks']} onChange={(e) => onHandleChange(e.currentTarget)} />
                 </div>
                 <div>
                     <label>Company Stamp</label>
@@ -291,11 +207,11 @@ export default function Tpc({ tpc, getData }) {
                 </div>
                 <div>
                     <label>Verifier Name</label>
-                    <Input type="text" name='finalFIVerifierName' value={formdata['finalFIVerifierName']} onChange={(e) => handleOnChange(e.currentTarget)} />
+                    <Input type="text" name='finalFIVerifierName' value={formdata['finalFIVerifierName']} onChange={(e) => onHandleChange(e.currentTarget)} />
                 </div>
                 <div>
                     <label>Product Supervisor</label>
-                    <Input type="text" name='productSupervisor' value={formdata['productSupervisor']} onChange={(e) => handleOnChange(e.currentTarget)} />
+                    <Input type="text" name='productSupervisor' value={formdata['productSupervisor']} onChange={(e) => onHandleChange(e.currentTarget)} />
                 </div>
                 <div className='d-none'>
                     <Button id='tpcdata' type='submit'>Submit</Button>

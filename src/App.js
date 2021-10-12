@@ -18,6 +18,7 @@ function App() {
       <Router >
         <Navigation />
         <Switch>
+          <div className='ps-2 pe-2'>
           <Route path='/' render={() => <Dashboard />} exact />
           <Route path='/login' render={() => <Login />} />
           <Route path='/signup' render={() => <SignUp />} />
@@ -29,6 +30,7 @@ function App() {
           <Route path='/office' render={() => <Office />} />
           <Route path='/office/:form' render={() => <Office />} />
           <Route path='/resident' render={() => <Resident />} />
+          </div>
         </Switch>
 
       </Router>

@@ -21,15 +21,6 @@ export default function VerificationObserverResident({ verification, getData }) 
         assetSeenAtResidence: '',
         negativeArea: ''
     })
-    const handleOnChange = (e) => {
-        // name
-        let form = formdata
-        form[e.name] = e.value
-        // console.log(e, form[e.name])
-        setFormdata(form)
-        setRefresh(Math.random())
-        // console.log(form)
-    }
     const onHandleChange = (e) => {
         // name
         let form = formdata
@@ -113,13 +104,11 @@ export default function VerificationObserverResident({ verification, getData }) 
             {(refresh > 0 || true) && <form className='d-flex justify-content-between flex-wrap' onSubmit={handleSubmit} >
                 <div>
                     <label>Locality of Address</label>
-                    {/* <Input type="text" name='localityOfAddress' value={formdata['localityOfAddress']} onChange={(e) => handleOnChange(e.currentTarget)} /> */}
-                    <DropDownComp handleOnChange={(e)=>onHandleChange()} formdata={formdata} dropDowmArry={localityOfAddress} />
+                    <DropDownComp onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={localityOfAddress} />
                 </div>
                 <div>
                     <label>Type of House</label>
-                    {/* <Input type="text" name='typeOfHouse' value={formdata['typeOfHouse']} onChange={(e) => handleOnChange(e.currentTarget)} /> */}
-                    <DropDownComp handleOnChange={(e)=>onHandleChange()} formdata={formdata} dropDowmArry={typeOfHouse} />
+                    <DropDownComp onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={typeOfHouse} />
                 </div>
                 <div>
                     <label>Type of House Others</label>
@@ -127,18 +116,15 @@ export default function VerificationObserverResident({ verification, getData }) 
                 </div>
                 <div>
                     <label>Construction Of Residence</label>
-                    {/* <Input type="text" name='constructionOfResidence' value={formdata['constructionOfResidence']} onChange={(e) => handleOnChange(e.currentTarget)} /> */}
-                    <DropDownComp handleOnChange={(e)=>onHandleChange()} formdata={formdata} dropDowmArry={constructionOfResidence} />
+                    <DropDownComp onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={constructionOfResidence} />
                 </div>
                 <div>
                     <label>Accessibility/Approachibility</label>
-                    {/* <Input type="text" name='accessibility' value={formdata['accessibility']} onChange={(e) => handleOnChange(e.currentTarget)} /> */}
-                    <DropDownComp handleOnChange={(e)=>onHandleChange()} formdata={formdata} dropDowmArry={accessibility} />
+                    <DropDownComp onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={accessibility} />
                 </div>
                 <div>
                     <label>Ease of Locating</label>
-                    {/* <Input type="text" name='easeofLocating' value={formdata['easeofLocating']} onChange={(e) => handleOnChange(e.currentTarget)} /> */}
-                    <DropDownComp handleOnChange={(e)=>onHandleChange()} formdata={formdata} dropDowmArry={easeofLocating} />
+                    <DropDownComp onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={easeofLocating} />
                 </div>
                 <div>
                     <label>Interior Conditions</label>
@@ -154,8 +140,7 @@ export default function VerificationObserverResident({ verification, getData }) 
                 </div>
                 <div>
                     <label>Customer Attitude</label>
-                    {/* <Input type="text" name='customerAttitude' value={formdata['customerAttitude']} onChange={(e) => handleOnChange(e.currentTarget)} /> */}
-                    <DropDownComp handleOnChange={(e)=>onHandleChange()} formdata={formdata} dropDowmArry={customerAttitude} />
+                    <DropDownComp onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={customerAttitude} />
                 </div>
                 <div>
                     <label>Distance from Station</label>
@@ -163,8 +148,7 @@ export default function VerificationObserverResident({ verification, getData }) 
                 </div>
                 <div>
                     <label>Picture Political Leader</label>
-                    {/* <Input type="text" name='picturePoliticalLeader' value={formdata['picturePoliticalLeader']} onChange={(e) => handleOnChange(e.currentTarget)} /> */}
-                    <DropDownComp handleOnChange={(e)=>onHandleChange()} formdata={formdata} dropDowmArry={picturePoliticalLeader} />
+                    <DropDownComp onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={picturePoliticalLeader} />
                 </div>
                 <div>
                     <label>Political Leader Details</label>
