@@ -29,6 +29,21 @@ export default function Navigation() {
                         <li className="nav-item">
                             <Link className="nav-link" to='/resident'>Resident</Link>
                         </li>
+                        <li className="nav-item">
+                            <Link className="nav-link" to='/ActiveCases'>Active Cases</Link>
+                        </li>
+                        <li className="nav-item">
+                            <Link className="nav-link" to='/SubmittedCases'>Submitted Cases</Link>
+                        </li>
+                        <li className="nav-item">
+                            <Link className="nav-link" to='/oldCases'>Old Cases</Link>
+                        </li>
+                        <li className="nav-item">
+                            <Link className="nav-link" to='/active-agents'>Active Agents</Link>
+                        </li>
+                        <li className="nav-item">
+                            <Link className="nav-link" to='/total-agents'>Total Agents</Link>
+                        </li>
                         </ul>
                        
                 </div>

@@ -5,12 +5,16 @@ import Forget from './auth/forget'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import Navigation from './header/navigation';
 import Dashboard from './landing/dashboard';
-import TotalAgents from './agents/TotalAgents';
+import TotalAgents from './agents/TotalAgents'
 import ActiveAgents from './agents/ActiveAgents';
 import Billing from './clients/Billing';
 import Office from './forms/Office';
 import Resident from './forms/Resident';
 import Multi from './forms/Multi';
+import ActiveCases from './Cases/ActiveCases'
+import SubmittedCases from './Cases/SubmittedCases';
+import OldCases from './Cases/OldCases';
+
 
 function App() {
   return (
@@ -30,6 +34,10 @@ function App() {
           <Route path='/office' render={() => <Office />} />
           <Route path='/office/:form' render={() => <Office />} />
           <Route path='/resident' render={() => <Resident />} />
+          <Route path='/ActiveCases' render={() => <ActiveCases />} />
+          <Route path='/SubmittedCases' render={() => <SubmittedCases />} />
+          <Route path='/oldCases' render={() => <OldCases />} />
+          
           </div>
         </Switch>
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Button, Input, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import DropDownComp from '../components/DropDownComp';
+import {useHistory} from 'react-router-dom'
 
 export default function ApplicantDetails({ applicantDetails, getData, test }) {
     const [formdata, setFormdata] = useState({
@@ -43,6 +44,13 @@ export default function ApplicantDetails({ applicantDetails, getData, test }) {
         }
         id = document.location.pathname.split('/')[2]
     }
+
+    let history = useHistory()
+
+    const onHandleSubmit = ()=>{
+        history.push('/')
+    }
+
     const handleSubmit = (e) => {
         // const formData = new FormData(e.currentTarget);
         e.preventDefault()
@@ -184,7 +192,7 @@ export default function ApplicantDetails({ applicantDetails, getData, test }) {
                         <Input type="text" name='remarks' value={formdata['remarks']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
                     <div className='pt-4'>
-                        <Button color='primary' id='applicationDetails' type="submit">
+                        <Button color='primary' id='applicationDetails' type="submit" onClick={()=>(onHandleSubmit())} >
                             Submit
                         </Button>
                     </div>

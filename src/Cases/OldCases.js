@@ -1,33 +1,30 @@
 import React from 'react'
 import { Input } from 'reactstrap'
 
-export default function TotalAgents() {
+const OldCases = () => {
     return (
         <div>
-            <h4>Total Agents</h4>
+            <h4>Old Cases</h4>
             <form className='d-flex justify-content-between flex-wrap'>
                 <table className="table table-striped table-bordered">
                     <thead>
                         <tr>
-                            <th scope="col"> <Input type="text" name="TPCName1" placeholder={'Sr.No'} /> </th>
-                            <th scope="col"> <Input type="text" name="TPCName1" placeholder={'Name of Agent'} /> </th>
-                            <th scope="col"> <Input type="text" name="TPCName1" placeholder={'Mobile No.'} /> </th>
-                            <th scope="col"> <Input type="text" name="TPCName1" placeholder={'PinCode'} /> </th>
+                        <th scope="col"> <Input type="text" name="TPCName1" placeholder={'ApplicationID'} /> </th>
+                            <th scope="col"> <Input type="text" name="TPCName1" placeholder={'LoginDate'} /> </th>
+                            <th scope="col"> <Input type="text" name="TPCName1" placeholder={'LoginTime'} /> </th>
+                            <th scope="col"> <Input type="text" name="TPCName1" placeholder={'CustomerName'} /> </th>
+                            <th scope="col"> <Input type="text" name="TPCName1" placeholder={'TAT'} /> </th>
+                            <th scope="col"> <Input type="text" name="TPCName1" placeholder={'ClientName'} /> </th>
                             <th scope="col"> <Input type="text" name="TPCName1" placeholder={'Status'} /> </th>
-                            <th scope="col"> <Input type="text" name="TPCName1" placeholder={'KYC Update'} /> </th>
-                            <th scope="col"> <Input type="text" name="TPCName1" placeholder={'KYC Renewe'} /> </th>
-                            <th scope="col"> <Input type="text" name="TPCName1" placeholder={'Remarks'} /> </th>
-
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <th>1</th>
-                            <td>
-                                <Input type="text" name="TPCName1" />
+                        <td>
+                                <Input type="text" name="TPCRemark1" />
                             </td>
                             <td>
-                                <Input type="text" name="TPCRemark1" />
+                                <Input type="text" name="TPCName1" />
                             </td>
                             <td>
                                 <Input type="text" name="TPCRemark1" />
@@ -46,7 +43,9 @@ export default function TotalAgents() {
                             </td>
                         </tr>
                         <tr>
-                            <th>2</th>
+                            <td>
+                                <Input type="text" name="TPCRemark1" />
+                            </td>
                             <td>
                                 <Input type="text" name="TPCName1" />
                             </td>
@@ -65,9 +64,7 @@ export default function TotalAgents() {
                             <td>
                                 <Input type="text" name="TPCRemark1" />
                             </td>
-                            <td>
-                                <Input type="text" name="TPCRemark1" />
-                            </td>
+
                         </tr>
                     </tbody>
                 </table>
@@ -75,3 +72,4 @@ export default function TotalAgents() {
         </div>
     )
 }
+export default OldCases
