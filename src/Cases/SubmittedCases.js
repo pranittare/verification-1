@@ -22,7 +22,7 @@ const SubmittedCases = () => {
                     <tbody>
                         <tr>
                         <td>
-                                <Input type="text" name="TPCRemark1" />
+                                {/* <Input type="text" name="TPCRemark1" /> */}
                             </td>
                             <td>
                                 <Input type="text" name="TPCName1" />
