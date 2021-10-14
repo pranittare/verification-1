@@ -1,9 +1,13 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { InputGroup, Input, Label, Button } from 'reactstrap'
 import './auth.styles.css'
 import {useHistory} from 'react-router-dom'
+import { connect } from 'react-redux';
+function Login(props) {
 
-function Login() {
+  useEffect(()=>{
+    console.log('redux',props)
+  },[])
 
   let history = useHistory()
 
@@ -54,4 +58,9 @@ function Login() {
   );
 }
 
-export default Login;
+const mapStateToProps=(state)=>{
+  return {
+    userData: state.data
+  }
+}
+export default connect(mapStateToProps)(Login);

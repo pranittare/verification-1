@@ -185,7 +185,9 @@ function SignUp() {
                             </DropdownMenu>
                       </ButtonDropdown> */}
                     {/* </InputGroup> */}
+                    <div>
                     <Button color='primary' onClick={() => (onHandleSubmit())}>Submit</Button>
+                    </div>
                 </div>
             </div>
         </div>

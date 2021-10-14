@@ -37,7 +37,6 @@ function App() {
           <Route path='/ActiveCases' render={() => <ActiveCases />} />
           <Route path='/SubmittedCases' render={() => <SubmittedCases />} />
           <Route path='/oldCases' render={() => <OldCases />} />
-          
           </div>
         </Switch>
 
