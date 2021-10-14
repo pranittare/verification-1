@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react';
 import './App.css';
 import Login from './auth/login'
 import SignUp from './auth/signup'
@@ -14,29 +15,91 @@ import Multi from './forms/Multi';
 import ActiveCases from './Cases/ActiveCases'
 import SubmittedCases from './Cases/SubmittedCases';
 import OldCases from './Cases/OldCases';
+import { initializeApp } from 'firebase/app';
+import { getFirestore, collection, getDocs } from 'firebase/firestore/lite';
+import { getDatabase, ref, onValue, get } from "firebase/database";
+import { connect } from 'react-redux';
 
+const firebaseConfig = {
+  apiKey: "AIzaSyB9c5BdRrl55U04wioeaP5uMTclzu9trgM",
+  authDomain: "verification-43844.firebaseapp.com",
+  databaseURL: "https://verification-43844.firebaseio.com",
+  projectId: "verification-43844",
+  storageBucket: "verification-43844.appspot.com",
+  messagingSenderId: "6012213713",
+  appId: "1:6012213713:web:84698986ce43c1bc3268f0",
+  measurementId: "G-C3G7LZQEGT"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app)
+const realtime = getDatabase(app);
 
-function App() {
+function App(props) {
+  const [sidebar, setSidebar] = useState(false)
+  const toggle = () => setSidebar(!sidebar)
+
+  const realtimedb = (update) => {
+    const getDetails = ref(realtime, `${update}/`);
+    onValue(getDetails, (snapshot) => {
+      const data = snapshot.val();
+      console.log('data', data)
+      let val = update.toString().toUpperCase()
+      props.dispatch({ type: val, data: data })
+      // updateStarCount(postElement, data);
+    });
+  }
+  const databaseUpdate = async (update) => {
+    const getDetails = collection(db, `${update}`);
+    const snapshot = await getDocs(getDetails);
+    console.log('snapshot', snapshot)
+    let val = update.toString().toUpperCase()
+    console.log('update', val)
+    props.dispatch({ type: `f${val}`, data: snapshot })
+    // snapshot.forEach((doc) => {
+    //   console.log(doc.data())
+    // })
+
+  }
+  useEffect(() => {
+    realtimedb('agents')
+    // realtimedb('forms')
+    // realtimedb('users')
+    databaseUpdate('agents')
+    setTimeout(() => {
+      console.log('props', props)
+    }, 1000)
+  }, [])
+  // const starCountRef = ref(db, 'agents');
+  // onValue(starCountRef, (snapshot) => {
+  //   const data = snapshot.val();
+  //   console.log('data', data)
+  // });
+  const onHandleSidebar = () => {
+    console.log('clicked')
+  }
   return (
     <div className="App">
       <Router >
-        <Navigation />
+        <Navigation onHandleSidebar={() => toggle()} />
         <Switch>
-          <div className='ps-2 pe-2'>
-          <Route path='/' render={() => <Dashboard />} exact />
-          <Route path='/login' render={() => <Login />} />
-          <Route path='/signup' render={() => <SignUp />} />
-          <Route path='/forget' render={() => <Forget />} />
-          <Route path='/total-agents' render={() => <TotalAgents />} />
-          <Route path='/active-agents' render={() => <ActiveAgents />} />
-          <Route path='/clients' render={() => <Billing />} />
-          <Route path='/new' render={() => <Multi />} />
-          <Route path='/office' render={() => <Office />} />
-          <Route path='/office/:form' render={() => <Office />} />
-          <Route path='/resident' render={() => <Resident />} />
-          <Route path='/ActiveCases' render={() => <ActiveCases />} />
-          <Route path='/SubmittedCases' render={() => <SubmittedCases />} />
-          <Route path='/oldCases' render={() => <OldCases />} />
+          {sidebar && <div >
+            <button>something</button>
+          </div>}
+          <div className={'ps-2 pe-2'}>
+            <Route path='/' render={() => <Dashboard />} exact />
+            <Route path='/login' render={() => <Login />} />
+            <Route path='/signup' render={() => <SignUp />} />
+            <Route path='/forget' render={() => <Forget />} />
+            <Route path='/total-agents' render={() => <TotalAgents />} />
+            <Route path='/active-agents' render={() => <ActiveAgents />} />
+            <Route path='/clients' render={() => <Billing />} />
+            <Route path='/new' render={() => <Multi />} />
+            <Route path='/office' render={() => <Office />} />
+            <Route path='/office/:form' render={() => <Office />} />
+            <Route path='/resident' render={() => <Resident />} />
+            <Route path='/ActiveCases' render={() => <ActiveCases />} />
+            <Route path='/SubmittedCases' render={() => <SubmittedCases />} />
+            <Route path='/oldCases' render={() => <OldCases />} />
           </div>
         </Switch>
 
@@ -44,5 +107,10 @@ function App() {
     </div>
   );
 }
+const mapStateToProps = (state) => {
+  console.log('state', state)
+  return 
 
-export default App;
+}
+
+export default connect(mapStateToProps)(App);
