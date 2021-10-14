@@ -36,6 +36,7 @@ function SignUp() {
 
     const onHandleChange = (e) => {
         // name
+        console.log('e',e)
         let form = formdata
         form[e.name] = e.value
         // console.log(e, form[e.name])
@@ -91,8 +92,9 @@ function SignUp() {
                             placeholder="Agent Id"
                             aria-label="Username"
                             aria-describedby="basic-addon1"
+                            name='agentId'
                             value={formdata.agentId}
-                            onChange={(e) => formdata.setAgentId(e.target.value)}
+                            onChange={(e) => onHandleChange(e.currentTarget)}
                         />
                     </InputGroup>
 
@@ -102,8 +104,9 @@ function SignUp() {
                             placeholder="Password"
                             type='password'
                             aria-describedby="basic-addon1"
+                            name='agentPassword'
                             value={formdata.agentPassword}
-                            onChange={(e) => formdata.setAgentPassword(e.target.value)}
+                            onChange={(e) => onHandleChange(e.currentTarget)}
                         />
                     </InputGroup>
 
