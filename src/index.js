@@ -32,7 +32,7 @@ function reducer(state = initialState, action) {
       return {
         ...state,
         users: action.data}
-    case 'FORMS': 
+    case 'FORM': 
       return {
         ...state,
         forms: action.data}

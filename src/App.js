@@ -42,32 +42,31 @@ function App(props) {
     const getDetails = ref(realtime, `${update}/`);
     onValue(getDetails, (snapshot) => {
       const data = snapshot.val();
-      console.log('data', data)
+      // console.log(`${update}`, data)
       let val = update.toString().toUpperCase()
       props.dispatch({ type: val, data: data })
       // updateStarCount(postElement, data);
     });
   }
   const databaseUpdate = async (update) => {
+    let value = []
     const getDetails = collection(db, `${update}`);
     const snapshot = await getDocs(getDetails);
-    console.log('snapshot', snapshot)
+    snapshot.forEach(snap => {
+      value.push(snap.data())
+    })
+    // console.log('val', value)
     let val = update.toString().toUpperCase()
-    console.log('update', val)
-    props.dispatch({ type: `f${val}`, data: snapshot })
-    // snapshot.forEach((doc) => {
-    //   console.log(doc.data())
-    // })
-
+    props.dispatch({ type: `F${val}`, data: value })
   }
   useEffect(() => {
     realtimedb('agents')
-    // realtimedb('forms')
-    // realtimedb('users')
+    realtimedb('form')
+    realtimedb('users')
     databaseUpdate('agents')
-    setTimeout(() => {
-      console.log('props', props)
-    }, 1000)
+    // setTimeout(() => {
+    //   console.log('props', props)
+    // }, 1000)
   }, [])
   // const starCountRef = ref(db, 'agents');
   // onValue(starCountRef, (snapshot) => {
@@ -82,9 +81,9 @@ function App(props) {
       <Router >
         <Navigation onHandleSidebar={() => toggle()} />
         <Switch>
-          {sidebar && <div >
+          {/* {sidebar && <div >
             <button>something</button>
-          </div>}
+          </div>} */}
           <div className={'ps-2 pe-2'}>
             <Route path='/' render={() => <Dashboard />} exact />
             <Route path='/login' render={() => <Login />} />
@@ -108,8 +107,8 @@ function App(props) {
   );
 }
 const mapStateToProps = (state) => {
-  console.log('state', state)
-  return 
+  // console.log('state', state)
+  return {}
 
 }
 
