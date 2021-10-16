@@ -1,7 +1,72 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { connect } from 'react-redux';
 import { Input } from 'reactstrap'
 
-const ActiveCases = () => {
+const ActiveCases = (props) => {
+    const [allData, setAllData] = useState([])
+    const [reset, setReset] = useState(0);
+    const formData = (forms) => {
+        const formKeys = Object.keys(forms)
+        let formarray = []
+        for (let j = 0; j < formKeys.length; j++) {
+            const element1 = formKeys[j];
+            let form = forms[element1]
+            let newform = Object.keys(form)
+            for (let index = 0; index < newform.length; index++) {
+                const element2 = newform[index];
+                let single = form[element2]
+                formarray.push(single)
+                // console.log('form', single)
+
+            }
+
+        }
+        console.log('forms', formarray)
+        setAllData(formarray)
+        setReset(Math.random())
+
+    }
+    const handleFilter = (e) => {
+        let data = allData
+        if (e.currentTarget.value) {
+            setAllData(data.filter(item => {
+                if (item[e.currentTarget.name]) {
+                    let rval = item[e.currentTarget.name].toLocaleLowerCase().includes(e.currentTarget.value)
+                    return rval
+
+                } else {
+                    console.log('item', item)
+                    if (e.currentTarget.name === 'CustomerName') {
+                        if (item.office) {
+                            let rval = item.office.applicantDetails.customerName.toLocaleLowerCase().includes(e.currentTarget.value)
+                            return rval
+                        } else {
+                            let rval = item.resident.applicantDetails.customerName.toLocaleLowerCase().includes(e.currentTarget.value)
+                            return rval
+                        }
+                    } else if (e.currentTarget.name === 'ClientName') {
+                        console.log('office', item)
+                        if (item.office) {
+                            let rval = item.office?.applicantDetails?.bankNBFCname.clientName.toLocaleLowerCase().includes(e.currentTarget.value)
+                            return rval
+                        } else {
+                            let rval = item.resident?.applicantDetails?.bankNBFCname.clientName.toLocaleLowerCase().includes(e.currentTarget.value)
+                            return rval
+                        }
+                    }
+                }
+            }
+            ))
+        } else {
+            formData(props.forms)
+        }
+        setReset(Math.random())
+
+    }
+    useEffect(() => {
+        formData(props.forms)
+        // console
+    }, [props.forms])
     return (
         <div>
             <h4>Active Cases</h4>
@@ -9,74 +74,76 @@ const ActiveCases = () => {
                 <table className="table table-striped table-bordered">
                     <thead>
                         <tr>
-                            <th scope="col"> <Input type="text" name="TPCName1" placeholder={'ApplicationID'} /> </th>
-                            <th scope="col"> <Input type="text" name="TPCName1" placeholder={'LoginDate'} /> </th>
-                            <th scope="col"> <Input type="text" name="TPCName1" placeholder={'LoginTime'} /> </th>
-                            <th scope="col"> <Input type="text" name="TPCName1" placeholder={'CustomerName'} /> </th>
-                            <th scope="col"> <Input type="text" name="TPCName1" placeholder={'TAT'} /> </th>
-                            <th scope="col"> <Input type="text" name="TPCName1" placeholder={'ClientName'} /> </th>
-                            <th scope="col"> <Input type="text" name="TPCName1" placeholder={'Stage'} /> </th>
-                            <th scope="col"> <Input type="text" name="TPCName1" placeholder={'Remark'} /> </th>
+                            <th scope="col"> <Input type="text" onChange={handleFilter} name="appid" placeholder={'ApplicationID'} /> </th>
+                            <th scope="col"> <Input type="text" onChange={handleFilter} name="TPCName1" placeholder={'LoginDate'} /> </th>
+                            <th scope="col"> <Input type="text" onChange={handleFilter} name="TPCName1" placeholder={'LoginTime'} /> </th>
+                            <th scope="col"> <Input type="text" onChange={handleFilter} name="customerName" placeholder={'CustomerName'} /> </th>
+                            <th scope="col"> <Input type="text" onChange={handleFilter} name="TPCName1" placeholder={'TAT'} /> </th>
+                            <th scope="col"> <Input type="text" onChange={handleFilter} name="clientName" placeholder={'ClientName'} /> </th>
+                            <th scope="col"> <Input type="text" onChange={handleFilter} name="TPCName1" placeholder={'Stage'} /> </th>
+                            <th scope="col"> <Input type="text" onChange={handleFilter} name="TPCName1" placeholder={'Remark'} /> </th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>
-                                <Input type="text" name="TPCRemark1" />
-                            </td>
-                            <td>
-                                <Input type="text" name="TPCName1" />
-                            </td>
-                            <td>
-                                <Input type="text" name="TPCRemark1" />
-                            </td>
-                            <td>
-                                <Input type="text" name="TPCRemark1" />
-                            </td>
-                            <td>
-                                <Input type="text" name="TPCRemark1" />
-                            </td>
-                            <td>
-                                <Input type="text" name="TPCRemark1" />
-                            </td>
-                            <td>
-                                <Input type="text" name="TPCRemark1" />
-                            </td>
-                            <td>
-                                <Input type="text" name="TPCRemark1" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <Input type="text" name="TPCRemark1" />
-                            </td>
-                            <td>
-                                <Input type="text" name="TPCName1" />
-                            </td>
-                            <td>
-                                <Input type="text" name="TPCRemark1" />
-                            </td>
-                            <td>
-                                <Input type="text" name="TPCRemark1" />
-                            </td>
-                            <td>
-                                <Input type="text" name="TPCRemark1" />
-                            </td>
-                            <td>
-                                <Input type="text" name="TPCRemark1" />
-                            </td>
-                            <td>
-                                <Input type="text" name="TPCRemark1" />
-                            </td>
-                            <td>
-                                <Input type="text" name="TPCRemark1" />
-                            </td>
+                        {reset > 0 && allData && allData.length > 0 && allData.map((item, index) => {
+                            return <tr>
+                                <td>
+                                    {item.appid}
+                                </td>
+                                <td>
+                                    {item.tat}
 
-                        </tr>
+                                </td>
+                                <td>
+                                    {item.tat}
+
+                                </td>
+                                <td>
+                                    {
+                                        item?.office ?
+                                            item.office?.applicantDetails?.customerName
+                                            :
+                                            item.resident?.applicantDetails?.customerName
+                                    }
+                                </td>
+                                <td>
+
+                                </td>
+                                <td>
+                                    {
+                                        item?.office ?
+                                            item.office?.applicantDetails?.bankNBFCname.clientName
+                                            :
+                                            item.resident?.applicantDetails?.bankNBFCname.clientName
+                                    }
+                                </td>
+                                <td>
+                                    Assigned {item?.assigned ? 'true' : 'false'}
+                                    Claimed {item?.claimed ? 'true' : 'false'}
+                                    Submitted {item?.submitted ? 'true' : 'false'}
+                                </td>
+                                <td>
+                                    {
+                                        item?.office ?
+                                            item.office?.applicantDetails?.remarks
+                                            :
+                                            item.resident?.applicantDetails?.remarks
+                                    }
+
+                                </td>
+                            </tr>
+                        })}
+
                     </tbody>
                 </table>
             </form>
         </div>
     )
 }
-export default ActiveCases
+
+const mapStateToProps = (state) => {
+    return {
+        forms: state.forms
+    }
+}
+export default connect(mapStateToProps)(ActiveCases)

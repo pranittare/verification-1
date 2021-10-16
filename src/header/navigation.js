@@ -10,13 +10,21 @@ export default function Navigation({ onHandleSidebar }) {
 
             <nav className="navbar navbar-expand-lg navbar-light bg-light">
                 <div className="container-fluid">
-                     <Dropdown isOpen={sidebar} toggle={toggle}>
+                     <Dropdown isOpen={sidebar} toggle={toggle} className='me-4'>
                         <DropdownToggle >
                             ...
                         </DropdownToggle>
                         {sidebar && <DropdownMenu>
                             <DropdownItem>Some Action</DropdownItem>
-                           
+                            <DropdownItem><Link className="nav-link" to='/office'>Office</Link></DropdownItem>
+                            <DropdownItem><Link className="nav-link" to='/resident'>Resident</Link></DropdownItem>
+                            <DropdownItem divider>cases</DropdownItem>
+                            <DropdownItem><Link className="nav-link" to='/ActiveCases'>Active Cases</Link></DropdownItem>
+                            <DropdownItem><Link className="nav-link" to='/SubmittedCases'>Submitted Cases</Link></DropdownItem>
+                            <DropdownItem><Link className="nav-link" to='/oldCases'>Old Cases</Link></DropdownItem>
+                            <DropdownItem divider>cases</DropdownItem>
+                            <DropdownItem><Link className="nav-link" to='/active-agents'>Active Agents</Link></DropdownItem>
+                            <DropdownItem><Link className="nav-link" to='/total-agents'>Total Agents</Link></DropdownItem>
                         </DropdownMenu>}
                     </Dropdown>
                     {/* <button className='btn' onClick={toggle}>exp</button> */}
@@ -38,27 +46,7 @@ export default function Navigation({ onHandleSidebar }) {
                             <li className="nav-item">
                                 <Link className="nav-link" to='/new'>New</Link>
                             </li>
-                            <li className="nav-item">
-                                <Link className="nav-link" to='/office'>Office</Link>
-                            </li>
-                            <li className="nav-item">
-                                <Link className="nav-link" to='/resident'>Resident</Link>
-                            </li>
-                            <li className="nav-item">
-                                <Link className="nav-link" to='/ActiveCases'>Active Cases</Link>
-                            </li>
-                            <li className="nav-item">
-                                <Link className="nav-link" to='/SubmittedCases'>Submitted Cases</Link>
-                            </li>
-                            <li className="nav-item">
-                                <Link className="nav-link" to='/oldCases'>Old Cases</Link>
-                            </li>
-                            <li className="nav-item">
-                                <Link className="nav-link" to='/active-agents'>Active Agents</Link>
-                            </li>
-                            <li className="nav-item">
-                                <Link className="nav-link" to='/total-agents'>Total Agents</Link>
-                            </li>
+                            
                         </ul>
 
                     </div>
