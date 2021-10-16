@@ -35,8 +35,6 @@ const db = getFirestore(app)
 const realtime = getDatabase(app);
 
 function App(props) {
-  const [sidebar, setSidebar] = useState(false)
-  const toggle = () => setSidebar(!sidebar)
 
   const realtimedb = (update) => {
     const getDetails = ref(realtime, `${update}/`);
@@ -79,11 +77,9 @@ function App(props) {
   return (
     <div className="App">
       <Router >
-        <Navigation onHandleSidebar={() => toggle()} />
+        <Navigation />
         <Switch>
-          {/* {sidebar && <div >
-            <button>something</button>
-          </div>} */}
+     
           <div className={'ps-2 pe-2'}>
             <Route path='/' render={() => <Dashboard />} exact />
             <Route path='/login' render={() => <Login />} />
