@@ -15,7 +15,9 @@ const ActiveCases = (props) => {
             for (let index = 0; index < newform.length; index++) {
                 const element2 = newform[index];
                 let single = form[element2]
-                formarray.push(single)
+                if (!single.submitted) {
+                    formarray.push(single)
+                }
                 // console.log('form', single)
 
             }

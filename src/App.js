@@ -16,7 +16,7 @@ import ActiveCases from './Cases/ActiveCases'
 import SubmittedCases from './Cases/SubmittedCases';
 import OldCases from './Cases/OldCases';
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, getDocs } from 'firebase/firestore/lite';
+import { getFirestore, collection, getDocs, query, where } from 'firebase/firestore/lite';
 import { getDatabase, ref, onValue, get } from "firebase/database";
 import { connect } from 'react-redux';
 
@@ -31,7 +31,7 @@ const firebaseConfig = {
   measurementId: "G-C3G7LZQEGT"
 };
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app)
+export const db = getFirestore(app)
 const realtime = getDatabase(app);
 
 function App(props) {
@@ -57,29 +57,23 @@ function App(props) {
     let val = update.toString().toUpperCase()
     props.dispatch({ type: `F${val}`, data: value })
   }
+ 
+  
   useEffect(() => {
     realtimedb('agents')
     realtimedb('form')
     realtimedb('users')
     databaseUpdate('agents')
-    // setTimeout(() => {
-    //   console.log('props', props)
-    // }, 1000)
+    databaseUpdate('vendors')
+    databaseUpdate('backup')
   }, [])
-  // const starCountRef = ref(db, 'agents');
-  // onValue(starCountRef, (snapshot) => {
-  //   const data = snapshot.val();
-  //   console.log('data', data)
-  // });
-  const onHandleSidebar = () => {
-    console.log('clicked')
-  }
+
   return (
     <div className="App">
       <Router >
         <Navigation />
         <Switch>
-     
+
           <div className={'ps-2 pe-2'}>
             <Route path='/' render={() => <Dashboard />} exact />
             <Route path='/login' render={() => <Login />} />
@@ -104,7 +98,9 @@ function App(props) {
 }
 const mapStateToProps = (state) => {
   // console.log('state', state)
-  return {}
+  return {
+    query: state.data
+  }
 
 }
 

@@ -15,49 +15,64 @@ const initialState = {
   users: [],
   fagents: [],
   fforms: [],
-  fusers: []
+  fusers: [],
+  oldcases: null,
+
 }
 
 function reducer(state = initialState, action) {
   switch (action.type) {
     case 'DATA':
-      return { 
+      return {
         ...state,
-        data: action.data }
+        data: action.data
+      }
     case 'USER':
-      return { 
-        ...state,
-        user: action.data }
-    case 'USERS': 
       return {
         ...state,
-        users: action.data}
-    case 'FORM': 
+        user: action.data
+      }
+    case 'USERS':
       return {
         ...state,
-        forms: action.data}
-    case 'AGENTS': 
+        users: action.data
+      }
+    case 'FORM':
       return {
         ...state,
-        agents: action.data}
-    case 'FAGENTS': 
-    return {
-      ...state,
-      fagents: action.data}
-    case 'FFORMS' :
+        forms: action.data
+      }
+    case 'AGENTS':
       return {
         ...state,
-        fforms: action.data}
-    case 'FUSERS' : 
+        agents: action.data
+      }
+    case 'FAGENTS':
       return {
         ...state,
-        fusers: action.data}
+        fagents: action.data
+      }
+    case 'FFORMS':
+      return {
+        ...state,
+        fforms: action.data
+      }
+    case 'FUSERS':
+      return {
+        ...state,
+        fusers: action.data
+      }
+    case 'OLDCASES':
+      return {
+        ...state,
+        oldcases: action.data
+      }
     default:
       return state
   }
 }
 
-const store = createStore(reducer)
+export const store = createStore(reducer)
 
 ReactDOM.render(
   <React.StrictMode>
