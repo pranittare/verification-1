@@ -3,15 +3,19 @@ import { db } from "../App";
 import { store } from '../index';
 
 const getQueryData = async (q) => {
-    let value = []
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach((doc) => {
-        // doc.data() is never undefined for query doc snapshots
-        // console.log(doc.id, " => ", doc.data());
-        value.push(doc.data())
-    });
-    console.log('value', value)
-    store.dispatch({ type: 'OLDCASES', data: value })
+    try{
+        let value = []
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
+            // doc.data() is never undefined for query doc snapshots
+            // console.log(doc.id, " => ", doc.data());
+            value.push(doc.data())
+        });
+        console.log('value', value)
+        store.dispatch({ type: 'OLDCASES', data: value })
+    } catch (err) {
+        console.log('err', err)
+    }
 }
 export const databaseUpdateQueryExactSingle = async (from, what) => {
     const q = query(collection(db, "forms/"), where(`${from}`, '==', `${what}`));

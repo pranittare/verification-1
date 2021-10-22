@@ -19,25 +19,25 @@ const OldCases = (props) => {
     })
     const [reset, setReset] = useState(0);
     const formData = (forms) => {
-        let formarray = []
-        const formKeys = Object.keys(forms)
-        for (let j = 0; j < formKeys.length; j++) {
-            const element1 = formKeys[j];
-            let form = forms[element1]
-            let newform = Object.keys(form)
-            for (let index = 0; index < newform.length; index++) {
-                const element2 = newform[index];
-                let single = form[element2]
-                if (single.selected && single.submitted) {
-                    formarray.push(single)
-                }
-                // console.log('form', single)
+        // let formarray = []
+        // const formKeys = Object.keys(forms)
+        // for (let j = 0; j < formKeys.length; j++) {
+        //     const element1 = formKeys[j];
+        //     let form = forms[element1]
+        //     let newform = Object.keys(form)
+        //     for (let index = 0; index < newform.length; index++) {
+        //         const element2 = newform[index];
+        //         let single = form[element2]
+        //         if (single.selected && single.submitted) {
+        //             formarray.push(single)
+        //         }
+        //         // console.log('form', single)
 
-            }
+        //     }
 
-        }
-        console.log('forms', formarray)
-        setAllData(formarray)
+        // }
+        // console.log('forms', formarray)
+        setAllData(forms)
         setReset(Math.random())
 
     }
@@ -90,29 +90,31 @@ const OldCases = (props) => {
     }
     const search1 = () => {
         if (searchData1.customerName && searchData1.bankNBFCname) {
-            
+            databaseUpdateQueryExactMultiple('applicantDetails.bankNBFCname', searchData1.bankNBFCname, 'applicantDetails.customerName', searchData1.customerName)
         }
         if (searchData1.customerName) {
-            
+            databaseUpdateQueryExactSingle('applicantDetails.customerName', searchData1.customerName)
+
         }
         if (searchData1.bankNBFCname) {
-            
+            databaseUpdateQueryExactSingle('applicantDetails.bankNBFCname', searchData1.bankNBFCname)
+
         }
     }
     const search2 = () => {
         if (searchData2.start && searchData1.end) {
-            
+
         }
         if (searchData2.start) {
-            
+
         }
         if (searchData2.end) {
-            
+
         }
     }
     useEffect(() => {
-        // formData(props.forms)
-        databaseUpdateQueryExactSingle('applicantDetails.bankNBFCname', 'TESTBANK')
+        formData(props.db)
+        // databaseUpdateQueryExactSingle('applicantDetails.bankNBFCname', 'TESTBANK')
         console.log('forms', props)
     }, [])
     return (
@@ -121,13 +123,13 @@ const OldCases = (props) => {
             <form className='d-flex justify-content-between flex-wrap'>
                 <div className="row">
                     <div className="col-2">
-                        <Input placeholder='Client Name' name='bankNBFCname' onChange={handleFilterSearch} />
+                        <Input placeholder='Client Name' name='bankNBFCname' onChange={(e) => handleFilterSearch(e.currentTarget)} />
                     </div>
                     <div className="col-2">
-                        <Input placeholder='Customer Name' name='customerName' onChange={handleFilterSearch} />
+                        <Input placeholder='Customer Name' name='customerName' onChange={(e) => handleFilterSearch(e.currentTarget)} />
                     </div>
                     <div className="col-2">
-                        <button className='btn btn-info' onClick={()=>search1()} >Search</button>
+                        <button className='btn btn-info' type='button' onClick={() => search1()} >Search</button>
                     </div>
                     <div className="col-2">
                         <Input placeholder='Start Date' name='start' onChange={handleFilterSearchTime} />
@@ -136,69 +138,51 @@ const OldCases = (props) => {
                         <Input placeholder='End Date' name='end' onChange={handleFilterSearchTime} />
                     </div>
                     <div className="col-2">
-                    <button className='btn btn-info' onClick={()=>search2()}>Search</button>
+                        <button className='btn btn-info' type='button' onClick={() => search2()}>Search</button>
                     </div>
                 </div>
                 <table className="table table-striped table-bordered">
                     <thead>
                         <tr>
                             <th scope="col"> <Input type="text" name="TPCName1" placeholder={'ApplicationID'} /> </th>
-                            <th scope="col"> <Input type="text" name="TPCName1" placeholder={'LoginDate'} /> </th>
-                            <th scope="col"> <Input type="text" name="TPCName1" placeholder={'LoginTime'} /> </th>
+                            <th scope="col"> <Input type="text" name="TPCName1" placeholder={'InitiationDate'} /> </th>
+                            <th scope="col"> <Input type="text" name="TPCName1" placeholder={'InitiationTime'} /> </th>
                             <th scope="col"> <Input type="text" name="TPCName1" placeholder={'CustomerName'} /> </th>
                             <th scope="col"> <Input type="text" name="TPCName1" placeholder={'TAT'} /> </th>
                             <th scope="col"> <Input type="text" name="TPCName1" placeholder={'ClientName'} /> </th>
-                            <th scope="col"> <Input type="text" name="TPCName1" placeholder={'Status'} /> </th>
+                            <th scope="col"> <Input type="text" name="TPCName1" placeholder={'Mobile No'} /> </th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>
-                                <Input type="text" name="TPCRemark1" />
-                            </td>
-                            <td>
-                                <Input type="text" name="TPCName1" />
-                            </td>
-                            <td>
-                                <Input type="text" name="TPCRemark1" />
-                            </td>
-                            <td>
-                                <Input type="text" name="TPCRemark1" />
-                            </td>
-                            <td>
-                                <Input type="text" name="TPCRemark1" />
-                            </td>
-                            <td>
-                                <Input type="text" name="TPCRemark1" />
-                            </td>
-                            <td>
-                                <Input type="text" name="TPCRemark1" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <Input type="text" name="TPCRemark1" />
-                            </td>
-                            <td>
-                                <Input type="text" name="TPCName1" />
-                            </td>
-                            <td>
-                                <Input type="text" name="TPCRemark1" />
-                            </td>
-                            <td>
-                                <Input type="text" name="TPCRemark1" />
-                            </td>
-                            <td>
-                                <Input type="text" name="TPCRemark1" />
-                            </td>
-                            <td>
-                                <Input type="text" name="TPCRemark1" />
-                            </td>
-                            <td>
-                                <Input type="text" name="TPCRemark1" />
-                            </td>
+                        {reset > 0 && allData && allData.length > 0 && allData.map((item) => {
+                            return <tr key={item.key}>
+                                <td>
+                                    {item.applicantDetails.appid}
+                                </td>
+                                <td>
+                                    {item.applicantDetails.initiationDate}
+                                </td>
+                                <td>
+                                    {item.applicantDetails.initiationDate}
+                                </td>
+                                <td>
+                                    {item.applicantDetails.customerName}
+                                </td>
+                                <td>
+                                    {item.tat}
 
-                        </tr>
+                                </td>
+                                <td>
+                                    {item.applicantDetails.bankNBFCname}
+
+                                </td>
+                                <td>
+                                    {item.applicantDetails.mobileNo}
+
+                                </td>
+                            </tr>
+                        })
+                        }
                     </tbody>
                 </table>
             </form>

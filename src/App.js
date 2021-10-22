@@ -74,7 +74,7 @@ function App(props) {
         <Navigation />
         <Switch>
 
-          <div className={'ps-2 pe-2'}>
+          <>
             <Route path='/' render={() => <Dashboard />} exact />
             <Route path='/login' render={() => <Login />} />
             <Route path='/signup' render={() => <SignUp />} />
@@ -89,7 +89,7 @@ function App(props) {
             <Route path='/ActiveCases' render={() => <ActiveCases />} />
             <Route path='/SubmittedCases' render={() => <SubmittedCases />} />
             <Route path='/oldCases' render={() => <OldCases />} />
-          </div>
+          </>
         </Switch>
 
       </Router>
