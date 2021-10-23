@@ -1,12 +1,16 @@
 import React, { useState } from 'react'
 import { Input, Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 export default function AddAgent() {
 
     const [modal, setModal] = useState(false);
     const [refresh, setRefresh] = useState(0)
     const [downloadUrl, setDownloadUrl] = useState(false)
+    const [startDate, setStartDate] = useState(new Date());
+    const [endDate, setEndDate] = useState(new Date());
     const initalState = {
         agentCode: '',
         name: '',
@@ -40,7 +44,8 @@ export default function AddAgent() {
 
     const toggle = () => {
         setFormdata(initalState)
-        setModal(!modal)};
+        setModal(!modal)
+    };
     const onHandleChange = (e) => {
         // name
         // console.log(e)
@@ -58,7 +63,7 @@ export default function AddAgent() {
             const element = secondary[index];
             secondarypincodes.push({ pincodes: element })
         }
-        console.log(secondarypincodes)
+        console.log(secondarypincodes, startDate, endDate)
     }
     const uploadFile = (e) => {
         const file = e.target.files[0];
@@ -129,15 +134,17 @@ export default function AddAgent() {
                                 <Input type="text" name='mobile2' value={formdata['mobile2']} onChange={(e) => onHandleChange(e.currentTarget)} />
                             </div><div >
                                 <label>KYC Updated Date</label>
-                                <Input type="text" name='kycUpdateDate' value={formdata['kycUpdateDate']} onChange={(e) => onHandleChange(e.currentTarget)} />
+                                <DatePicker className='form-control' selected={startDate} onChange={(date) => setStartDate(date)} />
+                                {/* <Input type="text" name='kycUpdateDate' value={formdata['kycUpdateDate']} onChange={(e) => onHandleChange(e.currentTarget)} /> */}
                             </div>
                             <div >
                                 <label>KYC Renewal date</label>
-                                <Input type="text" name='kycreneweddate' value={formdata['kycreneweddate']} onChange={(e) => onHandleChange(e.currentTarget)} />
+                                <DatePicker className='form-control' selected={endDate} onChange={(date) => setEndDate(date)} />
+                                {/* <Input type="text" name='kycreneweddate' value={formdata['kycreneweddate']} onChange={(e) => onHandleChange(e.currentTarget)} /> */}
                             </div>
                             <div >
                                 <label>Upload Doc</label>
-                                <Input type="file" onClick={(e) => uploadFile(e)} />
+                                <Input type="file" className='form-control' onClick={(e) => uploadFile(e)} />
                                 {downloadUrl && <a href={downloadUrl} target='_blank'>Click here to Download the Document</a>}
                             </div>
                             <div >
