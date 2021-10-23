@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { Input } from 'reactstrap'
 import moment from 'moment';
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
+import AddAgent from './AddAgent';
 
 const TotalAgents = (props) => {
     const formatedDate = new Date().toDateString()
@@ -42,6 +43,7 @@ const TotalAgents = (props) => {
 
                 <h4>Total Agents</h4>
                 <button onClick={getExcel} className='btn btn-primary'>Get Excel</button>
+                <AddAgent />
             </div>
             <ReactHTMLTableToExcel
                 id="test-table-xls-button"

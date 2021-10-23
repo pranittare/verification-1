@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { connect } from 'react-redux';
 import { Input } from 'reactstrap'
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
+import moment from 'moment';
 
 const SubmittedCases = (props) => {
     const [allData, setAllData] = useState([])
@@ -106,25 +107,25 @@ const SubmittedCases = (props) => {
                     </thead>
                     <tbody>
                         {reset > 0 && allData && allData.length > 0 && allData.map((item, index) => {
-                            return <tr>
+                            return <tr key={item.tat}>
                                 <td>
                                     {item.appid}
                                 </td>
                                 <td>
                                     {
                                         item?.office ?
-                                            item.office?.applicantDetails?.initiationDate
+                                            moment(item.office?.applicantDetails?.initiationDate).format('ll')
                                             :
-                                            item.resident?.applicantDetails?.initiationDate
+                                            moment(item.resident?.applicantDetails?.initiationDate).format('li')
                                     }
 
                                 </td>
                                 <td>
                                     {
                                         item?.office ?
-                                            item.office?.applicantDetails?.initiationDate
+                                            moment(item.office?.applicantDetails?.initiationDate).format('LT')
                                             :
-                                            item.resident?.applicantDetails?.initiationDate
+                                            moment(item.resident?.applicantDetails?.initiationDate).format('LT')
                                     }
 
                                 </td>
@@ -137,7 +138,8 @@ const SubmittedCases = (props) => {
                                     }
                                 </td>
                                 <td>
-                                    {item.tat}
+                                    {moment(item.tat).fromNow()}
+
                                 </td>
                                 <td>
                                     {
@@ -148,12 +150,7 @@ const SubmittedCases = (props) => {
                                     }
                                 </td>
                                 <td>
-                                    <ul class="list-group">
-                                        <li class="list-group-item">Assigned: {item?.assigned ? 'true' : 'false'}</li>
-                                        <li class="list-group-item">Claimed: {item?.claimed ? 'true' : 'false'}</li>
-                                        <li class="list-group-item"> Submitted: {item?.submitted ? 'true' : 'false'}</li>
-
-                                    </ul>
+                                    {item?.submitted ? 'Submitted' : item.claimed ? 'Claimed' : item.assigned ? 'Assigned' : ''}
                                 </td>
                                 <td>
                                     {
@@ -191,18 +188,18 @@ const SubmittedCases = (props) => {
                                 <td>
                                     {
                                         item?.office ?
-                                            item.office?.applicantDetails?.initiationDate
+                                            moment(item.office?.applicantDetails?.initiationDate).format('ll')
                                             :
-                                            item.resident?.applicantDetails?.initiationDate
+                                            moment(item.resident?.applicantDetails?.initiationDate).format('li')
                                     }
 
                                 </td>
                                 <td>
                                     {
                                         item?.office ?
-                                            item.office?.applicantDetails?.initiationDate
+                                            moment(item.office?.applicantDetails?.initiationDate).format('LT')
                                             :
-                                            item.resident?.applicantDetails?.initiationDate
+                                            moment(item.resident?.applicantDetails?.initiationDate).format('LT')
                                     }
 
                                 </td>
@@ -215,7 +212,8 @@ const SubmittedCases = (props) => {
                                     }
                                 </td>
                                 <td>
-                                    {item.tat}
+                                    {moment(item.tat).fromNow()}
+
                                 </td>
                                 <td>
                                     {
@@ -226,9 +224,7 @@ const SubmittedCases = (props) => {
                                     }
                                 </td>
                                 <td>
-                                    Assigned {item?.assigned ? 'true' : 'false'}
-                                    Claimed {item?.claimed ? 'true' : 'false'}
-                                    Submitted {item?.submitted ? 'true' : 'false'}
+                                    {item?.submitted ? 'Submitted' : item.claimed ? 'Claimed' : item.assigned ? 'Assigned' : ''}
                                 </td>
                                 <td>
                                     {

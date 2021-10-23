@@ -124,8 +124,8 @@ const ActiveAgents = (props) => {
                     </thead>
                     <tbody>
                         {reset > 0 && allData && allData.length > 0 && allData.map((item, index) => {
-                            if (item.isLoggedIn && item.uniqueId) {
-                                return <tr>
+                            if (item.isLoggedIn) {
+                                return <tr key={item.name}>
                                     <th>{index + 1}</th>
                                     <td>
                                         {item.name}
