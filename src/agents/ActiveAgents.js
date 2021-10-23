@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import { connect } from 'react-redux';
 import { Input } from 'reactstrap'
-import {combinedData} from '../utils/utils'
-import {onFilter} from '../utils/input-filter'
+import { combinedData } from '../utils/utils'
+import { onFilter } from '../utils/input-filter'
+import moment from 'moment';
+import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 
 const ActiveAgents = (props) => {
+    const formatedDate = new Date().toDateString()
+
     const [allData, setAllData] = useState([])
     const [reset, setReset] = useState(0);
     // const combinedData = (agents, forms) => {
@@ -69,26 +73,41 @@ const ActiveAgents = (props) => {
     //     }
 
     // }
+    const getExcel = () => {
+        let table = document.getElementById('test-table-xls-button')
+        table.click()
+    }
+    const handleFilter = (e) => {
+        setAllData(onFilter(e, allData, props.agents, props.forms))
+        setReset(Math.random())
+
+    }
     useEffect(() => {
         // if (props.forms.length > 0) {
         // }
         setAllData(combinedData(props.agents, props.forms))
         setReset(Math.random())
 
-        console.log(props.forms)
+        // console.log(props.forms)
         // setAllData(props.data)
         // console.log('props', props.data)
     }, [props])
 
-
-    const handleFilter =(e)=>{
-        setAllData(onFilter(e,allData,props.agents, props.forms))
-        setReset(Math.random())
-
-    }
+  
     return (
         <div>
-            <h4>Active Agents</h4>
+            <div className='d-flex justify-content-around mb-2 mt-2'>
+
+                <h4>Active Agents</h4>
+                <button onClick={getExcel} className='btn btn-primary'>Get Excel</button>
+            </div>
+            <ReactHTMLTableToExcel
+                id="test-table-xls-button"
+                className="d-none "
+                table="html-table"
+                filename={`Active-${formatedDate}`}
+                sheet="tablexls"
+                buttonText="Download as XLS" />
             <form className='d-flex justify-content-between flex-wrap'>
                 <table className="table table-striped table-bordered">
                     <thead>
@@ -105,36 +124,86 @@ const ActiveAgents = (props) => {
                     </thead>
                     <tbody>
                         {reset > 0 && allData && allData.length > 0 && allData.map((item, index) => {
-                            return <tr>
-                                <th>{index + 1}</th>
-                                <td>
-                                    {item.name}
-                                </td>
-                                <td>
-                                    {item.pincode}
+                            if (item.isLoggedIn && item.uniqueId) {
+                                return <tr>
+                                    <th>{index + 1}</th>
+                                    <td>
+                                        {item.name}
+                                    </td>
+                                    <td>
+                                        {item.pincode}
 
-                                </td>
-                                <td>
-                                    {item.lastUpdated}
+                                    </td>
+                                    <td>
+                                        {moment(item.lastUpdated).format('lll')}
 
-                                </td>
-                                <td>
-                                    {item.claimed}
+                                    </td>
+                                    <td>
+                                        {item.claimed}
 
-                                </td>
-                                <td>
-                                    {item.submitted}
+                                    </td>
+                                    <td>
+                                        {item.submitted}
 
-                                </td>
-                                <td>
-                                    {item.claimed + item.submitted}
+                                    </td>
+                                    <td>
+                                        {item.claimed + item.submitted}
 
-                                </td>
+                                    </td>
 
-                            </tr>
+                                </tr>
+                            }
                         })}
                     </tbody>
                 </table>
+                <table className="table table-striped table-bordered d-none" id='html-table'>
+                    <thead>
+                        <tr>
+                            <th scope="col"> srno</th>
+                            <th scope="col"> name</th>
+                            <th scope="col"> pincode</th>
+                            <th scope="col"> lastUpdated</th>
+                            <th scope="col"> claimed</th>
+                            <th scope="col"> submitted</th>
+                            <th scope="col"> total</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {reset > 0 && allData && allData.length > 0 && allData.map((item, index) => {
+                            if (item.isLoggedIn && item.uniqueId) {
+                                return <tr>
+                                    <th>{index + 1}</th>
+                                    <td>
+                                        {item.name}
+                                    </td>
+                                    <td>
+                                        {item.pincode}
+
+                                    </td>
+                                    <td>
+                                        {moment(item.lastUpdated).format('lll')}
+
+                                    </td>
+                                    <td>
+                                        {item.claimed}
+
+                                    </td>
+                                    <td>
+                                        {item.submitted}
+
+                                    </td>
+                                    <td>
+                                        {item.claimed + item.submitted}
+
+                                    </td>
+
+                                </tr>
+                            }
+                        })}
+                    </tbody>
+                </table>
+
             </form>
         </div>
     )

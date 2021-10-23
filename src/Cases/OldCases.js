@@ -5,9 +5,11 @@ import { databaseUpdateQueryExactSingle } from '../utils/query'
 import { databaseUpdateQueryExactMultiple } from '../utils/query'
 import { databaseUpdateQueryRangeSingle } from '../utils/query'
 import { databaseUpdateQueryRangeMultiple } from '../utils/query'
+import ReactHTMLTableToExcel from 'react-html-table-to-excel';
+import moment from 'moment';
 
 const OldCases = (props) => {
-
+    const formatedDate = new Date().toDateString()
     const [allData, setAllData] = useState([])
     const [searchData1, setSearchData1] = useState({
         bankNBFCname: '',
@@ -112,14 +114,29 @@ const OldCases = (props) => {
 
         }
     }
+    const getExcel = () => {
+        let table = document.getElementById('test-table-xls-button')
+        table.click()
+    }
     useEffect(() => {
         formData(props.db)
         // databaseUpdateQueryExactSingle('applicantDetails.bankNBFCname', 'TESTBANK')
         console.log('forms', props)
-    }, [])
+    }, [props])
     return (
         <div>
-            <h4>Old Cases</h4>
+            <div className='d-flex justify-content-around mb-2 mt-2'>
+
+                <h4>Old Cases</h4>
+                <button onClick={getExcel} className='btn btn-primary'>Get Excel</button>
+            </div>
+            <ReactHTMLTableToExcel
+                id="test-table-xls-button"
+                className="d-none "
+                table="html-table"
+                filename={`Old-${formatedDate}`}
+                sheet="tablexls"
+                buttonText="Download as XLS" />
             <form className='d-flex justify-content-between flex-wrap'>
                 <div className="row">
                     <div className="col-2">
@@ -154,22 +171,71 @@ const OldCases = (props) => {
                         </tr>
                     </thead>
                     <tbody>
+                        {reset > 0 && allData && allData.length > 0 && allData.map((item, index) => {
+                            return <tr key={`${item.key}-${index}`}>
+                                <td>
+                                    {item.applicantDetails.appid}
+                                </td>
+                                <td>
+
+                                    {moment(item.applicantDetails.initiationDate).format('ll')}
+                                </td>
+                                <td>
+                                    {moment(item.applicantDetails.initiationDate).format('LT')}
+
+                                </td>
+                                <td>
+                                    {item.applicantDetails.customerName}
+                                </td>
+                                <td>
+                                    
+                                    {/* {moment(item.initiationDate).diff(item.tat, 'hours')} */}
+
+                                    {moment(item.tat).format('LT')}
+
+                                </td>
+                                <td>
+                                    {item.applicantDetails.bankNBFCname}
+
+                                </td>
+                                <td>
+                                    {item.applicantDetails.mobileNo}
+
+                                </td>
+                            </tr>
+                        })
+                        }
+                    </tbody>
+                </table>
+                <table className="table table-striped table-bordered d-none" id='html-table'>
+                    <thead>
+                        <tr>
+                            <th scope="col">ApplicationID</th>
+                            <th scope="col">InitiationDate</th>
+                            <th scope="col">InitiationTime</th>
+                            <th scope="col">CustomerName</th>
+                            <th scope="col">TAT</th>
+                            <th scope="col">ClientName</th>
+                            <th scope="col">Mobile No</th>
+                        </tr>
+                    </thead>
+                    <tbody>
                         {reset > 0 && allData && allData.length > 0 && allData.map((item) => {
                             return <tr key={item.key}>
                                 <td>
                                     {item.applicantDetails.appid}
                                 </td>
                                 <td>
-                                    {item.applicantDetails.initiationDate}
+                                    {moment(item.applicantDetails.initiationDate).format('ll')}
                                 </td>
                                 <td>
-                                    {item.applicantDetails.initiationDate}
+                                    {moment(item.applicantDetails.initiationDate).format('LT')}
                                 </td>
                                 <td>
                                     {item.applicantDetails.customerName}
                                 </td>
                                 <td>
-                                    {item.tat}
+                                    {moment(item.tat).format('ll')}
 
                                 </td>
                                 <td>

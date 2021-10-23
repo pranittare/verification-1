@@ -71,7 +71,7 @@ const SubmittedCases = (props) => {
         let table = document.getElementById('test-table-xls-button')
         table.click()
     }
-    
+
     useEffect(() => {
         formData(props.forms)
         // console
@@ -79,9 +79,9 @@ const SubmittedCases = (props) => {
     return (
         <div>
             <div className='d-flex justify-content-around mb-2 mt-2'>
-                
-            <h4>Submitted Cases</h4>
-            <button onClick={getExcel} className='btn btn-primary'>Get Excel</button>
+
+                <h4>Submitted Cases</h4>
+                <button onClick={getExcel} className='btn btn-primary'>Get Excel</button>
             </div>
             <ReactHTMLTableToExcel
                 id="test-table-xls-button"
@@ -148,9 +148,12 @@ const SubmittedCases = (props) => {
                                     }
                                 </td>
                                 <td>
-                                    Assigned {item?.assigned ? 'true' : 'false'}
-                                    Claimed {item?.claimed ? 'true' : 'false'}
-                                    Submitted {item?.submitted ? 'true' : 'false'}
+                                    <ul class="list-group">
+                                        <li class="list-group-item">Assigned: {item?.assigned ? 'true' : 'false'}</li>
+                                        <li class="list-group-item">Claimed: {item?.claimed ? 'true' : 'false'}</li>
+                                        <li class="list-group-item"> Submitted: {item?.submitted ? 'true' : 'false'}</li>
+
+                                    </ul>
                                 </td>
                                 <td>
                                     {

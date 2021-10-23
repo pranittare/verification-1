@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { connect } from 'react-redux';
 import { Input } from 'reactstrap'
+import ReactHTMLTableToExcel from 'react-html-table-to-excel';
+import moment from 'moment';
 
 const ActiveCases = (props) => {
+    const formatedDate = new Date().toDateString()
+
     const [allData, setAllData] = useState([])
     const [reset, setReset] = useState(0);
     const formData = (forms) => {
@@ -65,13 +69,28 @@ const ActiveCases = (props) => {
         setReset(Math.random())
 
     }
+    const getExcel = () => {
+        let table = document.getElementById('test-table-xls-button')
+        table.click()
+    }
     useEffect(() => {
         formData(props.forms)
         // console
     }, [props.forms])
     return (
         <div>
-            <h4>Active Cases</h4>
+            <div className='d-flex justify-content-around mb-2 mt-2'>
+
+                <h4>Active Cases</h4>
+                <button onClick={getExcel} className='btn btn-primary'>Get Excel</button>
+            </div>
+            <ReactHTMLTableToExcel
+                id="test-table-xls-button"
+                className="d-none "
+                table="html-table"
+                filename={`Active-${formatedDate}`}
+                sheet="tablexls"
+                buttonText="Download as XLS" />
             <form className='d-flex justify-content-between flex-wrap'>
                 <table className="table table-striped table-bordered">
                     <thead>
@@ -88,52 +107,122 @@ const ActiveCases = (props) => {
                     </thead>
                     <tbody>
                         {reset > 0 && allData && allData.length > 0 && allData.map((item, index) => {
-                            return <tr>
-                                <td>
-                                    {item.appid}
-                                </td>
-                                <td>
-                                    {item.tat}
+                            if (item.appid) {
+                                return <tr key={item.tat}>
+                                    <td>
+                                        {item.appid}
+                                    </td>
+                                    <td>
+                                        {moment(item.tat).format('ll')}
 
-                                </td>
-                                <td>
-                                    {item.tat}
+                                    </td>
+                                    <td>
+                                        {moment(item.tat).format('LT')}
 
-                                </td>
-                                <td>
-                                    {
-                                        item?.office ?
-                                            item.office?.applicantDetails?.customerName
-                                            :
-                                            item.resident?.applicantDetails?.customerName
-                                    }
-                                </td>
-                                <td>
 
-                                </td>
-                                <td>
-                                    {
-                                        item?.office ?
-                                            item.office?.applicantDetails?.bankNBFCname.clientName
-                                            :
-                                            item.resident?.applicantDetails?.bankNBFCname.clientName
-                                    }
-                                </td>
-                                <td>
-                                    Assigned {item?.assigned ? 'true' : 'false'}
-                                    Claimed {item?.claimed ? 'true' : 'false'}
-                                    Submitted {item?.submitted ? 'true' : 'false'}
-                                </td>
-                                <td>
-                                    {
-                                        item?.office ?
-                                            item.office?.applicantDetails?.remarks
-                                            :
-                                            item.resident?.applicantDetails?.remarks
-                                    }
+                                    </td>
+                                    <td>
+                                        {
+                                            item?.office ?
+                                                item.office?.applicantDetails?.customerName
+                                                :
+                                                item.resident?.applicantDetails?.customerName
+                                        }
+                                    </td>
+                                    <td>
+                                        {moment(item.tat).fromNow()}
 
-                                </td>
-                            </tr>
+                                    </td>
+                                    <td>
+                                        {
+                                            item?.office ?
+                                                item.office?.applicantDetails?.bankNBFCname.clientName
+                                                :
+                                                item.resident?.applicantDetails?.bankNBFCname.clientName
+                                        }
+                                    </td>
+                                    <td>
+                                        {item.claimed ? 'Claimed' : item.assigned ? 'Assigned' : ''}
+                                        {/* Assigned {item?.assigned ? 'true' : 'false'}
+                                    Claimed {item?.claimed ? 'true' : 'false'} */}
+                                    </td>
+                                    <td>
+                                        {
+                                            item?.office ?
+                                                item.office?.applicantDetails?.remarks
+                                                :
+                                                item.resident?.applicantDetails?.remarks
+                                        }
+
+                                    </td>
+                                </tr>
+                            }
+                        })}
+
+                    </tbody>
+                </table>
+                <table className="table table-striped table-bordered d-none" id='html-table'>
+                    <thead>
+                        <tr>
+                            <th scope="col"> ApplicationID</th>
+                            <th scope="col"> LoginDate</th>
+                            <th scope="col"> LoginTime</th>
+                            <th scope="col"> CustomerName</th>
+                            <th scope="col"> TAT</th>
+                            <th scope="col"> ClientName</th>
+                            <th scope="col"> Stage</th>
+                            <th scope="col"> Remark</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {reset > 0 && allData && allData.length > 0 && allData.map((item, index) => {
+                            if (item.appid) {
+                                return <tr key={item.key}>
+                                    <td>
+                                        {item.appid}
+                                    </td>
+                                    <td>
+                                        {moment(item.tat).format('ll')}
+
+                                    </td>
+                                    <td>
+                                        {moment(item.tat).format('LT')}
+
+                                    </td>
+                                    <td>
+                                        {
+                                            item?.office ?
+                                                item.office?.applicantDetails?.customerName
+                                                :
+                                                item.resident?.applicantDetails?.customerName
+                                        }
+                                    </td>
+                                    <td>
+                                        {moment(item.tat).fromNow()}
+                                    </td>
+                                    <td>
+                                        {
+                                            item?.office ?
+                                                item.office?.applicantDetails?.bankNBFCname.clientName
+                                                :
+                                                item.resident?.applicantDetails?.bankNBFCname.clientName
+                                        }
+                                    </td>
+                                    <td>
+                                        {item.claimed ? 'Claimed' : item.assigned ? 'Assigned' : ''}
+
+                                    </td>
+                                    <td>
+                                        {
+                                            item?.office ?
+                                                item.office?.applicantDetails?.remarks
+                                                :
+                                                item.resident?.applicantDetails?.remarks
+                                        }
+
+                                    </td>
+                                </tr>
+                            }
                         })}
 
                     </tbody>
