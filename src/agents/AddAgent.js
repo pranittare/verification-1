@@ -1,18 +1,25 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Input, Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { getDatabase, set, update } from "firebase/database";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import moment from 'moment';
+import { connect } from 'react-redux';
 
-export default function AddAgent() {
+const AddAgent = ({ agent, allAgents, realTimeAgents, agents, realTimeforms }) => {
 
     const [modal, setModal] = useState(false);
     const [refresh, setRefresh] = useState(0)
     const [downloadUrl, setDownloadUrl] = useState(false)
     const [startDate, setStartDate] = useState(new Date());
     const [endDate, setEndDate] = useState(new Date());
+    const [rtA, setRta] = useState([])
+    const [rtF, setRtf] = useState([])
+    const db = getDatabase();
+    // console.log('agent', agent)
     const initalState = {
-        agentCode: '',
+        agentCode: `Ac-${new Date().getTime()}`,
         name: '',
         address: '',
         location: '',
@@ -27,7 +34,7 @@ export default function AddAgent() {
         remarks: '',
     }
     const [formdata, setFormdata] = useState({
-        agentCode: '',
+        agentCode: `Ac-${new Date().getTime()}`,
         name: '',
         address: '',
         location: '',
@@ -51,6 +58,19 @@ export default function AddAgent() {
         // console.log(e)
         let form = formdata
         form[e.name] = e.value
+        if (allAgents && allAgents.length > 0) {
+            for (let index = 0; index < allAgents.length; index++) {
+                const element = allAgents[index];
+                console.log('element', element)
+                if (form.agentCode === element['agentCode']) {
+                    alert('Same Agent Code Do not Continue!')
+                }
+                if (form.name === element['name']) {
+                    alert('Same Agent Name Do not Continue!')
+                }
+
+            }
+        }
         setFormdata(form)
         setRefresh(Math.random())
         console.log(form)
@@ -94,21 +114,129 @@ export default function AddAgent() {
                 // Handle any errors
             });
     }
+    const handleKyc = (num) => {
+        let form = formdata
+        if (num === 1) {
+            form.kycUpdateDate = ''
+        } else {
+            form.kycreneweddate = ''
+        }
+        setFormdata(form)
+        setRefresh(Math.random())
+    }
+    const handleDisable = () => {
+        let form = formdata
+        let realAgents = rtA
+        let realForms = rtF
+        for (let index = 0; index < realAgents.length; index++) {
+            const agents = realAgents[index];
+            
+            for (let index = 0; index < realForms.length; index++) {
+                const forms = realForms[index];
+                if (agents.userId === forms.selected) {
+                    forms.selected = false
+                    forms.clained = false
+                    update(ref(db, `form/${forms.pincode}/${forms.key}`), {
+                        selected: false,
+                        clained: false
+                    })
+                }
+            }
+            update(ref(db, `agents/${agents.key}`), {uniqueId: 'Disabled', isLoggedIn: false, onCase: false, myForms: 0})
+        }
+
+    }
+
+    useEffect(() => {
+        if (realTimeAgents) {
+            let temp = []
+            const objkeys = Object.keys(realTimeAgents)
+            for (let index = 0; index < objkeys.length; index++) {
+                const element = objkeys[index];
+                let agent = realTimeAgents[element]
+                agent.key = element
+                temp.push(agent)
+                // console.log('agent', agent)
+            
+            }
+setRta(temp)
+
+            // console.log('props', realTimeAgents, realTimeforms)
+        }
+    }, [realTimeAgents])
+    useEffect(() => {
+        if(realTimeforms) {
+            let temp = []
+            const objkeys1 = Object.keys(realTimeforms)
+            // console.log('obj', objkeys1);
+            for (let index = 0; index < objkeys1.length; index++) {
+                const element1 = objkeys1[index];
+                let forms = realTimeforms[element1]
+                // forms.pincode = element1
+                let formkey = Object.keys(forms)
+                for (let index = 0; index < formkey.length; index++) {
+                    const element = formkey[index];
+                    
+                    // console.log(forms[element]);
+                    forms[element].key = element
+                    forms[element].pincode = element1
+                }
+                // if (formkey) {
+                    
+                // }
+                temp.push(forms)
+            }
+            console.log('forms', temp)
+            setRtf(temp)
+        }
+    },[realTimeforms])
+
+    useEffect(() => {
+        if (agent && modal) {
+            let form = formdata
+            for (const property in form) {
+                if (agent[property]) {
+                    form[property] = agent[property]
+                }
+                if (property === 'kycUpdateDate') {
+                    form[property] = agent[property].seconds
+                }
+                if (property === 'kycreneweddate') {
+                    form[property] = agent[property].seconds
+                }
+            }
+            if (agent.secondaryPincodes && agent.secondaryPincodes.length > 0) {
+                for (let index = 0; index < agent.secondaryPincodes.length; index++) {
+                    const element = agent.secondaryPincodes[index];
+                    let pincodes = Object.values(element)
+                    form.pincodes += `${pincodes},`
+                }
+            }
+            setFormdata(form)
+            // console.log('form', form)
+            setRefresh(Math.random())
+        }
+    }, [agent, modal])
+    useEffect(() => {
+        setRefresh(Math.random())
+    }, [])
     return (
         <div>
-            <Button color="danger" onClick={toggle}>Add Agent</Button>
+            <Button color={agent ? "link" : "danger"} onClick={toggle}>{agent ? agent.name : 'Add Agent'}</Button>
             <Modal isOpen={modal} toggle={toggle} >
                 <ModalHeader toggle={toggle}>Modal title</ModalHeader>
                 <ModalBody>
-                    <div className='row'>
+                    {refresh > 0 && <div className='row'>
                         <div className='col-6'>
                             <div >
                                 <label>Agent Code</label>
                                 <Input type="text" name='agentCode' value={formdata['agentCode']} onChange={(e) => onHandleChange(e.currentTarget)} />
-                            </div><div >
+                            </div>
+                            <div >
                                 <label>Full Name</label>
                                 <Input type="text" name='name' value={formdata['name']} onChange={(e) => onHandleChange(e.currentTarget)} />
-                            </div><div >
+                            </div>
+                            <div >
                                 <label>Address</label>
                                 <Input type="text" name='address' value={formdata['address']} onChange={(e) => onHandleChange(e.currentTarget)} />
                             </div>
@@ -117,7 +245,7 @@ export default function AddAgent() {
                                 <Input type="text" name='location' value={formdata['location']} onChange={(e) => onHandleChange(e.currentTarget)} />
                             </div>
                             <div >
-                                <label>pincode</label>
+                                <label>Pincode</label>
                                 <Input type="text" name='pincode' value={formdata['pincode']} onChange={(e) => onHandleChange(e.currentTarget)} />
                             </div>
                             <div >
@@ -129,17 +257,23 @@ export default function AddAgent() {
                             <div >
                                 <label>Mobile No.1</label>
                                 <Input type="text" name='mobile1' value={formdata['mobile1']} onChange={(e) => onHandleChange(e.currentTarget)} />
-                            </div><div >
+                            </div>
+                            <div >
                                 <label>Mobile No.2</label>
                                 <Input type="text" name='mobile2' value={formdata['mobile2']} onChange={(e) => onHandleChange(e.currentTarget)} />
-                            </div><div >
+                            </div>
+                            <div >
                                 <label>KYC Updated Date</label>
-                                <DatePicker className='form-control' selected={startDate} onChange={(date) => setStartDate(date)} />
+                                {agent && <>  <button className='btn btn-link' onClick={() => handleKyc(1)}>Edit</button>
+                                    <br /> </>}
+                                {formdata['kycUpdateDate'] ? moment(formdata['kycUpdateDate'] * 1000).format('ll') : <DatePicker className='form-control' selected={startDate} onChange={(date) => setStartDate(date)} />}
                                 {/* <Input type="text" name='kycUpdateDate' value={formdata['kycUpdateDate']} onChange={(e) => onHandleChange(e.currentTarget)} /> */}
                             </div>
                             <div >
                                 <label>KYC Renewal date</label>
-                                <DatePicker className='form-control' selected={endDate} onChange={(date) => setEndDate(date)} />
+                                {agent && <> <button className='btn btn-link' onClick={() => handleKyc(2)}>Edit</button>
+                                    <br /> </>}
+                                {formdata['kycreneweddate'] ? moment(formdata['kycreneweddate'] * 1000).format('ll') : <DatePicker className='form-control' selected={endDate} onChange={(date) => setEndDate(date)} />}
                                 {/* <Input type="text" name='kycreneweddate' value={formdata['kycreneweddate']} onChange={(e) => onHandleChange(e.currentTarget)} /> */}
                             </div>
                             <div >
@@ -154,14 +288,19 @@ export default function AddAgent() {
                         </div>
                         <div className='col-12'>
                             <label>Secondary Pincode</label>
-                            <Input type="text" name='pincodes' value={formdata['pincodes']} onChange={(e) => onHandleChange(e.currentTarget)} />
+                            {formdata['pincodes'].split(',').map((item) => {
+                                return <span className="badge bg-info text-dark ms-2" key={item}>{item}</span>
+
+                            })
+                            }
+                            <textarea rows="2" cols="3" type="text" className='form-control mt-2' name='pincodes' value={formdata['pincodes']} onChange={(e) => onHandleChange(e.currentTarget)} />
                         </div>
                         <div className="col-12">
                             <label>Remarks</label>
                             <textarea rows="5" cols="3" type="text" className="form-control" name="remarks" onChange={(e) => onHandleChange(e.currentTarget)}>
                             </textarea>
                         </div>
-                    </div>
+                    </div>}
                 </ModalBody>
                 <ModalFooter>
                     <Button color="primary" onClick={onSubmit}>Submit</Button>{' '}
@@ -172,3 +311,13 @@ export default function AddAgent() {
         </div>
     )
 }
+const mapStateToProps = (state) => {
+    // console.log('state', state)
+    return {
+        realTimeAgents: state.agents,
+        agents: state.fagents,
+        realTimeforms: state.forms,
+
+    }
+}
+export default connect(mapStateToProps)(AddAgent)

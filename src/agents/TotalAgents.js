@@ -30,20 +30,21 @@ const TotalAgents = (props) => {
         setReset(Math.random())
 
     }
+
     useEffect(() => {
         // console.log('agents', props.agents)
         setAllData(props.agents)
         setReset(Math.random())
         console.log('props', props.agents)
     }, [props.agents])
-   
+
     return (
         <div>
             <div className='d-flex justify-content-around mb-2 mt-2'>
 
                 <h4>Total Agents</h4>
                 <button onClick={getExcel} className='btn btn-primary'>Get Excel</button>
-                <AddAgent />
+                <AddAgent allAgents={allData} />
             </div>
             <ReactHTMLTableToExcel
                 id="test-table-xls-button"
@@ -72,8 +73,8 @@ const TotalAgents = (props) => {
                             // console.log('item', item)
                             return <tr key={`${item.userId}-${item.agentCode}-${index}`}>
                                 <th>{index + 1}</th>
-                                <td>
-                                    {item.name}
+                                <td >
+                                    <AddAgent agent={item} />
                                 </td>
                                 <td>
                                     {item.mobile1}
@@ -96,10 +97,10 @@ const TotalAgents = (props) => {
                                     {item.uniqueId ? item.uniqueId !== 'Disabled' ? 'Active' : 'InActive' : 'InActive'}
                                 </td>
                                 <td>
-                                    {moment(item.kycUpdateDate.seconds*1000).format('ll')}
+                                    {moment(item.kycUpdateDate.seconds * 1000).format('ll')}
                                 </td>
                                 <td>
-                                    {moment(item.kycreneweddate.seconds*1000).format('ll')}
+                                    {moment(item.kycreneweddate.seconds * 1000).format('ll')}
                                 </td>
                                 <td>
                                     {item.remarks}
@@ -126,40 +127,40 @@ const TotalAgents = (props) => {
                     <tbody>
                         {reset > 0 && allData && allData.length > 0 && allData.map((item, index) => {
                             return <tr key={`${item.userId}-${item.agentCode}-${index}`}>
-                            <th>{index + 1}</th>
-                            <td>
-                                {item.name}
-                            </td>
-                            <td>
-                                {item.mobile1}
-                                <hr />
-                                {item.mobile2}
-                            </td>
-                            <td>
-                                {item.pincode}
-                                {item.secondaryPincodes &&
-                                    <div>
-                                        {/* <hr /> */}
-                                        {item.secondaryPincodes.map((item1, index1) => {
-                                            return <div key={item1.pincodes}>{item1.pincodes}</div>
-                                        })}
-                                    </div>
-                                }
+                                <th>{index + 1}</th>
+                                <td>
+                                    {item.name}
+                                </td>
+                                <td>
+                                    {item.mobile1}
+                                    <hr />
+                                    {item.mobile2}
+                                </td>
+                                <td>
+                                    {item.pincode}
+                                    {item.secondaryPincodes &&
+                                        <div>
+                                            {/* <hr /> */}
+                                            {item.secondaryPincodes.map((item1, index1) => {
+                                                return <div key={item1.pincodes}>{item1.pincodes}</div>
+                                            })}
+                                        </div>
+                                    }
 
-                            </td>
-                            <td>
-                                {item.uniqueId ? item.uniqueId !== 'Disabled' ? 'Active' : 'InActive' : 'InActive'}
-                            </td>
-                            <td>
-                                {moment(item.kycUpdateDate.seconds*1000).format('ll')}
-                            </td>
-                            <td>
-                                {moment(item.kycreneweddate.seconds*1000).format('ll')}
-                            </td>
-                            <td>
-                                {item.remarks}
-                            </td>
-                        </tr>
+                                </td>
+                                <td>
+                                    {item.uniqueId ? item.uniqueId !== 'Disabled' ? 'Active' : 'InActive' : 'InActive'}
+                                </td>
+                                <td>
+                                    {moment(item.kycUpdateDate.seconds * 1000).format('ll')}
+                                </td>
+                                <td>
+                                    {moment(item.kycreneweddate.seconds * 1000).format('ll')}
+                                </td>
+                                <td>
+                                    {item.remarks}
+                                </td>
+                            </tr>
                         })
                         }
                     </tbody>
