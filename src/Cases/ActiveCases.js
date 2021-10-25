@@ -41,22 +41,21 @@ const ActiveCases = (props) => {
                     return rval
 
                 } else {
-                    console.log('item', item)
-                    if (e.currentTarget.name === 'CustomerName') {
+                    if (e.currentTarget.name === 'customerName') {
                         if (item.office) {
-                            let rval = item.office.applicantDetails.customerName.toLocaleLowerCase().includes(e.currentTarget.value)
+                            let rval = item.office?.applicantDetails?.customerName.toLocaleLowerCase().includes(e.currentTarget.value)
                             return rval
-                        } else {
-                            let rval = item.resident.applicantDetails.customerName.toLocaleLowerCase().includes(e.currentTarget.value)
+                        } else if (item.resident) {
+                            let rval = item.resident?.applicantDetails?.customerName.toLocaleLowerCase().includes(e.currentTarget.value)
                             return rval
                         }
-                    } else if (e.currentTarget.name === 'ClientName') {
+                    } else if (e.currentTarget.name === 'clientName') {
                         console.log('office', item)
                         if (item.office) {
-                            let rval = item.office?.applicantDetails?.bankNBFCname.clientName.toLocaleLowerCase().includes(e.currentTarget.value)
+                            let rval = item.office?.applicantDetails?.bankNBFCname?.clientName.toLocaleLowerCase().includes(e.currentTarget.value)
                             return rval
-                        } else {
-                            let rval = item.resident?.applicantDetails?.bankNBFCname.clientName.toLocaleLowerCase().includes(e.currentTarget.value)
+                        } else if (item.resident) {
+                            let rval = item.resident?.applicantDetails?.bankNBFCname?.clientName.toLocaleLowerCase().includes(e.currentTarget.value)
                             return rval
                         }
                     }
@@ -77,6 +76,35 @@ const ActiveCases = (props) => {
         formData(props.forms)
         // console
     }, [props.forms])
+    useEffect(() => {
+        setTimeout(()=> {
+            if (allData && allData.length > 0) {
+                var uniq = allData
+                .map((name) => {
+                    if (name.office.applicantDetails.customerName) {
+                        return {
+                            count: 1,
+                            name: name.office.applicantDetails.customerName
+                          }
+                    } else {
+                        return {
+                            count: 1,
+                            name: name.resident.applicantDetails.customerName
+                          }
+                    }
+               
+                })
+                .reduce((a, b) => {
+                  a[b.name] = (a[b.name] || 0) + b.count
+                  return a
+                }, {})
+              
+              var duplicates = Object.keys(uniq).filter((a) => uniq[a] > 1)
+              alert(`Duplicate Entries Found: ${duplicates.join(', ')}`)
+              console.log('duplicates',duplicates)
+            }
+        },5000)
+    },[])
     return (
         <div>
             <div className='d-flex justify-content-around mb-2 mt-2'>

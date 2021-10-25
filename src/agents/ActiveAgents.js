@@ -92,8 +92,28 @@ const ActiveAgents = (props) => {
         // setAllData(props.data)
         // console.log('props', props.data)
     }, [props])
+    useEffect(() => {
+        setTimeout(()=> {
+            if (allData && allData.length > 0) {
+                var uniq = allData
+                .map((name) => {
+                  return {
+                    count: 1,
+                    name: name.name
+                  }
+                })
+                .reduce((a, b) => {
+                  a[b.name] = (a[b.name] || 0) + b.count
+                  return a
+                }, {})
+              
+              var duplicates = Object.keys(uniq).filter((a) => uniq[a] > 1)
+              alert(`Duplicate Entries Found: ${duplicates.join(', ')}`)
+              console.log('duplicates',duplicates)
+            }
+        },5000)
+    },[])
 
-  
     return (
         <div>
             <div className='d-flex justify-content-around mb-2 mt-2'>
@@ -125,14 +145,20 @@ const ActiveAgents = (props) => {
                     <tbody>
                         {reset > 0 && allData && allData.length > 0 && allData.map((item, index) => {
                             if (item.isLoggedIn) {
-                                return <tr key={item.name}>
+                                return <tr key={item.userId}>
                                     <th>{index + 1}</th>
                                     <td>
                                         {item.name}
                                     </td>
                                     <td>
                                         {item.pincode}
-
+                                        {item?.secondary && <hr />}
+                                        {item.secondary?.length > 0 && item.secondary?.map((item, index) => {
+                                            return <div key={`${item.pincode}-${index}`}>
+                                                {item.pincodes}
+                                            </div>
+                                        })
+                                        }
                                     </td>
                                     <td>
                                         {moment(item.lastUpdated).format('lll')}

@@ -43,43 +43,7 @@ const OldCases = (props) => {
         setReset(Math.random())
 
     }
-    const handleFilter = (e) => {
-        let data = allData
-        if (e.currentTarget.value) {
-            setAllData(data.filter(item => {
-                if (item[e.currentTarget.name]) {
-                    let rval = item[e.currentTarget.name].toLocaleLowerCase().includes(e.currentTarget.value)
-                    return rval
 
-                } else {
-                    console.log('item', item)
-                    if (e.currentTarget.name === 'CustomerName') {
-                        if (item.office) {
-                            let rval = item.office.applicantDetails.customerName.toLocaleLowerCase().includes(e.currentTarget.value)
-                            return rval
-                        } else {
-                            let rval = item.resident.applicantDetails.customerName.toLocaleLowerCase().includes(e.currentTarget.value)
-                            return rval
-                        }
-                    } else if (e.currentTarget.name === 'ClientName') {
-                        console.log('office', item)
-                        if (item.office) {
-                            let rval = item.office?.applicantDetails?.bankNBFCname.clientName.toLocaleLowerCase().includes(e.currentTarget.value)
-                            return rval
-                        } else {
-                            let rval = item.resident?.applicantDetails?.bankNBFCname.clientName.toLocaleLowerCase().includes(e.currentTarget.value)
-                            return rval
-                        }
-                    }
-                }
-            }
-            ))
-        } else {
-            formData(props.forms)
-        }
-        setReset(Math.random())
-
-    }
     const handleFilterSearch = (e) => {
         let val = searchData1
         val[e.name] = e.value
@@ -117,6 +81,35 @@ const OldCases = (props) => {
     const getExcel = () => {
         let table = document.getElementById('test-table-xls-button')
         table.click()
+    }
+    const handleFilter = (e) => {
+        let data = allData
+        if (e.currentTarget.value) {
+            setAllData(data.filter(item => {
+                if (item[e.currentTarget.name]) {
+                    let rval = item[e.currentTarget.name]?.toLocaleLowerCase().includes(e.currentTarget.value)
+                    return rval
+
+                } else {
+                    console.log('item', item);
+                    if (e.currentTarget.name === 'customerName') {
+                        let rval = item.applicantDetails?.customerName.toLocaleLowerCase().includes(e.currentTarget.value)
+                        return rval
+
+                    } else if (e.currentTarget.name === 'clientName') {
+                        console.log('office', item)
+                        let rval = item.applicantDetails?.bankNBFCname?.clientName.toLocaleLowerCase().includes(e.currentTarget.value)
+                        return rval
+
+                    }
+                }
+            }
+            ))
+        } else {
+            formData(props.db)
+        }
+        setReset(Math.random())
+
     }
     useEffect(() => {
         formData(props.db)
@@ -161,17 +154,17 @@ const OldCases = (props) => {
                 <table className="table table-striped table-bordered">
                     <thead>
                         <tr>
-                            <th scope="col"> <Input type="text" name="TPCName1" placeholder={'ApplicationID'} /> </th>
-                            <th scope="col"> <Input type="text" name="TPCName1" placeholder={'InitiationDate'} /> </th>
-                            <th scope="col"> <Input type="text" name="TPCName1" placeholder={'InitiationTime'} /> </th>
-                            <th scope="col"> <Input type="text" name="TPCName1" placeholder={'CustomerName'} /> </th>
-                            <th scope="col"> <Input type="text" name="TPCName1" placeholder={'TAT'} /> </th>
-                            <th scope="col"> <Input type="text" name="TPCName1" placeholder={'ClientName'} /> </th>
-                            <th scope="col"> <Input type="text" name="TPCName1" placeholder={'Mobile No'} /> </th>
+                            <th scope="col"> <Input type="text" name="appid" placeholder={'ApplicationID'} onChange={handleFilter} /> </th>
+                            <th scope="col"> <Input type="text" name="initiationDate" placeholder={'InitiationDate'} onChange={handleFilter} /> </th>
+                            <th scope="col"> <Input type="text" name="initiationDate" placeholder={'InitiationTime'} onChange={handleFilter} /> </th>
+                            <th scope="col"> <Input type="text" name="customerName" placeholder={'CustomerName'} onChange={handleFilter} /> </th>
+                            <th scope="col"> <Input type="text" name="tat" placeholder={'TAT'} /> </th>
+                            <th scope="col"> <Input type="text" name="bankNBFCname" placeholder={'ClientName'} onChange={handleFilter} /> </th>
+                            <th scope="col"> <Input type="text" name="mobileNo" placeholder={'Mobile No'} onChange={handleFilter} /> </th>
                         </tr>
                     </thead>
                     <tbody>
-                        {reset > 0 && allData && allData.length > 0 && allData.map((item, index) => {
+                        {reset && allData && allData.length > 0 && allData.map((item, index) => {
                             return <tr key={`${item.key}-${index}`}>
                                 <td>
                                     {item.applicantDetails.appid}
@@ -188,7 +181,7 @@ const OldCases = (props) => {
                                     {item.applicantDetails.customerName}
                                 </td>
                                 <td>
-                                    
+
                                     {/* {moment(item.initiationDate).diff(item.tat, 'hours')} */}
 
                                     {moment(item.tat).format('LT')}

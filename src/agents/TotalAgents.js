@@ -18,9 +18,25 @@ const TotalAgents = (props) => {
         let data = allData
         if (e.currentTarget.value) {
             setAllData(data.filter(item => {
-                if (item[e.currentTarget.name]) {
-                    let rval = item[e.currentTarget.name].toLocaleLowerCase().includes(e.currentTarget.value)
+                // console.log('item', item)
+
+                if (e.currentTarget.name === 'mobile1') {
+                    let concat = `${item.mobile1}` + `${item.mobile2}`
+
+                    let rval = concat.includes(e.currentTarget.value)
                     return rval
+                }
+                if (e.currentTarget.name === 'pincode') {
+                    // secondary pincode logic
+                    let concat = item.secondaryPincodes.map(x => x.pincodes).join(' ')
+                    let concat1 = `${concat} ${item.pincode}`
+                    let rval = concat1.includes(e.currentTarget.value)
+                    return rval
+                } else {
+                    if (item[e.currentTarget.name]) {
+                        let rval = item[e.currentTarget.name].toLocaleLowerCase().includes(e.currentTarget.value)
+                        return rval
+                    }
                 }
             }
             ))
@@ -37,6 +53,27 @@ const TotalAgents = (props) => {
         setReset(Math.random())
         console.log('props', props.agents)
     }, [props.agents])
+    useEffect(() => {
+        setTimeout(()=> {
+            if (allData && allData.length > 0) {
+                var uniq = allData
+                .map((name) => {
+                  return {
+                    count: 1,
+                    name: name.name
+                  }
+                })
+                .reduce((a, b) => {
+                  a[b.name] = (a[b.name] || 0) + b.count
+                  return a
+                }, {})
+              
+              var duplicates = Object.keys(uniq).filter((a) => uniq[a] > 1)
+              alert(`Duplicate Entries Found: ${duplicates.join(', ')}`)
+              console.log('duplicates',duplicates)
+            }
+        },5000)
+    },[])
 
     return (
         <div>
@@ -71,41 +108,42 @@ const TotalAgents = (props) => {
                     <tbody>
                         {reset > 0 && allData && allData.length > 0 && allData.map((item, index) => {
                             // console.log('item', item)
-                            return <tr key={`${item.userId}-${item.agentCode}-${index}`}>
-                                <th>{index + 1}</th>
-                                <td >
-                                    <AddAgent agent={item} />
-                                </td>
-                                <td>
-                                    {item.mobile1}
-                                    <hr />
-                                    {item.mobile2}
-                                </td>
-                                <td>
-                                    {item.pincode}
-                                    {item.secondaryPincodes &&
-                                        <div>
-                                            <hr />
-                                            {item.secondaryPincodes.map((item1, index1) => {
-                                                return <div key={item1.pincodes}>{item1.pincodes}</div>
-                                            })}
-                                        </div>
-                                    }
+                            if (item.name !== 'SAQUIB MASHKOOR KHAN')
+                                return <tr key={index}>
+                                    <th>{index + 1}</th>
+                                    <td >
+                                        <AddAgent agent={item} />
+                                    </td>
+                                    <td>
+                                        {item.mobile1}
+                                        <hr />
+                                        {item.mobile2}
+                                    </td>
+                                    <td>
+                                        {item.pincode}
+                                        {item.secondaryPincodes &&
+                                            <div>
+                                                <hr />
+                                                {item.secondaryPincodes.map((item1, index1) => {
+                                                    return <div key={item1.pincodes}>{item1.pincodes}</div>
+                                                })}
+                                            </div>
+                                        }
 
-                                </td>
-                                <td>
-                                    {item.uniqueId ? item.uniqueId !== 'Disabled' ? 'Active' : 'InActive' : 'InActive'}
-                                </td>
-                                <td>
-                                    {moment(item.kycUpdateDate.seconds * 1000).format('ll')}
-                                </td>
-                                <td>
-                                    {moment(item.kycreneweddate.seconds * 1000).format('ll')}
-                                </td>
-                                <td>
-                                    {item.remarks}
-                                </td>
-                            </tr>
+                                    </td>
+                                    <td>
+                                        {item.uniqueId ? item.uniqueId !== 'Disabled' ? 'Active' : 'InActive' : 'InActive'}
+                                    </td>
+                                    <td>
+                                        {moment(item.kycUpdateDate.seconds * 1000).format('ll')}
+                                    </td>
+                                    <td>
+                                        {moment(item.kycreneweddate.seconds * 1000).format('ll')}
+                                    </td>
+                                    <td>
+                                        {item.remarks}
+                                    </td>
+                                </tr>
                         })
                         }
                     </tbody>

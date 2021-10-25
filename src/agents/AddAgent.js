@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { Input, Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { getDatabase, set, update } from "firebase/database";
+import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
+import { getDatabase, set, update, remove } from "firebase/database";
+import { doc, deleteDoc } from "firebase/firestore";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import moment from 'moment';
@@ -125,28 +126,91 @@ const AddAgent = ({ agent, allAgents, realTimeAgents, agents, realTimeforms }) =
         setRefresh(Math.random())
     }
     const handleDisable = () => {
-        let form = formdata
+        let agent = formdata
         let realAgents = rtA
         let realForms = rtF
         for (let index = 0; index < realAgents.length; index++) {
             const agents = realAgents[index];
-            
+
             for (let index = 0; index < realForms.length; index++) {
                 const forms = realForms[index];
-                if (agents.userId === forms.selected) {
+                if (agent.userId === forms.selected) {
                     forms.selected = false
                     forms.clained = false
                     update(ref(db, `form/${forms.pincode}/${forms.key}`), {
                         selected: false,
                         clained: false
+                    }).then(res => {
+                        alert('Forms disabled')
+                    }).catch(err => {
+                        alert('Forms were not disabled check log')
+                        console.log('Disable Agent 1', err)
                     })
                 }
             }
-            update(ref(db, `agents/${agents.key}`), {uniqueId: 'Disabled', isLoggedIn: false, onCase: false, myForms: 0})
+            if (agent.userId === agents.userId) {
+                update(ref(db, `agents/${agents.key}`), { uniqueId: 'Disabled', isLoggedIn: false, onCase: false, myForms: 0 }).then(res => {
+                    alert('Agent Disabled')
+                }).catch(err => {
+                    alert('Agemt was not disabled check log')
+                    console.log('Disable Agent 2', err)
+                })
+            }
         }
 
     }
-
+    const handleEnable = () => {
+        let agent = formdata
+        let realAgents = rtA
+        for (let index = 0; index < realAgents.length; index++) {
+            const agents = realAgents[index];
+            if (agent.userId === agents.userId && agents.uniqueId !== 'Disabled') {
+                update(ref(db, `agents/${agents.key}`), { uniqueId: null }).then(res => {
+                    alert('Agent Enabled')
+                }).catch(err => {
+                    alert('Agent was not enabled check log')
+                    console.log('Agent Enabled', err)
+                })
+            }
+        }
+    }
+    const HandleDeleteAgent = () => {
+        let agent = formdata
+        let realAgents = rtA
+        const filePath = `agents/${formdata['agentCode']}`;
+        const storage = getStorage();
+        for (let index = 0; index < realAgents.length; index++) {
+            const agents = realAgents[index];
+            if (agent.userId === agents.userId) {
+                remove(ref(db, `agents/${agents.key}`)).then(res => {
+                    alert('Agent Deleted 1')
+                }).catch(err => {
+                    alert('Agent was not deleted check log')
+                    console.log('Agent Deleted 1', err)
+                })
+            }
+        }
+        for (let index = 0; index < agents.length; index++) {
+            const element = agents[index];
+            if (agent.agentCode === element.agentCode) {
+              const kycDocument = ref(storage, filePath);
+              deleteObject(kycDocument).then(res => {
+                    alert('KYC Deleted')
+                }).catch(err => {
+                    alert('KYC was not Deleted check log')
+                    console.log('Agent Deleted kyc', err);
+                })
+                deleteDoc(doc(db, `agents/${agent.agentCode}`)).then(res => {
+                    alert('Agent Deleted 2')
+                }).catch(err => {
+                    alert('Agent was not deleted check log')
+                    console.log('Agent Deleted 2', err)
+                })
+            }
+        }
+       
+        
+    }
     useEffect(() => {
         if (realTimeAgents) {
             let temp = []
@@ -157,15 +221,15 @@ const AddAgent = ({ agent, allAgents, realTimeAgents, agents, realTimeforms }) =
                 agent.key = element
                 temp.push(agent)
                 // console.log('agent', agent)
-            
+
             }
-setRta(temp)
+            setRta(temp)
 
             // console.log('props', realTimeAgents, realTimeforms)
         }
     }, [realTimeAgents])
     useEffect(() => {
-        if(realTimeforms) {
+        if (realTimeforms) {
             let temp = []
             const objkeys1 = Object.keys(realTimeforms)
             // console.log('obj', objkeys1);
@@ -176,20 +240,20 @@ setRta(temp)
                 let formkey = Object.keys(forms)
                 for (let index = 0; index < formkey.length; index++) {
                     const element = formkey[index];
-                    
+
                     // console.log(forms[element]);
                     forms[element].key = element
                     forms[element].pincode = element1
                 }
                 // if (formkey) {
-                    
+
                 // }
                 temp.push(forms)
             }
-            console.log('forms', temp)
+            // console.log('forms', temp)
             setRtf(temp)
         }
-    },[realTimeforms])
+    }, [realTimeforms])
 
     useEffect(() => {
         if (agent && modal) {
@@ -227,6 +291,17 @@ setRta(temp)
                 <ModalHeader toggle={toggle}>Modal title</ModalHeader>
                 <ModalBody>
                     {refresh > 0 && <div className='row'>
+                        <div className='col-4'>
+                            <button className='btn btn-primary' onClick={handleEnable}>Enable</button>
+                        </div>
+                        <div className='col-4'>
+                            <button className='btn btn-warning' onClick={handleDisable}>Disable</button>
+                        </div>
+
+                        <div className='col-4'>
+                            <button className='btn btn-danger' onClick={HandleDeleteAgent}>Delete</button>
+                        </div>
+
                         <div className='col-6'>
                             <div >
                                 <label>Agent Code</label>
