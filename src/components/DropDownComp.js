@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Input, Button, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap'
 
-const DropDownComp = ({onHandleChange, formdata, dropDowmArry, handleOnChange})=>{
+const DropDownComp = ({ onHandleChange, formdata, dropDowmArry, handleOnChange }) => {
 
     const [addressConfirmedOpen, setAddressConfirmed] = useState(false);
     const addressConfirmedtoggle = () => setAddressConfirmed(prevState => !prevState);
@@ -19,17 +19,17 @@ const DropDownComp = ({onHandleChange, formdata, dropDowmArry, handleOnChange})=
     return (
         <div>
             <Dropdown isOpen={addressConfirmedOpen} toggle={addressConfirmedtoggle}>
-                        <DropdownToggle caret className='text-capitalize'>
-                            {formdata[dropDowmArry[0].name] ? formdata[dropDowmArry[0].name] : 'None'}
-                        </DropdownToggle>
-                        <DropdownMenu>
-                        {dropDowmArry.map(item =>{
-                         return <DropdownItem name={item.name} onClick={(e) => onHandleChange(e.currentTarget)} value={item.value}>{item.label}</DropdownItem>  
-                        })}
-                            
+                <DropdownToggle caret className='text-capitalize'>
+                    {formdata[dropDowmArry[0].name] ? formdata[dropDowmArry[0].name] : 'None'}
+                </DropdownToggle>
+                <DropdownMenu>
+                    {dropDowmArry.map(item => {
+                        return <DropdownItem name={item.name} onClick={(e) => onHandleChange(e.currentTarget)} value={item.value}>{item.label}</DropdownItem>
+                    })}
 
-                        </DropdownMenu>
-                    </Dropdown>
+
+                </DropdownMenu>
+            </Dropdown>
         </div>
     )
 }

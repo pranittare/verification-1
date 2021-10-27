@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { InputGroup, Input, Label, Button, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap'
-import './auth.styles.css'
 import { useHistory } from 'react-router-dom'
 import { connect } from 'react-redux';
-import DropDownComp from '../components/DropDownComp';
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+
 function Login(props) {
 
   useEffect(() => {
@@ -16,14 +16,28 @@ function Login(props) {
   const [password, setPassword] = useState('')
   const [branch, setBranch] = useState('branch-1')
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const auth = getAuth();
 
   const toggle = () => setDropdownOpen(prevState => !prevState);
 
   const onHandleSubmit = () => {
     console.log(userId, password, branch)
-    setUserId('')
-    setPassword('')
-    history.push('/')
+    signInWithEmailAndPassword(auth, userId, password)
+      .then((userCredential) => {
+        // Signed in 
+        const user = userCredential.user;
+        props.dispatch({ type: 'AUTH', data: user })
+        setUserId('')
+        setPassword('')
+        history.push('/')
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        alert(errorMessage)
+        // console.log('err', errorCode, errorMessage)
+      });
+
 
   }
   let branches = [
@@ -65,7 +79,7 @@ function Login(props) {
           </DropdownToggle>
           <DropdownMenu>
             {branches.map(item => {
-              return <DropdownItem name={item.name} onClick={(e) => setBranch(e.currentTarget.value)} value={item.value}>{item.label}</DropdownItem>
+              return <DropdownItem key={item.name} name={item.name} onClick={(e) => setBranch(e.currentTarget.value)} value={item.value}>{item.label}</DropdownItem>
             })}
 
 

@@ -18,6 +18,7 @@ import OldCases from './Cases/OldCases';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, getDocs, query, where } from 'firebase/firestore/lite';
 import { getDatabase, ref, onValue, get } from "firebase/database";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { connect } from 'react-redux';
 
 const firebaseConfig = {
@@ -35,7 +36,9 @@ export const db = getFirestore(app)
 const realtime = getDatabase(app);
 
 function App(props) {
-
+  const auth = getAuth();
+  console.log('auth', auth)
+  const [isUser, setIsUser] = useState(false)
   const realtimedb = (update) => {
     const getDetails = ref(realtime, `${update}/`);
     onValue(getDetails, (snapshot) => {
@@ -57,8 +60,8 @@ function App(props) {
     let val = update.toString().toUpperCase()
     props.dispatch({ type: `F${val}`, data: value })
   }
- 
-  
+
+
   useEffect(() => {
     realtimedb('agents')
     realtimedb('form')
@@ -67,6 +70,16 @@ function App(props) {
     databaseUpdate('vendors')
     databaseUpdate('backup')
   }, [])
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      console.log('user', user)
+      if (user) {
+        setIsUser(true)
+      } else {
+        setIsUser(false)
+      }
+    })
+  },[])
 
   return (
     <div className="App">
@@ -75,20 +88,29 @@ function App(props) {
         <Switch>
 
           <>
+            {console.log('user', isUser)}
+            {isUser ? <> 
+            
             <Route path='/' render={() => <Dashboard />} exact />
-            <Route path='/login' render={() => <Login />} />
             <Route path='/signup' render={() => <SignUp />} />
-            <Route path='/forget' render={() => <Forget />} />
-            <Route path='/total-agents' render={() => <TotalAgents />} />
-            <Route path='/active-agents' render={() => <ActiveAgents />} />
-            <Route path='/clients' render={() => <Billing />} />
-            <Route path='/new' render={() => <Multi />} />
-            <Route path='/office' render={() => <Office />} />
-            <Route path='/office/:form' render={() => <Office />} />
-            <Route path='/resident' render={() => <Resident />} />
-            <Route path='/ActiveCases' render={() => <ActiveCases />} />
-            <Route path='/SubmittedCases' render={() => <SubmittedCases />} />
-            <Route path='/oldCases' render={() => <OldCases />} />
+              <Route path='/forget' render={() => <Forget />} />
+              <Route path='/total-agents' render={() => <TotalAgents />} />
+              <Route path='/active-agents' render={() => <ActiveAgents />} />
+              <Route path='/clients' render={() => <Billing />} />
+              <Route path='/new' render={() => <Multi />} />
+              <Route path='/office' render={() => <Office />} />
+              <Route path='/office/:form' render={() => <Office />} />
+              <Route path='/resident' render={() => <Resident />} />
+              <Route path='/ActiveCases' render={() => <ActiveCases />} />
+              <Route path='/SubmittedCases' render={() => <SubmittedCases />} />
+              <Route path='/oldCases' render={() => <OldCases />} />
+            </>
+              :
+              <Route path='/login' render={() => <Login />}  />
+            }
+
+
+
           </>
         </Switch>
 

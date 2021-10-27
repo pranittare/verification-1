@@ -67,6 +67,11 @@ function reducer(state = initialState, action) {
         ...state,
         oldcases: action.data
       }
+    case 'AUTH':
+      return {
+        ...state,
+        auth: action.data
+      }
     default:
       return state
   }

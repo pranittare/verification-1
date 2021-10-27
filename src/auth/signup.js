@@ -1,42 +1,32 @@
 import React, { useState } from 'react'
-import { InputGroup, InputGroupAddon, InputGroupText, Input, Button, Form, FormGroup, Label, FormText, ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
-import './auth.styles.css'
+import { InputGroup, Input, Button, Label } from 'reactstrap';
 import DropDownComp from '../components/DropDownComp';
-import {useHistory} from 'react-router-dom'
-
+import { useHistory } from 'react-router-dom'
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
 function SignUp() {
 
     let history = useHistory()
-
-    // const [agentId, setAgentId] = useState('')
-    // const [agentPassword, setAgentPassword] = useState('')
-    // const [primaryPincode, setPrimaryPincode] = useState('')
-    // const [userId, setUserId] = useState('')
-    // const [name, setName] = useState('')
-    // const [userPassword, setUserPassword] = useState('')
-    // const [pincode, setPincode] = useState('')
-    // const [level, setLevel] = useState(1)
     const [dropdownOpen, setOpen] = useState(false);
-
+    const auth = getAuth();
     const [refresh, setRefresh] = useState(0)
     const [formdata, setFormdata] = useState({
-        agentId:'',
-        agentPassword:'',
-        primaryPincode:'',
-        userId:'',
-        name:'',
-        userPassword:'',
-        pincode:'',
-        level:'1',
-        branches:''
+        agentId: '',
+        agentPassword: '',
+        primaryPincode: '',
+        userId: '',
+        name: '',
+        userPassword: '',
+        pincode: '',
+        level: '1',
+        branches: ''
     })
 
     const toggle = () => setOpen(!dropdownOpen);
 
     const onHandleChange = (e) => {
         // name
-        console.log('e',e)
+        console.log('e', e)
         let form = formdata
         form[e.name] = e.value
         // console.log(e, form[e.name])
@@ -46,23 +36,55 @@ function SignUp() {
     }
 
     const onHandleSubmit = () => {
-        if (formdata.agentId) {
+        const { agentId, agentPassword, primaryPincode, userId, name, userPassword, pincode, level, branches } = formdata
+        if (agentId) {
             console.log(
-                formdata.agentId,
-                formdata.agentPassword,
-                formdata.primaryPincode,
-                history.push('/')
+                agentId,
+                agentPassword,
+                primaryPincode,
                 )
+                history.push('/')
+            // createUserWithEmailAndPassword(auth, agentId, agentPassword)
+            //     .then((userCredential) => {
+            //         // Signed in 
+            //         // Add user info to database everything
+            //         const user = userCredential.user;
+            //         // ...
+            //     })
+            //     .catch((error) => {
+            //         const errorCode = error.code;
+            //         const errorMessage = error.message;
+            //         alert('Something went Wrong')
+            //         console.log('err', errorCode, errorMessage)
+            //         // ..
+            //     });
+       
         }
         else {
             console.log(
-                formdata.userId,
-                formdata.name,
-                formdata.userPassword,
-                formdata.pincode,
-                formdata.level,
-                history.push('/')
+                userId,
+                name,
+                userPassword,
+                pincode,
+                level,
+                branches,
                 )
+                // history.push('/')
+            // createUserWithEmailAndPassword(auth, userId, userPassword)
+            // .then((userCredential) => {
+            //     // Signed in 
+            //     // Add user info to database everything
+            //     const user = userCredential.user;
+            //     // ...
+            // })
+            // .catch((error) => {
+            //     const errorCode = error.code;
+            //     const errorMessage = error.message;
+            //     alert('Something went Wrong')
+            //     console.log('err', errorCode, errorMessage)
+            //     // ..
+            // });
+         
         }
     }
 
@@ -83,7 +105,7 @@ function SignUp() {
     return (
         <div>
             SignUp
-            <div className="sagar">
+            <div className="d-flex justify-content-around">
                 <div>
                     Agent
                     <Label id="basic-addon1">Username</Label>
@@ -94,6 +116,7 @@ function SignUp() {
                             aria-describedby="basic-addon1"
                             name='agentId'
                             value={formdata.agentId}
+                            autoComplete='off'
                             onChange={(e) => onHandleChange(e.currentTarget)}
                         />
                     </InputGroup>
@@ -106,6 +129,7 @@ function SignUp() {
                             aria-describedby="basic-addon1"
                             name='agentPassword'
                             value={formdata.agentPassword}
+                            autoComplete='off'
                             onChange={(e) => onHandleChange(e.currentTarget)}
                         />
                     </InputGroup>
@@ -117,7 +141,9 @@ function SignUp() {
                             type='number'
                             aria-describedby="basic-addon1"
                             value={formdata.primaryPincode}
-                            onChange={(e) => formdata.setPrimaryPincode(e.target.value)}
+                            autoComplete='off'
+                            name='primaryPincode'
+                            onChange={(e) => onHandleChange(e.currentTarget)}
                         />
                     </InputGroup>
 
@@ -131,7 +157,9 @@ function SignUp() {
                             aria-label="Recipient's username"
                             aria-describedby="basic-addon2"
                             value={formdata.userId}
-                            onChange={(e) => formdata.setUserId(e.target.value)}
+                            autoComplete='off'
+                            name='userId'
+                            onChange={(e) => onHandleChange(e.currentTarget)}
                         />
                     </InputGroup>
 
@@ -142,7 +170,9 @@ function SignUp() {
                             aria-label="Recipient's username"
                             aria-describedby="basic-addon2"
                             value={formdata.name}
-                            onChange={(e) => formdata.setName(e.target.value)}
+                            autoComplete='off'
+                            name='name'
+                            onChange={(e) => onHandleChange(e.currentTarget)}
                         />
                     </InputGroup>
 
@@ -153,7 +183,9 @@ function SignUp() {
                             aria-label="Recipient's username"
                             aria-describedby="basic-addon2"
                             value={formdata.userPassword}
-                            onChange={(e) => formdata.setUserPassword(e.target.value)}
+                            autoComplete='off'
+                            name='userPassword'
+                            onChange={(e) => onHandleChange(e.currentTarget)}
                         />
                     </InputGroup>
 
@@ -164,34 +196,28 @@ function SignUp() {
                             aria-label="Recipient's username"
                             aria-describedby="basic-addon2"
                             value={formdata.pincode}
-                            onChange={(e) => formdata.setPincode(e.target.value)}
+                            autoComplete='off'
+                            name='pincode'
+                            onChange={(e) => onHandleChange(e.currentTarget)}
                         />
                     </InputGroup>
+                    <div className='d-flex justify-content-between mb-2'>
+                        <div>
+                            <Label >Level</Label>
+                            <DropDownComp onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={level} />
+                        </div>
+                        <div>
+                            <Label >Branch</Label>
+                            <DropDownComp onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={branches} />
 
-                    <Label id="basic-addon2">Level</Label>
-                    {/* <InputGroup className="mb-3"> */}
-                    <DropDownComp onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={level} />
+                        </div>
 
-                    <Label id="basic-addon2">Branch</Label>
-                    <DropDownComp onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={branches} />
-                    {/* <ButtonDropdown isOpen={dropdownOpen} toggle={toggle}>
-                            <DropdownToggle variant="success" id="dropdown-basic">
-                                {level}
-                            </DropdownToggle>
-
-                            <DropdownMenu >
-                                <DropdownItem onClick={(e) => setLevel(e.target.value)} value={1}>1</DropdownItem>
-                                <DropdownItem onClick={(e) => setLevel(e.target.value)} value={2}>2</DropdownItem>
-                                <DropdownItem onClick={(e) => setLevel(e.target.value)} value={3}>3</DropdownItem>
-                                <DropdownItem onClick={(e) => setLevel(e.target.value)} value={4}>4</DropdownItem>
-                                <DropdownItem onClick={(e) => setLevel(e.target.value)} value={5}>5</DropdownItem>
-                            </DropdownMenu>
-                      </ButtonDropdown> */}
-                    {/* </InputGroup> */}
-                    <div>
-                    <Button color='primary' onClick={() => (onHandleSubmit())}>Submit</Button>
                     </div>
+
                 </div>
+            </div>
+            <div>
+                <Button color='primary' onClick={() => (onHandleSubmit())}>Submit</Button>
             </div>
         </div>
     );

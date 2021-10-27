@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import { Link } from 'react-router-dom'
+import { connect } from 'react-redux';
+import Logout from './Logout';
 
-export default function Navigation({ onHandleSidebar }) {
+const Navigation = ({ onHandleSidebar, auth }) => {
     const [sidebar, setSidebar] = useState(false)
     const toggle = () => setSidebar(!sidebar)
     return (
@@ -10,7 +12,7 @@ export default function Navigation({ onHandleSidebar }) {
 
             <nav className="navbar navbar-expand-lg navbar-light bg-light">
                 <div className="container-fluid">
-                     <Dropdown isOpen={sidebar} toggle={toggle} className='me-4'>
+                    <Dropdown isOpen={sidebar} toggle={toggle} className='me-4'>
                         <DropdownToggle >
                             ...
                         </DropdownToggle>
@@ -47,15 +49,25 @@ export default function Navigation({ onHandleSidebar }) {
                                 <Link className="nav-link" to='/new'>New</Link>
                             </li>
                             
+                            
                         </ul>
 
+                   {auth && <div>
+                        <Logout email={auth?.email}/>
+                        
+                    </div>}
                     </div>
-
                 </div>
             </nav>
 
         </>
     )
 }
-
+const mapStateToProps = (state) => {
+    console.log('data', state)
+    return {
+        auth: state.auth
+    }
+}
+export default connect(mapStateToProps)(Navigation)
 
