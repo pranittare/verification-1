@@ -24,7 +24,7 @@ const DropDownComp = ({ onHandleChange, formdata, dropDowmArry, handleOnChange }
                 </DropdownToggle>
                 <DropdownMenu>
                     {dropDowmArry.map(item => {
-                        return <DropdownItem name={item.name} onClick={(e) => onHandleChange(e.currentTarget)} value={item.value}>{item.label}</DropdownItem>
+                        return <DropdownItem key={item.name} name={item.name} onClick={(e) => onHandleChange(e.currentTarget)} value={item.value}>{item.label}</DropdownItem>
                     })}
 
 
