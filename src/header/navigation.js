@@ -39,9 +39,9 @@ const Navigation = ({ onHandleSidebar, auth }) => {
                             <li className="nav-item">
                                 <Link to='/' className="nav-link active" aria-current="page">Home</Link>
                             </li>
-                            <li className="nav-item">
+                         {!auth && <li className="nav-item">
                                 <Link className="nav-link" to='/login'>Login</Link>
-                            </li>
+                            </li>}
                             <li className="nav-item">
                                 <Link className="nav-link" to='/signup'>Signup</Link>
                             </li>
@@ -64,9 +64,9 @@ const Navigation = ({ onHandleSidebar, auth }) => {
     )
 }
 const mapStateToProps = (state) => {
-    console.log('data', state)
+    // console.log('data', state)
     return {
-        auth: state.auth
+        // auth: state.auth
     }
 }
 export default connect(mapStateToProps)(Navigation)

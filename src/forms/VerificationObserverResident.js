@@ -104,11 +104,11 @@ export default function VerificationObserverResident({ verification, getData }) 
             {(refresh > 0 || true) && <form className='d-flex justify-content-between flex-wrap' onSubmit={handleSubmit} >
                 <div>
                     <label>Locality of Address</label>
-                    <DropDownComp onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={localityOfAddress} />
+                    <DropDownComp id='verificationObserverResident' onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={localityOfAddress} />
                 </div>
                 <div>
                     <label>Type of House</label>
-                    <DropDownComp onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={typeOfHouse} />
+                    <DropDownComp id='verificationObserverResident' onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={typeOfHouse} />
                 </div>
                 <div>
                     <label>Type of House Others</label>
@@ -116,15 +116,15 @@ export default function VerificationObserverResident({ verification, getData }) 
                 </div>
                 <div>
                     <label>Construction Of Residence</label>
-                    <DropDownComp onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={constructionOfResidence} />
+                    <DropDownComp id='verificationObserverResident' onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={constructionOfResidence} />
                 </div>
                 <div>
                     <label>Accessibility/Approachibility</label>
-                    <DropDownComp onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={accessibility} />
+                    <DropDownComp id='verificationObserverResident' onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={accessibility} />
                 </div>
                 <div>
                     <label>Ease of Locating</label>
-                    <DropDownComp onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={easeofLocating} />
+                    <DropDownComp id='verificationObserverResident' onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={easeofLocating} />
                 </div>
                 <div>
                     <label>Interior Conditions</label>
@@ -140,7 +140,7 @@ export default function VerificationObserverResident({ verification, getData }) 
                 </div>
                 <div>
                     <label>Customer Attitude</label>
-                    <DropDownComp onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={customerAttitude} />
+                    <DropDownComp id='verificationObserverResident' onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={customerAttitude} />
                 </div>
                 <div>
                     <label>Distance from Station</label>
@@ -148,7 +148,7 @@ export default function VerificationObserverResident({ verification, getData }) 
                 </div>
                 <div>
                     <label>Picture Political Leader</label>
-                    <DropDownComp onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={picturePoliticalLeader} />
+                    <DropDownComp id='verificationObserverResident' onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={picturePoliticalLeader} />
                 </div>
                 <div>
                     <label>Political Leader Details</label>

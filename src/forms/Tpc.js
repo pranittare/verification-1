@@ -112,7 +112,7 @@ export default function Tpc({ tpc, getData }) {
                                 <Input type="text" name="TPCName1" value={formdata['TPCName1']} onChange={(e) => onHandleChange(e.currentTarget)} /></td>
                             
                             <td>
-                                <DropDownComp onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={status1} />
+                                <DropDownComp id='tpc' onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={status1} />
                             </td>
                             <td>
                                 <Input type="text" name="TPCRemark1" value={formdata['TPCRemark1']} onChange={(e) => onHandleChange(e.currentTarget)} /></td>
@@ -123,7 +123,7 @@ export default function Tpc({ tpc, getData }) {
                                 <Input type="text" name="TPCName2" value={formdata['TPCName2']} onChange={(e) => onHandleChange(e.currentTarget)} /></td>
 
                             <td>
-                                <DropDownComp onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={status2} />
+                                <DropDownComp id='tpc' onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={status2} />
                             </td>
                             <td>
                                 <Input type="text" name="TPCRemark2" value={formdata['TPCRemark2']} onChange={(e) => onHandleChange(e.currentTarget)} /></td>
@@ -134,7 +134,7 @@ export default function Tpc({ tpc, getData }) {
                                 <Input type="text" name="TPCName3" value={formdata['TPCName3']} onChange={(e) => onHandleChange(e.currentTarget)} /></td>
 
                             <td>
-                                <DropDownComp onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={status3} />
+                                <DropDownComp id='tpc' onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={status3} />
                             </td>
                             <td>
                                 <Input type="text" name="TPCRemark3" value={formdata['TPCRemark3']} onChange={(e) => onHandleChange(e.currentTarget)} /></td>
@@ -143,7 +143,7 @@ export default function Tpc({ tpc, getData }) {
                 </table>
                 <div>
                     <label>Market Reputation/Dedup Check</label>
-                    <DropDownComp onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={marketReputation} />
+                    <DropDownComp id='tpc' onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={marketReputation} />
                 </div>
                 <div>
                     <label>Remarks</label>
@@ -162,7 +162,7 @@ export default function Tpc({ tpc, getData }) {
                 <div>
                     <label>Status</label>
 
-                    <DropDownComp onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={TVRStatus} />
+                    <DropDownComp id='tpc' onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={TVRStatus} />
                 </div>
                 <div>
                     <label>Business Name</label>
@@ -186,7 +186,7 @@ export default function Tpc({ tpc, getData }) {
                 <div>
                     <label>Status</label>
 
-                    <DropDownComp onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={overallStatus} />
+                    <DropDownComp id='tpc' onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={overallStatus} />
                     
                 </div>
                 <div>

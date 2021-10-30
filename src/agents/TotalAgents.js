@@ -53,27 +53,29 @@ const TotalAgents = (props) => {
         setReset(Math.random())
         console.log('props', props.agents)
     }, [props.agents])
+
+    // Duplicate entries
     useEffect(() => {
-        setTimeout(()=> {
+        setTimeout(() => {
             if (allData && allData.length > 0) {
                 var uniq = allData
-                .map((name) => {
-                  return {
-                    count: 1,
-                    name: name.name
-                  }
-                })
-                .reduce((a, b) => {
-                  a[b.name] = (a[b.name] || 0) + b.count
-                  return a
-                }, {})
-              
-              var duplicates = Object.keys(uniq).filter((a) => uniq[a] > 1)
-              alert(`Duplicate Entries Found: ${duplicates.join(', ')}`)
-              console.log('duplicates',duplicates)
+                    .map((name) => {
+                        return {
+                            count: 1,
+                            name: name.name
+                        }
+                    })
+                    .reduce((a, b) => {
+                        a[b.name] = (a[b.name] || 0) + b.count
+                        return a
+                    }, {})
+
+                var duplicates = Object.keys(uniq).filter((a) => uniq[a] > 1)
+                alert(`Duplicate Entries Found: ${duplicates.join(', ')}`)
+                console.log('duplicates', duplicates)
             }
-        },5000)
-    },[])
+        }, 5000)
+    }, [])
 
     return (
         <div>

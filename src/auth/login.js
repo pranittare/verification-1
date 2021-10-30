@@ -26,7 +26,7 @@ function Login(props) {
       .then((userCredential) => {
         // Signed in 
         const user = userCredential.user;
-        props.dispatch({ type: 'AUTH', data: user })
+        // props.dispatch({ type: 'AUTH', data: user })
         setUserId('')
         setPassword('')
         history.push('/')
@@ -79,7 +79,7 @@ function Login(props) {
           </DropdownToggle>
           <DropdownMenu>
             {branches.map(item => {
-              return <DropdownItem key={item.name} name={item.name} onClick={(e) => setBranch(e.currentTarget.value)} value={item.value}>{item.label}</DropdownItem>
+              return <DropdownItem key={item.value} name={item.name} onClick={(e) => setBranch(e.currentTarget.value)} value={item.value}>{item.label}</DropdownItem>
             })}
 
 

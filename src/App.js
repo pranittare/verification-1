@@ -84,12 +84,12 @@ function App(props) {
   return (
     <div className="App">
       <Router >
-        <Navigation />
+        <Navigation auth={auth?.currentUser}/>
         <Switch>
 
           <>
-            {console.log('user', isUser)}
-            {isUser ? <> 
+            {console.log('user', auth?.currentUser?.email)}
+            {auth?.currentUser?.email ? <> 
             
             <Route path='/' render={() => <Dashboard />} exact />
             <Route path='/signup' render={() => <SignUp />} />

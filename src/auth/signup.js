@@ -192,7 +192,7 @@ function SignUp({ agentsTotal, agentsActive, usersTotal }) {
                 <FormGroup check>
                     <Input
                         type="radio"
-                        onClick={() => setSelector('agent')}
+                        onChange={() => setSelector('agent')}
                         checked={selector === 'agent'}
                     />
                     {' '}
@@ -202,7 +202,7 @@ function SignUp({ agentsTotal, agentsActive, usersTotal }) {
                 </FormGroup>
                 <FormGroup check>
                     <Input
-                        onClick={() => setSelector('user')}
+                        onChange={() => setSelector('user')}
                         checked={selector === 'user'}
                         type="radio"
                     />
@@ -316,7 +316,7 @@ function SignUp({ agentsTotal, agentsActive, usersTotal }) {
                     <div className='d-flex justify-content-center mb-2'>
                         <div>
                             <Label >Level</Label>
-                            <DropDownComp onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={level} />
+                            <DropDownComp id='signup' other={true} onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={level} />
                         </div>
 
 
@@ -327,7 +327,7 @@ function SignUp({ agentsTotal, agentsActive, usersTotal }) {
             </div>
             <div className='mb-2'>
                 <Label >Branch</Label>
-                <DropDownComp onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={branches} />
+                <DropDownComp id='signup' other={true} onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={branches} />
 
             </div>
             <div>

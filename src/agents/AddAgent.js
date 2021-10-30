@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react'
-import { Input, Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import { Input, Button, Modal, ModalHeader, ModalBody, ModalFooter, Label } from 'reactstrap';
 import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 import { getDatabase, set, update, remove } from "firebase/database";
-import { doc, deleteDoc } from "firebase/firestore";
+import { doc, deleteDoc, setDoc } from "firebase/firestore";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import moment from 'moment';
 import { connect } from 'react-redux';
+import DropDownComp from '../components/DropDownComp';
 
 const AddAgent = ({ agent, allAgents, realTimeAgents, agents, realTimeforms }) => {
 
@@ -17,7 +18,13 @@ const AddAgent = ({ agent, allAgents, realTimeAgents, agents, realTimeforms }) =
     const [endDate, setEndDate] = useState(new Date());
     const [rtA, setRta] = useState([])
     const [rtF, setRtf] = useState([])
+    const [updateField, setUpdateField] = useState(true)
     const db = getDatabase();
+    let branches = [
+        { name: 'branch', value: 'branch-1', label: 'Branch-1' },
+        { name: 'branch', value: 'nashik', label: 'Nashik' },
+        { name: 'branch', value: 'pune', label: 'Pune' },
+    ]
     // console.log('agent', agent)
     const initalState = {
         agentCode: `Ac-${new Date().getTime()}`,
@@ -33,6 +40,7 @@ const AddAgent = ({ agent, allAgents, realTimeAgents, agents, realTimeforms }) =
         kycreneweddate: '',
         password: '',
         remarks: '',
+        branch: ''
     }
     const [formdata, setFormdata] = useState({
         agentCode: `Ac-${new Date().getTime()}`,
@@ -48,17 +56,36 @@ const AddAgent = ({ agent, allAgents, realTimeAgents, agents, realTimeforms }) =
         kycreneweddate: '',
         password: '',
         remarks: '',
+        branch: ''
     })
 
     const toggle = () => {
         setFormdata(initalState)
         setModal(!modal)
     };
+    const addOrUpdate = (form) => {
+        // let form = formdata
+        if (form.name) {
+            rtA.map(item => {
+                if (form.name == item.name) {
+                    setUpdateField(true)
+                } else {
+                    setUpdateField(false)
+                }
+            })
+            setUpdateField(true)
+
+        } else {
+            setUpdateField(false)
+
+        }
+    }
     const onHandleChange = (e) => {
         // name
         // console.log(e)
         let form = formdata
         form[e.name] = e.value
+        addOrUpdate(form)
         if (allAgents && allAgents.length > 0) {
             for (let index = 0; index < allAgents.length; index++) {
                 const element = allAgents[index];
@@ -74,7 +101,7 @@ const AddAgent = ({ agent, allAgents, realTimeAgents, agents, realTimeforms }) =
         }
         setFormdata(form)
         setRefresh(Math.random())
-        console.log(form)
+        // console.log(form)
     }
     const onSubmit = () => {
         let form = formdata
@@ -103,9 +130,9 @@ const AddAgent = ({ agent, allAgents, realTimeAgents, agents, realTimeforms }) =
             alert('Upload Cancelled')
         }
     }
-    const downloadUrlfnc = () => {
+    const downloadUrlfnc = (agentCode) => {
         const storage = getStorage();
-        const filePath = `agents/${formdata['agentCode']}`;
+        const filePath = `agents/${agentCode}`;
         getDownloadURL(ref(storage, filePath))
             .then((url) => {
                 setDownloadUrl(url)
@@ -193,8 +220,8 @@ const AddAgent = ({ agent, allAgents, realTimeAgents, agents, realTimeforms }) =
         for (let index = 0; index < agents.length; index++) {
             const element = agents[index];
             if (agent.agentCode === element.agentCode) {
-              const kycDocument = ref(storage, filePath);
-              deleteObject(kycDocument).then(res => {
+                const kycDocument = ref(storage, filePath);
+                deleteObject(kycDocument).then(res => {
                     alert('KYC Deleted')
                 }).catch(err => {
                     alert('KYC was not Deleted check log')
@@ -208,8 +235,82 @@ const AddAgent = ({ agent, allAgents, realTimeAgents, agents, realTimeforms }) =
                 })
             }
         }
-       
-        
+
+
+    }
+    const commonAddUpdate = () => {
+        let { name, password, userId, pincodes, branches, pincode } = formdata
+        let secondary = pincodes?.split(',')
+        let secondaryPincodes = []
+        for (let index = 0; index < secondary?.length; index++) {
+            const element = secondary[index];
+            if (element) {
+                secondaryPincodes.push({ pincodes: element })
+            }
+        }
+
+
+        let data = {
+            userId: userId,
+            password: password,
+            pincode: pincode,
+            name: name,
+            created: new Date().toDateString(),
+            lastUpdated: '',
+            branch: branches,
+            secondary: secondaryPincodes
+        }
+        return data
+        // console.log('data', data, rtA)
+    }
+    const handleAddUser = () => {
+        console.log('add', commonAddUpdate())
+        // Add logic only for Firestore DB
+
+        await setDoc(doc(db, `agents/`), commonAddUpdate())
+            .then(res => {
+                alert('Total user update Successfull')
+            })
+            .catch(err => {
+                alert('Total user update Error')
+                console.log('Total user', err)
+            })
+
+
+    }
+    const handleUpdateUser = () => {
+        console.log('update', commonAddUpdate())
+        let agentkey = ''
+        let agent1 = formdata
+        let realAgents = rtA
+        for (let index = 0; index < realAgents.length; index++) {
+            const agents = realAgents[index];
+            if (agent1.userId === agents.userId) {
+                agentkey = agents.key
+            }
+        }
+        // Add update logic only for Firestore DB
+        await updateDoc(doc(db, `agents/${agentkey}`), commonAddUpdate())
+            .then(res => {
+                alert('Total user update Successfull')
+                // Add update logic only for Realtime DB
+                update(ref(db, `agents/${agentkey}`), commonAddUpdate())
+                    .then(res => {
+                        if (res) {
+                            alert('Update Successfull')
+                        }
+                    })
+                    .catch(err => {
+                        alert('Error Occured retry')
+                        console.log('total users real time update error', err)
+                    })
+            })
+            .catch(err => {
+                alert('Total user update Error')
+                console.log('Total user', err)
+            })
+
+
     }
     useEffect(() => {
         if (realTimeAgents) {
@@ -258,7 +359,9 @@ const AddAgent = ({ agent, allAgents, realTimeAgents, agents, realTimeforms }) =
     useEffect(() => {
         if (agent && modal) {
             let form = formdata
+            console.log('agent', agent);
             for (const property in form) {
+
                 if (agent[property]) {
                     form[property] = agent[property]
                 }
@@ -273,15 +376,20 @@ const AddAgent = ({ agent, allAgents, realTimeAgents, agents, realTimeforms }) =
                 for (let index = 0; index < agent.secondaryPincodes.length; index++) {
                     const element = agent.secondaryPincodes[index];
                     let pincodes = Object.values(element)
-                    form.pincodes += `${pincodes},`
+                    if (pincodes) {
+                        form.pincodes += `${pincodes},`
+                    }
                 }
             }
             setFormdata(form)
+            addOrUpdate(form)
+            downloadUrlfnc(form.agentCode)
             // console.log('form', form)
             setRefresh(Math.random())
         }
     }, [agent, modal])
     useEffect(() => {
+        setDownloadUrl(false)
         setRefresh(Math.random())
     }, [])
     return (
@@ -292,14 +400,14 @@ const AddAgent = ({ agent, allAgents, realTimeAgents, agents, realTimeforms }) =
                 <ModalBody>
                     {refresh > 0 && <div className='row'>
                         <div className='col-4'>
-                            <button className='btn btn-primary' onClick={handleEnable}>Enable</button>
+                            <button className='btn btn-primary' type='button' onClick={handleEnable}>Enable</button>
                         </div>
                         <div className='col-4'>
-                            <button className='btn btn-warning' onClick={handleDisable}>Disable</button>
+                            <button className='btn btn-warning' type='button' onClick={handleDisable}>Disable</button>
                         </div>
 
                         <div className='col-4'>
-                            <button className='btn btn-danger' onClick={HandleDeleteAgent}>Delete</button>
+                            <button className='btn btn-danger' type='button' onClick={HandleDeleteAgent}>Delete</button>
                         </div>
 
                         <div className='col-6'>
@@ -370,17 +478,23 @@ const AddAgent = ({ agent, allAgents, realTimeAgents, agents, realTimeforms }) =
                             }
                             <textarea rows="2" cols="3" type="text" className='form-control mt-2' name='pincodes' value={formdata['pincodes']} onChange={(e) => onHandleChange(e.currentTarget)} />
                         </div>
-                        <div className="col-12">
+                        <div className="col-8">
                             <label>Remarks</label>
                             <textarea rows="5" cols="3" type="text" className="form-control" name="remarks" onChange={(e) => onHandleChange(e.currentTarget)}>
                             </textarea>
+                        </div>
+                        <div className='col-4'>
+                            <div className='mt-4'>
+                                <Label >Branch</Label>
+                                <DropDownComp id='addAgent' other={true} onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={branches} />
+                            </div>
                         </div>
                     </div>}
                 </ModalBody>
                 <ModalFooter>
                     <Button color="primary" onClick={onSubmit}>Submit</Button>{' '}
-                    <Button color="info" onClick={downloadUrlfnc}>Get Download Url</Button>{' '}
                     <Button color="secondary" onClick={toggle}>Cancel</Button>
+                    {updateField ? formdata['name'] ? <Button color="warning" onClick={handleUpdateUser}>Update User</Button> : agent?.name && <Button color="warning" onClick={handleAddUser}>Add User</Button> : <Button color="warning" onClick={handleAddUser}>Add User</Button>}
                 </ModalFooter>
             </Modal>
         </div>

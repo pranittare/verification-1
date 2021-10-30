@@ -130,19 +130,19 @@ export default function VerificationObserverOffice({ verification, getData }) {
                 <div>
                     <label>Type of Office</label>
 
-                    <DropDownComp onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={verificationObserver} />
+                    <DropDownComp id='verificationObserverOffice' onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={verificationObserver} />
                 </div>
                 <div>
                     <label>Locality of Office</label>
-                    <DropDownComp onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={localityofOffice} />
+                    <DropDownComp id='verificationObserverOffice' onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={localityofOffice} />
                 </div>
                 <div>
                     <label>Construction Of Office</label>
-                    <DropDownComp onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={constructionOfOffice} />
+                    <DropDownComp id='verificationObserverOffice' onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={constructionOfOffice} />
                 </div>
                 <div>
                     <label>Ease of Locating</label>
-                    <DropDownComp onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={easeofLocating} />
+                    <DropDownComp id='verificationObserverOffice' onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={easeofLocating} />
                 </div>
                 <div>
                     <label>Exterior Condition</label>
@@ -154,7 +154,7 @@ export default function VerificationObserverOffice({ verification, getData }) {
                 </div>
                 <div>
                     <label>Business Activity Level</label>
-                    <DropDownComp onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={businessActivityLevel} />
+                    <DropDownComp id='verificationObserverOffice' onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={businessActivityLevel} />
                 </div>
                 <div>
                     <label>No. of Employees Working in Office/ Business or Seen in Premises</label>
@@ -162,7 +162,7 @@ export default function VerificationObserverOffice({ verification, getData }) {
                 </div>
                 <div>
                     <label>Within Municipal Limits</label>
-                    <DropDownComp onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={withinMunicipalLimits} />
+                    <DropDownComp id='verificationObserverOffice' onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={withinMunicipalLimits} />
                 </div>
                 <div>
                     <label>Distance from Neareast Railway Station</label>
@@ -170,7 +170,7 @@ export default function VerificationObserverOffice({ verification, getData }) {
                 </div>
                 <div>
                     <label>Picture Political Leader</label>
-                    <DropDownComp onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={picturePoliticalLeader} />
+                    <DropDownComp id='verificationObserverOffice' onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={picturePoliticalLeader} />
                 </div>
                 <div>
                     <label>Political Leader Details</label>
@@ -186,11 +186,11 @@ export default function VerificationObserverOffice({ verification, getData }) {
                 </div>
                 <div>
                     <label>Stock Level</label>
-                    <DropDownComp onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={stockLevel} />
+                    <DropDownComp id='verificationObserverOffice' onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={stockLevel} />
                 </div>
                 <div>
                     <label>Doc Verified</label>
-                    <DropDownComp onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={docVerified} />
+                    <DropDownComp id='verificationObserverOffice' onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={docVerified} />
                 </div>
                 <div>
                     <label>Document Details</label>

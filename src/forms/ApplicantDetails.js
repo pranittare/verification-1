@@ -138,7 +138,7 @@ export default function ApplicantDetails({ applicantDetails, getData, test }) {
                     }
                     <div >
                         <label>Type</label>
-                        <DropDownComp onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={type}  />
+                        <DropDownComp id='applicantDetail' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={type}  />
                         {/* <Dropdown isOpen={dropdownOpen} toggle={toggle}>
                                 <DropdownToggle caret className='text-capitalize'>
                                     {formdata.type ? formdata.type : 'Type'}

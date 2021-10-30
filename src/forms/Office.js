@@ -185,12 +185,12 @@ export default function Office() {
                 </div>
                 <div>
                     <label>Address Confirmed</label>
-                    <DropDownComp onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={addressConfirmed} />
+                    <DropDownComp id='office' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={addressConfirmed} />
                     
                 </div>
                 <div>
                     <label>Business Board Seen</label>
-                    <DropDownComp onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={businessBoardSeen} />
+                    <DropDownComp id='office' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={businessBoardSeen} />
                    
                 </div>
                 <div>
@@ -203,7 +203,7 @@ export default function Office() {
                 </div>
                 <div>
                     <label>Person Met</label>
-                    <DropDownComp onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={personMet} />
+                    <DropDownComp id='office' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={personMet} />
                    
                 </div>
                 <div>
@@ -212,7 +212,7 @@ export default function Office() {
                 </div>
                 <div>
                     <label>Person Met Designation</label>
-                    <DropDownComp onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={personMetNameDesignation} />
+                    <DropDownComp id='office' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={personMetNameDesignation} />
                     
                 </div>
                 <div>
@@ -225,7 +225,7 @@ export default function Office() {
                 </div>
                 <div>
                     <label>Less than 1 yr at Current Address</label>
-                    <DropDownComp onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={lessThanYrAtCurrentAddress} />
+                    <DropDownComp id='office' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={lessThanYrAtCurrentAddress} />
                     
                 </div>
                 <div>
@@ -234,7 +234,7 @@ export default function Office() {
                 </div>
                 <div>
                     <label>Nature of Business</label>
-                    <DropDownComp onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={natureofBusines} />
+                    <DropDownComp id='office' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={natureofBusines} />
                     
                 </div>
                 <div>
@@ -243,7 +243,7 @@ export default function Office() {
                 </div>
                 <div>
                     <label>Office Ownership</label>
-                    <DropDownComp onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={officeOwnership} />
+                    <DropDownComp id='office' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={officeOwnership} />
                     
                 </div>
                 <div>
@@ -264,7 +264,7 @@ export default function Office() {
                 </div>
                 <div>
                     <label>Type of Entity</label>
-                    <DropDownComp onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={typeofEntity} />
+                    <DropDownComp id='office' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={typeofEntity} />
                    
                 </div>
                 <div className='d-none'>
