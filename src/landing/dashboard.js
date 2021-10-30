@@ -1,11 +1,11 @@
-import React,{useEffect} from 'react'
-import {connect} from 'react-redux'
+import React, { useEffect } from 'react'
+import { connect } from 'react-redux'
 
-const Dashboard=(props)=> {
+const Dashboard = (props) => {
 
-    useEffect(()=>{
-        console.log('dashboard redux',props)
-      },[])
+    useEffect(() => {
+        console.log('dashboard redux', props)
+    }, [])
 
     return (
         <div className='row'>
@@ -25,15 +25,15 @@ const Dashboard=(props)=> {
                 TAt
             </div>
 
-            <button value='update store' onClick={()=> props.dispatch({type:'DATA', data:'XYZ'})}>update redux</button>
-            
+            <button value='update store' onClick={() => props.dispatch({ type: 'DATA', data: 'XYZ' })}>update redux</button>
+
         </div>
     )
 }
 
-const mapStateToProps=(state)=>{
+const mapStateToProps = (state) => {
     return {
-      userData: state.data
+        userData: state.data
     }
-  }
-  export default connect(mapStateToProps)(Dashboard);
+}
+export default connect(mapStateToProps)(Dashboard);

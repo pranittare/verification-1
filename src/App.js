@@ -37,7 +37,7 @@ const realtime = getDatabase(app);
 
 function App(props) {
   const auth = getAuth();
-  console.log('auth', auth)
+  // console.log('auth', auth)
   const [isUser, setIsUser] = useState(false)
   const realtimedb = (update) => {
     const getDetails = ref(realtime, `${update}/`);
@@ -54,8 +54,11 @@ function App(props) {
     const getDetails = collection(db, `${update}`);
     const snapshot = await getDocs(getDetails);
     snapshot.forEach(snap => {
-      value.push(snap.data())
+      let data = snap.data()
+      data.key = snap.id
+      value.push(data)
     })
+    console.log('snap', value);
     // console.log('val', value)
     let val = update.toString().toUpperCase()
     props.dispatch({ type: `F${val}`, data: value })
@@ -72,7 +75,7 @@ function App(props) {
   }, [])
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
-      console.log('user', user)
+      // console.log('user', user)
       if (user) {
         setIsUser(true)
       } else {
@@ -88,7 +91,7 @@ function App(props) {
         <Switch>
 
           <>
-            {console.log('user', auth?.currentUser?.email)}
+            {/* {console.log('user', auth?.currentUser?.email)} */}
             {auth?.currentUser?.email ? <> 
             
             <Route path='/' render={() => <Dashboard />} exact />

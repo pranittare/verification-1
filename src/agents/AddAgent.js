@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { Input, Button, Modal, ModalHeader, ModalBody, ModalFooter, Label } from 'reactstrap';
 import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
-import { getDatabase, set, update, remove } from "firebase/database";
-import { doc, deleteDoc, setDoc } from "firebase/firestore";
+import { getDatabase, set, update, remove, ref as rtRef } from "firebase/database";
+import { doc, deleteDoc, addDoc, updateDoc, getFirestore } from "firebase/firestore";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import moment from 'moment';
@@ -20,6 +20,7 @@ const AddAgent = ({ agent, allAgents, realTimeAgents, agents, realTimeforms }) =
     const [rtF, setRtf] = useState([])
     const [updateField, setUpdateField] = useState(true)
     const db = getDatabase();
+    const fdb = getFirestore();
     let branches = [
         { name: 'branch', value: 'branch-1', label: 'Branch-1' },
         { name: 'branch', value: 'nashik', label: 'Nashik' },
@@ -138,7 +139,7 @@ const AddAgent = ({ agent, allAgents, realTimeAgents, agents, realTimeforms }) =
                 setDownloadUrl(url)
             })
             .catch((error) => {
-                alert('Nothing found')
+                alert('Kyc Document not found')
                 // Handle any errors
             });
     }
@@ -238,8 +239,10 @@ const AddAgent = ({ agent, allAgents, realTimeAgents, agents, realTimeforms }) =
 
 
     }
-    const commonAddUpdate = () => {
-        let { name, password, userId, pincodes, branches, pincode } = formdata
+    const commonAddUpdate = (db) => {
+        let { name, password, userId, pincodes, branch, pincode,
+            address, location, mobile1, mobile2, kycUpdateDate, kycreneweddate, remarks
+        } = formdata
         let secondary = pincodes?.split(',')
         let secondaryPincodes = []
         for (let index = 0; index < secondary?.length; index++) {
@@ -248,53 +251,110 @@ const AddAgent = ({ agent, allAgents, realTimeAgents, agents, realTimeforms }) =
                 secondaryPincodes.push({ pincodes: element })
             }
         }
-
-
-        let data = {
-            userId: userId,
-            password: password,
-            pincode: pincode,
-            name: name,
-            created: new Date().toDateString(),
-            lastUpdated: '',
-            branch: branches,
-            secondary: secondaryPincodes
+        // let data = {
+        //     userId: userId,
+        //     password: password,
+        //     pincode: pincode,
+        //     name: name,
+        //     created: new Date().toDateString(),
+        //     lastUpdated: '',
+        //     branch: branch,
+        //     secondary: secondaryPincodes
+        // }
+        // return data
+        // if (add) {
+        if (db == 'rt') {
+            let data = {
+                userId: userId,
+                password: password,
+                pincode: pincode,
+                name: name,
+                created: new Date().toDateString(),
+                lastUpdated: '',
+                branch: branch,
+                secondary: secondaryPincodes
+            }
+            return data
+        } else if (db == 'fs') {
+            let data = {
+                userId: userId,
+                password: password,
+                pincode: pincode,
+                name: name,
+                created: new Date().toDateString(),
+                lastUpdated: '',
+                branch: branch,
+                secondaryPincodes: secondaryPincodes,
+                address: address,
+                location: location,
+                mobile1: mobile1,
+                mobile2: mobile2,
+                kycUpdateDate: kycUpdateDate,
+                kycreneweddate: kycreneweddate,
+                remarks: remarks,
+            }
+            return data
         }
-        return data
+        // } else {
+        //     let data = {
+        //         userId: userId,
+        //         password: password,
+        //         pincode: pincode,
+        //         name: name,
+        //         created: new Date().toDateString(),
+        //         lastUpdated: '',
+        //         branch: branch,
+        //         secondaryPincodes: secondaryPincodes,
+        //         address: address,
+        //         location: location,
+        //         mobile1: mobile1,
+        //         mobile2: mobile2,
+        //         kycUpdateDate: kycUpdateDate,
+        //         kycreneweddate: kycreneweddate,
+        //         remarks: remarks,
+        //     }
+        //     return data
+
+        // }
         // console.log('data', data, rtA)
     }
     const handleAddUser = () => {
-        console.log('add', commonAddUpdate())
+        console.log('add', commonAddUpdate('fs'))
         // Add logic only for Firestore DB
 
-        await setDoc(doc(db, `agents/`), commonAddUpdate())
-            .then(res => {
-                alert('Total user update Successfull')
-            })
-            .catch(err => {
-                alert('Total user update Error')
-                console.log('Total user', err)
-            })
+        // addDoc(doc(db, `agents/`), commonAddUpdate())
+        //     .then(res => {
+        //         alert('Total user update Successfull')
+        //     })
+        //     .catch(err => {
+        //         alert('Total user update Error')
+        //         console.log('Total user', err)
+        //     })
 
 
     }
     const handleUpdateUser = () => {
-        console.log('update', commonAddUpdate())
-        let agentkey = ''
+        let agentkeyRt = ''
         let agent1 = formdata
-        let realAgents = rtA
+        let realAgents = rtA;
         for (let index = 0; index < realAgents.length; index++) {
             const agents = realAgents[index];
-            if (agent1.userId === agents.userId) {
-                agentkey = agents.key
+            if (agent1.userId?.toString().toLowerCase() == agents.userId?.toString().toLowerCase()) {
+                agentkeyRt = agents.key
             }
         }
+
+
+        // console.log('update', commonAddUpdate(), agentkeyRt)
         // Add update logic only for Firestore DB
-        await updateDoc(doc(db, `agents/${agentkey}`), commonAddUpdate())
+        const totalRef = doc(fdb, `agents`, `${agent.key}/`)
+        updateDoc(totalRef, commonAddUpdate('fs'))
             .then(res => {
+                // if (res) {
+                console.log('res', res)
                 alert('Total user update Successfull')
                 // Add update logic only for Realtime DB
-                update(ref(db, `agents/${agentkey}`), commonAddUpdate())
+                update(rtRef(db, `agents/${agentkeyRt}`), commonAddUpdate('rt'))
                     .then(res => {
                         if (res) {
                             alert('Update Successfull')
@@ -304,10 +364,14 @@ const AddAgent = ({ agent, allAgents, realTimeAgents, agents, realTimeforms }) =
                         alert('Error Occured retry')
                         console.log('total users real time update error', err)
                     })
+                // }
             })
             .catch(err => {
-                alert('Total user update Error')
-                console.log('Total user', err)
+                if (err) {
+                    alert('Total user update Error')
+                    console.log('Total user', err)
+
+                }
             })
 
 
@@ -506,7 +570,6 @@ const mapStateToProps = (state) => {
         realTimeAgents: state.agents,
         agents: state.fagents,
         realTimeforms: state.forms,
-
     }
 }
 export default connect(mapStateToProps)(AddAgent)

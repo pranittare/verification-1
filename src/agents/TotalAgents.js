@@ -165,6 +165,7 @@ const TotalAgents = (props) => {
                         </tr>
                     </thead>
                     <tbody>
+                        {console.log('total',allData && allData)}
                         {reset > 0 && allData && allData.length > 0 && allData.map((item, index) => {
                             return <tr key={`${item.userId}-${item.agentCode}-${index}`}>
                                 <th>{index + 1}</th>
