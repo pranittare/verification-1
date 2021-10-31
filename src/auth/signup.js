@@ -2,14 +2,14 @@ import React, { useState, useEffect } from 'react'
 import { InputGroup, Input, Button, Label, FormGroup } from 'reactstrap';
 import DropDownComp from '../components/DropDownComp';
 import { useHistory } from 'react-router-dom'
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { connect } from 'react-redux';
+import { createUser } from '../utils/createUser'
+import { getDatabase, ref, set } from "firebase/database";
 
 function SignUp({ agentsTotal, agentsActive, usersTotal }) {
-
+    const db = getDatabase();
     let history = useHistory()
     const [dropdownOpen, setOpen] = useState(false);
-    const auth = getAuth();
     const [refresh, setRefresh] = useState(0)
     const [selector, setSelector] = useState('agent')
     const [formdata, setFormdata] = useState({
@@ -103,17 +103,32 @@ function SignUp({ agentsTotal, agentsActive, usersTotal }) {
             //     // Signed in 
             //     // Add user info to database everything
             //     const user = userCredential.user;
-            let data = {
-                userId: userId,
-                password: userPassword,
-                created: new Date().toDateString(),
-                name: name,
-                lastUpdated: '',
-                level: level,
-                branch: branches,
-                // branch: this.form.value.branch
-            }
-            console.log('data', data)
+            createUser(userId, userPassword).then(res => {
+                alert(`User created ${res.user.email}`)
+                let data = {
+                    userId: userId,
+                    password: userPassword,
+                    created: new Date().toDateString(),
+                    name: name,
+                    lastUpdated: '',
+                    level: level,
+                    branch: branches,
+                    // branch: this.form.value.branch
+                }
+
+                set(ref(db, 'users/'), data).then(res => {
+                    alert('Real time Database Updated')
+                }).catch(err => {
+                    alert('Something went Wrong check log and database')
+                    console.log('err create user', err)
+                })
+            }).catch(err => {
+                alert('User registration Error')
+                console.log('user Registration', err)
+            })
+
+
+            // console.log('data', data)
 
             //     // ...
             // })
@@ -290,7 +305,7 @@ function SignUp({ agentsTotal, agentsActive, usersTotal }) {
                     <InputGroup className="mb-3">
                         <Input
                             placeholder="Password"
-                           type='password'
+                            type='password'
                             value={formdata.userPassword}
                             autoComplete='off'
                             name='userPassword'

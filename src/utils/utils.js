@@ -19,7 +19,7 @@ export const combinedData = (agents, forms) => {
     for (let index = 0; index < objkeys.length; index++) {
         const element = objkeys[index];
         let agent = agents[element]
-        // console.log('agent', agent)
+        console.log('agent', agent)
         let claimed = 0
         let submitted = 0
         for (let j = 0; j < formarray.length; j++) {
@@ -34,9 +34,11 @@ export const combinedData = (agents, forms) => {
 
             }
         }
-        agent.claimed = claimed
-        agent.submitted = submitted
-        allCombined.push(agent)
+        if (agent.userId) {
+            agent.claimed = claimed
+            agent.submitted = submitted
+            allCombined.push(agent)
+        }
 
     }
     console.log('fnc started', allCombined)

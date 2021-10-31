@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Input, Button, Modal, ModalHeader, ModalBody, ModalFooter, Label } from 'reactstrap';
 import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 import { getDatabase, set, update, remove, ref as rtRef } from "firebase/database";
-import { doc, deleteDoc, addDoc, updateDoc, getFirestore } from "firebase/firestore";
+import { doc, deleteDoc, addDoc, updateDoc, getFirestore, Timestamp } from "firebase/firestore";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import moment from 'moment';
@@ -243,6 +243,7 @@ const AddAgent = ({ agent, allAgents, realTimeAgents, agents, realTimeforms }) =
         let { name, password, userId, pincodes, branch, pincode,
             address, location, mobile1, mobile2, kycUpdateDate, kycreneweddate, remarks
         } = formdata
+        console.log('formdata', kycUpdateDate, kycreneweddate);
         let secondary = pincodes?.split(',')
         let secondaryPincodes = []
         for (let index = 0; index < secondary?.length; index++) {
@@ -251,18 +252,6 @@ const AddAgent = ({ agent, allAgents, realTimeAgents, agents, realTimeforms }) =
                 secondaryPincodes.push({ pincodes: element })
             }
         }
-        // let data = {
-        //     userId: userId,
-        //     password: password,
-        //     pincode: pincode,
-        //     name: name,
-        //     created: new Date().toDateString(),
-        //     lastUpdated: '',
-        //     branch: branch,
-        //     secondary: secondaryPincodes
-        // }
-        // return data
-        // if (add) {
         if (db == 'rt') {
             let data = {
                 userId: userId,
@@ -281,7 +270,7 @@ const AddAgent = ({ agent, allAgents, realTimeAgents, agents, realTimeforms }) =
                 password: password,
                 pincode: pincode,
                 name: name,
-                created: new Date().toDateString(),
+                // created: new Date().toDateString(),
                 lastUpdated: '',
                 branch: branch,
                 secondaryPincodes: secondaryPincodes,
@@ -289,51 +278,27 @@ const AddAgent = ({ agent, allAgents, realTimeAgents, agents, realTimeforms }) =
                 location: location,
                 mobile1: mobile1,
                 mobile2: mobile2,
-                kycUpdateDate: kycUpdateDate,
-                kycreneweddate: kycreneweddate,
+                kycUpdateDate: new Date(kycUpdateDate.seconds * 1000),
+                kycreneweddate: new Date(kycreneweddate.seconds * 1000),
                 remarks: remarks,
             }
             return data
         }
-        // } else {
-        //     let data = {
-        //         userId: userId,
-        //         password: password,
-        //         pincode: pincode,
-        //         name: name,
-        //         created: new Date().toDateString(),
-        //         lastUpdated: '',
-        //         branch: branch,
-        //         secondaryPincodes: secondaryPincodes,
-        //         address: address,
-        //         location: location,
-        //         mobile1: mobile1,
-        //         mobile2: mobile2,
-        //         kycUpdateDate: kycUpdateDate,
-        //         kycreneweddate: kycreneweddate,
-        //         remarks: remarks,
-        //     }
-        //     return data
-
-        // }
-        // console.log('data', data, rtA)
     }
     const handleAddUser = () => {
         console.log('add', commonAddUpdate('fs'))
         // Add logic only for Firestore DB
 
-        // addDoc(doc(db, `agents/`), commonAddUpdate())
-        //     .then(res => {
-        //         alert('Total user update Successfull')
-        //     })
-        //     .catch(err => {
-        //         alert('Total user update Error')
-        //         console.log('Total user', err)
-        //     })
-
-
+        addDoc(doc(fdb, `agents`), commonAddUpdate())
+            .then(res => {
+                alert('Total user update Successfull')
+            })
+            .catch(err => {
+                alert('Total user update Error')
+                console.log('Total user', err)
+            })
     }
-    const handleUpdateUser = () => {
+    const realTimeAgentKey = () => {
         let agentkeyRt = ''
         let agent1 = formdata
         let realAgents = rtA;
@@ -343,28 +308,26 @@ const AddAgent = ({ agent, allAgents, realTimeAgents, agents, realTimeforms }) =
                 agentkeyRt = agents.key
             }
         }
+        return agentkeyRt
 
-
-        // console.log('update', commonAddUpdate(), agentkeyRt)
+    }
+    const handleUpdateUser = () => {
+        //    realTimeAgentKey()
+        console.log('update', commonAddUpdate('fs'), realTimeAgentKey())
         // Add update logic only for Firestore DB
         const totalRef = doc(fdb, `agents`, `${agent.key}/`)
         updateDoc(totalRef, commonAddUpdate('fs'))
             .then(res => {
-                // if (res) {
-                console.log('res', res)
                 alert('Total user update Successfull')
                 // Add update logic only for Realtime DB
-                update(rtRef(db, `agents/${agentkeyRt}`), commonAddUpdate('rt'))
+                update(rtRef(db, `agents/${realTimeAgentKey()}`), commonAddUpdate('rt'))
                     .then(res => {
-                        if (res) {
-                            alert('Update Successfull')
-                        }
+                        alert('Update Successfull')
                     })
                     .catch(err => {
                         alert('Error Occured retry')
                         console.log('total users real time update error', err)
                     })
-                // }
             })
             .catch(err => {
                 if (err) {
@@ -373,8 +336,6 @@ const AddAgent = ({ agent, allAgents, realTimeAgents, agents, realTimeforms }) =
 
                 }
             })
-
-
     }
     useEffect(() => {
         if (realTimeAgents) {
@@ -383,14 +344,13 @@ const AddAgent = ({ agent, allAgents, realTimeAgents, agents, realTimeforms }) =
             for (let index = 0; index < objkeys.length; index++) {
                 const element = objkeys[index];
                 let agent = realTimeAgents[element]
-                agent.key = element
+                console.log('agent', agent)
+                if (agent.branch) {
+                    agent.key = element
+                }
                 temp.push(agent)
-                // console.log('agent', agent)
-
             }
             setRta(temp)
-
-            // console.log('props', realTimeAgents, realTimeforms)
         }
     }, [realTimeAgents])
     useEffect(() => {
@@ -405,14 +365,10 @@ const AddAgent = ({ agent, allAgents, realTimeAgents, agents, realTimeforms }) =
                 let formkey = Object.keys(forms)
                 for (let index = 0; index < formkey.length; index++) {
                     const element = formkey[index];
-
                     // console.log(forms[element]);
                     forms[element].key = element
                     forms[element].pincode = element1
                 }
-                // if (formkey) {
-
-                // }
                 temp.push(forms)
             }
             // console.log('forms', temp)
@@ -423,18 +379,18 @@ const AddAgent = ({ agent, allAgents, realTimeAgents, agents, realTimeforms }) =
     useEffect(() => {
         if (agent && modal) {
             let form = formdata
-            console.log('agent', agent);
+            // console.log('agent', agent);
             for (const property in form) {
 
                 if (agent[property]) {
                     form[property] = agent[property]
                 }
-                if (property === 'kycUpdateDate') {
-                    form[property] = agent[property].seconds
-                }
-                if (property === 'kycreneweddate') {
-                    form[property] = agent[property].seconds
-                }
+                // if (property === 'kycUpdateDate') {
+                //     form[property] = agent[property].seconds
+                // }
+                // if (property === 'kycreneweddate') {
+                //     form[property] = agent[property].seconds
+                // }
             }
             if (agent.secondaryPincodes && agent.secondaryPincodes.length > 0) {
                 for (let index = 0; index < agent.secondaryPincodes.length; index++) {
@@ -498,6 +454,7 @@ const AddAgent = ({ agent, allAgents, realTimeAgents, agents, realTimeforms }) =
                             <div >
                                 <label>User Id</label>
                                 <Input type="text" name='userId' value={formdata['userId']} onChange={(e) => onHandleChange(e.currentTarget)} />
+                                <label>*Changing userId requires manual changes the realtime db</label>
                             </div>
                         </div>
                         <div className='col-6'>
@@ -513,14 +470,22 @@ const AddAgent = ({ agent, allAgents, realTimeAgents, agents, realTimeforms }) =
                                 <label>KYC Updated Date</label>
                                 {agent && <>  <button className='btn btn-link' onClick={() => handleKyc(1)}>Edit</button>
                                     <br /> </>}
-                                {formdata['kycUpdateDate'] ? moment(formdata['kycUpdateDate'] * 1000).format('ll') : <DatePicker className='form-control' selected={startDate} onChange={(date) => setStartDate(date)} />}
+                                {/* {console.log(new Date(formdata['kycUpdateDate']*1000))} */}
+                                {formdata['kycUpdateDate'] ? new Date(formdata['kycUpdateDate'].seconds * 1000).toDateString() : <DatePicker className='form-control' selected={startDate} onChange={(date) => {
+                                    setFormdata(state => { return { ...formdata, kycUpdateDate: date } })
+                                    setStartDate(date)
+                                    // console.log('date', date)
+                                }} />}
                                 {/* <Input type="text" name='kycUpdateDate' value={formdata['kycUpdateDate']} onChange={(e) => onHandleChange(e.currentTarget)} /> */}
                             </div>
                             <div >
                                 <label>KYC Renewal date</label>
                                 {agent && <> <button className='btn btn-link' onClick={() => handleKyc(2)}>Edit</button>
                                     <br /> </>}
-                                {formdata['kycreneweddate'] ? moment(formdata['kycreneweddate'] * 1000).format('ll') : <DatePicker className='form-control' selected={endDate} onChange={(date) => setEndDate(date)} />}
+                                {formdata['kycreneweddate'] ? new Date(formdata['kycreneweddate'].seconds * 1000).toDateString() : <DatePicker className='form-control' selected={endDate} onChange={(date) => {
+                                    setFormdata(state => { return { ...formdata, kycreneweddate: date } })
+                                    setEndDate(date)
+                                }} />}
                                 {/* <Input type="text" name='kycreneweddate' value={formdata['kycreneweddate']} onChange={(e) => onHandleChange(e.currentTarget)} /> */}
                             </div>
                             <div >
@@ -531,6 +496,7 @@ const AddAgent = ({ agent, allAgents, realTimeAgents, agents, realTimeforms }) =
                             <div >
                                 <label>Password</label>
                                 <Input type="text" name='password' value={formdata['password']} onChange={(e) => onHandleChange(e.currentTarget)} />
+                                <label>{realTimeAgentKey()}</label>
                             </div>
                         </div>
                         <div className='col-12'>

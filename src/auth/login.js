@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { InputGroup, Input, Label, Button, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap'
 import { useHistory } from 'react-router-dom'
 import { connect } from 'react-redux';
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { signInUser } from '../utils/signInUser';
 
 function Login(props) {
 
@@ -16,29 +16,24 @@ function Login(props) {
   const [password, setPassword] = useState('')
   const [branch, setBranch] = useState('branch-1')
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const auth = getAuth();
 
   const toggle = () => setDropdownOpen(prevState => !prevState);
 
   const onHandleSubmit = () => {
-    console.log(userId, password, branch)
-    signInWithEmailAndPassword(auth, userId, password)
-      .then((userCredential) => {
-        // Signed in 
-        const user = userCredential.user;
-        // props.dispatch({ type: 'AUTH', data: user })
-        setUserId('')
-        setPassword('')
+    signInUser(userId, password).then(res => {
+      // console.log(res.user.email)
+      props.dispatch({type: 'BRANCH', data: branch})
+      setUserId('')
+      setPassword('')
+      setTimeout(()=> {
         history.push('/')
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        alert(errorMessage)
-        // console.log('err', errorCode, errorMessage)
-      });
 
-
+      },200)
+    }).catch(error => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      alert(errorMessage)
+    })
   }
   let branches = [
     { name: 'branches', value: 'branch-1', label: 'Branch-1' },

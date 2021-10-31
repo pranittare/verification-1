@@ -108,7 +108,7 @@ const ActiveAgents = (props) => {
                 }, {})
               
               var duplicates = Object.keys(uniq).filter((a) => uniq[a] > 1)
-              alert(`Duplicate Entries Found: ${duplicates.join(', ')}`)
+              duplicates.length > 0 && alert(`Duplicate Entries Found: ${duplicates.join(', ')}`)
               console.log('duplicates',duplicates)
             }
         },5000)

@@ -6,9 +6,10 @@ import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { createStore } from 'redux'
 import { Provider } from 'react-redux'
+import { composeWithDevTools } from "redux-devtools-extension";
 
 const initialState = {
-  data: 'ABC',
+  branch: 'branch-1',
   user: 'user profile',
   agents: [],
   forms: [],
@@ -22,10 +23,10 @@ const initialState = {
 
 function reducer(state = initialState, action) {
   switch (action.type) {
-    case 'DATA':
+    case 'BRANCH':
       return {
         ...state,
-        data: action.data
+        branch: action.data
       }
     case 'USER':
       return {
@@ -77,7 +78,12 @@ function reducer(state = initialState, action) {
   }
 }
 
-export const store = createStore(reducer)
+const composeEnhancers = composeWithDevTools({
+  // actionCreators,
+  trace: true,
+  traceLimit: 25,
+});
+export const store = createStore(reducer, composeEnhancers());
 
 ReactDOM.render(
   <React.StrictMode>
