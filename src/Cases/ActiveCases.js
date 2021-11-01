@@ -19,7 +19,7 @@ const ActiveCases = (props) => {
             for (let index = 0; index < newform.length; index++) {
                 const element2 = newform[index];
                 let single = form[element2]
-                if (!single.submitted) {
+                if (single.appid && !single.submitted && single.branch === props.branch) {
                     formarray.push(single)
                 }
                 // console.log('form', single)
@@ -68,6 +68,9 @@ const ActiveCases = (props) => {
         setReset(Math.random())
 
     }
+    const handleOpenForm = (form) => {
+        console.log('form', form)
+    }
     const getExcel = () => {
         let table = document.getElementById('test-table-xls-button')
         table.click()
@@ -77,34 +80,34 @@ const ActiveCases = (props) => {
         // console
     }, [props.forms])
     useEffect(() => {
-        setTimeout(()=> {
+        setTimeout(() => {
             if (allData && allData.length > 0) {
                 var uniq = allData
-                .map((name) => {
-                    if (name.office.applicantDetails.customerName) {
-                        return {
-                            count: 1,
-                            name: name.office.applicantDetails.customerName
-                          }
-                    } else {
-                        return {
-                            count: 1,
-                            name: name.resident.applicantDetails.customerName
-                          }
-                    }
-               
-                })
-                .reduce((a, b) => {
-                  a[b.name] = (a[b.name] || 0) + b.count
-                  return a
-                }, {})
-              
-              var duplicates = Object.keys(uniq).filter((a) => uniq[a] > 1)
-              alert(`Duplicate Entries Found: ${duplicates.join(', ')}`)
-              console.log('duplicates',duplicates)
+                    .map((name) => {
+                        if (name.office?.applicantDetails.customerName) {
+                            return {
+                                count: 1,
+                                name: name?.office?.applicantDetails?.customerName
+                            }
+                        } else {
+                            return {
+                                count: 1,
+                                name: name?.resident?.applicantDetails?.customerName
+                            }
+                        }
+
+                    })
+                    .reduce((a, b) => {
+                        a[b.name] = (a[b.name] || 0) + b.count
+                        return a
+                    }, {})
+
+                var duplicates = Object.keys(uniq).filter((a) => uniq[a] > 1)
+                alert(`Duplicate Entries Found: ${duplicates.join(', ')}`)
+                console.log('duplicates', duplicates)
             }
-        },5000)
-    },[])
+        }, 5000)
+    }, [])
     return (
         <div>
             <div className='d-flex justify-content-around mb-2 mt-2'>
@@ -135,56 +138,54 @@ const ActiveCases = (props) => {
                     </thead>
                     <tbody>
                         {reset > 0 && allData && allData.length > 0 && allData.map((item, index) => {
-                            if (item.appid && item.branch === props.branch) {
-                                return <tr key={item.tat}>
-                                    <td>
-                                        {item.appid}
-                                    </td>
-                                    <td>
-                                        {moment(item.tat).format('ll')}
+                            return <tr key={item.tat}>
+                                <td onClick={() => handleOpenForm(item)}>
+                                    {item.appid}
+                                </td>
+                                <td>
+                                    {moment(item.tat).format('ll')}
 
-                                    </td>
-                                    <td>
-                                        {moment(item.tat).format('LT')}
+                                </td>
+                                <td>
+                                    {moment(item.tat).format('LT')}
 
 
-                                    </td>
-                                    <td>
-                                        {
-                                            item?.office ?
-                                                item.office?.applicantDetails?.customerName
-                                                :
-                                                item.resident?.applicantDetails?.customerName
-                                        }
-                                    </td>
-                                    <td>
-                                        {moment(item.tat).fromNow()}
+                                </td>
+                                <td>
+                                    {
+                                        item?.office ?
+                                            item.office?.applicantDetails?.customerName
+                                            :
+                                            item.resident?.applicantDetails?.customerName
+                                    }
+                                </td>
+                                <td>
+                                    {moment(item.tat).fromNow()}
 
-                                    </td>
-                                    <td>
-                                        {
-                                            item?.office ?
-                                                item.office?.applicantDetails?.bankNBFCname.clientName
-                                                :
-                                                item.resident?.applicantDetails?.bankNBFCname.clientName
-                                        }
-                                    </td>
-                                    <td>
-                                        {item.claimed ? 'Claimed' : item.assigned ? 'Assigned' : ''}
-                                        {/* Assigned {item?.assigned ? 'true' : 'false'}
+                                </td>
+                                <td>
+                                    {
+                                        item?.office ?
+                                            item.office?.applicantDetails?.bankNBFCname.clientName
+                                            :
+                                            item.resident?.applicantDetails?.bankNBFCname.clientName
+                                    }
+                                </td>
+                                <td>
+                                    {item.claimed ? 'Claimed' : item.assigned ? 'Assigned' : ''}
+                                    {/* Assigned {item?.assigned ? 'true' : 'false'}
                                     Claimed {item?.claimed ? 'true' : 'false'} */}
-                                    </td>
-                                    <td>
-                                        {
-                                            item?.office ?
-                                                item.office?.applicantDetails?.remarks
-                                                :
-                                                item.resident?.applicantDetails?.remarks
-                                        }
+                                </td>
+                                <td>
+                                    {
+                                        item?.office ?
+                                            item.office?.applicantDetails?.remarks
+                                            :
+                                            item.resident?.applicantDetails?.remarks
+                                    }
 
-                                    </td>
-                                </tr>
-                            }
+                                </td>
+                            </tr>
                         })}
 
                     </tbody>
@@ -204,53 +205,51 @@ const ActiveCases = (props) => {
                     </thead>
                     <tbody>
                         {reset > 0 && allData && allData.length > 0 && allData.map((item, index) => {
-                            if (item.appid && item.branch === props.branch) {
-                                return <tr key={item.key}>
-                                    <td>
-                                        {item.appid}
-                                    </td>
-                                    <td>
-                                        {moment(item.tat).format('ll')}
+                            return <tr key={item.key}>
+                                <td>
+                                    {item.appid}
+                                </td>
+                                <td>
+                                    {moment(item.tat).format('ll')}
 
-                                    </td>
-                                    <td>
-                                        {moment(item.tat).format('LT')}
+                                </td>
+                                <td>
+                                    {moment(item.tat).format('LT')}
 
-                                    </td>
-                                    <td>
-                                        {
-                                            item?.office ?
-                                                item.office?.applicantDetails?.customerName
-                                                :
-                                                item.resident?.applicantDetails?.customerName
-                                        }
-                                    </td>
-                                    <td>
-                                        {moment(item.tat).fromNow()}
-                                    </td>
-                                    <td>
-                                        {
-                                            item?.office ?
-                                                item.office?.applicantDetails?.bankNBFCname.clientName
-                                                :
-                                                item.resident?.applicantDetails?.bankNBFCname.clientName
-                                        }
-                                    </td>
-                                    <td>
-                                        {item.claimed ? 'Claimed' : item.assigned ? 'Assigned' : ''}
+                                </td>
+                                <td>
+                                    {
+                                        item?.office ?
+                                            item.office?.applicantDetails?.customerName
+                                            :
+                                            item.resident?.applicantDetails?.customerName
+                                    }
+                                </td>
+                                <td>
+                                    {moment(item.tat).fromNow()}
+                                </td>
+                                <td>
+                                    {
+                                        item?.office ?
+                                            item.office?.applicantDetails?.bankNBFCname.clientName
+                                            :
+                                            item.resident?.applicantDetails?.bankNBFCname.clientName
+                                    }
+                                </td>
+                                <td>
+                                    {item.claimed ? 'Claimed' : item.assigned ? 'Assigned' : ''}
 
-                                    </td>
-                                    <td>
-                                        {
-                                            item?.office ?
-                                                item.office?.applicantDetails?.remarks
-                                                :
-                                                item.resident?.applicantDetails?.remarks
-                                        }
+                                </td>
+                                <td>
+                                    {
+                                        item?.office ?
+                                            item.office?.applicantDetails?.remarks
+                                            :
+                                            item.resident?.applicantDetails?.remarks
+                                    }
 
-                                    </td>
-                                </tr>
-                            }
+                                </td>
+                            </tr>
                         })}
 
                     </tbody>

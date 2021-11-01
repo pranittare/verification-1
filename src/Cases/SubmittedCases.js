@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react'
 import { connect } from 'react-redux';
 import { Input } from 'reactstrap'
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
+import { useHistory } from 'react-router-dom'
 import moment from 'moment';
 
 const SubmittedCases = (props) => {
+    let history = useHistory()
     const [allData, setAllData] = useState([])
     const [reset, setReset] = useState(0);
     const formatedDate = new Date().toDateString()
@@ -15,10 +17,12 @@ const SubmittedCases = (props) => {
             const element1 = formKeys[j];
             let form = forms[element1]
             let newform = Object.keys(form)
+            // console.log('keys', newform)
             for (let index = 0; index < newform.length; index++) {
                 const element2 = newform[index];
                 let single = form[element2]
-                if (single.selected && single.submitted) {
+                single.key = element2
+                if (single.submitted && single.branch === props.branch) {
                     formarray.push(single)
                 }
                 // console.log('form', single)
@@ -72,40 +76,51 @@ const SubmittedCases = (props) => {
         let table = document.getElementById('test-table-xls-button')
         table.click()
     }
-
+    const handleViewForm = (item) => {
+        console.log('handleViewForm', item)
+        let pincode = ''
+        if (item?.office) {
+            pincode = item?.office?.applicantDetails?.pincode
+        } else if(item?.resident) {
+            pincode = item?.resident?.applicantDetails?.pincode
+        } else {
+            alert('Form Error, Check log for handleViewForm')
+        }
+        history.push(`office/${pincode}/${item.key}`)
+    }
     useEffect(() => {
         formData(props.forms)
-        // console
+        // console.log
     }, [props.forms])
     useEffect(() => {
-        setTimeout(()=> {
+        setTimeout(() => {
             if (allData && allData.length > 0) {
                 var uniq = allData
-                .map((name) => {
-                    if (name.office.applicantDetails.customerName) {
-                        return {
-                            count: 1,
-                            name: name.office.applicantDetails.customerName
-                          }
-                    } else {
-                        return {
-                            count: 1,
-                            name: name.resident.applicantDetails.customerName
-                          }
-                    }
-               
-                })
-                .reduce((a, b) => {
-                  a[b.name] = (a[b.name] || 0) + b.count
-                  return a
-                }, {})
-              
-              var duplicates = Object.keys(uniq).filter((a) => uniq[a] > 1)
-              alert(`Duplicate Entries Found: ${duplicates.join(', ')}`)
-              console.log('duplicates',duplicates)
+                    .map((name) => {
+                        if (name.office.applicantDetails.customerName) {
+                            return {
+                                count: 1,
+                                name: name.office.applicantDetails.customerName
+                            }
+                        } else {
+                            return {
+                                count: 1,
+                                name: name.resident.applicantDetails.customerName
+                            }
+                        }
+
+                    })
+                    .reduce((a, b) => {
+                        a[b.name] = (a[b.name] || 0) + b.count
+                        return a
+                    }, {})
+
+                var duplicates = Object.keys(uniq).filter((a) => uniq[a] > 1)
+                duplicates.length > 0 && alert(`Duplicate Entries Found: ${duplicates.join(', ')}`)
+                console.log('duplicates', duplicates)
             }
-        },5000)
-    },[])
+        }, 5000)
+    }, [])
     return (
         <div>
             <div className='d-flex justify-content-around mb-2 mt-2'>
@@ -136,10 +151,9 @@ const SubmittedCases = (props) => {
                     </thead>
                     <tbody>
                         {reset > 0 && allData && allData.length > 0 && allData.map((item, index) => {
-                            if (item.branch === props.branch) {
 
                             return <tr key={item.appid}>
-                                <td>
+                                <td onClick={()=>handleViewForm(item)}>
                                     {item.appid}
                                 </td>
                                 <td>
@@ -193,7 +207,6 @@ const SubmittedCases = (props) => {
 
                                 </td>
                             </tr>
-                            }
                         })}
                     </tbody>
                 </table>
@@ -213,7 +226,6 @@ const SubmittedCases = (props) => {
                     </thead>
                     <tbody>
                         {reset > 0 && allData && allData.length > 0 && allData.map((item, index) => {
-                            if (item.branch === props.branch) {
                             return <tr key={item.appid} >
                                 <td>
                                     {item.appid}
@@ -269,8 +281,7 @@ const SubmittedCases = (props) => {
 
                                 </td>
                             </tr>
-                                
-                            }
+
                         })}
                     </tbody>
                 </table>

@@ -344,7 +344,7 @@ const AddAgent = ({ agent, allAgents, realTimeAgents, agents, realTimeforms }) =
             for (let index = 0; index < objkeys.length; index++) {
                 const element = objkeys[index];
                 let agent = realTimeAgents[element]
-                console.log('agent', agent)
+                // console.log('agent', agent)
                 if (agent.branch) {
                     agent.key = element
                 }

@@ -93,26 +93,26 @@ const ActiveAgents = (props) => {
         // console.log('props', props.data)
     }, [props])
     useEffect(() => {
-        setTimeout(()=> {
+        setTimeout(() => {
             if (allData && allData.length > 0) {
                 var uniq = allData
-                .map((name) => {
-                  return {
-                    count: 1,
-                    name: name.name
-                  }
-                })
-                .reduce((a, b) => {
-                  a[b.name] = (a[b.name] || 0) + b.count
-                  return a
-                }, {})
-              
-              var duplicates = Object.keys(uniq).filter((a) => uniq[a] > 1)
-              duplicates.length > 0 && alert(`Duplicate Entries Found: ${duplicates.join(', ')}`)
-              console.log('duplicates',duplicates)
+                    .map((name) => {
+                        return {
+                            count: 1,
+                            name: name.name
+                        }
+                    })
+                    .reduce((a, b) => {
+                        a[b.name] = (a[b.name] || 0) + b.count
+                        return a
+                    }, {})
+
+                var duplicates = Object.keys(uniq).filter((a) => uniq[a] > 1)
+                duplicates.length > 0 && alert(`Duplicate Entries Found: ${duplicates.join(', ')}`)
+                console.log('duplicates', duplicates)
             }
-        },5000)
-    },[])
+        }, 5000)
+    }, [])
 
     return (
         <div>
@@ -148,7 +148,10 @@ const ActiveAgents = (props) => {
                                 return <tr key={item.userId}>
                                     <th>{index + 1}</th>
                                     <td>
-                                        {item.name}
+                                        <a href={`http://maps.google.com/maps/search/?api=1&query=${item?.location?.coords?.latitude},${item?.location?.coords?.longitude}`}
+                                            target="_blank" className="text-primary">
+                                            {item.name}
+                                        </a>
                                         <hr />
                                         {item.userId}
                                     </td>

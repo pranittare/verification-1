@@ -58,7 +58,8 @@ function App(props) {
       data.key = snap.id
       value.push(data)
     })
-    console.log('snap', value);
+      console.log(`${update}`, value)
+    // console.log('snap', value);
     // console.log('val', value)
     let val = update.toString().toUpperCase()
     props.dispatch({ type: `F${val}`, data: value })
@@ -101,9 +102,10 @@ function App(props) {
               <Route path='/active-agents' render={() => <ActiveAgents />} />
               <Route path='/clients' render={() => <Billing />} />
               <Route path='/new' render={() => <Multi />} />
-              <Route path='/office' render={() => <Office />} />
-              <Route path='/office/:form' render={() => <Office />} />
-              <Route path='/resident' render={() => <Resident />} />
+              <Route path='/office' exact render={() => <Office />} />
+              <Route path='/office/:pincode/:id' render={() => <Office />} />
+              <Route path='/resident' exact render={() => <Resident />} />
+              <Route path='/resident/:pincode/:id' render={() => <Resident />} />
               <Route path='/ActiveCases' render={() => <ActiveCases />} />
               <Route path='/SubmittedCases' render={() => <SubmittedCases />} />
               <Route path='/oldCases' render={() => <OldCases />} />

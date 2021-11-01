@@ -87,7 +87,7 @@ export default function ApplicantDetails({ applicantDetails, getData, test }) {
     return (
         <div>
             <h1>Applicant Details</h1>
-            {(refresh > 0 || true) && <div>
+            {refresh && <div>
                 <form className='d-flex justify-content-between flex-wrap' id='myform' onSubmit={handleSubmit}>
                     <div >
                         <label>App.Id/Lead id</label>
@@ -138,7 +138,7 @@ export default function ApplicantDetails({ applicantDetails, getData, test }) {
                     }
                     <div >
                         <label>Type</label>
-                        <DropDownComp id='applicantDetail' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={type}  />
+                        <DropDownComp id='applicantDetails' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={type}  />
                         {/* <Dropdown isOpen={dropdownOpen} toggle={toggle}>
                                 <DropdownToggle caret className='text-capitalize'>
                                     {formdata.type ? formdata.type : 'Type'}

@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from 'react'
-import { Input, Button} from 'reactstrap'
+import { Input, Button } from 'reactstrap'
 import ApplicantDetails from './ApplicantDetails'
 import Tpc from './Tpc';
 import VerificationObserverOffice from './VerificationObserverOffice';
 import Geolocation from './Geolocation';
 import DropDownComp from '../components/DropDownComp';
 import Collapse from '../components/Collapse';
+import { useParams } from 'react-router-dom'
+import { getFormData } from '../utils/singleForm'
 
 export default function Office() {
     let allData1 = []
     let test = ['appid', '1234']
+    let { pincode, id } = useParams()
+    console.log('form', id, pincode)
     const [formdata, setFormdata] = useState({
         visitDate: '',
         visitedTime: '',
@@ -92,19 +96,33 @@ export default function Office() {
         }
     }, [applicantDetails])
     useEffect(() => {
-        if (formdata) {
-            // for (let [key, value] of formdata.entries()) {
-            //     allData1.push({ [key]: value })
-            // }
-            // setAlldata(allData1)
-            console.log('form', formdata)
+        if (id) {
+            let formsaved = getFormData(pincode, id)
+            console.log(formsaved)
+            for (const key in formsaved) {
+                if (Object.hasOwnProperty.call(formsaved, key)) {
+                    const element = formsaved[key];
+                    console.log('element', element)
+                }
+            }
+
         }
-    }, [formdata])
-    useEffect(() => {
-        if (alldata) {
-            console.log('alldata', alldata)
-        }
-    }, [alldata])
+
+    }, [id])
+    // useEffect(() => {
+    //     if (formdata) {
+    //         // for (let [key, value] of formdata.entries()) {
+    //         //     allData1.push({ [key]: value })
+    //         // }
+    //         // setAlldata(allData1)
+    //         console.log('form', formdata)
+    //     }
+    // }, [formdata])
+    // useEffect(() => {
+    //     if (alldata) {
+    //         console.log('alldata', alldata)
+    //     }
+    // }, [alldata])
 
     let addressConfirmed = [
         { name: 'addressConfirmed', value: '', label: 'None' },
@@ -170,111 +188,111 @@ export default function Office() {
 
     return (
         <div>
-            <Collapse title='Applicant Details' children={<ApplicantDetails details={test} applicantDetails={(data) => { setApplicantDetails(data) }} getData={getData} test={test} />}/>
+            <Collapse title='Applicant Details' children={<ApplicantDetails details={test} applicantDetails={(data) => { setApplicantDetails(data) }} getData={getData} test={test} />} />
             <Collapse title='Verification Details' >
-            <h1>Verification Details</h1>
-            
-            {(refresh > 0 || true) && <form className='d-flex justify-content-between flex-wrap' onSubmit={handleSubmit} >
-                <div>
-                    <label>Visit Date</label>
-                    <Input type="text" name='visitDate' value={formdata['visitDate']} onChange={(e) => onHandleChange(e)} />
-                </div>
-                <div>
-                    <label>Visited Time:</label>
-                    <Input type="text" name='visitedTime' value={formdata['visitedTime']} onChange={(e) => onHandleChange(e)} />
-                </div>
-                <div>
-                    <label>Address Confirmed</label>
-                    <DropDownComp id='office' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={addressConfirmed} />
-                    
-                </div>
-                <div>
-                    <label>Business Board Seen</label>
-                    <DropDownComp id='office' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={businessBoardSeen} />
-                   
-                </div>
-                <div>
-                    <label>Business Board Seen</label>
-                    <Input type="text" name='businessBoardSeenNote' value={formdata['businessBoardSeenNote']} onChange={(e) => onHandleChange(e)} />
-                </div>
-                <div>
-                    <label>LandMark</label>
-                    <Input type="text" name='landmark' value={formdata['landmark']} onChange={(e) => onHandleChange(e)} />
-                </div>
-                <div>
-                    <label>Person Met</label>
-                    <DropDownComp id='office' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={personMet} />
-                   
-                </div>
-                <div>
-                    <label>Person Met Name</label>
-                    <Input type="text" name='personMetName' value={formdata['personMetName']} onChange={(e) => onHandleChange(e)} />
-                </div>
-                <div>
-                    <label>Person Met Designation</label>
-                    <DropDownComp id='office' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={personMetNameDesignation} />
-                    
-                </div>
-                <div>
-                    <label>No of Yrs in present Employment/Business & Total Yrs of Exp</label>
-                    <Input type="text" name='totalYearsExp' value={formdata['totalYearsExp']} onChange={(e) => onHandleChange(e)} />
-                </div>
-                <div>
-                    <label>No of Yrs At Current Address</label>
-                    <Input type="text" name='totalYearsExpAtCurrentAddress' value={formdata['totalYearsExpAtCurrentAddress']} onChange={(e) => onHandleChange(e)} />
-                </div>
-                <div>
-                    <label>Less than 1 yr at Current Address</label>
-                    <DropDownComp id='office' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={lessThanYrAtCurrentAddress} />
-                    
-                </div>
-                <div>
-                    <label>Prev Address/ Prev Employment</label>
-                    <Input type="text" name='lessThanYrAtCurrentAddressNote' value={formdata['lessThanYrAtCurrentAddressNote']} onChange={(e) => onHandleChange(e)} />
-                </div>
-                <div>
-                    <label>Nature of Business</label>
-                    <DropDownComp id='office' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={natureofBusines} />
-                    
-                </div>
-                <div>
-                    <label>Nature of Business Other</label>
-                    <Input type="text" name='natureOfBusinessDetails' value={formdata['natureOfBusinessDetails']} onChange={(e) => onHandleChange(e)} />
-                </div>
-                <div>
-                    <label>Office Ownership</label>
-                    <DropDownComp id='office' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={officeOwnership} />
-                    
-                </div>
-                <div>
-                    <label>if Rented then Rent Amount</label>
-                    <Input type="text" name='rentAmount' value={formdata['rentAmount']} onChange={(e) => onHandleChange(e)} />
-                </div>
-                <div>
-                    <label>Details(Income/Designation)</label>
-                    <Input type="text" name='detailsIncomeDesignation' value={formdata['detailsIncomeDesignation']} onChange={(e) => onHandleChange(e)} />
-                </div>
-                <div>
-                    <label>Additional Income</label>
-                    <Input type="text" name='additionalIncome' value={formdata['additionalIncome']} onChange={(e) => onHandleChange(e)} />
-                </div>
-                <div>
-                    <label>Source</label>
-                    <Input type="text" name='source' value={formdata['source']} onChange={(e) => onHandleChange(e)} />
-                </div>
-                <div>
-                    <label>Type of Entity</label>
-                    <DropDownComp id='office' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={typeofEntity} />
-                   
-                </div>
-                <div className='d-none'>
-                    <button type='submit' id='officeVerficationDetails' >Submit</button>
-                </div>
-            </form>}
-            <VerificationObserverOffice verification={(data) => setVerification(data)} getData={getData} />
-            <Tpc tpc={(data) => setTpc(data)} getData={getData} />
-            <Geolocation data={[]} />
-            <Button color='primary' onClick={getAllData}>Submit</Button>
+                <h1>Verification Details</h1>
+
+                {(refresh > 0 || true) && <form className='d-flex justify-content-between flex-wrap' onSubmit={handleSubmit} >
+                    <div>
+                        <label>Visit Date</label>
+                        <Input type="text" name='visitDate' value={formdata['visitDate']} onChange={(e) => onHandleChange(e)} />
+                    </div>
+                    <div>
+                        <label>Visited Time:</label>
+                        <Input type="text" name='visitedTime' value={formdata['visitedTime']} onChange={(e) => onHandleChange(e)} />
+                    </div>
+                    <div>
+                        <label>Address Confirmed</label>
+                        <DropDownComp id='office' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={addressConfirmed} />
+
+                    </div>
+                    <div>
+                        <label>Business Board Seen</label>
+                        <DropDownComp id='office' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={businessBoardSeen} />
+
+                    </div>
+                    <div>
+                        <label>Business Board Seen</label>
+                        <Input type="text" name='businessBoardSeenNote' value={formdata['businessBoardSeenNote']} onChange={(e) => onHandleChange(e)} />
+                    </div>
+                    <div>
+                        <label>LandMark</label>
+                        <Input type="text" name='landmark' value={formdata['landmark']} onChange={(e) => onHandleChange(e)} />
+                    </div>
+                    <div>
+                        <label>Person Met</label>
+                        <DropDownComp id='office' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={personMet} />
+
+                    </div>
+                    <div>
+                        <label>Person Met Name</label>
+                        <Input type="text" name='personMetName' value={formdata['personMetName']} onChange={(e) => onHandleChange(e)} />
+                    </div>
+                    <div>
+                        <label>Person Met Designation</label>
+                        <DropDownComp id='office' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={personMetNameDesignation} />
+
+                    </div>
+                    <div>
+                        <label>No of Yrs in present Employment/Business & Total Yrs of Exp</label>
+                        <Input type="text" name='totalYearsExp' value={formdata['totalYearsExp']} onChange={(e) => onHandleChange(e)} />
+                    </div>
+                    <div>
+                        <label>No of Yrs At Current Address</label>
+                        <Input type="text" name='totalYearsExpAtCurrentAddress' value={formdata['totalYearsExpAtCurrentAddress']} onChange={(e) => onHandleChange(e)} />
+                    </div>
+                    <div>
+                        <label>Less than 1 yr at Current Address</label>
+                        <DropDownComp id='office' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={lessThanYrAtCurrentAddress} />
+
+                    </div>
+                    <div>
+                        <label>Prev Address/ Prev Employment</label>
+                        <Input type="text" name='lessThanYrAtCurrentAddressNote' value={formdata['lessThanYrAtCurrentAddressNote']} onChange={(e) => onHandleChange(e)} />
+                    </div>
+                    <div>
+                        <label>Nature of Business</label>
+                        <DropDownComp id='office' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={natureofBusines} />
+
+                    </div>
+                    <div>
+                        <label>Nature of Business Other</label>
+                        <Input type="text" name='natureOfBusinessDetails' value={formdata['natureOfBusinessDetails']} onChange={(e) => onHandleChange(e)} />
+                    </div>
+                    <div>
+                        <label>Office Ownership</label>
+                        <DropDownComp id='office' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={officeOwnership} />
+
+                    </div>
+                    <div>
+                        <label>if Rented then Rent Amount</label>
+                        <Input type="text" name='rentAmount' value={formdata['rentAmount']} onChange={(e) => onHandleChange(e)} />
+                    </div>
+                    <div>
+                        <label>Details(Income/Designation)</label>
+                        <Input type="text" name='detailsIncomeDesignation' value={formdata['detailsIncomeDesignation']} onChange={(e) => onHandleChange(e)} />
+                    </div>
+                    <div>
+                        <label>Additional Income</label>
+                        <Input type="text" name='additionalIncome' value={formdata['additionalIncome']} onChange={(e) => onHandleChange(e)} />
+                    </div>
+                    <div>
+                        <label>Source</label>
+                        <Input type="text" name='source' value={formdata['source']} onChange={(e) => onHandleChange(e)} />
+                    </div>
+                    <div>
+                        <label>Type of Entity</label>
+                        <DropDownComp id='office' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={typeofEntity} />
+
+                    </div>
+                    <div className='d-none'>
+                        <button type='submit' id='officeVerficationDetails' >Submit</button>
+                    </div>
+                </form>}
+                <VerificationObserverOffice verification={(data) => setVerification(data)} getData={getData} />
+                <Tpc tpc={(data) => setTpc(data)} getData={getData} />
+                <Geolocation data={[]} />
+                <Button color='primary' onClick={getAllData}>Submit</Button>
             </Collapse>
         </div>
     )
