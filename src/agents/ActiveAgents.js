@@ -144,11 +144,13 @@ const ActiveAgents = (props) => {
                     </thead>
                     <tbody>
                         {reset > 0 && allData && allData.length > 0 && allData.map((item, index) => {
-                            if (item.isLoggedIn) {
+                            if (item.isLoggedIn && item.branch === props.branch) {
                                 return <tr key={item.userId}>
                                     <th>{index + 1}</th>
                                     <td>
                                         {item.name}
+                                        <hr />
+                                        {item.userId}
                                     </td>
                                     <td>
                                         {item.pincode}
@@ -197,8 +199,8 @@ const ActiveAgents = (props) => {
                     </thead>
                     <tbody>
                         {reset > 0 && allData && allData.length > 0 && allData.map((item, index) => {
-                            if (item.isLoggedIn && item.uniqueId) {
-                                return <tr>
+                            if (item.isLoggedIn && item.uniqueId && item.branch === props.branch) {
+                                return <tr key={item.userId}>
                                     <th>{index + 1}</th>
                                     <td>
                                         {item.name}
@@ -239,8 +241,8 @@ const mapStateToProps = (state) => {
     // console.log('state', state)
     return {
         agents: state.agents,
-        forms: state.forms
-
+        forms: state.forms,
+        branch: state.branch
     }
 }
 

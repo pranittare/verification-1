@@ -136,7 +136,9 @@ const SubmittedCases = (props) => {
                     </thead>
                     <tbody>
                         {reset > 0 && allData && allData.length > 0 && allData.map((item, index) => {
-                            return <tr key={item.tat}>
+                            if (item.branch === props.branch) {
+
+                            return <tr key={item.appid}>
                                 <td>
                                     {item.appid}
                                 </td>
@@ -191,6 +193,7 @@ const SubmittedCases = (props) => {
 
                                 </td>
                             </tr>
+                            }
                         })}
                     </tbody>
                 </table>
@@ -210,7 +213,8 @@ const SubmittedCases = (props) => {
                     </thead>
                     <tbody>
                         {reset > 0 && allData && allData.length > 0 && allData.map((item, index) => {
-                            return <tr>
+                            if (item.branch === props.branch) {
+                            return <tr key={item.appid} >
                                 <td>
                                     {item.appid}
                                 </td>
@@ -265,6 +269,8 @@ const SubmittedCases = (props) => {
 
                                 </td>
                             </tr>
+                                
+                            }
                         })}
                     </tbody>
                 </table>
@@ -274,7 +280,8 @@ const SubmittedCases = (props) => {
 }
 const mapStateToProps = (state) => {
     return {
-        forms: state.forms
+        forms: state.forms,
+        branch: state.branch
     }
 }
 export default connect(mapStateToProps)(SubmittedCases)

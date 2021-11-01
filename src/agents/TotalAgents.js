@@ -110,7 +110,7 @@ const TotalAgents = (props) => {
                     <tbody>
                         {reset > 0 && allData && allData.length > 0 && allData.map((item, index) => {
                             // console.log('item', item)
-                            if (item.name !== 'SAQUIB MASHKOOR KHAN')
+                            if (item.name !== 'SAQUIB MASHKOOR KHAN' && item.branch === props.branch)
                                 return <tr key={index}>
                                     <th>{index + 1}</th>
                                     <td >
@@ -167,6 +167,7 @@ const TotalAgents = (props) => {
                     <tbody>
                         {console.log('total',allData && allData)}
                         {reset > 0 && allData && allData.length > 0 && allData.map((item, index) => {
+                            if (item.branch === props.branch) {
                             return <tr key={`${item.userId}-${item.agentCode}-${index}`}>
                                 <th>{index + 1}</th>
                                 <td>
@@ -202,6 +203,8 @@ const TotalAgents = (props) => {
                                     {item.remarks}
                                 </td>
                             </tr>
+                                
+                            }
                         })
                         }
                     </tbody>
@@ -214,6 +217,7 @@ const mapStateToProps = (state) => {
     // console.log('state', state)
     return {
         agents: state.fagents,
+        branch: state.branch
     }
 }
 export default connect(mapStateToProps)(TotalAgents)

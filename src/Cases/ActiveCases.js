@@ -135,7 +135,7 @@ const ActiveCases = (props) => {
                     </thead>
                     <tbody>
                         {reset > 0 && allData && allData.length > 0 && allData.map((item, index) => {
-                            if (item.appid) {
+                            if (item.appid && item.branch === props.branch) {
                                 return <tr key={item.tat}>
                                     <td>
                                         {item.appid}
@@ -204,7 +204,7 @@ const ActiveCases = (props) => {
                     </thead>
                     <tbody>
                         {reset > 0 && allData && allData.length > 0 && allData.map((item, index) => {
-                            if (item.appid) {
+                            if (item.appid && item.branch === props.branch) {
                                 return <tr key={item.key}>
                                     <td>
                                         {item.appid}
@@ -262,7 +262,8 @@ const ActiveCases = (props) => {
 
 const mapStateToProps = (state) => {
     return {
-        forms: state.forms
+        forms: state.forms,
+        branch: state.branch
     }
 }
 export default connect(mapStateToProps)(ActiveCases)
