@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Input, Button, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap'
 
-const DropDownComp = ({ onHandleChange, formdata, dropDowmArry, handleOnChange, id, other }) => {
+const DropDownComp = ({ onHandleChange, formdata, dropDowmArry, id, other, value }) => {
 
     const [addressConfirmedOpen, setAddressConfirmed] = useState(false);
     const addressConfirmedtoggle = () => setAddressConfirmed(prevState => !prevState);
@@ -20,7 +20,8 @@ const DropDownComp = ({ onHandleChange, formdata, dropDowmArry, handleOnChange, 
         <div>
             <Dropdown isOpen={addressConfirmedOpen} toggle={addressConfirmedtoggle}>
                 <DropdownToggle caret className='text-capitalize'>
-                    {formdata[dropDowmArry[0].name] ? formdata[dropDowmArry[0].name] : 'None'}
+                  {/* {console.log('drop', dropDowmArry)} */}
+                    {formdata[dropDowmArry[0].name] ? formdata[dropDowmArry[0].name] : value ? value :'None'}
                 </DropdownToggle>
                 <DropdownMenu>
                   {other ?

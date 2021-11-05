@@ -8,12 +8,13 @@ import DropDownComp from '../components/DropDownComp';
 import Collapse from '../components/Collapse';
 import { useParams } from 'react-router-dom'
 import { getFormData } from '../utils/singleForm'
+import { connect } from 'react-redux';
 
-export default function Office() {
-    let allData1 = []
-    let test = ['appid', '1234']
+const Office = (props) => {
+    // let allData1 = []
+    // let test = ['appid', '1234']
     let { pincode, id } = useParams()
-    console.log('form', id, pincode)
+    console.log('form', props)
     const [formdata, setFormdata] = useState({
         visitDate: '',
         visitedTime: '',
@@ -69,46 +70,67 @@ export default function Office() {
         setRefresh(Math.random())
         // console.log(form)
     }
-    useEffect(() => {
-        if (verification) {
-
-            for (let [key, value] of verification.entries()) {
-                allData1.push({ [key]: value })
-            }
-            setAlldata(allData1)
-        }
-    }, [verification])
-    useEffect(() => {
-        if (tpc) {
-            for (let [key, value] of tpc.entries()) {
-                allData1.push({ [key]: value })
-            }
-            setAlldata(allData1)
-        }
-    }, [tpc])
-    useEffect(() => {
-        if (applicantDetails) {
-            for (let [key, value] of applicantDetails.entries()) {
-                allData1.push({ [key]: value })
-            }
-            setAlldata(allData1)
-            console.log('app', applicantDetails)
-        }
-    }, [applicantDetails])
+    // Form data by id
     useEffect(() => {
         if (id) {
-            let formsaved = getFormData(pincode, id)
-            console.log(formsaved)
-            for (const key in formsaved) {
-                if (Object.hasOwnProperty.call(formsaved, key)) {
-                    const element = formsaved[key];
-                    console.log('element', element)
-                }
-            }
+            console.log(id)
+            getFormData(pincode, id)
+                .then(formsaved => {
+                    let formd = formdata
+                    let applicant = {}
+                    console.log('formsaved', formsaved)
+                    if (formsaved?.office) {
+                        for (const key in formsaved.office.verificationDetails) {
+                            formd[key] = formsaved.office.verificationDetails[key]
+                        }
+                        for (const key in formsaved?.office?.applicantDetails) {
+                            applicant[key] = formsaved?.office?.applicantDetails[key]
+                        }
+                    } else if (formsaved?.resident) {
+                        for (const key in formsaved.resident.verificationDetails) {
+                            formd[key] = formsaved.resident.verificationDetails[key]
+                        }
+                        for (const key in formsaved?.resident?.applicantDetails) {
+                            applicant[key] = formsaved?.resident?.applicantDetails[key]
+                        }
+                    }
+                    setApplicantDetails(applicant)
+                    setFormdata(formd)
+                    setRefresh(Math.random())
+                    console.log('formd', formd)
+                })
 
         }
 
-    }, [id])
+    }, [id, pincode])
+
+    // useEffect(() => {
+    //     if (verification) {
+
+    //         for (let [key, value] of verification.entries()) {
+    //             allData1.push({ [key]: value })
+    //         }
+    //         setAlldata(allData1)
+    //     }
+    // }, [verification])
+    // useEffect(() => {
+    //     if (tpc) {
+    //         for (let [key, value] of tpc.entries()) {
+    //             allData1.push({ [key]: value })
+    //         }
+    //         setAlldata(allData1)
+    //     }
+    // }, [tpc])
+    // useEffect(() => {
+    //     if (applicantDetails) {
+    //         for (let [key, value] of applicantDetails.entries()) {
+    //             allData1.push({ [key]: value })
+    //         }
+    //         setAlldata(allData1)
+    //         console.log('app', applicantDetails)
+    //     }
+    // }, [applicantDetails])
+
     // useEffect(() => {
     //     if (formdata) {
     //         // for (let [key, value] of formdata.entries()) {
@@ -188,7 +210,7 @@ export default function Office() {
 
     return (
         <div>
-            <Collapse title='Applicant Details' children={<ApplicantDetails details={test} applicantDetails={(data) => { setApplicantDetails(data) }} getData={getData} test={test} />} />
+            <Collapse title='Applicant Details' children={<ApplicantDetails applicantDetails={(data) => { setApplicantDetails(data) }} data={applicantDetails} />} />
             <Collapse title='Verification Details' >
                 <h1>Verification Details</h1>
 
@@ -297,3 +319,9 @@ export default function Office() {
         </div>
     )
 }
+const mapStateToProps = (state) => {
+    return {
+        vendor: state.vendors
+    }
+}
+export default connect(mapStateToProps)(Office)

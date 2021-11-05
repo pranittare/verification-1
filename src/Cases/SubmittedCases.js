@@ -153,7 +153,7 @@ const SubmittedCases = (props) => {
                         {reset > 0 && allData && allData.length > 0 && allData.map((item, index) => {
 
                             return <tr key={item.appid}>
-                                <td onClick={()=>handleViewForm(item)}>
+                                <td onClick={()=>handleViewForm(item)} style={{cursor:'pointer'}} className='text-primary'>
                                     {item.appid}
                                 </td>
                                 <td>

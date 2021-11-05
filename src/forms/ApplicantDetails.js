@@ -1,9 +1,30 @@
 import React, { useState, useEffect } from 'react'
 import { Button, Input, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import DropDownComp from '../components/DropDownComp';
-import {useHistory} from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
+import { connect } from 'react-redux';
 
-export default function ApplicantDetails({ applicantDetails, getData, test }) {
+const ApplicantDetails = ({ applicantDetails, data, vendor }) => {
+    const initalData = {
+        appid: '',
+        srNo: '',
+        month: '',
+        initiationDate: '',
+        customerName: '',
+        bankNBFCname: '',
+        product: '',
+        loaction: '',
+        pincode: '',
+        contactNo: '',
+        mobileNo: '',
+        officeAddressProvided: '',
+        residenceAddressProvided: '',
+        mismatchAddress: '',
+        visitedOfficeAddress: '',
+        visitedresidentAddress: '',
+        remarks: '',
+        type: ''
+    }
     const [formdata, setFormdata] = useState({
         appid: '',
         srNo: '',
@@ -25,8 +46,12 @@ export default function ApplicantDetails({ applicantDetails, getData, test }) {
         type: ''
     })
     const [refresh, setRefresh] = useState(0)
-    const url = document.location.pathname.split('/').length > 1
-    let id;
+    const [dropdownBankNameOpen, setBankNameOpen] = useState(false);
+    const toggleBankName = () => setBankNameOpen(!dropdownBankNameOpen);
+    const [dropdownProductNameOpen, setProductNameOpen] = useState(false);
+    const toggleProductName = () => setProductNameOpen(!dropdownProductNameOpen);
+    const [productList, setProductList] = useState([]);
+    // const url = document.location.pathname.split('/').length > 1
     let office = false
     let resident = false
     let multi = false
@@ -34,34 +59,53 @@ export default function ApplicantDetails({ applicantDetails, getData, test }) {
     if (document.location.pathname.split('/')[1] === 'new') {
         multi = true
     }
-    if (url) {
-        if (document.location.pathname.split('/')[1] === 'office') {
-            office = true
-            resident = false
-        } else {
-            office = false
-            resident = true
-        }
-        id = document.location.pathname.split('/')[2]
-    }
+    // if (url) {
+    //     if (document.location.pathname.split('/')[1] === 'office') {
+    //         office = true
+    //         resident = false
+    //     } else {
+    //         office = false
+    //         resident = true
+    //     }
+    //     id = document.location.pathname.split('/')[2]
+    // }
 
     let history = useHistory()
 
-    const onHandleSubmit = ()=>{
-        history.push('/')
+    const onHandleSubmit = () => {
+        // history.push('/')
     }
 
     const handleSubmit = (e) => {
         // const formData = new FormData(e.currentTarget);
+
         e.preventDefault()
-        applicantDetails(formdata)
+        console.log('formdata', formdata);
+        // applicantDetails(formdata)
     }
     useEffect(() => {
-        if (test) {
-            console.log('test', test)
-            onHandleChange({ name: test[0], value: test[1] })
+        if (data) {
+            let form = formdata
+            console.log('data', data)
+            for (const key in data) {
+                form[key] = data[key]
+
+                if (key === 'bankNBFCname') {
+                    form['bankNBFCname'] = data.bankNBFCname.clientName
+                }
+                if (key === 'product') {
+                    form['product'] = data.bankNBFCname.productList[0].productName
+                    form.emailList = data.bankNBFCname.productList[0].emailList
+                }
+                if (key === 'form') {
+                    form['type'] = data['form']
+                }
+            }
+            setFormdata(form)
+            setRefresh(Math.random())
+            // onHandleChange({ name: data[0], value: test[1] })
         }
-    }, [test])
+    }, [data])
     const onHandleChange = (e) => {
         // name
         console.log(e)
@@ -72,12 +116,22 @@ export default function ApplicantDetails({ applicantDetails, getData, test }) {
         console.log(form)
     }
     useEffect(() => {
-        if (getData) {
-            document.getElementById('applicationDetails').click()
-        }
-        // console.log('getdata',getData)
-    }, [getData])
-    let mismatchAddress = true
+        console.log('dropdownBankNameOpen', dropdownBankNameOpen)
+    }, [dropdownBankNameOpen])
+    useEffect(() => {
+        setRefresh(Math.random())
+    }, [])
+    // useEffect(() => {
+    //     if (getData) {
+    //         document.getElementById('applicationDetails').click()
+    //     }
+    //     // console.log('getdata',getData)
+    // }, [getData])
+
+    let mismatchAddressField = [
+        { name: 'mismatchAddress', value: 'yes', label: 'Yes' },
+        { name: 'mismatchAddress', value: 'no', label: 'No' }
+    ]
 
     let type = [
         { name: 'type', value: 'resident', label: 'Resident' },
@@ -93,7 +147,7 @@ export default function ApplicantDetails({ applicantDetails, getData, test }) {
                         <label>App.Id/Lead id</label>
                         <Input type="text" name='appid' value={formdata['appid']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
-                    {id &&
+                    {(office || resident) &&
                         <div className='pt-4'>
                             <Button color='success'>Check</Button>
                         </div>
@@ -117,11 +171,57 @@ export default function ApplicantDetails({ applicantDetails, getData, test }) {
                     </div>
                     <div >
                         <label>Bank/ NBFC name</label>
-                        <Input type="text" name='bankNBFCname' value={formdata['bankNBFCname']} onChange={(e) => onHandleChange(e.currentTarget)} />
+                        <Dropdown toggle={toggleBankName} isOpen={dropdownBankNameOpen}>
+                            <DropdownToggle caret>
+                                {formdata['bankNBFCname'] ? formdata['bankNBFCname'] : 'None'}
+                            </DropdownToggle>
+                            <DropdownMenu
+                            >
+                                {vendor.map(item => {
+                                    return <DropdownItem key={item.clientName} onClick={() => {
+                                        setProductList(item?.productList)
+                                        setFormdata({...formdata, bankNBFCname: item.clientName})
+                                        }}>
+                                        {console.log('list', item.clientName)}
+                                        {item.clientName}
+                                    </DropdownItem>
+                                })}
+
+                            </DropdownMenu>
+                        </Dropdown>
+                        {/* <DropDownComp id='applicantDetails' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={vendor.map(item => {
+                            item.name = 'bankNBFCname'
+                            item.value = item.clientName
+                            return item.label = item.clientName
+                        })} value={formdata['bankNBFCname']} /> */}
+                        {/* <Input type="text" name='bankNBFCname' value={formdata['bankNBFCname']} onChange={(e) => onHandleChange(e.currentTarget)} /> */}
                     </div>
                     <div >
                         <label>Product</label>
-                        <Input type="text" name='product' value={formdata['product']} onChange={(e) => onHandleChange(e.currentTarget)} />
+
+                        {/* <Input type="text" name='product' value={formdata['product']} onChange={(e) => onHandleChange(e.currentTarget)} /> */}
+                        {/* <DropDownComp id='applicantDetails' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={vendor.map(item => {
+                            item.name = 'product'
+                            item.value = JSON.stringify(item)
+                            return item.label = item.clientName
+                        })} value={formdata['product']} /> */}
+                        <Dropdown toggle={toggleProductName} isOpen={dropdownProductNameOpen}>
+                            <DropdownToggle caret>
+                                {formdata['product'] ? formdata['product'] : 'None'}
+                                {/* None */}
+                            </DropdownToggle>
+                            <DropdownMenu
+                            >
+                                {productList?.map(item => {
+                                    return <DropdownItem key={item.productName} onClick={() => {
+                                        setFormdata({...formdata, product: item.productName, emailList: item.emailList})
+                                    }}>
+                                        {item.productName}
+                                    </DropdownItem>
+                                })}
+
+                            </DropdownMenu>
+                        </Dropdown>
                     </div>
                     <div >
                         <label>Location</label>
@@ -131,14 +231,15 @@ export default function ApplicantDetails({ applicantDetails, getData, test }) {
                         <label>Pincode</label>
                         <Input type="text" name='pincode' value={formdata['pincode']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
-                    {!id &&
+                    {!(formdata['type'] === 'office' || formdata['type'] === 'resident') &&
                         <div className='pt-4'>
                             <Button>Get Agents</Button>
                         </div>
                     }
                     <div >
-                        <label>Type</label>
-                        <DropDownComp id='applicantDetails' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={type}  />
+                        <label>Type {formdata['type']}</label>
+
+                        <DropDownComp id='applicantDetails' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={type} value={formdata['type']} />
                         {/* <Dropdown isOpen={dropdownOpen} toggle={toggle}>
                                 <DropdownToggle caret className='text-capitalize'>
                                     {formdata.type ? formdata.type : 'Type'}
@@ -158,27 +259,28 @@ export default function ApplicantDetails({ applicantDetails, getData, test }) {
                         <label>Mobile No.</label>
                         <Input type="text" name='mobileNo' value={formdata['mobileNo']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
-                    <div >
+                    {formdata['type'] === 'office' && <div >
                         <label>Office Address Provided</label>
                         <Input type="text" name='officeAddressProvided' value={formdata['officeAddressProvided']} onChange={(e) => onHandleChange(e.currentTarget)} />
-                    </div>
-                    <div >
+                    </div>}
+                    {formdata['type'] === 'resident' && <div >
                         <label>Resident Address Provided</label>
                         <Input type="text" name='residenceAddressProvided' value={formdata['residenceAddressProvided']} onChange={(e) => onHandleChange(e.currentTarget)} />
-                    </div>
-                    {id &&
+                    </div>}
+                    {(formdata['type'] === 'office' || formdata['type'] === 'resident') &&
                         <>
                             <div >
                                 <label>Mismatch Address</label>
-                                <Input type="text" name='mismatchAddress' value={formdata['mismatchAddress']} onChange={(e) => onHandleChange(e.currentTarget)} />
+                                <DropDownComp id='applicantDetails' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={mismatchAddressField} value={formdata['mismatchAddress']} />
+                                {/* <Input type="text" name='mismatchAddress' value={formdata['mismatchAddress']} onChange={(e) => onHandleChange(e.currentTarget)} /> */}
                             </div>
-                            {mismatchAddress &&
+                            {formdata['mismatchAddress'] &&
                                 <>
-                                    {office && <div >
+                                    {formdata['type'] === 'office' && <div >
                                         <label>Visited Office Address</label>
                                         <Input type="text" name='visitedOfficeAddress' value={formdata['visitedOfficeAddress']} onChange={(e) => onHandleChange(e.currentTarget)} />
                                     </div>}
-                                    {resident && <div >
+                                    {formdata['type'] === 'resident' && <div >
                                         <label>Visited Resident Address</label>
                                         <Input type="text" name='visitedresidentAddress' value={formdata['visitedresidentAddress']} onChange={(e) => onHandleChange(e.currentTarget)} />
                                     </div>}
@@ -192,7 +294,9 @@ export default function ApplicantDetails({ applicantDetails, getData, test }) {
                         <Input type="text" name='remarks' value={formdata['remarks']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
                     <div className='pt-4'>
-                        <Button color='primary' id='applicationDetails' type="submit" onClick={()=>(onHandleSubmit())} >
+                        <Button color='primary' id='applicationDetails' type="submit" 
+                        // onClick={() => (onHandleSubmit())}
+                         >
                             Submit
                         </Button>
                     </div>
@@ -201,3 +305,9 @@ export default function ApplicantDetails({ applicantDetails, getData, test }) {
         </div>
     )
 }
+const mapStateToProps = (state) => {
+    return {
+        vendor: state.vendors
+    }
+}
+export default connect(mapStateToProps)(ApplicantDetails)

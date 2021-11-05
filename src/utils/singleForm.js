@@ -3,14 +3,16 @@ import { getDatabase, ref, onValue } from "firebase/database";
 
 
 export const getFormData = (pincode, formId) => {
-    setTimeout(() => {
+    const promise  = new Promise((resolve, reject) => {
         const db = getDatabase()
         const formRef = ref(db, `form/${pincode}/${formId}`)
+        console.log('formref', formRef)
         onValue(formRef, (snapshot) => {
-            // console.log(snapshot.val());
-            if(snapshot)
-            return snapshot.val()
+            console.log(snapshot.val());
+            // if(snapshot)
+            resolve(snapshot.val())
         })
 
-    },500)
+    })
+    return promise
 }

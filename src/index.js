@@ -17,6 +17,7 @@ const initialState = {
   fagents: [],
   fforms: [],
   fusers: [],
+  vendors: [],
   oldcases: null,
 
 }
@@ -72,6 +73,11 @@ function reducer(state = initialState, action) {
       return {
         ...state,
         auth: action.data
+      }
+    case 'FVENDORS' : 
+      return {
+        ...state,
+        vendors: action.data
       }
     default:
       return state

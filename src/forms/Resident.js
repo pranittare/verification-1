@@ -5,9 +5,14 @@ import VerificationObserverResident from './VerificationObserverResident';
 import Tpc from './Tpc';
 import Geolocation from './Geolocation';
 import Collapse from '../components/Collapse';
+import { useParams } from 'react-router-dom'
+import { getFormData } from '../utils/singleForm'
+import { connect } from 'react-redux';
 
-export default function Resident() {
+const Resident = (props) => {
     let allData1 = []
+    let { pincode, id } = useParams()
+
     const [verification, setVerification] = useState()
     const [tpc, setTpc] = useState()
     // const [formdata, setFormData] = useState()
@@ -65,47 +70,80 @@ export default function Resident() {
         }, [100])
 
     }
+    // Form data by id
     useEffect(() => {
-        if (verification) {
-            // for (let [key, value] of verification.entries()) {
-            //     allData1.push({ [key]: value })
-            // }
-            // setAlldata(allData1)
+        if (id) {
+            console.log(id)
+            getFormData(pincode, id)
+                .then(formsaved => {
+                    let formd = formdata
+                    let applicant = {}
+                    console.log('formsaved', formsaved)
+                    if (formsaved?.office) {
+                        for (const key in formsaved.office.verificationDetails) {
+                            formd[key] = formsaved.office.verificationDetails[key]
+                        }
+                        for (const key in formsaved?.office?.applicantDetails) {
+                            applicant[key] = formsaved?.office?.applicantDetails[key]
+                        }
+                    } else if (formsaved?.resident) {
+                        for (const key in formsaved.resident.verificationDetails) {
+                            formd[key] = formsaved.resident.verificationDetails[key]
+                        }
+                        for (const key in formsaved?.resident?.applicantDetails) {
+                            applicant[key] = formsaved?.resident?.applicantDetails[key]
+                        }
+                    }
+                    setApplicantDetails(applicant)
+                    setFormdata(formd)
+                    setRefresh(Math.random())
+                    console.log('formd', formd)
+                })
+
         }
-    }, [verification])
-    useEffect(() => {
-        if (tpc) {
-            // for (let [key, value] of tpc.entries()) {
-            //     allData1.push({ [key]: value })
-            // }
-            // setAlldata(allData1)
-        }
-    }, [tpc])
-    useEffect(() => {
-        if (applicantDetails) {
-            // for (let [key, value] of applicantDetails.entries()) {
-            //     allData1.push({ [key]: value })
-            // }
-            // setAlldata(allData1)
-        }
-    }, [applicantDetails])
-    useEffect(() => {
-        if (formdata) {
-            // for (let [key, value] of formdata.entries()) {
-            //     allData1.push({ [key]: value })
-            // }
-            setAlldata(allData1)
-        }
-    }, [formdata])
-    useEffect(() => {
-        if (alldata) {
-            console.log('alldata', alldata)
-        }
-    }, [alldata])
+
+    }, [id, pincode])
+    // useEffect(() => {
+    //     if (verification) {
+    //         // for (let [key, value] of verification.entries()) {
+    //         //     allData1.push({ [key]: value })
+    //         // }
+    //         // setAlldata(allData1)
+    //     }
+    // }, [verification])
+    // useEffect(() => {
+    //     if (tpc) {
+    //         // for (let [key, value] of tpc.entries()) {
+    //         //     allData1.push({ [key]: value })
+    //         // }
+    //         // setAlldata(allData1)
+    //     }
+    // }, [tpc])
+    // useEffect(() => {
+    //     if (applicantDetails) {
+    //         // for (let [key, value] of applicantDetails.entries()) {
+    //         //     allData1.push({ [key]: value })
+    //         // }
+    //         // setAlldata(allData1)
+    //     }
+    // }, [applicantDetails])
+    // useEffect(() => {
+    //     if (formdata) {
+    //         // for (let [key, value] of formdata.entries()) {
+    //         //     allData1.push({ [key]: value })
+    //         // }
+    //         setAlldata(allData1)
+    //     }
+    // }, [formdata])
+    // useEffect(() => {
+    //     if (alldata) {
+    //         console.log('alldata', alldata)
+    //     }
+    // }, [alldata])
     return (
         <div>
             <Collapse title='Applicant Details' id='true'>
-            <ApplicantDetails applicantDetails={(data) => { setApplicantDetails(data) }} getData={getData} />
+            <ApplicantDetails applicantDetails={(data) => { setApplicantDetails(data) }} gdata={applicantDetails}  />
             </Collapse>
             <Collapse title='Verification Details'>
             <h1>Verification Details</h1>
@@ -226,3 +264,9 @@ export default function Resident() {
         </div>
     )
 }
+const mapStateToProps = (state) => {
+    return {
+        vendor: state.vendors
+    }
+}
+export default connect(mapStateToProps)(Resident)
