@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import './App.css';
 import Login from './auth/login'
 import SignUp from './auth/signup'
 import Forget from './auth/forget'
@@ -86,7 +85,7 @@ function App(props) {
   },[])
 
   return (
-    <div className="App">
+    <div className="text-center w-100">
       <Router >
         <Navigation auth={auth?.currentUser}/>
         <Switch>

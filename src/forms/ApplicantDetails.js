@@ -105,6 +105,8 @@ const ApplicantDetails = ({ applicantDetails, data, vendor }) => {
             setRefresh(Math.random())
             // onHandleChange({ name: data[0], value: test[1] })
         }
+        console.log('data 2', data)
+
     }, [data])
     const onHandleChange = (e) => {
         // name

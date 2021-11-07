@@ -79,14 +79,21 @@ const SubmittedCases = (props) => {
     const handleViewForm = (item) => {
         console.log('handleViewForm', item)
         let pincode = ''
-        if (item?.office) {
-            pincode = item?.office?.applicantDetails?.pincode
-        } else if(item?.resident) {
-            pincode = item?.resident?.applicantDetails?.pincode
-        } else {
-            alert('Form Error, Check log for handleViewForm')
+        for (const key in item) {
+            if (key === 'office') {
+                pincode = item?.office?.applicantDetails?.pincode
+                history.push(`office/${pincode}/${item.key}`)
+            } else if (key === 'resident') {
+                pincode = item?.resident?.applicantDetails?.pincode
+                history.push(`resident/${pincode}/${item.key}`)
+            }
         }
-        history.push(`office/${pincode}/${item.key}`)
+        // if (item?.office) {
+
+        // } else if(item?.resident) {
+
+        // } else {
+        // }
     }
     useEffect(() => {
         formData(props.forms)
@@ -153,7 +160,7 @@ const SubmittedCases = (props) => {
                         {reset > 0 && allData && allData.length > 0 && allData.map((item, index) => {
 
                             return <tr key={item.appid}>
-                                <td onClick={()=>handleViewForm(item)} style={{cursor:'pointer'}} className='text-primary'>
+                                <td onClick={() => handleViewForm(item)} style={{ cursor: 'pointer' }} className='text-primary'>
                                     {item.appid}
                                 </td>
                                 <td>

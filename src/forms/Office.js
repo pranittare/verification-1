@@ -40,6 +40,8 @@ const Office = (props) => {
         abc: ''
     })
     const [verification, setVerification] = useState()
+    const [verificationObserver, setVerificationOvserver] = useState();
+
     const [tpc, setTpc] = useState()
     // const [formdata, setFormData] = useState()
     const [getData, setGetData] = useState(false)
@@ -81,18 +83,28 @@ const Office = (props) => {
                     console.log('formsaved', formsaved)
                     if (formsaved?.office) {
                         for (const key in formsaved.office.verificationDetails) {
-                            formd[key] = formsaved.office.verificationDetails[key]
+                            let savedForm = formsaved.office.verificationDetails
+                            formd[key] = savedForm[key]
+                            if (key === 'VisitDate') {
+                                let date = savedForm[key]
+                                let visitdateandtime = new Date(date)
+                                let dateday = visitdateandtime.getDate()
+                                let dateMonth = (visitdateandtime.getMonth() + 1)
+                                let dateYear = visitdateandtime.getFullYear()
+                                let vDate = `${dateday}/${dateMonth}/${dateYear}`
+                                let time3 = visitdateandtime.toTimeString()
+                                let time4 = time3.split('GMT')[0]
+                                formd.visitDate = vDate
+                                formd.visitedTime = time4
+                            }
+                            if (key === 'addressConfirmedLandmark') {
+                                formd.landmark = savedForm[key]
+                            }
                         }
                         for (const key in formsaved?.office?.applicantDetails) {
                             applicant[key] = formsaved?.office?.applicantDetails[key]
                         }
-                    } else if (formsaved?.resident) {
-                        for (const key in formsaved.resident.verificationDetails) {
-                            formd[key] = formsaved.resident.verificationDetails[key]
-                        }
-                        for (const key in formsaved?.resident?.applicantDetails) {
-                            applicant[key] = formsaved?.resident?.applicantDetails[key]
-                        }
+                        setVerificationOvserver(formsaved.office.verificationDetails)
                     }
                     setApplicantDetails(applicant)
                     setFormdata(formd)
@@ -311,7 +323,7 @@ const Office = (props) => {
                         <button type='submit' id='officeVerficationDetails' >Submit</button>
                     </div>
                 </form>}
-                <VerificationObserverOffice verification={(data) => setVerification(data)} getData={getData} />
+                <VerificationObserverOffice verification={(data) => setVerification(data)} getData={getData} data={verificationObserver}/>
                 <Tpc tpc={(data) => setTpc(data)} getData={getData} />
                 <Geolocation data={[]} />
                 <Button color='primary' onClick={getAllData}>Submit</Button>
