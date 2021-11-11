@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Button, Input} from 'reactstrap';
 import DropDownComp from '../components/DropDownComp';
 
-export default function Tpc({ tpc, getData }) {
+export default function Tpc({ tpc, getData, data }) {
     const [refresh, setRefresh] = useState(0)
     const [formdata, setFormdata] = useState({
         TPCName1: '',
@@ -91,7 +91,18 @@ export default function Tpc({ tpc, getData }) {
         {name:'overallStatus', value:'Refer', label:'Refer'},
         {name:'overallStatus', value:'Not Recomended', label:'Not Recomended'},
     ]
-
+    useEffect(() => {
+        if (data) {
+            let form = formdata
+            // console.log('data', data)
+            for (const key in data) {
+                form[key] = data[key]
+            }
+            setFormdata(form)
+            setRefresh(Math.random())
+            // onHandleChange({ name: data[0], value: test[1] })
+        }
+    }, [data])
     return (
         <div>
             <h4>TPC Confirmation</h4>
