@@ -165,7 +165,7 @@ const OldCases = (props) => {
                     </thead>
                     <tbody>
                         {reset && allData && allData.length > 0 && allData.map((item, index) => {
-                            return <tr key={`${item.key}-${index}`}>
+                            return <tr key={`${item.key}-${index + 1}`}>
                                 <td>
                                     {item.applicantDetails.appid}
                                 </td>
@@ -213,8 +213,8 @@ const OldCases = (props) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {reset > 0 && allData && allData.length > 0 && allData.map((item) => {
-                            return <tr key={item.key}>
+                        {reset > 0 && allData && allData.length > 0 && allData.map((item, index) => {
+                            return <tr key={`${item.key}-${index + 1}`}>
                                 <td>
                                     {item.applicantDetails.appid}
                                 </td>
@@ -249,7 +249,7 @@ const OldCases = (props) => {
     )
 }
 const mapStateToProps = (state) => {
-    console.log('state', state)
+    // console.log('state', state)
     return {
         forms: state.fforms,
         db: state.oldcases

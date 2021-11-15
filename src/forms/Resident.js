@@ -349,7 +349,7 @@ const Resident = (props) => {
                 </form>}
                 <VerificationObserverResident verification={(data) => setVerification(data)} getData={getData} data={verificationObserver}/>
                 <Tpc tpc={(data) => setTpc(data)} getData={getData} data={verificationObserver} />
-                <Geolocation data={[]} data={verificationObserver} id={id} pincode={pincode}/>
+                <Geolocation data={verificationObserver} id={id} pincode={pincode}/>
                 <Button color='primary' onClick={getAllData}>Submit</Button>
             </Collapse>
         </div>

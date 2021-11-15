@@ -138,7 +138,7 @@ const ActiveCases = (props) => {
                     </thead>
                     <tbody>
                         {reset > 0 && allData && allData.length > 0 && allData.map((item, index) => {
-                            return <tr key={item.tat}>
+                            return <tr key={`${item.tat}-${index + 1}`}>
                                 <td onClick={() => handleOpenForm(item)}>
                                     {item.appid}
                                 </td>
@@ -205,7 +205,7 @@ const ActiveCases = (props) => {
                     </thead>
                     <tbody>
                         {reset > 0 && allData && allData.length > 0 && allData.map((item, index) => {
-                            return <tr key={item.key}>
+                            return <tr key={`${item.tat}-${index + 1}`}>
                                 <td>
                                     {item.appid}
                                 </td>

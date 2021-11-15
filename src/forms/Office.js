@@ -12,7 +12,6 @@ import { connect } from 'react-redux';
 
 const Office = (props) => {
     // let allData1 = []
-    // let test = ['appid', '1234']
     let { pincode, id } = useParams()
     console.log('form', props)
     const [formdata, setFormdata] = useState({
@@ -225,7 +224,6 @@ const Office = (props) => {
             <Collapse title='Applicant Details' children={<ApplicantDetails applicantDetails={(data) => { setApplicantDetails(data) }} data={applicantDetails} />} />
             <Collapse title='Verification Details' >
                 <h1>Verification Details</h1>
-
                 {(refresh > 0 || true) && <form className='d-flex justify-content-between flex-wrap' onSubmit={handleSubmit} >
                     <div>
                         <label>Visit Date</label>
@@ -324,8 +322,8 @@ const Office = (props) => {
                     </div>
                 </form>}
                 <VerificationObserverOffice verification={(data) => setVerification(data)} getData={getData} data={verificationObserver}/>
-                <Tpc tpc={(data) => setTpc(data)} getData={getData} />
-                <Geolocation data={[]} />
+                <Tpc tpc={(data) => setTpc(data)} getData={getData} data={verificationObserver}/>
+                <Geolocation data={verificationObserver} id={id} pincode={pincode}/>
                 <Button color='primary' onClick={getAllData}>Submit</Button>
             </Collapse>
         </div>

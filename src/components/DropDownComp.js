@@ -26,11 +26,11 @@ const DropDownComp = ({ onHandleChange, formdata, dropDowmArry, id, other, value
                 <DropdownMenu>
                   {other ?
                   dropDowmArry.map(item => {
-                    return <DropdownItem key={`${item.value}-${id}`} name={item.name} onClick={(e) => onHandleChange(e.currentTarget)} value={item.value}>{item.label}</DropdownItem>
+                    return <DropdownItem key={`${item.value}-${id}-${Math.random()}`} name={item.name} onClick={(e) => onHandleChange(e.currentTarget)} value={item.value}>{item.label}</DropdownItem>
                 })
                   :
                   dropDowmArry.map(item => {
-                    return <DropdownItem key={`${item.name}-${id}`} name={item.name} onClick={(e) => onHandleChange(e.currentTarget)} value={item.value}>{item.label}</DropdownItem>
+                    return <DropdownItem key={`${item.name}-${id}-${Math.random()}`} name={item.name} onClick={(e) => onHandleChange(e.currentTarget)} value={item.value}>{item.label}</DropdownItem>
                 })
                   }
                  

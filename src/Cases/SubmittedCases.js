@@ -4,6 +4,7 @@ import { Input } from 'reactstrap'
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import { useHistory } from 'react-router-dom'
 import moment from 'moment';
+import ProblemCases from './ProblemCases';
 
 const SubmittedCases = (props) => {
     let history = useHistory()
@@ -104,15 +105,15 @@ const SubmittedCases = (props) => {
             if (allData && allData.length > 0) {
                 var uniq = allData
                     .map((name) => {
-                        if (name.office.applicantDetails.customerName) {
+                        if (name?.office?.applicantDetails?.customerName) {
                             return {
                                 count: 1,
-                                name: name.office.applicantDetails.customerName
+                                name: name?.office?.applicantDetails?.customerName
                             }
                         } else {
                             return {
                                 count: 1,
-                                name: name.resident.applicantDetails.customerName
+                                name: name?.resident?.applicantDetails?.customerName
                             }
                         }
 
@@ -159,9 +160,12 @@ const SubmittedCases = (props) => {
                     <tbody>
                         {reset > 0 && allData && allData.length > 0 && allData.map((item, index) => {
 
-                            return <tr key={item.appid}>
-                                <td onClick={() => handleViewForm(item)} style={{ cursor: 'pointer' }} className='text-primary'>
+                            return <tr key={`${item.appid}-${index + 1}`}>
+                                <td >
+                                    <div onClick={() => handleViewForm(item)} style={{ cursor: 'pointer' }} className='text-primary'>
                                     {item.appid}
+                                    </div>
+                                    <ProblemCases cases={item} />
                                 </td>
                                 <td>
                                     {
@@ -233,7 +237,7 @@ const SubmittedCases = (props) => {
                     </thead>
                     <tbody>
                         {reset > 0 && allData && allData.length > 0 && allData.map((item, index) => {
-                            return <tr key={item.appid} >
+                            return <tr key={`${item.appid}-${index + 1}`} >
                                 <td>
                                     {item.appid}
                                 </td>

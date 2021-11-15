@@ -53,13 +53,13 @@ export default function Geolocation({ data, id, pincode }) {
             <h3>Geolocation and Images</h3>
             <div>
                 <h5>Audio</h5>
-                <a href={audio} matTooltip="Click to Play" target="_blank"
+                <a href={audio} target="_blank"
                     rel="noopener noreferrer">Play</a>
             </div>
             <div>
                 <h5>Map</h5>
                 <img src={`https://maps.googleapis.com/maps/api/staticmap?size=300x300&maptype=hybrid&markers=${data?.region?.latitude},${data?.region?.latitude}&key=AIzaSyBPoGWXtGubXKV44J4D4ZsBtvY-lIBjEMU&zoom=16`}
-                    alt="" id="imagemap" matTooltip="Click to Open" />
+                    alt="" id="imagemap" />
                 <a href={`http://maps.google.com/maps?q=${data?.region?.latitude} +, + ${data?.region?.longitude}" target="_blank`}>
                     <strong>
                         Latitude: {data?.region?.latitude}
