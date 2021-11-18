@@ -6,11 +6,27 @@ const ProblemCases = ({ cases }) => {
     const [modal, setModal] = useState(false);
     const [refresh, setRefresh] = useState(0)
     const [outsideEdit, setOutsideEdit] = useState(false);
+    const [resiEdit, setResiEdit] = useState(false);
+    const [officeEdit, setOfficeEdit] = useState(false);
     const [formdata, setFormdata] = useState({
         branches: '',
         allocated: '',
         claimed: ''
     })
+    
+    const [formdataResi, setFormdataResi] = useState({
+        resiAppid: '',
+        contactNo: '',
+        location: '',
+        mobileNo: '',
+    })
+    const [formdataOffice, setFormdataOffice] = useState({
+        resiAppid: '',
+        contactNo: '',
+        location: '',
+        mobileNo: '',
+    })
+    
     const toggle = () => {
         setModal(!modal)
     };
@@ -110,10 +126,44 @@ const ProblemCases = ({ cases }) => {
         setRefresh(Math.random())
         // console.log(form)
     }
+    const onHandleChange1 = (e) => {
+        // name
+        // console.log(e)
+        let form = formdataResi
+        form[e.name] = e.value
+        setFormdataResi(form)
+        setRefresh(Math.random())
+        // console.log(form)
+    }
+    const onHandleChange2 = (e) => {
+        // name
+        // console.log(e)
+        let form = formdataOffice
+        form[e.name] = e.value
+        setFormdataOffice(form)
+        setRefresh(Math.random())
+        // console.log(form)
+    }
     const handleoutsideApply = () => {
         let ndate = moment().format('ddd ll')
         let tat = new Date().toString()
         console.log('ndate', ndate, tat)
+    }
+    const handleresiApplicantEdit = () => {
+        setResiEdit(true)
+    }
+    const handleresiApplicantApply = () => {
+        console.log('form', formdataResi)
+        setResiEdit(false)
+
+    }
+    const handleofficeApplicantEdit = () => {
+        setOfficeEdit(true)
+    }
+    const handleofficeApplicantApply = () => {
+        console.log('form', formdataOffice)
+        setOfficeEdit(false)
+
     }
     return (
         <div>
@@ -127,7 +177,7 @@ const ProblemCases = ({ cases }) => {
             <Modal isOpen={modal} toggle={toggle} >
                 <ModalHeader>Header</ModalHeader>
                 <ModalBody>
-                    <Table>
+                    <Table bordered>
                         <thead>
                             <tr>
                                 <th>Outside</th>
@@ -139,7 +189,7 @@ const ProblemCases = ({ cases }) => {
                                 <td>
                                     <div className='d-flex justify-content-around'>
                                         <Button onClick={handleoutsideEdit}>Edit</Button>
-                                        <Button color='warning' onClick={handleoutsideApply}>Apply</Button>
+                                        {outsideEdit && <Button color='warning' onClick={handleoutsideApply}>Apply</Button>}
                                     </div>
                                     <div>
                                         allocated: {JSON.stringify(cases?.allocated)}
@@ -171,41 +221,58 @@ const ProblemCases = ({ cases }) => {
                                     </div>
                                 </td>
                                 <td>
+
                                     {resiApplicant ?
                                         <>
+                                            <div className='d-flex justify-content-around'>
+                                                <Button onClick={handleresiApplicantEdit}>Edit</Button>
+                                               {resiEdit && <Button color='warning' onClick={handleresiApplicantApply}>Apply</Button>}
+                                            </div>
                                             <div>
                                                 appid: {JSON.stringify(cases?.resident?.applicantDetails?.appid)}
+                                                {resiEdit && <Input name='resiAppid'  onChange={(e) => onHandleChange1(e.currentTarget)} value={formdataResi['resiAppid']}/>}
                                             </div>
                                             <br />
                                             <div>
                                                 contactNo: {JSON.stringify(cases?.resident?.applicantDetails?.contactNo)}
+                                                {resiEdit && <Input name='contactNo'  onChange={(e) => onHandleChange1(e.currentTarget)} value={formdataResi['contactNo']}/>}
                                             </div>
                                             <br />
                                             <div>
                                                 loaction: {JSON.stringify(cases?.resident?.applicantDetails?.loaction)}
+                                                {resiEdit && <Input name='location'  onChange={(e) => onHandleChange1(e.currentTarget)} value={formdataResi['location']}/>}
                                             </div>
                                             <br />
                                             <div>
                                                 mobileNo: {JSON.stringify(cases?.resident?.applicantDetails?.mobileNo)}
+                                                {resiEdit && <Input name='mobileNo'  onChange={(e) => onHandleChange1(e.currentTarget)} value={formdataResi['mobileNo']}/>}
                                             </div>
 
                                         </>
                                         :
                                         <>
+                                            <div className='d-flex justify-content-around'>
+                                                <Button onClick={handleofficeApplicantEdit}>Edit</Button>
+                                              {officeEdit &&  <Button color='warning' onClick={handleofficeApplicantApply}>Apply</Button>}
+                                            </div>
                                             <div>
                                                 appid: {JSON.stringify(cases?.office?.applicantDetails?.appid)}
+                                                {officeEdit && <Input name='appid'  onChange={(e) => onHandleChange2(e.currentTarget)} value={formdataOffice['appid']}/>}
                                             </div>
                                             <br />
                                             <div>
                                                 contactNo: {JSON.stringify(cases?.office?.applicantDetails?.contactNo)}
+                                                {officeEdit && <Input name='contactNo'  onChange={(e) => onHandleChange2(e.currentTarget)} value={formdataOffice['contactNo']}/>}
                                             </div>
                                             <br />
                                             <div>
                                                 loaction: {JSON.stringify(cases?.office?.applicantDetails?.loaction)}
+                                                {officeEdit && <Input name='location'  onChange={(e) => onHandleChange2(e.currentTarget)} value={formdataOffice['location']}/>}
                                             </div>
                                             <br />
                                             <div>
                                                 mobileNo: {JSON.stringify(cases?.office?.applicantDetails?.mobileNo)}
+                                                {officeEdit && <Input name='mobileNo'  onChange={(e) => onHandleChange2(e.currentTarget)} value={formdataOffice['mobileNo']}/>}
                                             </div>
                                         </>
                                     }
