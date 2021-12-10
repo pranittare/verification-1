@@ -71,7 +71,7 @@ const TotalAgents = (props) => {
                     }, {})
 
                 var duplicates = Object.keys(uniq).filter((a) => uniq[a] > 1)
-                alert(`Duplicate Entries Found: ${duplicates.join(', ')}`)
+                duplicates && duplicates.length > 0 && alert(`Duplicate Entries Found: ${duplicates.join(', ')}`)
                 console.log('duplicates', duplicates)
             }
         }, 5000)
@@ -110,7 +110,7 @@ const TotalAgents = (props) => {
                     <tbody>
                         {reset > 0 && allData && allData.length > 0 && allData.map((item, index) => {
                             // console.log('item', item)
-                            if (item.name !== 'SAQUIB MASHKOOR KHAN' && item.branch === props.branch)
+                            if (item.branch === props.branch)
                                 return <tr key={index}>
                                     <th>{index + 1}</th>
                                     <td >
