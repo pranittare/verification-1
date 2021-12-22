@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
 const Office = (props) => {
     // let allData1 = []
     let { pincode, id } = useParams()
-    console.log('form', props)
+    // console.log('form', props)
     const [formdata, setFormdata] = useState({
         visitDate: '',
         visitedTime: '',
@@ -35,23 +35,22 @@ const Office = (props) => {
         detailsIncomeDesignation: '',
         additionalIncome: '',
         source: '',
-        typeofEntity: '',
-        abc: ''
+        typeofEntity: ''
     })
-    const [verification, setVerification] = useState()
+    // const [verification, setVerification] = useState()
     const [verificationObserver, setVerificationOvserver] = useState();
 
-    const [tpc, setTpc] = useState()
+    // const [tpc, setTpc] = useState()
     // const [formdata, setFormData] = useState()
     const [getData, setGetData] = useState(false)
-    const [alldata, setAlldata] = useState([])
+    // const [alldata, setAlldata] = useState([])
     const [applicantDetails, setApplicantDetails] = useState()
     const [refresh, setRefresh] = useState(0)
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        const formd = new FormData(e.currentTarget)
-        setFormdata(formd)
+        // const formd = new FormData(e.currentTarget)
+        // setFormdata(formd)
     }
     const getAllData = () => {
         document.getElementById('officeVerficationDetails').click()
@@ -64,7 +63,7 @@ const Office = (props) => {
     const onHandleChange = (e) => {
         // name
         let form = formdata
-        console.log(e)
+        // console.log(e)
         form[e.name] = e.value
         // console.log(e, form[e.name] )
         setFormdata(form)
@@ -115,6 +114,9 @@ const Office = (props) => {
 
     }, [id, pincode])
 
+    useEffect(() => {
+        console.log('getData', formdata)
+    }, [getData])
     // useEffect(() => {
     //     if (verification) {
 
@@ -227,11 +229,11 @@ const Office = (props) => {
                 {(refresh > 0 || true) && <form className='d-flex justify-content-between flex-wrap' onSubmit={handleSubmit} >
                     <div>
                         <label>Visit Date</label>
-                        <Input type="text" name='visitDate' value={formdata['visitDate']} onChange={(e) => onHandleChange(e)} />
+                        <Input type="text" name='visitDate' value={formdata['visitDate']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
                     <div>
                         <label>Visited Time:</label>
-                        <Input type="text" name='visitedTime' value={formdata['visitedTime']} onChange={(e) => onHandleChange(e)} />
+                        <Input type="text" name='visitedTime' value={formdata['visitedTime']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
                     <div>
                         <label>Address Confirmed</label>
@@ -245,11 +247,11 @@ const Office = (props) => {
                     </div>
                     <div>
                         <label>Business Board Seen</label>
-                        <Input type="text" name='businessBoardSeenNote' value={formdata['businessBoardSeenNote']} onChange={(e) => onHandleChange(e)} />
+                        <Input type="text" name='businessBoardSeenNote' value={formdata['businessBoardSeenNote']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
                     <div>
                         <label>LandMark</label>
-                        <Input type="text" name='landmark' value={formdata['landmark']} onChange={(e) => onHandleChange(e)} />
+                        <Input type="text" name='landmark' value={formdata['landmark']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
                     <div>
                         <label>Person Met</label>
@@ -258,7 +260,7 @@ const Office = (props) => {
                     </div>
                     <div>
                         <label>Person Met Name</label>
-                        <Input type="text" name='personMetName' value={formdata['personMetName']} onChange={(e) => onHandleChange(e)} />
+                        <Input type="text" name='personMetName' value={formdata['personMetName']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
                     <div>
                         <label>Person Met Designation</label>
@@ -267,11 +269,11 @@ const Office = (props) => {
                     </div>
                     <div>
                         <label>No of Yrs in present Employment/Business & Total Yrs of Exp</label>
-                        <Input type="text" name='totalYearsExp' value={formdata['totalYearsExp']} onChange={(e) => onHandleChange(e)} />
+                        <Input type="text" name='totalYearsExp' value={formdata['totalYearsExp']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
                     <div>
                         <label>No of Yrs At Current Address</label>
-                        <Input type="text" name='totalYearsExpAtCurrentAddress' value={formdata['totalYearsExpAtCurrentAddress']} onChange={(e) => onHandleChange(e)} />
+                        <Input type="text" name='totalYearsExpAtCurrentAddress' value={formdata['totalYearsExpAtCurrentAddress']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
                     <div>
                         <label>Less than 1 yr at Current Address</label>
@@ -280,7 +282,7 @@ const Office = (props) => {
                     </div>
                     <div>
                         <label>Prev Address/ Prev Employment</label>
-                        <Input type="text" name='lessThanYrAtCurrentAddressNote' value={formdata['lessThanYrAtCurrentAddressNote']} onChange={(e) => onHandleChange(e)} />
+                        <Input type="text" name='lessThanYrAtCurrentAddressNote' value={formdata['lessThanYrAtCurrentAddressNote']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
                     <div>
                         <label>Nature of Business</label>
@@ -289,7 +291,7 @@ const Office = (props) => {
                     </div>
                     <div>
                         <label>Nature of Business Other</label>
-                        <Input type="text" name='natureOfBusinessDetails' value={formdata['natureOfBusinessDetails']} onChange={(e) => onHandleChange(e)} />
+                        <Input type="text" name='natureOfBusinessDetails' value={formdata['natureOfBusinessDetails']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
                     <div>
                         <label>Office Ownership</label>
@@ -298,31 +300,40 @@ const Office = (props) => {
                     </div>
                     <div>
                         <label>if Rented then Rent Amount</label>
-                        <Input type="text" name='rentAmount' value={formdata['rentAmount']} onChange={(e) => onHandleChange(e)} />
+                        <Input type="text" name='rentAmount' value={formdata['rentAmount']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
                     <div>
                         <label>Details(Income/Designation)</label>
-                        <Input type="text" name='detailsIncomeDesignation' value={formdata['detailsIncomeDesignation']} onChange={(e) => onHandleChange(e)} />
+                        <Input type="text" name='detailsIncomeDesignation' value={formdata['detailsIncomeDesignation']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
-                    <div>
+                    <div className='d-flex'>
+                    <div className='pe-4'>
                         <label>Additional Income</label>
-                        <Input type="text" name='additionalIncome' value={formdata['additionalIncome']} onChange={(e) => onHandleChange(e)} />
+                        <Input type="text" name='additionalIncome' value={formdata['additionalIncome']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
-                    <div>
+                    <div className='pe-4'>
                         <label>Source</label>
-                        <Input type="text" name='source' value={formdata['source']} onChange={(e) => onHandleChange(e)} />
+                        <Input type="text" name='source' value={formdata['source']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
                     <div>
                         <label>Type of Entity</label>
                         <DropDownComp id='office' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={typeofEntity} />
 
                     </div>
+
+                    </div>
                     <div className='d-none'>
                         <button type='submit' id='officeVerficationDetails' >Submit</button>
                     </div>
                 </form>}
-                <VerificationObserverOffice verification={(data) => setVerification(data)} getData={getData} data={verificationObserver}/>
-                <Tpc tpc={(data) => setTpc(data)} getData={getData} data={verificationObserver}/>
+                <VerificationObserverOffice verification={(data) => {
+                    let alldata = formdata
+                    let combinded = Object.assign(alldata, data);
+                    setFormdata(combinded)}} getData={getData} data={verificationObserver}/>
+                <Tpc tpc={(data) => {
+                    let alldata = formdata
+                    let combinded = Object.assign(alldata, data);
+                    setFormdata(combinded)}} getData={getData} data={verificationObserver}/>
                 <Geolocation data={verificationObserver} id={id} pincode={pincode}/>
                 <Button color='primary' onClick={getAllData}>Submit</Button>
             </Collapse>

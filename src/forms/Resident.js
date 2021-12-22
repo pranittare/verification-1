@@ -9,16 +9,17 @@ import { useParams } from 'react-router-dom'
 import { getFormData } from '../utils/singleForm'
 import { connect } from 'react-redux';
 import DropDownComp from '../components/DropDownComp';
+import VerificationObserverOffice from './VerificationObserverOffice';
 
 const Resident = (props) => {
     let allData1 = []
     let { pincode, id } = useParams()
 
-    const [verification, setVerification] = useState()
-    const [tpc, setTpc] = useState()
+    // const [verification, setVerification] = useState()
+    // const [tpc, setTpc] = useState()
     // const [formdata, setFormData] = useState()
     const [getData, setGetData] = useState(false)
-    const [alldata, setAlldata] = useState([])
+    // const [alldata, setAlldata] = useState([])
     const [applicantDetails, setApplicantDetails] = useState()
     const [verificationObserver, setVerificationOvserver] = useState();
     const [formdata, setFormdata] = useState({
@@ -61,7 +62,7 @@ const Resident = (props) => {
     }
     const handleSubmit = (e) => {
         e.preventDefault()
-        const formd = new FormData(e.currentTarget)
+        // const formd = new FormData(e.currentTarget)
         // setFormData(formd)
     }
     const getAllData = () => {
@@ -72,6 +73,9 @@ const Resident = (props) => {
         }, [100])
 
     }
+    useEffect(() => {
+        console.log('getData', formdata)
+    }, [getData])
     // Form data by id
     useEffect(() => {
         if (id) {
@@ -347,8 +351,14 @@ const Resident = (props) => {
                         <button type='submit' id='residentVerificationDetails'>Submit</button>
                     </div>
                 </form>}
-                <VerificationObserverResident verification={(data) => setVerification(data)} getData={getData} data={verificationObserver}/>
-                <Tpc tpc={(data) => setTpc(data)} getData={getData} data={verificationObserver} />
+                <VerificationObserverResident verification={(data) => {
+                    let alldata = formdata
+                    let combinded = Object.assign(alldata, data);
+                    setFormdata(combinded)}} getData={getData} data={verificationObserver}/>
+                <Tpc tpc={(data) => {
+                    let alldata = formdata
+                    let combinded = Object.assign(alldata, data);
+                    setFormdata(combinded)}} getData={getData} data={verificationObserver}/>
                 <Geolocation data={verificationObserver} id={id} pincode={pincode}/>
                 <Button color='primary' onClick={getAllData}>Submit</Button>
             </Collapse>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Input} from 'reactstrap';
+import { Button, Input } from 'reactstrap';
 import DropDownComp from '../components/DropDownComp';
 
 export default function Tpc({ tpc, getData, data }) {
@@ -29,7 +29,7 @@ export default function Tpc({ tpc, getData, data }) {
         TPCRemarks: '',
         overallStatus: '',
     })
-    
+
 
     const onHandleChange = (e) => {
         // name
@@ -41,9 +41,10 @@ export default function Tpc({ tpc, getData, data }) {
         // console.log(form)
     }
     const handleSubmit = (e) => {
-        const formData = new FormData(e.currentTarget);
+        // const formData = new FormData(e.currentTarget);
         e.preventDefault()
-        tpc(formData)
+        // console.log('tpc', formdata)
+        tpc(formdata)
         // for (let [key, value] of formData.entries()) {
         //     console.log(key, value);
         // }
@@ -52,44 +53,44 @@ export default function Tpc({ tpc, getData, data }) {
         if (getData) {
             document.getElementById('tpcdata').click()
         }
-        console.log('getdata', getData)
+        // console.log('getdata', getData)
     }, [getData])
 
     let status1 = [
-        {name:'status1', value:'', label:'None'},
-        {name:'status1', value:'positive', label:'Positive'},
-        {name:'status1', value:'negative', label:'Negative'},
+        { name: 'status1', value: '', label: 'None' },
+        { name: 'status1', value: 'positive', label: 'Positive' },
+        { name: 'status1', value: 'negative', label: 'Negative' },
     ]
 
     let status2 = [
-        {name:'status2', value:'', label:'None'},
-        {name:'status2', value:'positive', label:'Positive'},
-        {name:'status2', value:'negative', label:'Negative'},
+        { name: 'status2', value: '', label: 'None' },
+        { name: 'status2', value: 'positive', label: 'Positive' },
+        { name: 'status2', value: 'negative', label: 'Negative' },
     ]
 
     let status3 = [
-        {name:'status3', value:'', label:'None'},
-        {name:'status3', value:'positive', label:'Positive'},
-        {name:'status3', value:'negative', label:'Negative'},
+        { name: 'status3', value: '', label: 'None' },
+        { name: 'status3', value: 'positive', label: 'Positive' },
+        { name: 'status3', value: 'negative', label: 'Negative' },
     ]
 
     let marketReputation = [
-        {name:'marketReputation', value:'', label:'None'},
-        {name:'marketReputation', value:'positive', label:'Positive'},
-        {name:'marketReputation', value:'negative', label:'Negative'},
+        { name: 'marketReputation', value: '', label: 'None' },
+        { name: 'marketReputation', value: 'positive', label: 'Positive' },
+        { name: 'marketReputation', value: 'negative', label: 'Negative' },
     ]
 
     let TVRStatus = [
-        {name:'TVRStatus', value:'', label:'None'},
-        {name:'TVRStatus', value:'positive', label:'Positive'},
-        {name:'TVRStatus', value:'negative', label:'Negative'},
+        { name: 'TVRStatus', value: '', label: 'None' },
+        { name: 'TVRStatus', value: 'positive', label: 'Positive' },
+        { name: 'TVRStatus', value: 'negative', label: 'Negative' },
     ]
 
     let overallStatus = [
-        {name:'overallStatus', value:'', label:'None'},
-        {name:'overallStatus', value:'Recomended', label:'Recomended'},
-        {name:'overallStatus', value:'Refer', label:'Refer'},
-        {name:'overallStatus', value:'Not Recomended', label:'Not Recomended'},
+        { name: 'overallStatus', value: '', label: 'None' },
+        { name: 'overallStatus', value: 'Recomended', label: 'Recomended' },
+        { name: 'overallStatus', value: 'Refer', label: 'Refer' },
+        { name: 'overallStatus', value: 'Not Recomended', label: 'Not Recomended' },
     ]
     useEffect(() => {
         if (data) {
@@ -121,9 +122,9 @@ export default function Tpc({ tpc, getData, data }) {
                             <th>1</th>
                             <td>
                                 <Input type="text" name="TPCName1" value={formdata['TPCName1']} onChange={(e) => onHandleChange(e.currentTarget)} /></td>
-                            
+
                             <td>
-                                <DropDownComp id='tpc' onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={status1} />
+                                <DropDownComp id='tpc' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={status1} />
                             </td>
                             <td>
                                 <Input type="text" name="TPCRemark1" value={formdata['TPCRemark1']} onChange={(e) => onHandleChange(e.currentTarget)} /></td>
@@ -134,7 +135,7 @@ export default function Tpc({ tpc, getData, data }) {
                                 <Input type="text" name="TPCName2" value={formdata['TPCName2']} onChange={(e) => onHandleChange(e.currentTarget)} /></td>
 
                             <td>
-                                <DropDownComp id='tpc' onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={status2} />
+                                <DropDownComp id='tpc' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={status2} />
                             </td>
                             <td>
                                 <Input type="text" name="TPCRemark2" value={formdata['TPCRemark2']} onChange={(e) => onHandleChange(e.currentTarget)} /></td>
@@ -145,20 +146,23 @@ export default function Tpc({ tpc, getData, data }) {
                                 <Input type="text" name="TPCName3" value={formdata['TPCName3']} onChange={(e) => onHandleChange(e.currentTarget)} /></td>
 
                             <td>
-                                <DropDownComp id='tpc' onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={status3} />
+                                <DropDownComp id='tpc' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={status3} />
                             </td>
                             <td>
                                 <Input type="text" name="TPCRemark3" value={formdata['TPCRemark3']} onChange={(e) => onHandleChange(e.currentTarget)} /></td>
                         </tr>
                     </tbody>
                 </table>
-                <div>
-                    <label>Market Reputation/Dedup Check</label>
-                    <DropDownComp id='tpc' onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={marketReputation} />
-                </div>
-                <div>
-                    <label>Remarks</label>
-                    <Input type="text" name='TPCRemarks' value={formdata['TPCRemarks']} onChange={(e) => onHandleChange(e.currentTarget)} />
+                <div className='d-flex'>
+                    <div>
+                        <label>Market Reputation/Dedup Check</label>
+                        <DropDownComp id='tpc' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={marketReputation} />
+                    </div>
+                    <div className='ms-4'>
+                        <label>Remarks</label>
+                        <Input type="text" name='TPCRemarks' value={formdata['TPCRemarks']} onChange={(e) => onHandleChange(e.currentTarget)} />
+
+                    </div>
 
                 </div>
                 <h4 className='w-100'>TVR Comments</h4>
@@ -173,7 +177,7 @@ export default function Tpc({ tpc, getData, data }) {
                 <div>
                     <label>Status</label>
 
-                    <DropDownComp id='tpc' onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={TVRStatus} />
+                    <DropDownComp id='tpc' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={TVRStatus} />
                 </div>
                 <div>
                     <label>Business Name</label>
@@ -197,8 +201,8 @@ export default function Tpc({ tpc, getData, data }) {
                 <div>
                     <label>Status</label>
 
-                    <DropDownComp id='tpc' onHandleChange={(e)=>onHandleChange(e)} formdata={formdata} dropDowmArry={overallStatus} />
-                    
+                    <DropDownComp id='tpc' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={overallStatus} />
+
                 </div>
                 <div>
                     <label>Agency name</label>

@@ -4,7 +4,7 @@ import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject, listAll } f
 export default function Geolocation({ data, id, pincode }) {
     const [audio, setAudio] = useState()
     const [images, setImages] = useState([])
-    const [map, setMap] = useState();
+    const [refresh, setRefresh] = useState(0)
 
     const storage = getStorage();
 
@@ -24,22 +24,48 @@ export default function Geolocation({ data, id, pincode }) {
         const filePath = `forms/${pincode}/${key}/images/`
         const storageRef = ref(storage, filePath);
         listAll(storageRef)
-        .then((res) => {
-            // setImages(res)
-            // console.log('viewImages', res)
-          res.items.map((itemRef) => {
-              console.log('single', itemRef)
-              getDownloadURL(storage, itemRef._location.path_).then((x) => {
-                  console.log('x',x)
-                setImages([...images, x])
-              }).catch(err => {
-                  console.log('err', err)
-              })
-            // All the items under listRef.
-          });
-        }).catch((error) => {
-          // Uh-oh, an error occurred!
-        });
+            .then((res) => {
+                let temp = []
+                res.items.map((itemRef) => {
+                    let imageRef = ref(storage, itemRef._location.path_)
+                    getDownloadURL(imageRef).then((x) => {
+                        temp.push(x)
+                        setImages(temp)
+                        setRefresh(Math.random())
+                    }).catch(err => {
+                        console.log('err', err)
+                    })
+
+                    // All the items under listRef.
+                });
+                console.log('set', temp)
+            }).catch((error) => {
+                // Uh-oh, an error occurred!
+            });
+    }
+    const handleDeleteImage = (item, index) => {
+        console.log('delete', item, index)
+        const desertRef = ref(storage, item);
+        deleteObject(desertRef).then(res => {
+            console.log('delete successfully')
+            setRefresh(Math.random())
+        }).catch(err => {
+            console.log('err', err)
+        })
+    }
+    const uploadImage = (file) => {
+        const filePath = `forms/${pincode}/${id}/images/${file.name}`
+        const storageRef = ref(storage, filePath);
+        const metadata = {
+            contentType: 'image/jpeg',
+        };
+        const uploadTask = uploadBytes(storageRef, file, metadata);
+        uploadTask.then(res => {
+            // console.log('uploadTask', res)
+            viewImages(id, pincode)
+        }).catch(err => {
+            console.log('uploadTask error', err)
+        })
     }
     useEffect(() => {
         console.log('data', data, pincode, id)
@@ -58,22 +84,35 @@ export default function Geolocation({ data, id, pincode }) {
             </div>
             <div>
                 <h5>Map</h5>
-                <img src={`https://maps.googleapis.com/maps/api/staticmap?size=300x300&maptype=hybrid&markers=${data?.region?.latitude},${data?.region?.latitude}&key=AIzaSyBPoGWXtGubXKV44J4D4ZsBtvY-lIBjEMU&zoom=16`}
-                    alt="" id="imagemap" />
-                <a href={`http://maps.google.com/maps?q=${data?.region?.latitude} +, + ${data?.region?.longitude}" target="_blank`}>
-                    <strong>
-                        Latitude: {data?.region?.latitude}
-                        <br />
-                        Longitude: {data?.region?.longitude}
-                    </strong>
-                </a>
+                <div className='d-flex justify-content-center'>
+                    <img src={`https://maps.googleapis.com/maps/api/staticmap?size=300x300&maptype=hybrid&markers=${data?.region?.latitude},${data?.region?.longitude}&key=AIzaSyBPoGWXtGubXKV44J4D4ZsBtvY-lIBjEMU&zoom=16`}
+                        alt="" id="imagemap" />
+                    <a className='mt-3' href={`http://maps.google.com/maps?q=${data?.region?.latitude} +, + ${data?.region?.longitude}" target="_blank`}>
+                        <strong>
+                            Latitude: {data?.region?.latitude}
+                            <br />
+                            Longitude: {data?.region?.longitude}
+                        </strong>
+                    </a>
+
+                </div>
+                <br />
                 <p>{data?.locName}</p>
             </div>
             <div>
                 <h5>Images</h5>
-                {images?.map((item, index) => {
-                    return <img src={item} key={item} />
-                })}
+                <div className='d-flex justify-content-between flex-wrap'>
+                    {images?.map((item, index) => {
+                        return <div key={item} >
+                           <a href={item} target='_blank'><img src={item} /></a> 
+                            <button onClick={() => handleDeleteImage(item, index)} className='btn btn-danger'>X</button>
+                        </div>
+                    })}
+
+                </div>
+                <div className='w-50 my-2'>
+                <input className='form-control' type="file" id="image-file" onChange={(e) => uploadImage(e.target.files[0])}/>
+                </div>
             </div>
 
 

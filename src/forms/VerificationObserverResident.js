@@ -56,7 +56,7 @@ export default function VerificationObserverResident({ verification, getData, da
         // console.log(form)
     }
     const handleSubmit = (e) => {
-        const formdata = new FormData(e.currentTarget)
+        // const formdata = new FormData(e.currentTarget)
         e.preventDefault()
         verification(formdata)
         // setData(formdata)

@@ -110,16 +110,16 @@ const ApplicantDetails = ({ applicantDetails, data, vendor }) => {
     }, [data])
     const onHandleChange = (e) => {
         // name
-        console.log(e)
+        // console.log(e)
         let form = formdata
         form[e.name] = e.value
         setFormdata(form)
         setRefresh(Math.random())
-        console.log(form)
+        // console.log(form)
     }
-    useEffect(() => {
-        console.log('dropdownBankNameOpen', dropdownBankNameOpen)
-    }, [dropdownBankNameOpen])
+    // useEffect(() => {
+    //     console.log('dropdownBankNameOpen', dropdownBankNameOpen)
+    // }, [dropdownBankNameOpen])
     useEffect(() => {
         setRefresh(Math.random())
     }, [])
@@ -184,7 +184,6 @@ const ApplicantDetails = ({ applicantDetails, data, vendor }) => {
                                         setProductList(item?.productList)
                                         setFormdata({...formdata, bankNBFCname: item.clientName})
                                         }}>
-                                        {console.log('list', item.clientName)}
                                         {item.clientName}
                                     </DropdownItem>
                                 })}

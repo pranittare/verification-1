@@ -49,7 +49,7 @@ export default function VerificationObserverOffice({ verification, getData, data
     //     // console.log(form)
     // }
     const handleSubmit = (e) => {
-        const formdata = new FormData(e.currentTarget)
+        // const formdata = new FormData(e.currentTarget)
         e.preventDefault()
         verification(formdata)
         // setData(formdata)
@@ -61,7 +61,7 @@ export default function VerificationObserverOffice({ verification, getData, data
         if (getData) {
             document.getElementById('officeVerificationObserver').click()
         }
-        console.log('getdata', getData)
+        // console.log('getdata', getData)
     }, [getData])
     useEffect(() => {
         if (data) {
