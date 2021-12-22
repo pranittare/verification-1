@@ -9,6 +9,7 @@ import Collapse from '../components/Collapse';
 import { useParams } from 'react-router-dom'
 import { getFormData } from '../utils/singleForm'
 import { connect } from 'react-redux';
+import PdfOffice from './PdfOffice';
 
 const Office = (props) => {
     // let allData1 = []
@@ -337,6 +338,8 @@ const Office = (props) => {
                 <Geolocation data={verificationObserver} id={id} pincode={pincode}/>
                 <Button color='primary' onClick={getAllData}>Submit</Button>
             </Collapse>
+            pdf
+            <PdfOffice data={formdata}/>
         </div>
     )
 }
