@@ -9,17 +9,12 @@ import { useParams } from 'react-router-dom'
 import { getFormData } from '../utils/singleForm'
 import { connect } from 'react-redux';
 import DropDownComp from '../components/DropDownComp';
-import VerificationObserverOffice from './VerificationObserverOffice';
+import PdfMakeResident from './PdfMakeResident';
 
 const Resident = (props) => {
-    let allData1 = []
     let { pincode, id } = useParams()
 
-    // const [verification, setVerification] = useState()
-    // const [tpc, setTpc] = useState()
-    // const [formdata, setFormData] = useState()
     const [getData, setGetData] = useState(false)
-    // const [alldata, setAlldata] = useState([])
     const [applicantDetails, setApplicantDetails] = useState()
     const [verificationObserver, setVerificationOvserver] = useState();
     const [formdata, setFormdata] = useState({
@@ -52,18 +47,13 @@ const Resident = (props) => {
     })
     const [refresh, setRefresh] = useState(0)
     const onHandleChange = (e) => {
-        // name
         let form = formdata
         form[e.name] = e.value
-        // console.log(e, form[e.name] )
         setFormdata(form)
         setRefresh(Math.random())
-        // console.log(form)
     }
     const handleSubmit = (e) => {
         e.preventDefault()
-        // const formd = new FormData(e.currentTarget)
-        // setFormData(formd)
     }
     const getAllData = () => {
         document.getElementById('residentVerificationDetails').click()
@@ -227,8 +217,13 @@ const Resident = (props) => {
     // }, [alldata])
     return (
         <div>
-            <Collapse title='Applicant Details' id='true'>
-                <ApplicantDetails applicantDetails={(data) => { setApplicantDetails(data) }} data={applicantDetails} />
+            {(refresh > 0 || true) && <PdfMakeResident data={formdata} refresh={()=> setRefresh(Math.random())}/>}
+            <Collapse title='Applicant Details'>
+                <ApplicantDetails applicantDetails={(data) => {
+                      let alldata = formdata
+                      let combinded = Object.assign(alldata, data);
+                      setFormdata(combinded);
+                      setApplicantDetails(data) }} data={applicantDetails} getData={getData}/>
             </Collapse>
             <Collapse title='Verification Details'>
                 <h1>Verification Details</h1>
@@ -367,7 +362,8 @@ const Resident = (props) => {
 }
 const mapStateToProps = (state) => {
     return {
-        vendor: state.vendors
+        vendor: state.vendors,
+        images: state.images
     }
 }
 export default connect(mapStateToProps)(Resident)

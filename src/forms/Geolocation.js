@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject, listAll } from "firebase/storage";
-
-export default function Geolocation({ data, id, pincode }) {
+import { connect } from 'react-redux';
+const Geolocation = (props) => {
+    const { data, id, pincode } = props
     const [audio, setAudio] = useState()
     const [images, setImages] = useState([])
     const [refresh, setRefresh] = useState(0)
@@ -74,6 +75,12 @@ export default function Geolocation({ data, id, pincode }) {
             viewImages(id, pincode)
         }
     }, [data])
+    useEffect(() => {
+        if (images.length > 0) {
+            props.dispatch({ type: 'IMAGES', data: images })
+        }
+        console.log('images', images)
+    }, [images])
     return (
         <div className='w-100'>
             <h3>Geolocation and Images</h3>
@@ -119,3 +126,4 @@ export default function Geolocation({ data, id, pincode }) {
         </div>
     )
 }
+export default connect()(Geolocation)

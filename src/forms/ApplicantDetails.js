@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { Button, Input, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import DropDownComp from '../components/DropDownComp';
-import { useHistory } from 'react-router-dom'
 import { connect } from 'react-redux';
 
-const ApplicantDetails = ({ applicantDetails, data, vendor }) => {
+const ApplicantDetails = ({ applicantDetails, data, vendor, getData }) => {
     const initalData = {
         appid: '',
         srNo: '',
@@ -59,29 +58,9 @@ const ApplicantDetails = ({ applicantDetails, data, vendor }) => {
     if (document.location.pathname.split('/')[1] === 'new') {
         multi = true
     }
-    // if (url) {
-    //     if (document.location.pathname.split('/')[1] === 'office') {
-    //         office = true
-    //         resident = false
-    //     } else {
-    //         office = false
-    //         resident = true
-    //     }
-    //     id = document.location.pathname.split('/')[2]
-    // }
-
-    let history = useHistory()
-
-    const onHandleSubmit = () => {
-        // history.push('/')
-    }
-
     const handleSubmit = (e) => {
-        // const formData = new FormData(e.currentTarget);
-
         e.preventDefault()
-        console.log('formdata', formdata);
-        // applicantDetails(formdata)
+        applicantDetails(formdata)
     }
     useEffect(() => {
         if (data) {
@@ -103,9 +82,7 @@ const ApplicantDetails = ({ applicantDetails, data, vendor }) => {
             }
             setFormdata(form)
             setRefresh(Math.random())
-            // onHandleChange({ name: data[0], value: test[1] })
         }
-        console.log('data 2', data)
 
     }, [data])
     const onHandleChange = (e) => {
@@ -117,18 +94,15 @@ const ApplicantDetails = ({ applicantDetails, data, vendor }) => {
         setRefresh(Math.random())
         // console.log(form)
     }
-    // useEffect(() => {
-    //     console.log('dropdownBankNameOpen', dropdownBankNameOpen)
-    // }, [dropdownBankNameOpen])
     useEffect(() => {
         setRefresh(Math.random())
     }, [])
-    // useEffect(() => {
-    //     if (getData) {
-    //         document.getElementById('applicationDetails').click()
-    //     }
-    //     // console.log('getdata',getData)
-    // }, [getData])
+    useEffect(() => {
+        if (getData) {
+            document.getElementById('applicationDetails').click()
+        }
+        // console.log('getdata',getData)
+    }, [getData])
 
     let mismatchAddressField = [
         { name: 'mismatchAddress', value: 'yes', label: 'Yes' },

@@ -9,7 +9,7 @@ import Collapse from '../components/Collapse';
 import { useParams } from 'react-router-dom'
 import { getFormData } from '../utils/singleForm'
 import { connect } from 'react-redux';
-import PdfOffice from './PdfOffice';
+import PdfMake from './PdfMake';
 
 const Office = (props) => {
     // let allData1 = []
@@ -224,8 +224,13 @@ const Office = (props) => {
 
     return (
         <div>
-            <Collapse title='Applicant Details' children={<ApplicantDetails applicantDetails={(data) => { setApplicantDetails(data) }} data={applicantDetails} />} />
-            <Collapse title='Verification Details' >
+            {(refresh > 0 || true) && <PdfMake data={formdata} refresh={()=> setRefresh(Math.random())}/>}
+            <Collapse title='Applicant Details' children={<ApplicantDetails applicantDetails={(data) => { 
+                  let alldata = formdata
+                  let combinded = Object.assign(alldata, data);
+                  setFormdata(combinded);
+                  setApplicantDetails(data) }} data={applicantDetails} />} />
+            <Collapse title='Verification Details'>
                 <h1>Verification Details</h1>
                 {(refresh > 0 || true) && <form className='d-flex justify-content-between flex-wrap' onSubmit={handleSubmit} >
                     <div>
@@ -308,19 +313,19 @@ const Office = (props) => {
                         <Input type="text" name='detailsIncomeDesignation' value={formdata['detailsIncomeDesignation']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
                     <div className='d-flex'>
-                    <div className='pe-4'>
-                        <label>Additional Income</label>
-                        <Input type="text" name='additionalIncome' value={formdata['additionalIncome']} onChange={(e) => onHandleChange(e.currentTarget)} />
-                    </div>
-                    <div className='pe-4'>
-                        <label>Source</label>
-                        <Input type="text" name='source' value={formdata['source']} onChange={(e) => onHandleChange(e.currentTarget)} />
-                    </div>
-                    <div>
-                        <label>Type of Entity</label>
-                        <DropDownComp id='office' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={typeofEntity} />
+                        <div className='pe-4'>
+                            <label>Additional Income</label>
+                            <Input type="text" name='additionalIncome' value={formdata['additionalIncome']} onChange={(e) => onHandleChange(e.currentTarget)} />
+                        </div>
+                        <div className='pe-4'>
+                            <label>Source</label>
+                            <Input type="text" name='source' value={formdata['source']} onChange={(e) => onHandleChange(e.currentTarget)} />
+                        </div>
+                        <div>
+                            <label>Type of Entity</label>
+                            <DropDownComp id='office' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={typeofEntity} />
 
-                    </div>
+                        </div>
 
                     </div>
                     <div className='d-none'>
@@ -330,22 +335,23 @@ const Office = (props) => {
                 <VerificationObserverOffice verification={(data) => {
                     let alldata = formdata
                     let combinded = Object.assign(alldata, data);
-                    setFormdata(combinded)}} getData={getData} data={verificationObserver}/>
+                    setFormdata(combinded)
+                }} getData={getData} data={verificationObserver} />
                 <Tpc tpc={(data) => {
                     let alldata = formdata
                     let combinded = Object.assign(alldata, data);
-                    setFormdata(combinded)}} getData={getData} data={verificationObserver}/>
-                <Geolocation data={verificationObserver} id={id} pincode={pincode}/>
+                    setFormdata(combinded)
+                }} getData={getData} data={verificationObserver} />
+                <Geolocation data={verificationObserver} id={id} pincode={pincode} />
                 <Button color='primary' onClick={getAllData}>Submit</Button>
             </Collapse>
-            pdf
-            <PdfOffice data={formdata}/>
         </div>
     )
 }
 const mapStateToProps = (state) => {
     return {
-        vendor: state.vendors
+        vendor: state.vendors,
+        images: state.images
     }
 }
 export default connect(mapStateToProps)(Office)
