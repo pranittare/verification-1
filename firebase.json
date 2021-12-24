@@ -1,0 +1,17 @@
+{
+  "hosting": {
+    "public": "build",
+    "site": "kredt-react",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}
