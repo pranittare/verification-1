@@ -3,7 +3,7 @@ import { Button, Input, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } f
 import DropDownComp from '../components/DropDownComp';
 import { connect } from 'react-redux';
 
-const ApplicantDetails = ({ applicantDetails, data, vendor, getData }) => {
+const ApplicantDetails = ({ applicantDetail, data, vendor, getData }) => {
     const initalData = {
         appid: '',
         srNo: '',
@@ -42,7 +42,8 @@ const ApplicantDetails = ({ applicantDetails, data, vendor, getData }) => {
         visitedOfficeAddress: '',
         visitedresidentAddress: '',
         remarks: '',
-        type: ''
+        type: '',
+        emailList: []
     })
     const [refresh, setRefresh] = useState(0)
     const [dropdownBankNameOpen, setBankNameOpen] = useState(false);
@@ -60,44 +61,53 @@ const ApplicantDetails = ({ applicantDetails, data, vendor, getData }) => {
     }
     const handleSubmit = (e) => {
         e.preventDefault()
-        applicantDetails(formdata)
+        applicantDetail(formdata)
+    }
+    const onHandleChange = (e) => {
+        let form = formdata
+        form[e.name] = e.value
+        setFormdata(form)
+        setRefresh(Math.random())
     }
     useEffect(() => {
+        console.log('formdata data', formdata)
+
         if (data) {
+        console.log('formdata data after', formdata)
+
             let form = formdata
-            console.log('data', data)
+            console.log('data start', data, form)
             for (const key in data) {
                 form[key] = data[key]
 
                 if (key === 'bankNBFCname') {
-                    form['bankNBFCname'] = data.bankNBFCname.clientName
+                    form['bankNBFCname'] = data.bankNBFCname?.clientName
                 }
                 if (key === 'product') {
-                    form['product'] = data.bankNBFCname.productList[0].productName
-                    form.emailList = data.bankNBFCname.productList[0].emailList
+                    form['product'] = data.bankNBFCname?.productList[0]?.productName
+                    form.emailList = data.bankNBFCname?.productList[0]?.emailList
                 }
                 if (key === 'form') {
                     form['type'] = data['form']
                 }
             }
+            console.log('data', form)
             setFormdata(form)
+            applicantDetail(form)
             setRefresh(Math.random())
         }
 
     }, [data])
-    const onHandleChange = (e) => {
-        // name
-        // console.log(e)
-        let form = formdata
-        form[e.name] = e.value
-        setFormdata(form)
-        setRefresh(Math.random())
-        // console.log(form)
-    }
     useEffect(() => {
-        setRefresh(Math.random())
-    }, [])
+        console.log('formdata initial', formdata)
+    },[])
+    useEffect(()=>{
+        console.log('formdata vendor', formdata)
+
+    },[vendor])
     useEffect(() => {
+        console.log('formdata getdata', formdata)
+
         if (getData) {
             document.getElementById('applicationDetails').click()
         }
@@ -117,8 +127,8 @@ const ApplicantDetails = ({ applicantDetails, data, vendor, getData }) => {
     return (
         <div>
             <h1>Applicant Details</h1>
-            {refresh && <div>
-                <form className='d-flex justify-content-between flex-wrap' id='myform' onSubmit={handleSubmit}>
+            {(refresh || true) && <div>
+                <form className='d-flex justify-content-between flex-wrap' onSubmit={handleSubmit}>
                     <div >
                         <label>App.Id/Lead id</label>
                         <Input type="text" name='appid' value={formdata['appid']} onChange={(e) => onHandleChange(e.currentTarget)} />
@@ -155,9 +165,14 @@ const ApplicantDetails = ({ applicantDetails, data, vendor, getData }) => {
                             >
                                 {vendor.map(item => {
                                     return <DropdownItem key={item.clientName} onClick={() => {
+                                        let form = formdata
+                                        form.bankNBFCname = item.clientName
+                                        setFormdata(form)
                                         setProductList(item?.productList)
-                                        setFormdata({...formdata, bankNBFCname: item.clientName})
-                                        }}>
+                                        // setFormdata({...formdata, bankNBFCname: item.clientName})
+                                        }}
+                                        value={item.clientName}
+                                        name={item.clientName}>
                                         {item.clientName}
                                     </DropdownItem>
                                 })}
@@ -189,8 +204,15 @@ const ApplicantDetails = ({ applicantDetails, data, vendor, getData }) => {
                             >
                                 {productList?.map(item => {
                                     return <DropdownItem key={item.productName} onClick={() => {
-                                        setFormdata({...formdata, product: item.productName, emailList: item.emailList})
-                                    }}>
+                                        let form = formdata
+                                        form.product = item.productName
+                                        form.emailList = item.emailList
+                                        setFormdata(form)
+                                        
+                                        // setFormdata({...formdata, product: item.productName, emailList: item.emailList})
+                                    }}
+                                    value={item.productName}
+                                    >
                                         {item.productName}
                                     </DropdownItem>
                                 })}
@@ -269,9 +291,7 @@ const ApplicantDetails = ({ applicantDetails, data, vendor, getData }) => {
                         <Input type="text" name='remarks' value={formdata['remarks']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
                     <div className='pt-4'>
-                        <Button color='primary' id='applicationDetails' type="submit" 
-                        // onClick={() => (onHandleSubmit())}
-                         >
+                        <Button color='primary' id='applicationDetails' type="submit" >
                             Submit
                         </Button>
                     </div>

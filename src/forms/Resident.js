@@ -217,7 +217,7 @@ const Resident = (props) => {
     // }, [alldata])
     return (
         <div>
-            {(refresh > 0 || true) && <PdfMakeResident data={formdata} refresh={()=> setRefresh(Math.random())}/>}
+            {(refresh > 0 || true) && <PdfMakeResident data={formdata} refresh={()=> {setRefresh(Math.random()); getAllData()}}/>}
             <Collapse title='Applicant Details'>
                 <ApplicantDetails applicantDetails={(data) => {
                       let alldata = formdata

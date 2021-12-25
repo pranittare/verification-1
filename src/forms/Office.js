@@ -50,11 +50,12 @@ const Office = (props) => {
 
     const handleSubmit = (e) => {
         e.preventDefault()
+        getAllData()
+        // document.getElementById('officeVerficationDetails').click()
         // const formd = new FormData(e.currentTarget)
         // setFormdata(formd)
     }
     const getAllData = () => {
-        document.getElementById('officeVerficationDetails').click()
         setGetData(true)
         setTimeout(() => {
             setGetData(false)
@@ -78,9 +79,12 @@ const Office = (props) => {
             getFormData(pincode, id)
                 .then(formsaved => {
                     let formd = formdata
-                    let applicant = {}
+                    // let applicant = {}
                     console.log('formsaved', formsaved)
                     if (formsaved?.office) {
+                        // for (const key in formsaved?.office?.applicantDetails) {
+                        //     applicant[key] = formsaved?.office?.applicantDetails[key]
+                        // }
                         for (const key in formsaved.office.verificationDetails) {
                             let savedForm = formsaved.office.verificationDetails
                             formd[key] = savedForm[key]
@@ -100,12 +104,10 @@ const Office = (props) => {
                                 formd.landmark = savedForm[key]
                             }
                         }
-                        for (const key in formsaved?.office?.applicantDetails) {
-                            applicant[key] = formsaved?.office?.applicantDetails[key]
-                        }
+                        console.log('applicant', formsaved?.office?.applicantDetails)
+                        setApplicantDetails(formsaved?.office?.applicantDetails)
                         setVerificationOvserver(formsaved.office.verificationDetails)
                     }
-                    setApplicantDetails(applicant)
                     setFormdata(formd)
                     setRefresh(Math.random())
                     console.log('formd', formd)
@@ -118,47 +120,6 @@ const Office = (props) => {
     useEffect(() => {
         console.log('getData', formdata)
     }, [getData])
-    // useEffect(() => {
-    //     if (verification) {
-
-    //         for (let [key, value] of verification.entries()) {
-    //             allData1.push({ [key]: value })
-    //         }
-    //         setAlldata(allData1)
-    //     }
-    // }, [verification])
-    // useEffect(() => {
-    //     if (tpc) {
-    //         for (let [key, value] of tpc.entries()) {
-    //             allData1.push({ [key]: value })
-    //         }
-    //         setAlldata(allData1)
-    //     }
-    // }, [tpc])
-    // useEffect(() => {
-    //     if (applicantDetails) {
-    //         for (let [key, value] of applicantDetails.entries()) {
-    //             allData1.push({ [key]: value })
-    //         }
-    //         setAlldata(allData1)
-    //         console.log('app', applicantDetails)
-    //     }
-    // }, [applicantDetails])
-
-    // useEffect(() => {
-    //     if (formdata) {
-    //         // for (let [key, value] of formdata.entries()) {
-    //         //     allData1.push({ [key]: value })
-    //         // }
-    //         // setAlldata(allData1)
-    //         console.log('form', formdata)
-    //     }
-    // }, [formdata])
-    // useEffect(() => {
-    //     if (alldata) {
-    //         console.log('alldata', alldata)
-    //     }
-    // }, [alldata])
 
     let addressConfirmed = [
         { name: 'addressConfirmed', value: '', label: 'None' },
@@ -221,15 +182,20 @@ const Office = (props) => {
         { name: 'typeofEntity', value: 'LLP', label: 'LLP' },
         { name: 'typeofEntity', value: 'Co-op Society', label: 'Co-op Society' },
     ]
-
+    useEffect(() => {
+        console.log('office', formdata)
+    }, [formdata])
     return (
         <div>
-            {(refresh > 0 || true) && <PdfMake data={formdata} refresh={()=> setRefresh(Math.random())}/>}
-            <Collapse title='Applicant Details' children={<ApplicantDetails applicantDetails={(data) => { 
-                  let alldata = formdata
-                  let combinded = Object.assign(alldata, data);
-                  setFormdata(combinded);
-                  setApplicantDetails(data) }} data={applicantDetails} />} />
+            {(refresh > 0 || true) && <PdfMake data={formdata} refresh={() => { setRefresh(Math.random()) }} />}
+            <Collapse title='Applicant Details'>
+                <ApplicantDetails applicantDetail={(data) => {
+                    let alldata = formdata
+                    let combinded = Object.assign(alldata, data);
+                    setFormdata(combinded);
+                    setApplicantDetails(data)
+                }} data={applicantDetails} getData={getData} />
+            </Collapse>
             <Collapse title='Verification Details'>
                 <h1>Verification Details</h1>
                 {(refresh > 0 || true) && <form className='d-flex justify-content-between flex-wrap' onSubmit={handleSubmit} >
@@ -343,7 +309,7 @@ const Office = (props) => {
                     setFormdata(combinded)
                 }} getData={getData} data={verificationObserver} />
                 <Geolocation data={verificationObserver} id={id} pincode={pincode} />
-                <Button color='primary' onClick={getAllData}>Submit</Button>
+                <Button color='primary' type='submit'>Submit</Button>
             </Collapse>
         </div>
     )

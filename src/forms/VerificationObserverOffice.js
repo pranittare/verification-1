@@ -31,42 +31,23 @@ export default function VerificationObserverOffice({ verification, getData, data
     const [assetSeenAtOfficeDrop, setAssetSeenAtOfficeDrop] = useState(false);
     const assetSeenAtOfficeDroptoggle = () => setAssetSeenAtOfficeDrop(prevState => !prevState);
     const onHandleChange = (e) => {
-        // name
         let form = formdata
         form[e.name] = e.value
-        // console.log(e, form[e.name])
         setFormdata(form)
         setRefresh(Math.random())
-        // console.log(form)
     }
-    // const onHandleChange = (e) => {
-    //     // name
-    //     let form = formdata
-    //     form[e.name] = e.value
-    //     // console.log(e, form[e.name])
-    //     setFormdata(form)
-    //     setRefresh(Math.random())
-    //     // console.log(form)
-    // }
     const handleSubmit = (e) => {
-        // const formdata = new FormData(e.currentTarget)
         e.preventDefault()
         verification(formdata)
-        // setData(formdata)
-        // for (let [key, value] of formData.entries()) {
-        //     console.log(key, value);
-        // }
     }
     useEffect(() => {
         if (getData) {
             document.getElementById('officeVerificationObserver').click()
         }
-        // console.log('getdata', getData)
     }, [getData])
     useEffect(() => {
         if (data) {
             let form = formdata
-            // console.log('data', data)
             for (const key in data) {
                 form[key] = data[key]
             }

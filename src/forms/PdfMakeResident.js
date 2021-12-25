@@ -1,10 +1,14 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 import { connect } from 'react-redux';
+import stamp from '../assets/stamp.jpeg'
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 const PdfMakeResident = ({ data, images, refresh }) => {
+
+    const [stamp64, setStamp64] = useState();
+    const [map, setMap] = useState();
     const toDataURL = (url, callback) => {
         let xhRequest = new XMLHttpRequest();
         xhRequest.onload = function () {
@@ -1588,9 +1592,8 @@ const PdfMakeResident = ({ data, images, refresh }) => {
                             {
                                 // colSpan: 1,
                                 border: [true, true, true, true],
-                                // image: data.stamp2,
+                                image: stamp64,
                                 width: 150,
-                                text: 'Image'
                             },
                         ],
 
@@ -1668,11 +1671,11 @@ const PdfMakeResident = ({ data, images, refresh }) => {
                     widths: [250, 270],
                     body: [
                         [
-                            // {
-                            //     image: map2,
-                            //     width: 200,
-                            //     pageBreak: 'before'
-                            // },
+                            {
+                                image: map,
+                                width: 200,
+                                pageBreak: 'before'
+                            },
                             {
                                 // rowSpan: 1,
                                 border: [true, true, true, true],
@@ -1729,12 +1732,20 @@ const PdfMakeResident = ({ data, images, refresh }) => {
                 }
                 )
             }
+            if (stamp) {
+                toDataURL(stamp, (dataUrl) => {
+                    setStamp64(dataUrl)
+                });
+                toDataURL(`https://maps.googleapis.com/maps/api/staticmap?size=300x300&maptype=hybrid&markers=${data?.region?.latitude},${data?.region?.longitude}&key=AIzaSyBPoGWXtGubXKV44J4D4ZsBtvY-lIBjEMU&zoom=16`, (dataUrl) => {
+                    setMap(dataUrl)
+                });
+            }
         }
     }, [images.length])
     return (
         <div>
             <button onClick={() => { pdfMake.createPdf(documentDefinition).open() }}>Print PDfmake</button>
-            <button onClick={() => { refresh()}}>Load Pdf</button>
+            <button onClick={() => { refresh() }}>Load Pdf</button>
         </div>
     )
 }

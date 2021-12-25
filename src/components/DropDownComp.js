@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { Input, Button, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap'
+import React, { useState } from 'react'
+import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap'
 
 const DropDownComp = ({ onHandleChange, formdata, dropDowmArry, id, other, value }) => {
 
