@@ -3,7 +3,7 @@ import { Button, Input, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } f
 import DropDownComp from '../components/DropDownComp';
 import { connect } from 'react-redux';
 
-const ApplicantDetails = ({ applicantDetail, data, vendor, getData }) => {
+const ApplicantDetails = ({ applicantDetail, data, getData, vendor }) => {
     const initalData = {
         appid: '',
         srNo: '',
@@ -73,15 +73,11 @@ const ApplicantDetails = ({ applicantDetail, data, vendor, getData }) => {
         console.log('formdata data', formdata)
 
         if (data) {
-        console.log('formdata data after', formdata)
-
             let form = formdata
-            console.log('data start', data, form)
             for (const key in data) {
                 form[key] = data[key]
-
                 if (key === 'bankNBFCname') {
-                    form['bankNBFCname'] = data.bankNBFCname?.clientName
+                    form['bankNBFCname'] = data.bankNBFCname?.clientName ? data.bankNBFCname?.clientName : data.bankNBFCname
                 }
                 if (key === 'product') {
                     form['product'] = data.bankNBFCname?.productList[0]?.productName
@@ -91,27 +87,18 @@ const ApplicantDetails = ({ applicantDetail, data, vendor, getData }) => {
                     form['type'] = data['form']
                 }
             }
-            console.log('data', form)
             setFormdata(form)
-            applicantDetail(form)
+            // applicantDetail(form)
             setRefresh(Math.random())
         }
 
     }, [data])
     useEffect(() => {
-        console.log('formdata initial', formdata)
-    },[])
-    useEffect(()=>{
-        console.log('formdata vendor', formdata)
-
-    },[vendor])
-    useEffect(() => {
-        console.log('formdata getdata', formdata)
+        console.log('formdata getdata', formdata, getData)
 
         if (getData) {
             document.getElementById('applicationDetails').click()
         }
-        // console.log('getdata',getData)
     }, [getData])
 
     let mismatchAddressField = [
@@ -179,22 +166,9 @@ const ApplicantDetails = ({ applicantDetail, data, vendor, getData }) => {
 
                             </DropdownMenu>
                         </Dropdown>
-                        {/* <DropDownComp id='applicantDetails' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={vendor.map(item => {
-                            item.name = 'bankNBFCname'
-                            item.value = item.clientName
-                            return item.label = item.clientName
-                        })} value={formdata['bankNBFCname']} /> */}
-                        {/* <Input type="text" name='bankNBFCname' value={formdata['bankNBFCname']} onChange={(e) => onHandleChange(e.currentTarget)} /> */}
                     </div>
                     <div >
                         <label>Product</label>
-
-                        {/* <Input type="text" name='product' value={formdata['product']} onChange={(e) => onHandleChange(e.currentTarget)} /> */}
-                        {/* <DropDownComp id='applicantDetails' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={vendor.map(item => {
-                            item.name = 'product'
-                            item.value = JSON.stringify(item)
-                            return item.label = item.clientName
-                        })} value={formdata['product']} /> */}
                         <Dropdown toggle={toggleProductName} isOpen={dropdownProductNameOpen}>
                             <DropdownToggle caret>
                                 {formdata['product'] ? formdata['product'] : 'None'}
@@ -208,8 +182,6 @@ const ApplicantDetails = ({ applicantDetail, data, vendor, getData }) => {
                                         form.product = item.productName
                                         form.emailList = item.emailList
                                         setFormdata(form)
-                                        
-                                        // setFormdata({...formdata, product: item.productName, emailList: item.emailList})
                                     }}
                                     value={item.productName}
                                     >
@@ -237,16 +209,6 @@ const ApplicantDetails = ({ applicantDetail, data, vendor, getData }) => {
                         <label>Type {formdata['type']}</label>
 
                         <DropDownComp id='applicantDetails' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={type} value={formdata['type']} />
-                        {/* <Dropdown isOpen={dropdownOpen} toggle={toggle}>
-                                <DropdownToggle caret className='text-capitalize'>
-                                    {formdata.type ? formdata.type : 'Type'}
-                                </DropdownToggle>
-                                <DropdownMenu>
-                                    <DropdownItem name='type' onClick={(e) => onHandleChange(e.currentTarget)} value='resident'>Resident</DropdownItem>
-                                    <DropdownItem name='type' onClick={(e) => onHandleChange(e.currentTarget)} value='office'>Office</DropdownItem>
-                                    
-                                </DropdownMenu>
-                            </Dropdown> */}
                     </div>
                     <div >
                         <label>Contact No.</label>
@@ -269,7 +231,6 @@ const ApplicantDetails = ({ applicantDetail, data, vendor, getData }) => {
                             <div >
                                 <label>Mismatch Address</label>
                                 <DropDownComp id='applicantDetails' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={mismatchAddressField} value={formdata['mismatchAddress']} />
-                                {/* <Input type="text" name='mismatchAddress' value={formdata['mismatchAddress']} onChange={(e) => onHandleChange(e.currentTarget)} /> */}
                             </div>
                             {formdata['mismatchAddress'] &&
                                 <>
@@ -285,7 +246,6 @@ const ApplicantDetails = ({ applicantDetail, data, vendor, getData }) => {
                             }
                         </>
                     }
-
                     <div >
                         <label>Remarks If any</label>
                         <Input type="text" name='remarks' value={formdata['remarks']} onChange={(e) => onHandleChange(e.currentTarget)} />

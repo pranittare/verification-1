@@ -183,17 +183,18 @@ const Office = (props) => {
         { name: 'typeofEntity', value: 'Co-op Society', label: 'Co-op Society' },
     ]
     useEffect(() => {
-        console.log('office', formdata)
-    }, [formdata])
+        console.log('office', getData)
+    }, [getData])
     return (
         <div>
             {(refresh > 0 || true) && <PdfMake data={formdata} refresh={() => { setRefresh(Math.random()) }} />}
             <Collapse title='Applicant Details'>
                 <ApplicantDetails applicantDetail={(data) => {
                     let alldata = formdata
-                    let combinded = Object.assign(alldata, data);
-                    setFormdata(combinded);
-                    setApplicantDetails(data)
+                    let combined = Object.assign(alldata, data);
+                    setFormdata(combined);
+                    // getAllData()
+                    // setApplicantDetails(data)
                 }} data={applicantDetails} getData={getData} />
             </Collapse>
             <Collapse title='Verification Details'>
@@ -300,13 +301,13 @@ const Office = (props) => {
                 </form>}
                 <VerificationObserverOffice verification={(data) => {
                     let alldata = formdata
-                    let combinded = Object.assign(alldata, data);
-                    setFormdata(combinded)
+                    let combined = Object.assign(alldata, data);
+                    setFormdata(combined)
                 }} getData={getData} data={verificationObserver} />
                 <Tpc tpc={(data) => {
                     let alldata = formdata
-                    let combinded = Object.assign(alldata, data);
-                    setFormdata(combinded)
+                    let combined = Object.assign(alldata, data);
+                    setFormdata(combined)
                 }} getData={getData} data={verificationObserver} />
                 <Geolocation data={verificationObserver} id={id} pincode={pincode} />
                 <Button color='primary' type='submit'>Submit</Button>
