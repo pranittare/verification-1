@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Input, Button } from 'reactstrap'
 import ApplicantDetails from './ApplicantDetails'
 import Tpc from './Tpc';
@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
 import PdfMake from './PdfMake';
 
 const Office = (props) => {
+   
     // let allData1 = []
     let { pincode, id } = useParams()
     // console.log('form', props)
@@ -47,10 +48,12 @@ const Office = (props) => {
     // const [alldata, setAlldata] = useState([])
     const [applicantDetails, setApplicantDetails] = useState()
     const [refresh, setRefresh] = useState(0)
-
+    const aplicantDeatilsRef = useRef()
     const handleSubmit = (e) => {
         e.preventDefault()
+        console.log('handlesubmit', formdata)
         getAllData()
+        // handleSubmit1()
         // document.getElementById('officeVerficationDetails').click()
         // const formd = new FormData(e.currentTarget)
         // setFormdata(formd)
@@ -185,16 +188,32 @@ const Office = (props) => {
     useEffect(() => {
         console.log('office', getData)
     }, [getData])
+
+    // useEffect(()=>{
+    //     if(refresh === 0)
+    //     setRefresh(Math.random())
+    // },[refresh])
+
+    const handleSubmit1=()=>{
+        console.log("applicantDetail",aplicantDeatilsRef)
+        const applicantDetail = aplicantDeatilsRef.current.getData();
+        let combined = {...formdata, ...applicantDetail}
+        setFormdata(combined);
+    }
+    const combiner = (data) => {
+        let alldata = formdata
+        let combined = Object.assign(alldata, data);
+        console.log('combiner', combined)
+        setFormdata(combined)
+    }
     return (
         <div>
-            {(refresh > 0 || true) && <PdfMake data={formdata} refresh={() => { setRefresh(Math.random()) }} />}
+            {(refresh > 0 || true) && <PdfMake data={formdata} refresh={() => { setRefresh(Math.random()); }} />}
             <Collapse title='Applicant Details'>
-                <ApplicantDetails applicantDetail={(data) => {
-                    let alldata = formdata
-                    let combined = Object.assign(alldata, data);
-                    setFormdata(combined);
-                    // getAllData()
-                    // setApplicantDetails(data)
+                <ApplicantDetails 
+                // ref={aplicantDeatilsRef}
+                applicantDetail={(data) => {
+                    combiner(data)
                 }} data={applicantDetails} getData={getData} />
             </Collapse>
             <Collapse title='Verification Details'>
@@ -300,17 +319,13 @@ const Office = (props) => {
                     </div>
                 </form>}
                 <VerificationObserverOffice verification={(data) => {
-                    let alldata = formdata
-                    let combined = Object.assign(alldata, data);
-                    setFormdata(combined)
+                    combiner(data)
                 }} getData={getData} data={verificationObserver} />
                 <Tpc tpc={(data) => {
-                    let alldata = formdata
-                    let combined = Object.assign(alldata, data);
-                    setFormdata(combined)
+                   combiner(data)
                 }} getData={getData} data={verificationObserver} />
                 <Geolocation data={verificationObserver} id={id} pincode={pincode} />
-                <Button color='primary' type='submit'>Submit</Button>
+                <Button color='primary' onClick={handleSubmit} type='submit'>Submit</Button>
             </Collapse>
         </div>
     )

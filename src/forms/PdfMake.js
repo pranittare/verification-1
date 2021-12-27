@@ -9,6 +9,7 @@ const PdfMake = ({ data, images, refresh }) => {
 
     const [stamp64, setStamp64] = useState();
     const [map, setMap] = useState();
+    const [pdfImages, setPDFImages] = useState([])
     const toDataURL = (url, callback) => {
         let xhRequest = new XMLHttpRequest();
         xhRequest.onload = function () {
@@ -24,8 +25,6 @@ const PdfMake = ({ data, images, refresh }) => {
     }
     const documentDefinition = {
         content: [
-
-
             {
                 text: 'Office Report', color: 'purple', alignment: 'center', fontSize: 18,
                 border: [true, true, true, true], fillColor: '#358fd4'
@@ -38,7 +37,7 @@ const PdfMake = ({ data, images, refresh }) => {
                         [
 
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#358fd4',
                                 text: 'Office Report',
@@ -81,24 +80,24 @@ const PdfMake = ({ data, images, refresh }) => {
                         [
 
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'App.Id/Lead id'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.appid
                             },
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Sr.No'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.srNo
                             },
@@ -115,24 +114,24 @@ const PdfMake = ({ data, images, refresh }) => {
                         [
 
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Month'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.month
                             },
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Initiation Date'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.initiationDate
                             },
@@ -149,24 +148,24 @@ const PdfMake = ({ data, images, refresh }) => {
                         [
 
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Customer Name'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.customerName
                             },
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Bank/ NBFC name'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.bankNBFCname
                             },
@@ -183,24 +182,24 @@ const PdfMake = ({ data, images, refresh }) => {
                         [
 
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Product'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.product
                             },
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Location'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.loaction
                             },
@@ -217,24 +216,24 @@ const PdfMake = ({ data, images, refresh }) => {
                         [
 
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Pincode'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.pincode
                             },
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Contact No'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.contactNo
                             },
@@ -251,13 +250,13 @@ const PdfMake = ({ data, images, refresh }) => {
                         [
 
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Mobile No'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.mobileNo
                             },
@@ -276,24 +275,24 @@ const PdfMake = ({ data, images, refresh }) => {
 
 
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Office Address Provided'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.officeAddressProvided
                             },
                             // {
-                            //   // rowSpan: 1,
+                            //   
                             //   border: [true, true, true, true],
                             //   fillColor: '#ccc',
                             //   text: 'Mismatch Address Details'
                             // },
                             // {
-                            //   // colSpan: 1,
+                            //   
                             //   border: [true, true, true, true],
                             //   text: 'ADD DATA HERE'
                             // },
@@ -309,24 +308,24 @@ const PdfMake = ({ data, images, refresh }) => {
                     body: [
                         [
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Mismatch Address'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.mismatchAddress
                             },
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Visited Office Address'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.visitedOfficeAddress
                             },
@@ -364,24 +363,24 @@ const PdfMake = ({ data, images, refresh }) => {
                         [
 
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Visit Date'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.visitDate
                             },
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Visited Time'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.visitedTime
                             },
@@ -398,24 +397,24 @@ const PdfMake = ({ data, images, refresh }) => {
                         [
 
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Address Confirmed'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.addressConfirmed
                             },
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Business Board Seen'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.businessBoardSeen
                             },
@@ -433,24 +432,24 @@ const PdfMake = ({ data, images, refresh }) => {
 
 
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Landmark(Neareast)'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.landmark
                             },
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Business Board Seen Details'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.businessBoardSeenNote
                             }
@@ -467,24 +466,24 @@ const PdfMake = ({ data, images, refresh }) => {
                         [
 
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Person Met'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.personMet
                             },
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Person Met Name'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.personMetName
                             },
@@ -501,24 +500,24 @@ const PdfMake = ({ data, images, refresh }) => {
                         [
 
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Person Met Designation'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.personMetNameDesignation
                             },
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'No of Yrs in present Employment/Business & Total Yrs of Exp'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.totalYearsExp
                             },
@@ -535,24 +534,24 @@ const PdfMake = ({ data, images, refresh }) => {
                         [
 
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'No of Yrs At Current Address'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.totalYearsExpAtCurrentAddress
                             },
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Less than 1 yr at Current Address'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.lessThanYrAtCurrentAddress
                             },
@@ -569,24 +568,24 @@ const PdfMake = ({ data, images, refresh }) => {
                         [
 
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Prev Address/ Prev Employment'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.lessThanYrAtCurrentAddressNote
                             },
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Nature of Business'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.natureofBusines
                             },
@@ -605,24 +604,24 @@ const PdfMake = ({ data, images, refresh }) => {
 
 
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Nature of Business (details)'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.natureOfBusinessDetails
                             },
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Type of Entity'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.typeofEntity
                             },
@@ -639,25 +638,25 @@ const PdfMake = ({ data, images, refresh }) => {
                     body: [
                         [
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Office Ownership'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.officeOwnership
                             },
 
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'if Rented then Rent Amount'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.rentAmount
                             },
@@ -675,35 +674,35 @@ const PdfMake = ({ data, images, refresh }) => {
                         [
 
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Details(Income/Designation)'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.detailsIncomeDesignation
                             },
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Approx Area of Office (sq.ft)'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.approxAreaofOffice
                             },
                             // {
-                            //   // rowSpan: 1,
+                            //   
                             //   border: [true, true, true, true],
                             //   fillColor: '#ccc',
                             //   text: 'Any other Family member working/Business'
                             // },
                             // {
-                            //   // colSpan: 1,
+                            //   
                             //   border: [true, true, true, true],
                             //   text: data.otherWorkingBusiness
                             // },
@@ -721,24 +720,24 @@ const PdfMake = ({ data, images, refresh }) => {
 
 
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Additional Income'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.additionalIncome
                             },
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Source'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.source
                             },
@@ -755,13 +754,13 @@ const PdfMake = ({ data, images, refresh }) => {
             //       [
 
             //         {
-            //           // rowSpan: 1,
+            //           
             //           border: [true, true, true, true],
             //           fillColor: '#ccc',
             //           text: 'Source'
             //         },
             //         {
-            //           // colSpan: 1,
+            //           
             //           border: [true, true, true, true],
             //           text: data.source
             //         },
@@ -799,24 +798,24 @@ const PdfMake = ({ data, images, refresh }) => {
                         [
 
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Type of Office'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.verificationObserver
                             },
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Locality of Office'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.localityofOffice
                             },
@@ -833,24 +832,24 @@ const PdfMake = ({ data, images, refresh }) => {
                         [
 
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Construction Of Office'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.constructionOfOffice
                             },
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Ease of Locating'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.easeofLocating
                             },
@@ -868,24 +867,24 @@ const PdfMake = ({ data, images, refresh }) => {
                         [
 
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Business Activity Level'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.businessActivityLevel
                             },
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'No. of Employees Seen in Office/ Business'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.noOfEmployeesWorkinginPremises
                             },
@@ -901,35 +900,35 @@ const PdfMake = ({ data, images, refresh }) => {
                     body: [
                         [
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Stock Level'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.stockLevel
                             },
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Distance from Station(Km)'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.distanceFromRailwayStation
                             },
                             // {
-                            //   // rowSpan: 1,
+                            //   
                             //   border: [true, true, true, true],
                             //   fillColor: '#ccc',
                             //   text: 'Office Setup Detail'
                             // },
                             // {
-                            //   // colSpan: 1,
+                            //   
                             //   border: [true, true, true, true],
                             //   text: data.officeSetupDetails
                             // },
@@ -946,24 +945,24 @@ const PdfMake = ({ data, images, refresh }) => {
                         [
 
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Within Municipal Limits'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.withinMunicipalLimits
                             },
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Negative Area'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.negativeArea
                             },
@@ -979,26 +978,26 @@ const PdfMake = ({ data, images, refresh }) => {
                     body: [
                         [
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Asset Seen At Office'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.assetSeen
 
                             },
 
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Interior Conditions'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.interior
                             },
@@ -1016,13 +1015,13 @@ const PdfMake = ({ data, images, refresh }) => {
                         [
 
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Exterior Condition'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.exteriorconditions
                             }
@@ -1040,24 +1039,24 @@ const PdfMake = ({ data, images, refresh }) => {
                         [
 
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Picture Political Leader'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.picturePoliticalLeader
                             },
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Political Leader Details'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.politicalLeaderDetails
                             },
@@ -1076,24 +1075,24 @@ const PdfMake = ({ data, images, refresh }) => {
 
 
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Doc Verified'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.docVerified
                             },
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Document Details'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.documentDetails
                             }
@@ -1110,13 +1109,13 @@ const PdfMake = ({ data, images, refresh }) => {
             //       [
 
             //         {
-            //           // rowSpan: 1,
+            //           
             //           border: [true, true, true, true],
             //           fillColor: '#ccc',
             //           text: 'Document Details'
             //         },
             //         {
-            //           // colSpan: 1,
+            //           
             //           border: [true, true, true, true],
             //           text: data.documentDetails
             //         }
@@ -1220,24 +1219,24 @@ const PdfMake = ({ data, images, refresh }) => {
                         [
 
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Market Reputation/Dedup Check'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.marketReputation
                             },
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Remarks'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.TPCRemarks
                             },
@@ -1275,24 +1274,24 @@ const PdfMake = ({ data, images, refresh }) => {
                         [
 
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Number'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.TVRNumber
                             },
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Designation'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.TVRDesignation
                             },
@@ -1309,24 +1308,24 @@ const PdfMake = ({ data, images, refresh }) => {
                         [
 
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Status'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.TVRStatus
                             },
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Business Name'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.TVRBusinessName
                             },
@@ -1343,24 +1342,24 @@ const PdfMake = ({ data, images, refresh }) => {
                         [
 
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'No of years in Business'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.TVRNoofyearsinBusiness
                             },
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Remarks'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.TVRRemarks
                             },
@@ -1398,24 +1397,24 @@ const PdfMake = ({ data, images, refresh }) => {
                         [
 
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Overall Status'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.overallStatus
                             },
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Agency name'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.finalFIAgencyname
                             },
@@ -1432,13 +1431,13 @@ const PdfMake = ({ data, images, refresh }) => {
                     body: [
                         [
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Standard Remark'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.finalFIAnyRemarks,
                                 // pageBreak: 'before'
@@ -1458,7 +1457,7 @@ const PdfMake = ({ data, images, refresh }) => {
                     body: [
                         [
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Remarks'
@@ -1468,13 +1467,13 @@ const PdfMake = ({ data, images, refresh }) => {
                                 text: data.finalFIRemarks
                             },
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Company Stamp'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 image: stamp64,
                                 width: 150,
@@ -1493,25 +1492,25 @@ const PdfMake = ({ data, images, refresh }) => {
                     body: [
                         [
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Product Supervisor'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.productSupervisor,
                                 // pageBreak: 'before'
                             },
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Verifier Name'
                             },
                             {
-                                // colSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: data.finalFIVerifierName
                             },
@@ -1526,13 +1525,13 @@ const PdfMake = ({ data, images, refresh }) => {
                     body: [
                         [
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Verification Note'
                             },
                             {
-                                // colSpan: 1,
+
                                 fontSize: 9,
                                 border: [true, true, true, true],
                                 text: 'The Observation/photograph provided in the report is purely based on photograph taken in approximate vincity of the address provided. We, as a process, do not check or collect any documentary evidence to check the authenticity of the information gathered. Neither we certify the correctness of observation nor the photograph is admissible as an evidence. Photograph is additional information provided by us as customary practice without any corresponding liabilities. We do takecare of tagging photos/observation to the appropriate case/applicant, however, considering visual transmission of data, erros can not be eliminated.  ',
@@ -1556,7 +1555,7 @@ const PdfMake = ({ data, images, refresh }) => {
                                 pageBreak: 'before'
                             },
                             {
-                                // rowSpan: 1,
+
                                 border: [true, true, true, true],
                                 text: `Geo Tagging \n\n Latitude: ${data?.region?.latitude} \n Longitude: ${data?.region?.longitude} \n ${data.locName}`,
                                 link: `http://maps.google.com/maps?q=${data?.region?.latitude} +, + ${data?.region?.longitude}`,
@@ -1568,6 +1567,7 @@ const PdfMake = ({ data, images, refresh }) => {
                     ]
                 }
             },
+            ...pdfImages,
             // {
             //   image: images,
             //   width: 200
@@ -1590,29 +1590,16 @@ const PdfMake = ({ data, images, refresh }) => {
                 fillColor: '#bf9728',
                 color: 'black'
             }
-            // tableHeader {
-            //   fillColor: '#b4c1de'
-            // }
-            // table: {
-            //   fillColor: 'white',
-            //   // fillColor: '#b4c1de',
-            //   color: 'black',
-            //   // color: white
-            // },
-            // tbody: {
-            //   fillColor: 'white',
-            //   color: 'black',
-            // }
         }
 
     }
     useEffect(() => {
         if (images && images.length > 0) {
-            for (let i = 0; i < images.length; i++) {
-                let item = images[i];
-                console.log('item', item);
+            let myImages = [];
+            images.map((item, index) => {
+                // console.log('item', item);
                 toDataURL(item, (dataUrl) => {
-                    documentDefinition.content.push({
+                    myImages.push({
                         style: 'table',
                         table: {
                             widths: [500],
@@ -1628,7 +1615,8 @@ const PdfMake = ({ data, images, refresh }) => {
                     })
                 }
                 )
-            }
+            })
+            setPDFImages(myImages)
             if (stamp) {
                 toDataURL(stamp, (dataUrl) => {
                     setStamp64(dataUrl)
@@ -1639,11 +1627,10 @@ const PdfMake = ({ data, images, refresh }) => {
             }
         }
     }, [images.length])
-    console.log('pdfmake', data)
     return (
         <div>
-            <button onClick={() => { pdfMake.createPdf(documentDefinition).open() }}>Print PDfmake</button>
-            <button onClick={() => { refresh() }}>Load Pdf</button>
+            <button className='btn text-primary' onClick={() => { pdfMake.createPdf(documentDefinition).open() }}>Print PDfmake</button>
+            <button className='btn text-danger' onClick={() => { refresh() }}>Load Pdf</button>
         </div>
     )
 }

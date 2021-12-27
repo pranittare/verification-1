@@ -215,15 +215,21 @@ const Resident = (props) => {
     //         console.log('alldata', alldata)
     //     }
     // }, [alldata])
+    const combiner = (data) => {
+        let alldata = formdata
+        let combined = Object.assign(alldata, data);
+        console.log('combiner', combined)
+        setFormdata(combined)
+    }
     return (
         <div>
-            {(refresh > 0 || true) && <PdfMakeResident data={formdata} refresh={()=> {setRefresh(Math.random()); getAllData()}}/>}
+            {(refresh > 0 || true) && <PdfMakeResident data={formdata} refresh={()=> {setRefresh(Math.random())}}/>}
             <Collapse title='Applicant Details'>
-                <ApplicantDetails applicantDetails={(data) => {
-                      let alldata = formdata
-                      let combinded = Object.assign(alldata, data);
-                      setFormdata(combinded);
-                      setApplicantDetails(data) }} data={applicantDetails} getData={getData}/>
+            <ApplicantDetails 
+                // ref={aplicantDeatilsRef}
+                applicantDetail={(data) => {
+                    combiner(data)
+                }} data={applicantDetails} getData={getData} />
             </Collapse>
             <Collapse title='Verification Details'>
                 <h1>Verification Details</h1>
@@ -347,13 +353,9 @@ const Resident = (props) => {
                     </div>
                 </form>}
                 <VerificationObserverResident verification={(data) => {
-                    let alldata = formdata
-                    let combinded = Object.assign(alldata, data);
-                    setFormdata(combinded)}} getData={getData} data={verificationObserver}/>
+                    combiner(data)}} getData={getData} data={verificationObserver}/>
                 <Tpc tpc={(data) => {
-                    let alldata = formdata
-                    let combinded = Object.assign(alldata, data);
-                    setFormdata(combinded)}} getData={getData} data={verificationObserver}/>
+                    combiner(data)}} getData={getData} data={verificationObserver}/>
                 <Geolocation data={verificationObserver} id={id} pincode={pincode}/>
                 <Button color='primary' onClick={getAllData}>Submit</Button>
             </Collapse>

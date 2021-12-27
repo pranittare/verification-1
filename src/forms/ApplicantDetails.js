@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect,forwardRef, useImperativeHandle } from 'react'
 import { Button, Input, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import DropDownComp from '../components/DropDownComp';
 import { connect } from 'react-redux';
 
-const ApplicantDetails = ({ applicantDetail, data, getData, vendor }) => {
+const ApplicantDetails = forwardRef((props, ref) =>{
+const { applicantDetail, data, getData, vendor } = props;
+
     const initalData = {
         appid: '',
         srNo: '',
@@ -61,8 +63,19 @@ const ApplicantDetails = ({ applicantDetail, data, getData, vendor }) => {
     }
     const handleSubmit = (e) => {
         e.preventDefault()
+        console.log('submit', formdata)
         applicantDetail(formdata)
     }
+
+    useImperativeHandle(ref, () => ({
+
+        getData() {
+            return formdata
+            // applicantDetail(formdata)
+        }
+    
+      }));
+
     const onHandleChange = (e) => {
         let form = formdata
         form[e.name] = e.value
@@ -97,9 +110,10 @@ const ApplicantDetails = ({ applicantDetail, data, getData, vendor }) => {
         console.log('formdata getdata', formdata, getData)
 
         if (getData) {
+            // applicantDetail(formdata)
             document.getElementById('applicationDetails').click()
         }
-    }, [getData])
+    }, [getData,formdata])
 
     let mismatchAddressField = [
         { name: 'mismatchAddress', value: 'yes', label: 'Yes' },
@@ -259,7 +273,7 @@ const ApplicantDetails = ({ applicantDetail, data, getData, vendor }) => {
             </div>}
         </div>
     )
-}
+})
 const mapStateToProps = (state) => {
     return {
         vendor: state.vendors

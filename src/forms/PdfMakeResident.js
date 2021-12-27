@@ -9,6 +9,7 @@ const PdfMakeResident = ({ data, images, refresh }) => {
 
     const [stamp64, setStamp64] = useState();
     const [map, setMap] = useState();
+    const [pdfImages, setPDFImages] = useState([])
     const toDataURL = (url, callback) => {
         let xhRequest = new XMLHttpRequest();
         xhRequest.onload = function () {
@@ -32,7 +33,7 @@ const PdfMakeResident = ({ data, images, refresh }) => {
                         [
 
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#358fd4',
                                 text: 'Residence Verification Report',
@@ -77,24 +78,24 @@ const PdfMakeResident = ({ data, images, refresh }) => {
                         [
 
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'App.Id/Lead id'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.appid
                             },
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Sr.No'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.srNo
                             },
@@ -111,24 +112,24 @@ const PdfMakeResident = ({ data, images, refresh }) => {
                         [
 
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Month'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.month
                             },
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Initiation Date'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.initiationDate
                             },
@@ -145,24 +146,24 @@ const PdfMakeResident = ({ data, images, refresh }) => {
                         [
 
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Customer Name'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.customerName
                             },
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Bank/ NBFC name'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.bankNBFCname
                             },
@@ -179,24 +180,24 @@ const PdfMakeResident = ({ data, images, refresh }) => {
                         [
 
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Product'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.product
                             },
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Location'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.loaction
                             },
@@ -213,24 +214,24 @@ const PdfMakeResident = ({ data, images, refresh }) => {
                         [
 
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Pincode'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.pincode
                             },
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Contact No'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.contactNo
                             },
@@ -247,13 +248,13 @@ const PdfMakeResident = ({ data, images, refresh }) => {
                         [
 
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Mobile No'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.mobileNo
                             },
@@ -269,13 +270,13 @@ const PdfMakeResident = ({ data, images, refresh }) => {
                     body: [
                         [
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Residence Address Provided'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.residenceAddressProvided
                             },
@@ -292,35 +293,35 @@ const PdfMakeResident = ({ data, images, refresh }) => {
                         [
 
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Mismatch Address'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.mismatchAddress
                             },
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Visited Address'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.visitedresidentAddress
                             },
                             // {
-                            //   // rowSpan: 1,
+                            //   
                             //   border: [true, true, true, true],
                             //   fillColor: '#ccc',
                             //   text: 'Distance from Station(Km)'
                             // },
                             // {
-                            //   // colSpan: 1,
+                            //   
                             //   border: [true, true, true, true],
                             //   text: data.distancefromNeareastStation
                             // },
@@ -338,13 +339,13 @@ const PdfMakeResident = ({ data, images, refresh }) => {
 
 
             //         // {
-            //         //   // rowSpan: 1,
+            //         //   
             //         //   border: [true, true, true, true],
             //         //   fillColor: '#ccc',
             //         //   text: 'Nearest Landmark'
             //         // },
             //         // {
-            //         //   // colSpan: 1,
+            //         //   
             //         //   border: [true, true, true, true],
             //         //   text: data.nearestLandMark
             //         // },
@@ -384,24 +385,24 @@ const PdfMakeResident = ({ data, images, refresh }) => {
                         [
 
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Visit Date'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.visitDate
                             },
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Visited Time'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.visitedTime
                             },
@@ -418,24 +419,24 @@ const PdfMakeResident = ({ data, images, refresh }) => {
                         [
 
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Address Confirmed'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.addressConfirmed
                             },
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Nearest Landmark'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.landmark
                             },
@@ -452,24 +453,24 @@ const PdfMakeResident = ({ data, images, refresh }) => {
                         [
 
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Person Met'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.personMet
                             },
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Person Met Name'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.personMetName
                             },
@@ -486,24 +487,24 @@ const PdfMakeResident = ({ data, images, refresh }) => {
                     body: [
                         [
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Person Met Age'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.personMetAge
                             },
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Relationship with Applicant'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.personMetRealtionwithApplicant
                             },
@@ -519,25 +520,25 @@ const PdfMakeResident = ({ data, images, refresh }) => {
                     body: [
                         [
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Name and Relationship with Applicant (Others)'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.personMetRealtionwithApplicantOther
                             },
 
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Staying in City (No. of Yrs)'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.totalYearsInCity
                             },
@@ -554,24 +555,24 @@ const PdfMakeResident = ({ data, images, refresh }) => {
                         [
 
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Staying at Current Address (No. of Yrs)'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.totalYearsAtCurrentAddress
                             },
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Less than 1 yr at Current Address'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.lessThanYrAtCurrentAddress
                             },
@@ -588,24 +589,24 @@ const PdfMakeResident = ({ data, images, refresh }) => {
                         [
 
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Less than 1 yr at Current Address (Prev.Address)'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.lessThanYrAtCurrentAddressNote
                             },
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Residence Status'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.residenceStatus
                             },
@@ -621,24 +622,24 @@ const PdfMakeResident = ({ data, images, refresh }) => {
                     body: [
                         [
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Customer Occupation'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.customerOccupation
                             },
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Qualification'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.qualification
                             },
@@ -655,24 +656,24 @@ const PdfMakeResident = ({ data, images, refresh }) => {
                     body: [
                         [
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Marital Status'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.marrried
                             },
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Gate/Door color & Bldg Color'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.gateDoorColor
                             },
@@ -692,24 +693,24 @@ const PdfMakeResident = ({ data, images, refresh }) => {
 
 
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'No of Family Members'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.noOfFamilyMembers
                             },
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Earning Members'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.earningMembers
                             },
@@ -730,24 +731,24 @@ const PdfMakeResident = ({ data, images, refresh }) => {
 
 
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Dependents'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.dependents
                             },
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Children'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.children
                             },
@@ -766,24 +767,24 @@ const PdfMakeResident = ({ data, images, refresh }) => {
 
 
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Office Name'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.officeName
                             },
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Designation'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.designation
                             },
@@ -802,13 +803,13 @@ const PdfMakeResident = ({ data, images, refresh }) => {
 
 
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Office Address'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.officeAddress
                             },
@@ -824,24 +825,24 @@ const PdfMakeResident = ({ data, images, refresh }) => {
                     body: [
                         [
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Doc Verified'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.docVerified
                             },
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Document Details'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.documentDetails
                             },
@@ -881,24 +882,24 @@ const PdfMakeResident = ({ data, images, refresh }) => {
             //       [
 
             //         {
-            //           // rowSpan: 1,
+            //           
             //           border: [true, true, true, true],
             //           fillColor: '#ccc',
             //           text: 'Customer Name Verified From'
             //         },
             //         {
-            //           // colSpan: 1,
+            //           
             //           border: [true, true, true, true],
             //           text: data.customerNameVerifiedFrom.toString()
             //         },
             //         {
-            //           // rowSpan: 1,
+            //           
             //           border: [true, true, true, true],
             //           fillColor: '#ccc',
             //           text: 'Customer Name Verified From Others'
             //         },
             //         {
-            //           // colSpan: 1,
+            //           
             //           border: [true, true, true, true],
             //           text: data.customerNameVerifiedFromOther
             //         },
@@ -915,24 +916,24 @@ const PdfMakeResident = ({ data, images, refresh }) => {
                         [
 
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Locality of Address'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.localityOfAddress
                             },
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Type of House'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.typeOfHouse
                             },
@@ -949,24 +950,24 @@ const PdfMakeResident = ({ data, images, refresh }) => {
                         [
 
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Type of House Others'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.typeOfHouseOthers
                             },
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Construction Of Residence'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.constructionOfResidence
                             },
@@ -983,24 +984,24 @@ const PdfMakeResident = ({ data, images, refresh }) => {
                         [
 
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Accessibility/Approachibility'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.accessibility
                             },
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Area of Residence (sq.ft)'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.areaofResidence
                             },
@@ -1038,13 +1039,13 @@ const PdfMakeResident = ({ data, images, refresh }) => {
                         [
 
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Ease of Locating'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.easeofLocating
                             }
@@ -1062,25 +1063,25 @@ const PdfMakeResident = ({ data, images, refresh }) => {
                         [
 
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Customer Attitude'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.customerAttitude
                             },
 
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Asset Seen At Residence'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.assetSeen
                             },
@@ -1096,37 +1097,37 @@ const PdfMakeResident = ({ data, images, refresh }) => {
                     body: [
                         [
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Interior Conditions'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.interior
                             },
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Exterior Condition'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.exteriorconditions
 
                             },
 
                             // {
-                            //   // rowSpan: 1,
+                            //   
                             //   border: [true, true, true, true],
                             //   fillColor: '#ccc',
                             //   text: 'Vehical Owned'
                             // },
                             // {
-                            //   // colSpan: 1,
+                            //   
                             //   border: [true, true, true, true],
                             //   text: data.vehicalOwned
                             // },
@@ -1143,24 +1144,24 @@ const PdfMakeResident = ({ data, images, refresh }) => {
                         [
 
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Distance from Station(Km)'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.distancefromStation
                             },
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Negative Area'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.negativeArea
                             },
@@ -1176,24 +1177,24 @@ const PdfMakeResident = ({ data, images, refresh }) => {
                     body: [
                         [
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Picture Political Leader'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.picturePoliticalLeader
                             },
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Political Leader Details'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.politicalLeaderDetails
                             },
@@ -1338,24 +1339,24 @@ const PdfMakeResident = ({ data, images, refresh }) => {
                         [
 
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Market Reputation/Dedup Check'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.marketReputation
                             },
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Remarks'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.TPCRemarks
                             },
@@ -1393,24 +1394,24 @@ const PdfMakeResident = ({ data, images, refresh }) => {
                         [
 
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Number'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.TVRNumber
                             },
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Designation'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.TVRDesignation
                             },
@@ -1427,24 +1428,24 @@ const PdfMakeResident = ({ data, images, refresh }) => {
                         [
 
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Status'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.TVRStatus
                             },
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Business Name'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.TVRBusinessName
                             },
@@ -1461,24 +1462,24 @@ const PdfMakeResident = ({ data, images, refresh }) => {
                         [
 
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'No of years in Business'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.TVRNoofyearsinBusiness
                             },
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Remarks'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.TVRRemarks
                             },
@@ -1516,24 +1517,24 @@ const PdfMakeResident = ({ data, images, refresh }) => {
                         [
 
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'OverAll Status'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.overallStatus
                             },
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Agency name'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.finalFIAgencyname
                             },
@@ -1550,13 +1551,13 @@ const PdfMakeResident = ({ data, images, refresh }) => {
                         [
 
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Standard Remark'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.finalFIAnyRemarks
                             },
@@ -1573,7 +1574,7 @@ const PdfMakeResident = ({ data, images, refresh }) => {
                     body: [
                         [
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Remarks'
@@ -1584,13 +1585,13 @@ const PdfMakeResident = ({ data, images, refresh }) => {
                             },
 
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Company Stamp'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 image: stamp64,
                                 width: 150,
@@ -1608,24 +1609,24 @@ const PdfMakeResident = ({ data, images, refresh }) => {
                         [
 
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Product Supervisor'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.productSupervisor
                             },
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Verifier Name'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: data.finalFIVerifierName
                             },
@@ -1642,13 +1643,13 @@ const PdfMakeResident = ({ data, images, refresh }) => {
                     body: [
                         [
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 fillColor: '#ccc',
                                 text: 'Verification Note'
                             },
                             {
-                                // colSpan: 1,
+                                
                                 fontSize: 9,
                                 border: [true, true, true, true],
                                 text: 'The Observation/photograph provided in the report is purely based on photograph taken in approximate vincity of the address provided. We, as a process, do not check or collect any documentary evidence to check the authenticity of the information gathered. Neither we certify the correctness of observation nor the photograph is admissible as an evidence. Photograph is additional information provided by us as customary practice without any corresponding liabilities. We do takecare of tagging photos/observation to the appropriate case/applicant, however, considering visual transmission of data, erros can not be eliminated.  ',
@@ -1677,7 +1678,7 @@ const PdfMakeResident = ({ data, images, refresh }) => {
                                 pageBreak: 'before'
                             },
                             {
-                                // rowSpan: 1,
+                                
                                 border: [true, true, true, true],
                                 text: `Geo Tagging \n\n Latitude: ${data?.region?.latitude} \n Longitude: ${data?.region?.longitude} \n ${data?.locName}`,
                                 link: `http://maps.google.com/maps?q=${data?.region?.latitude} +, + ${data?.region?.longitude}`,
@@ -1689,6 +1690,7 @@ const PdfMakeResident = ({ data, images, refresh }) => {
                     ]
                 }
             },
+            ...pdfImages,
 
         ],
         styles: {
@@ -1710,12 +1712,12 @@ const PdfMakeResident = ({ data, images, refresh }) => {
         }
     };
     useEffect(() => {
-        // images = JSON.parse(images)
         if (images && images.length > 0) {
-            for (let i = 0; i < images.length; i++) {
-                let item = images[i];
+            let myImages = [];
+            images.map((item, index) => {
+                // console.log('item', item);
                 toDataURL(item, (dataUrl) => {
-                    documentDefinition.content.push({
+                    myImages.push({
                         style: 'table',
                         table: {
                             widths: [500],
@@ -1731,7 +1733,8 @@ const PdfMakeResident = ({ data, images, refresh }) => {
                     })
                 }
                 )
-            }
+            })
+            setPDFImages(myImages)
             if (stamp) {
                 toDataURL(stamp, (dataUrl) => {
                     setStamp64(dataUrl)
@@ -1744,8 +1747,8 @@ const PdfMakeResident = ({ data, images, refresh }) => {
     }, [images.length])
     return (
         <div>
-            <button onClick={() => { pdfMake.createPdf(documentDefinition).open() }}>Print PDfmake</button>
-            <button onClick={() => { refresh() }}>Load Pdf</button>
+            <button className='btn text-primary' onClick={() => { pdfMake.createPdf(documentDefinition).open() }}>Print PDfmake</button>
+            <button className='btn text-danger' onClick={() => { refresh() }}>Load Pdf</button>
         </div>
     )
 }
