@@ -1,7 +1,22 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
+import {
+    Button,
+    Toast,
+    ToastHeader,
+    ToastBody,
+    Modal,
+    ModalBody
+} from 'reactstrap';
+import CollapseItem from '../components/Collapse';
 
 const Dashboard = ({ forms, agents }) => {
+
+    const [casesTodayToast, setCasesTodayToast] = useState(false);
+    const [casesTodayModal, setCasesToadyModal] = useState(false);
+    const [unclaimedCasesToast, setUnclaimedCasesToast] = useState(false)
+    const [activeAgentsToast, setActiveAgentsToast] = useState(false)
+    const [tatToast, setTatToast] = useState(false)
 
     const bankwise = () => {
         let bankAndForms = { bank: [], pincode: [] }
@@ -13,9 +28,9 @@ const Dashboard = ({ forms, agents }) => {
                     if (Object.hasOwnProperty.call(element, pincode)) {
                         const formId = element[pincode];
                         if (formId.office?.applicantDetails) {
-                            bankAndForms.bank.push({ name: formId?.office?.applicantDetails?.bankNBFCname.clientName, data: element })
+                            bankAndForms.bank.push({ name: formId?.office?.applicantDetails?.bankNBFCname.clientName, data: formId, id: Object.keys(element)[0] })
                         } else if (formId.resident?.applicantDetails) {
-                            bankAndForms.bank.push({ name: formId.resident?.applicantDetails?.bankNBFCname?.clientName, data: element })
+                            bankAndForms.bank.push({ name: formId.resident?.applicantDetails?.bankNBFCname?.clientName, data: formId, id: Object.keys(element)[0] })
                         }
                     }
                 }
@@ -28,7 +43,6 @@ const Dashboard = ({ forms, agents }) => {
         for (var i = 0, l = arr.length; i < l; i++)
             if (a.indexOf(arr[i][name]) === -1 && arr[i][name] !== '') {
                 a.push(arr[i][name]);
-                console.log('uni', arr[i])
             }
         return a;
     }
@@ -41,7 +55,7 @@ const Dashboard = ({ forms, agents }) => {
         }
         return a;
     }
-    function uniqueObject2(obj,name) {
+    function uniqueObject2(obj, name) {
         let a = [];
         for (const key in obj) {
             if (a.indexOf(obj[key][name]) == -1 && obj[key][name] !== '') {
@@ -100,7 +114,7 @@ const Dashboard = ({ forms, agents }) => {
     }
     const activeAgents = () => {
         let activeAgents = []
-        let uniqpincodes = uniqueObject2(agents,'pincode');
+        let uniqpincodes = uniqueObject2(agents, 'pincode');
         for (let index = 0; index < uniqpincodes.length; index++) {
             const element = uniqpincodes[index];
             activeAgents.push({ pincodes: element, data: [] })
@@ -119,7 +133,7 @@ const Dashboard = ({ forms, agents }) => {
         return activeAgents
     }
     const tat = () => {
-        const tat = [{time: 'slot1', data: []},{time: 'slot2', data: []},{time: 'slot3', data: []},{time: 'slot4', data: []},{time: 'slot5', data: []}]
+        const tat = [{ time: 'slot1', data: [] }, { time: 'slot2', data: [] }, { time: 'slot3', data: [] }, { time: 'slot4', data: [] }, { time: 'slot5', data: [] }]
         const currentTime = new Date().getTime();
         for (const key in forms) {
             if (Object.hasOwnProperty.call(forms, key)) {
@@ -155,8 +169,31 @@ const Dashboard = ({ forms, agents }) => {
 
     return (
         <div className='row'>
-            <div className="col-6 bg-secondary p-2">
-                cases Today
+            <div className="col-6 p-2">
+                cases Today {casesToday().map(item => (
+                    <span>({item.data.length})</span>
+                ))}
+                <div>
+                    <Button
+                        color="primary"
+                        onClick={() => setCasesTodayToast(!casesTodayToast)}
+                    >
+                        {casesTodayToast ? "Hide Details": "View Details" }
+                    </Button>
+                    <br />
+                    <br />
+                    <Toast isOpen={casesTodayToast} className='w-100'>
+                        <ToastBody >
+                            {casesToday()?.map((item,index) => (
+                                <>
+                                    <Button color='link' key={item.name} onClick={() => setCasesToadyModal({count: index, state: true})}>{item.name}</Button>
+                                   
+                                    <ModalItem item={item} open={casesTodayModal} count={index} close={() => setCasesToadyModal(false)}/>
+                                </>
+                            ))}
+                        </ToastBody>
+                    </Toast>
+                </div>
                 <button onClick={() => console.log('casesToday', casesToday())}>Test</button>
             </div>
             <div className="col-6 bg-danger">
@@ -179,6 +216,40 @@ const Dashboard = ({ forms, agents }) => {
             {/* <button value='update store' onClick={() => props.dispatch({ type: 'DATA', data: 'XYZ' })}>update redux</button> */}
 
         </div>
+    )
+}
+
+const ModalItem = ({item, open, close, count}) => {
+
+    console.log('elem', item)
+    const combinedData = () => {
+        let combined = [];
+        for (let index = 0; index < item.data.length; index++) {
+            const element = item.data[index];
+            if(element.data?.office?.applicantDetails.customerName){
+                combined.push({name: element.data?.office?.applicantDetails.customerName, 
+                    data: element.data.office, id: element.id})
+            } else{
+                combined.push({name: element.data?.resident?.applicantDetails.customerName, data:element.data.resident, id: element.id})
+            }
+        }
+        return combined
+    }
+    console.log('combined', combinedData())
+    return (
+            <Modal isOpen={open.state && open.count === count} toggle={() => close(!open.state)}>
+                <ModalBody>
+                    <div> 
+                        {combinedData().map(item => {
+                            return <div>
+                                <a href={`${item?.data?.applicantDetails.form}/${item?.data?.applicantDetails.pincode}/${item.id}`} target='_blank'>{item.name}
+                                    </a>
+                            </div>
+                        })}x
+                    </div>
+
+                </ModalBody>
+            </Modal>
     )
 }
 
