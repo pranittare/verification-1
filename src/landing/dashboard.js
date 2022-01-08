@@ -15,7 +15,9 @@ const Dashboard = ({ forms, agents }) => {
     const [casesTodayToast, setCasesTodayToast] = useState(false);
     const [casesTodayModal, setCasesToadyModal] = useState(false);
     const [unclaimedCasesToast, setUnclaimedCasesToast] = useState(false)
+    const [unclaimedCasesModal, setUnclaimedCasesModal] = useState(false)
     const [activeAgentsToast, setActiveAgentsToast] = useState(false)
+    const [activeAgentsModal, setActiveAgentsModal] = useState(false)
     const [tatToast, setTatToast] = useState(false)
 
     const bankwise = () => {
@@ -86,29 +88,48 @@ const Dashboard = ({ forms, agents }) => {
     }
     const unClaimedCases = () => {
         let unClaimed = []
+        let singleUnclaimed = []
         let uniqpincodes = uniqueObject(forms)
         for (let index = 0; index < uniqpincodes.length; index++) {
             const element = uniqpincodes[index];
-            unClaimed.push({ pincodes: element, data: [] })
+            unClaimed.push({ pincodes: element, data: [], total: 0 })
         }
-        for (const key in forms) {
-            if (Object.hasOwnProperty.call(forms, key)) {
-                const element = forms[key];
-                for (const form in element) {
-                    if (Object.hasOwnProperty.call(element, form)) {
-                        const single = element[form];
-                        if (!single.claimed && !single.submitted) {
-                            for (let index = 0; index < unClaimed.length; index++) {
-                                const singlepin = unClaimed[index];
-                                if (single.pincode === singlepin.pincode) {
-                                    singlepin.data.push({ single })
+        for (let index = 0; index < bankwise().pincode.length; index++) {
+            const element = bankwise().pincode[index];
+            for (const key in element) {
+                if (Object.hasOwnProperty.call(element, key)) {
+                    const single = element[key];
+                    if (!single.claimed && !single.submitted && single.appid) {
+                        single.id = Object.keys(element)[0]
+                        if (single.office?.applicantDetails) {
+                            single.pincode = single.office.applicantDetails.pincode
 
-                                }
-                            }
+                        } else if (single.resident?.applicantDetails) {
+                            single.pincode = single.resident.applicantDetails.pincode
+
                         }
+                        singleUnclaimed.push(single)
                     }
                 }
             }
+        }
+        for (let index = 0; index < unClaimed.length; index++) {
+            const element = unClaimed[index];
+            for (let index = 0; index < singleUnclaimed.length; index++) {
+                const case1 = singleUnclaimed[index];
+                if (element.pincodes == case1.pincode) {
+                    element.data.push(case1)
+                }
+            }
+        }
+        let total = 0
+        for (let index = 0; index < unClaimed.length; index++) {
+            const element = unClaimed[index];
+            total += element.data.length
+        }
+        for (let index = 0; index < unClaimed.length; index++) {
+            const element = unClaimed[index];
+            element.total = total
         }
         return unClaimed
     }
@@ -125,7 +146,9 @@ const Dashboard = ({ forms, agents }) => {
                 for (let index = 0; index < activeAgents.length; index++) {
                     const agentPincode = activeAgents[index];
                     if (agentPincode.pincodes === Number(element.pincode)) {
-                        agentPincode.data.push(element)
+                        if (element.isLoggedIn) {
+                            agentPincode.data.push(element)
+                        }
                     }
                 }
             }
@@ -178,17 +201,17 @@ const Dashboard = ({ forms, agents }) => {
                         color="primary"
                         onClick={() => setCasesTodayToast(!casesTodayToast)}
                     >
-                        {casesTodayToast ? "Hide Details": "View Details" }
+                        {casesTodayToast ? "Hide Details" : "View Details"}
                     </Button>
                     <br />
                     <br />
                     <Toast isOpen={casesTodayToast} className='w-100'>
                         <ToastBody >
-                            {casesToday()?.map((item,index) => (
+                            {casesToday()?.map((item, index) => (
                                 <>
-                                    <Button color='link' key={item.name} onClick={() => setCasesToadyModal({count: index, state: true})}>{item.name}</Button>
-                                   
-                                    <ModalItem item={item} open={casesTodayModal} count={index} close={() => setCasesToadyModal(false)}/>
+                                    <Button color='link' key={item.name} onClick={() => setCasesToadyModal({ count: index, state: true })}>{item.name}</Button>
+
+                                    <ModalItem item={item} open={casesTodayModal} count={index} close={() => setCasesToadyModal(false)} />
                                 </>
                             ))}
                         </ToastBody>
@@ -200,12 +223,27 @@ const Dashboard = ({ forms, agents }) => {
                 Total Cases
             </div>
             <div className="col-6 bg-warning">
-                Unclaimed cases
+                Unclaimed cases ({unClaimedCases()[2].total})
+                {unClaimedCases().map((item, index) => {
+                    if (item.data.length > 0)
+                        return <div>
+                            <Button color='link' key={item?.tat} onClick={() => setUnclaimedCasesModal({ count: index, state: true })}>{item?.pincodes} - {item?.data?.length}</Button>
 
+                            <ModalItem item={item} open={unclaimedCasesModal} count={index} close={() => setUnclaimedCasesModal(false)} />
+                        </div>
+                })}
                 <button onClick={() => console.log('unClaimedCases', unClaimedCases())}>Test</button>
             </div>
             <div className="col-6 bg-primary">
                 Active agents
+                {activeAgents().map((item, index) => {
+                    if (item.data.length > 0)
+                        return <div>
+                            <Button color='danger' key={item?.tat} onClick={() => setUnclaimedCasesModal({ count: index, state: true })}>{item?.pincodes} - {item?.data?.length}</Button>
+
+                            <AgentItem item={item} open={unclaimedCasesModal} count={index} close={() => setUnclaimedCasesModal(false)} />
+                        </div>
+                })}
                 <button onClick={() => console.log('activeAgents', activeAgents())}>Test</button>
             </div>
             <div className="col-12 bg-success">
@@ -219,40 +257,79 @@ const Dashboard = ({ forms, agents }) => {
     )
 }
 
-const ModalItem = ({item, open, close, count}) => {
+const ModalItem = ({ item, open, close, count }) => {
 
-    console.log('elem', item)
     const combinedData = () => {
         let combined = [];
         for (let index = 0; index < item.data.length; index++) {
             const element = item.data[index];
-            if(element.data?.office?.applicantDetails.customerName){
-                combined.push({name: element.data?.office?.applicantDetails.customerName, 
-                    data: element.data.office, id: element.id})
-            } else{
-                combined.push({name: element.data?.resident?.applicantDetails.customerName, data:element.data.resident, id: element.id})
+            if (element.data) {
+                if (element.data?.office?.applicantDetails.customerName) {
+                    combined.push({
+                        name: element.data?.office?.applicantDetails.customerName,
+                        data: element.data.office, id: element.id
+                    })
+                } else if (element.data?.resident?.applicantDetails.customerName) {
+                    combined.push({ name: element.data?.resident?.applicantDetails.customerName, data: element.data.resident, id: element.id })
+                }
+            } else {
+                if (element.office?.applicantDetails.customerName) {
+                    combined.push({
+                        name: element.office?.applicantDetails.customerName,
+                        data: element.office, id: element.id
+                    })
+                } else if (element.resident?.applicantDetails.customerName) {
+                    combined.push({ name: element.resident?.applicantDetails.customerName, data: element.resident, id: element.id })
+                }
             }
         }
         return combined
     }
     console.log('combined', combinedData())
     return (
-            <Modal isOpen={open.state && open.count === count} toggle={() => close(!open.state)}>
-                <ModalBody>
-                    <div> 
-                        {combinedData().map(item => {
-                            return <div>
-                                <a href={`${item?.data?.applicantDetails.form}/${item?.data?.applicantDetails.pincode}/${item.id}`} target='_blank'>{item.name}
-                                    </a>
-                            </div>
-                        })}x
-                    </div>
+        <Modal isOpen={open.state && open.count === count} toggle={() => close(!open.state)}>
+            <ModalBody>
+                <div>
+                    {combinedData().map(item => {
+                        return <div>
+                            <a href={`${item?.data?.applicantDetails.form}/${item?.data?.applicantDetails.pincode}/${item.id}`} target='_blank'>{item.name ? item.name : item.pincode}
+                            </a>
+                        </div>
+                    })}
+                </div>
 
-                </ModalBody>
-            </Modal>
+            </ModalBody>
+        </Modal>
     )
 }
 
+const AgentItem = ({ item, open, close, count }) => {
+    const agentData = () => {
+        let agent = [];
+        for (let index = 0; index < item.data.length; index++) {
+            const element = item.data[index];
+            if (element.isLoggedIn) {
+                agent.push(element)
+            }
+        }
+        return agent
+    }
+    return (
+        <Modal isOpen={open.state && open.count === count} toggle={() => close(!open.state)}>
+            <ModalBody>
+                <div>
+                    {agentData().map(item => {
+                        return <div>
+                            <a href={`${item?.data?.applicantDetails.form}/${item?.data?.applicantDetails.pincode}/${item.id}`} target='_blank'>{item.name} -- {JSON.stringify(item.onCase)}
+                            </a>
+                        </div>
+                    })}
+                </div>
+
+            </ModalBody>
+        </Modal>
+    )
+}
 const mapStateToProps = (state) => {
     return {
         users: state.data,
