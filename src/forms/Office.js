@@ -39,6 +39,17 @@ const Office = (props) => {
         source: '',
         typeofEntity: ''
     })
+    const [outerDetails, setOuterDetails] = useState({
+        allocated: false,
+        assigned: false,
+        branch: '',
+        claimed: false,
+        claimedAt: '',
+        completed: false,
+        selected: '',
+        submitted: false,
+        tat: ''
+    })
     // const [verification, setVerification] = useState()
     const [verificationObserver, setVerificationOvserver] = useState();
 
@@ -84,6 +95,17 @@ const Office = (props) => {
                     let formd = formdata
                     // let applicant = {}
                     console.log('formsaved', formsaved)
+                    let outer = outerDetails
+                    for (const key in formsaved) {
+                        if (Object.hasOwnProperty.call(formsaved, key)) {
+                            const element = formsaved[key];
+                            for (const outerkeys in outer) {
+                                if (outerkeys === key) {
+                                    outer[key] = element
+                                }
+                            }
+                        }
+                    }
                     if (formsaved?.office) {
                         // for (const key in formsaved?.office?.applicantDetails) {
                         //     applicant[key] = formsaved?.office?.applicantDetails[key]
@@ -110,6 +132,7 @@ const Office = (props) => {
                         console.log('applicant', formsaved?.office?.applicantDetails)
                         setApplicantDetails(formsaved?.office?.applicantDetails)
                         setVerificationOvserver(formsaved.office.verificationDetails)
+                        setOuterDetails(outer)
                     }
                     setFormdata(formd)
                     setRefresh(Math.random())
@@ -194,12 +217,6 @@ const Office = (props) => {
     //     setRefresh(Math.random())
     // },[refresh])
 
-    const handleSubmit1=()=>{
-        console.log("applicantDetail",aplicantDeatilsRef)
-        const applicantDetail = aplicantDeatilsRef.current.getData();
-        let combined = {...formdata, ...applicantDetail}
-        setFormdata(combined);
-    }
     const combiner = (data) => {
         let alldata = formdata
         let combined = Object.assign(alldata, data);
@@ -214,7 +231,7 @@ const Office = (props) => {
                 // ref={aplicantDeatilsRef}
                 applicantDetail={(data) => {
                     combiner(data)
-                }} data={applicantDetails} getData={getData} />
+                }} data={applicantDetails} getData={getData} outerDetails={outerDetails} />
             </Collapse>
             <Collapse title='Verification Details'>
                 <h1>Verification Details</h1>

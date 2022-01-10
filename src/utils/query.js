@@ -5,6 +5,7 @@ const storage = React.lazy(() => import('../index'));
 
 // console.log('store', store.getState())
 const branch = storage?.store?.getState()?.branch
+
 const getQueryData = async (q) => {
     try {
         let value = []
@@ -21,7 +22,7 @@ const getQueryData = async (q) => {
     }
 }
 export const databaseUpdateQueryExactSingle = async (from, what) => {
-    const q = query(collection(db, "forms/"), where(`${from}`, '==', `${what}`), where('branch', '==', `${branch}`));
+    const q = query(collection(db, "forms/"), where(`${from}`, '==', `${what}`), where('branch', '==', `${branch ? branch : 'branch-1'}`));
     getQueryData(q)
 }
 export const databaseUpdateQueryExactMultiple = async (from1, what1, from2, what2) => {

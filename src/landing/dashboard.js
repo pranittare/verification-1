@@ -19,6 +19,7 @@ const Dashboard = ({ forms, agents }) => {
     const [activeAgentsToast, setActiveAgentsToast] = useState(false)
     const [activeAgentsModal, setActiveAgentsModal] = useState(false)
     const [tatToast, setTatToast] = useState(false)
+    const [tatModal, setTatModal] = useState(false)
 
     const bankwise = () => {
         let bankAndForms = { bank: [], pincode: [] }
@@ -223,10 +224,10 @@ const Dashboard = ({ forms, agents }) => {
                 Total Cases
             </div>
             <div className="col-6 bg-warning">
-                Unclaimed cases ({unClaimedCases()[2].total})
+                Unclaimed cases ({unClaimedCases()[2]?.total})
                 {unClaimedCases().map((item, index) => {
                     if (item.data.length > 0)
-                        return <div>
+                        return <div key={item.tat}>
                             <Button color='link' key={item?.tat} onClick={() => setUnclaimedCasesModal({ count: index, state: true })}>{item?.pincodes} - {item?.data?.length}</Button>
 
                             <ModalItem item={item} open={unclaimedCasesModal} count={index} close={() => setUnclaimedCasesModal(false)} />
@@ -234,20 +235,26 @@ const Dashboard = ({ forms, agents }) => {
                 })}
                 <button onClick={() => console.log('unClaimedCases', unClaimedCases())}>Test</button>
             </div>
-            <div className="col-6 bg-primary">
+            {/* <div className="col-6 bg-primary">
                 Active agents
                 {activeAgents().map((item, index) => {
                     if (item.data.length > 0)
-                        return <div>
-                            <Button color='danger' key={item?.tat} onClick={() => setUnclaimedCasesModal({ count: index, state: true })}>{item?.pincodes} - {item?.data?.length}</Button>
+                        return <div key={item.tat}>
+                            <Button color='danger' onClick={() => setActiveAgentsModal({ count: index, state: true })}>{item?.pincodes} - {item?.data?.length}</Button>
 
-                            <AgentItem item={item} open={unclaimedCasesModal} count={index} close={() => setUnclaimedCasesModal(false)} />
+                            <AgentItem item={item} open={activeAgentsModal} count={index} close={() => setActiveAgentsModal(false)} />
                         </div>
                 })}
                 <button onClick={() => console.log('activeAgents', activeAgents())}>Test</button>
-            </div>
+            </div> */}
             <div className="col-12 bg-success">
                 TAt
+                {tat().map((item, index) => {
+                    return <div key={item.time}>
+                        <Button color='link' onClick={() => setTatModal({ count: index, state: true })}>{item?.time}</Button>
+                        <ModalItem item={item} open={tatModal} count={index} close={() => setTatModal(false)} />
+                    </div>
+                })}
                 <button onClick={() => console.log('tat', tat())}>Test</button>
             </div>
 
@@ -258,7 +265,6 @@ const Dashboard = ({ forms, agents }) => {
 }
 
 const ModalItem = ({ item, open, close, count }) => {
-
     const combinedData = () => {
         let combined = [];
         for (let index = 0; index < item.data.length; index++) {
@@ -291,7 +297,7 @@ const ModalItem = ({ item, open, close, count }) => {
             <ModalBody>
                 <div>
                     {combinedData().map(item => {
-                        return <div>
+                        return <div key={item.name || item.pincode}>
                             <a href={`${item?.data?.applicantDetails.form}/${item?.data?.applicantDetails.pincode}/${item.id}`} target='_blank'>{item.name ? item.name : item.pincode}
                             </a>
                         </div>
@@ -319,7 +325,7 @@ const AgentItem = ({ item, open, close, count }) => {
             <ModalBody>
                 <div>
                     {agentData().map(item => {
-                        return <div>
+                        return <div key={item.name}>
                             <a href={`${item?.data?.applicantDetails.form}/${item?.data?.applicantDetails.pincode}/${item.id}`} target='_blank'>{item.name} -- {JSON.stringify(item.onCase)}
                             </a>
                         </div>

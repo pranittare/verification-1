@@ -99,6 +99,7 @@ export default function VerificationObserverOffice({ verification, getData, data
         { name: 'businessActivityLevel', value: 'High', label: 'High' },
         { name: 'businessActivityLevel', value: 'Medium', label: 'Medium' },
         { name: 'businessActivityLevel', value: 'Low', label: 'Low' },
+        { name: 'businessActivityLevel', value: 'No business activity', label: 'No business activity' },
     ]
     let withinMunicipalLimits = [
         { name: 'withinMunicipalLimits', value: 'yes', label: 'yes' },

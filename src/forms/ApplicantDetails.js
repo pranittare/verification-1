@@ -1,10 +1,11 @@
-import React, { useState, useEffect,forwardRef, useImperativeHandle } from 'react'
+import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react'
 import { Button, Input, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import DropDownComp from '../components/DropDownComp';
+import { databaseUpdateQueryExactSingle } from '../utils/query'
 import { connect } from 'react-redux';
 
-const ApplicantDetails = forwardRef((props, ref) =>{
-const { applicantDetail, data, getData, vendor } = props;
+const ApplicantDetails = forwardRef((props, ref) => {
+    const { applicantDetail, data, getData, vendor, agents, outerDetails } = props;
 
     const initalData = {
         appid: '',
@@ -45,7 +46,11 @@ const { applicantDetail, data, getData, vendor } = props;
         visitedresidentAddress: '',
         remarks: '',
         type: '',
-        emailList: []
+        emailList: [],
+        selected: '',
+        claimed: '',
+        claimedAt: '',
+        assigned: ''
     })
     const [refresh, setRefresh] = useState(0)
     const [dropdownBankNameOpen, setBankNameOpen] = useState(false);
@@ -53,6 +58,9 @@ const { applicantDetail, data, getData, vendor } = props;
     const [dropdownProductNameOpen, setProductNameOpen] = useState(false);
     const toggleProductName = () => setProductNameOpen(!dropdownProductNameOpen);
     const [productList, setProductList] = useState([]);
+    const [agentsDropdown, setAgentsDropdown] = useState([]);
+    const [selectedAgent, setSelectedAgent] = useState('');
+    const [changeAgent, setChangeAgent] = useState(false);
     // const url = document.location.pathname.split('/').length > 1
     let office = false
     let resident = false
@@ -73,8 +81,8 @@ const { applicantDetail, data, getData, vendor } = props;
             return formdata
             // applicantDetail(formdata)
         }
-    
-      }));
+
+    }));
 
     const onHandleChange = (e) => {
         let form = formdata
@@ -113,8 +121,51 @@ const { applicantDetail, data, getData, vendor } = props;
             // applicantDetail(formdata)
             document.getElementById('applicationDetails').click()
         }
-    }, [getData,formdata])
+    }, [getData, formdata])
+    useEffect(() => {
+        if (outerDetails) {
+            let formd = formdata
+            for(const outer in outerDetails) {
+                const element = outerDetails[outer]
+                for(const form in formd) {
+                    if (form === outer) {
+                        formd[outer] = element
+                        if (outer === 'selected' && element) {
+                            setSelectedAgent(element)
+                        }
+                    }
+                }
+            }
+            console.log('formd', formd)
+            setFormdata(formd)
+        }
+    },[outerDetails])
 
+    const getAgents = () => {
+        let pincodeWiseAgents = []
+        if (formdata.pincode) {
+            for (const key in agents) {
+                if (Object.hasOwnProperty.call(agents, key)) {
+                    const element = agents[key];
+                    let pincode = []
+                    pincode.push(JSON.stringify(element.pincode))
+                    if (element.secondary && element.secondary.length > 0) {
+                        for (let index = 0; index < element.secondary.length; index++) {
+                            const element1 = element.secondary[index];
+                            pincode.push(element1.pincodes)
+                        }
+                    }
+                    if (pincode.includes(formdata.pincode)) {
+                        pincodeWiseAgents.push(element)
+                    }
+
+                }
+            }
+        }
+        console.log('agents', pincodeWiseAgents)
+        return pincodeWiseAgents;
+    }
+  
     let mismatchAddressField = [
         { name: 'mismatchAddress', value: 'yes', label: 'Yes' },
         { name: 'mismatchAddress', value: 'no', label: 'No' }
@@ -134,12 +185,6 @@ const { applicantDetail, data, getData, vendor } = props;
                         <label>App.Id/Lead id</label>
                         <Input type="text" name='appid' value={formdata['appid']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
-                    {(office || resident) &&
-                        <div className='pt-4'>
-                            <Button color='success'>Check</Button>
-                        </div>
-                    }
-
                     <div >
                         <label>Sr.No</label>
                         <Input type="text" name='srNo' value={formdata['srNo']} onChange={(e) => onHandleChange(e.currentTarget)} />
@@ -171,7 +216,7 @@ const { applicantDetail, data, getData, vendor } = props;
                                         setFormdata(form)
                                         setProductList(item?.productList)
                                         // setFormdata({...formdata, bankNBFCname: item.clientName})
-                                        }}
+                                    }}
                                         value={item.clientName}
                                         name={item.clientName}>
                                         {item.clientName}
@@ -197,7 +242,7 @@ const { applicantDetail, data, getData, vendor } = props;
                                         form.emailList = item.emailList
                                         setFormdata(form)
                                     }}
-                                    value={item.productName}
+                                        value={item.productName}
                                     >
                                         {item.productName}
                                     </DropdownItem>
@@ -214,14 +259,23 @@ const { applicantDetail, data, getData, vendor } = props;
                         <label>Pincode</label>
                         <Input type="text" name='pincode' value={formdata['pincode']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
-                    {!(formdata['type'] === 'office' || formdata['type'] === 'resident') &&
+                    {/* // {!(formdata['type'] === 'office' || formdata['type'] === 'resident') && */}
                         <div className='pt-4'>
-                            <Button>Get Agents</Button>
+                            <Dropdown toggle={() => setAgentsDropdown(!agentsDropdown)} isOpen={agentsDropdown}>
+                                <DropdownToggle caret className='bg-transparent text-danger border-0'>
+                                    {selectedAgent ? selectedAgent : getAgents().length > 0 ? `Agents - ${getAgents().length}` : 'None'}
+                                </DropdownToggle>
+                                <DropdownMenu>
+                                    {getAgents()?.map((item, index) => {
+                                        return <DropdownItem key={item.name} onClick={() => { setSelectedAgent(item.name) }}>
+                                            {item.name}
+                                        </DropdownItem>
+                                    })}
+                                </DropdownMenu>
+                            </Dropdown>
                         </div>
-                    }
                     <div >
                         <label>Type {formdata['type']}</label>
-
                         <DropDownComp id='applicantDetails' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={type} value={formdata['type']} />
                     </div>
                     <div >
@@ -276,7 +330,8 @@ const { applicantDetail, data, getData, vendor } = props;
 })
 const mapStateToProps = (state) => {
     return {
-        vendor: state.vendors
+        vendor: state.vendors,
+        agents: state.agents
     }
 }
 export default connect(mapStateToProps)(ApplicantDetails)

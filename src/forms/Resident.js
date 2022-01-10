@@ -45,6 +45,17 @@ const Resident = (props) => {
         children: '',
         officeAddress: '',
     })
+    const [outerDetails, setOuterDetails] = useState({
+        allocated: false,
+        assigned: false,
+        branch: '',
+        claimed: false,
+        claimedAt: '',
+        completed: false,
+        selected: '',
+        submitted: false,
+        tat: ''
+    })
     const [refresh, setRefresh] = useState(0)
     const onHandleChange = (e) => {
         let form = formdata
@@ -74,6 +85,17 @@ const Resident = (props) => {
                 .then(formsaved => {
                     let formd = formdata
                     let applicant = {}
+                    let outer = outerDetails
+                    for (const key in formsaved) {
+                        if (Object.hasOwnProperty.call(formsaved, key)) {
+                            const element = formsaved[key];
+                            for (const outerkeys in outer) {
+                                if (outerkeys === key) {
+                                    outer[key] = element
+                                }
+                            }
+                        }
+                    }
                     console.log('formsaved', formsaved)
                     if (formsaved?.resident) {
                         for (const key in formsaved.resident.verificationDetails) {
@@ -103,6 +125,7 @@ const Resident = (props) => {
                     // console.log('applicant',applicant)
                     setApplicantDetails(applicant)
                     setFormdata(formd)
+                    setOuterDetails(outer)
                     setRefresh(Math.random())
                     console.log('formd', formd)
                 })
@@ -229,7 +252,7 @@ const Resident = (props) => {
                 // ref={aplicantDeatilsRef}
                 applicantDetail={(data) => {
                     combiner(data)
-                }} data={applicantDetails} getData={getData} />
+                }} data={applicantDetails} getData={getData} outerDetails={outerDetails}/>
             </Collapse>
             <Collapse title='Verification Details'>
                 <h1>Verification Details</h1>

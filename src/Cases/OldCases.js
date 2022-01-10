@@ -56,14 +56,14 @@ const OldCases = (props) => {
     }
     const search1 = () => {
         if (searchData1.customerName && searchData1.bankNBFCname) {
-            databaseUpdateQueryExactMultiple('applicantDetails.bankNBFCname', searchData1.bankNBFCname, 'applicantDetails.customerName', searchData1.customerName)
+            setAllData(databaseUpdateQueryExactMultiple('applicantDetails.bankNBFCname', searchData1.bankNBFCname, 'applicantDetails.customerName', searchData1.customerName))
         }
         if (searchData1.customerName) {
-            databaseUpdateQueryExactSingle('applicantDetails.customerName', searchData1.customerName)
+            setAllData(databaseUpdateQueryExactSingle('applicantDetails.customerName', searchData1.customerName))
 
         }
         if (searchData1.bankNBFCname) {
-            databaseUpdateQueryExactSingle('applicantDetails.bankNBFCname', searchData1.bankNBFCname)
+            setAllData(databaseUpdateQueryExactSingle('applicantDetails.bankNBFCname', searchData1.bankNBFCname))
 
         }
     }
