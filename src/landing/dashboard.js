@@ -16,8 +16,8 @@ const Dashboard = ({ forms, agents }) => {
     const [casesTodayModal, setCasesToadyModal] = useState(false);
     const [unclaimedCasesToast, setUnclaimedCasesToast] = useState(false)
     const [unclaimedCasesModal, setUnclaimedCasesModal] = useState(false)
-    const [activeAgentsToast, setActiveAgentsToast] = useState(false)
-    const [activeAgentsModal, setActiveAgentsModal] = useState(false)
+    // const [activeAgentsToast, setActiveAgentsToast] = useState(false)
+    // const [activeAgentsModal, setActiveAgentsModal] = useState(false)
     const [tatToast, setTatToast] = useState(false)
     const [tatModal, setTatModal] = useState(false)
 
@@ -134,28 +134,28 @@ const Dashboard = ({ forms, agents }) => {
         }
         return unClaimed
     }
-    const activeAgents = () => {
-        let activeAgents = []
-        let uniqpincodes = uniqueObject2(agents, 'pincode');
-        for (let index = 0; index < uniqpincodes.length; index++) {
-            const element = uniqpincodes[index];
-            activeAgents.push({ pincodes: element, data: [] })
-        }
-        for (const key in agents) {
-            if (Object.hasOwnProperty.call(agents, key)) {
-                const element = agents[key];
-                for (let index = 0; index < activeAgents.length; index++) {
-                    const agentPincode = activeAgents[index];
-                    if (agentPincode.pincodes === Number(element.pincode)) {
-                        if (element.isLoggedIn) {
-                            agentPincode.data.push(element)
-                        }
-                    }
-                }
-            }
-        }
-        return activeAgents
-    }
+    // const activeAgents = () => {
+    //     let activeAgents = []
+    //     let uniqpincodes = uniqueObject2(agents, 'pincode');
+    //     for (let index = 0; index < uniqpincodes.length; index++) {
+    //         const element = uniqpincodes[index];
+    //         activeAgents.push({ pincodes: element, data: [] })
+    //     }
+    //     for (const key in agents) {
+    //         if (Object.hasOwnProperty.call(agents, key)) {
+    //             const element = agents[key];
+    //             for (let index = 0; index < activeAgents.length; index++) {
+    //                 const agentPincode = activeAgents[index];
+    //                 if (agentPincode.pincodes === Number(element.pincode)) {
+    //                     if (element.isLoggedIn) {
+    //                         agentPincode.data.push(element)
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     return activeAgents
+    // }
     const tat = () => {
         const tat = [{ time: 'slot1', data: [] }, { time: 'slot2', data: [] }, { time: 'slot3', data: [] }, { time: 'slot4', data: [] }, { time: 'slot5', data: [] }]
         const currentTime = new Date().getTime();
@@ -247,7 +247,7 @@ const Dashboard = ({ forms, agents }) => {
                 })}
                 <button onClick={() => console.log('activeAgents', activeAgents())}>Test</button>
             </div> */}
-            <div className="col-12 bg-success">
+            <div className="col-6 bg-success">
                 TAt
                 {tat().map((item, index) => {
                     return <div key={item.time}>

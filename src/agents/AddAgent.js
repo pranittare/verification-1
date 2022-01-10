@@ -177,10 +177,12 @@ const AddAgent = ({ agent, allAgents, realTimeAgents, agents, realTimeforms }) =
                 }
             }
             if (agent.userId === agents.userId) {
+                console.log('selected', agent, agents)
+
                 update(ref(db, `agents/${agents.key}`), { uniqueId: 'Disabled', isLoggedIn: false, onCase: false, myForms: 0 }).then(res => {
                     alert('Agent Disabled')
                 }).catch(err => {
-                    alert('Agemt was not disabled check log')
+                    alert('Agent was not disabled check log')
                     console.log('Disable Agent 2', err)
                 })
             }
