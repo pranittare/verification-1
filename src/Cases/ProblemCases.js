@@ -83,7 +83,7 @@ const ProblemCases = ({ cases }) => {
         if (cases?.office?.applicantDetails?.mobileNo) {
             officeApplicant = true
         }
-        console.log('props', cases)
+        // console.log('props', cases)
 
     }
     const handleoutsideEdit = () => {

@@ -14,17 +14,16 @@ const Navigation = ({ onHandleSidebar, auth }) => {
                 <div className="container-fluid">
                     <Dropdown isOpen={sidebar} toggle={toggle} className='me-4'>
                         <DropdownToggle >
-                            ...
+                            Menu
                         </DropdownToggle>
                         {sidebar && <DropdownMenu>
-                            <DropdownItem>Some Action</DropdownItem>
                             <DropdownItem><Link className="nav-link" to='/office'>Office</Link></DropdownItem>
                             <DropdownItem><Link className="nav-link" to='/resident'>Resident</Link></DropdownItem>
-                            <DropdownItem divider>cases</DropdownItem>
+                            <DropdownItem divider></DropdownItem>
                             <DropdownItem><Link className="nav-link" to='/ActiveCases'>Active Cases</Link></DropdownItem>
                             <DropdownItem><Link className="nav-link" to='/SubmittedCases'>Submitted Cases</Link></DropdownItem>
                             <DropdownItem><Link className="nav-link" to='/oldCases'>Old Cases</Link></DropdownItem>
-                            <DropdownItem divider>cases</DropdownItem>
+                            <DropdownItem divider></DropdownItem>
                             <DropdownItem><Link className="nav-link" to='/active-agents'>Active Agents</Link></DropdownItem>
                             <DropdownItem><Link className="nav-link" to='/total-agents'>Total Agents</Link></DropdownItem>
                         </DropdownMenu>}

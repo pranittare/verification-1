@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
+import { getDatabase, ref, update } from "firebase/database";
+import { Prompt } from 'react-router-dom';
 import { Input, Button } from 'reactstrap'
 import ApplicantDetails from './ApplicantDetails'
 import Tpc from './Tpc';
@@ -12,9 +14,9 @@ import { connect } from 'react-redux';
 import PdfMake from './PdfMake';
 
 const Office = (props) => {
-   
     // let allData1 = []
     let { pincode, id } = useParams()
+    const db = getDatabase();
     // console.log('form', props)
     const [formdata, setFormdata] = useState({
         visitDate: '',
@@ -86,6 +88,20 @@ const Office = (props) => {
         setRefresh(Math.random())
         // console.log(form)
     }
+    function getCookie(cname) {
+        let name = cname + "=";
+        let ca = document.cookie.split(';');
+        for (let i = 0; i < ca.length; i++) {
+            let c = ca[i];
+            while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return "";
+    }
     // Form data by id
     useEffect(() => {
         if (id) {
@@ -138,10 +154,17 @@ const Office = (props) => {
                     setRefresh(Math.random())
                     console.log('formd', formd)
                 })
-
+            update(ref(db, `form/${pincode}/${id}`), {
+                watcherEmail: getCookie('email'),
+            });
         }
 
     }, [id, pincode])
+    const clearWatcher = () => {
+        update(ref(db, `form/${pincode}/${id}`), {
+            watcherEmail: '',
+        });
+    }
 
     useEffect(() => {
         console.log('getData', formdata)
@@ -225,13 +248,22 @@ const Office = (props) => {
     }
     return (
         <div>
+            <Prompt
+                message={(location, action) => {
+                    if (action === 'POP') {
+                        // On Going Back
+                        // Need to end at submit also
+                        clearWatcher()
+                    }
+                }}
+            />
             {(refresh > 0 || true) && <PdfMake data={formdata} refresh={() => { setRefresh(Math.random()); }} />}
             <Collapse title='Applicant Details'>
-                <ApplicantDetails 
-                // ref={aplicantDeatilsRef}
-                applicantDetail={(data) => {
-                    combiner(data)
-                }} data={applicantDetails} getData={getData} outerDetails={outerDetails} />
+                <ApplicantDetails
+                    // ref={aplicantDeatilsRef}
+                    applicantDetail={(data) => {
+                        combiner(data)
+                    }} data={applicantDetails} getData={getData} outerDetails={outerDetails} />
             </Collapse>
             <Collapse title='Verification Details'>
                 <h1>Verification Details</h1>
@@ -339,7 +371,7 @@ const Office = (props) => {
                     combiner(data)
                 }} getData={getData} data={verificationObserver} />
                 <Tpc tpc={(data) => {
-                   combiner(data)
+                    combiner(data)
                 }} getData={getData} data={verificationObserver} />
                 <Geolocation data={verificationObserver} id={id} pincode={pincode} />
                 <Button color='primary' onClick={handleSubmit} type='submit'>Submit</Button>

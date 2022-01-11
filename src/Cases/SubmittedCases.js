@@ -7,7 +7,7 @@ import moment from 'moment';
 import ProblemCases from './ProblemCases';
 
 const SubmittedCases = (props) => {
-    let history = useHistory()
+    let history = useHistory();
     const [allData, setAllData] = useState([])
     const [reset, setReset] = useState(0);
     const formatedDate = new Date().toDateString()
@@ -89,12 +89,6 @@ const SubmittedCases = (props) => {
                 history.push(`resident/${pincode}/${item.key}`)
             }
         }
-        // if (item?.office) {
-
-        // } else if(item?.resident) {
-
-        // } else {
-        // }
     }
     useEffect(() => {
         formData(props.forms)
@@ -132,7 +126,6 @@ const SubmittedCases = (props) => {
     return (
         <div>
             <div className='d-flex justify-content-around mb-2 mt-2'>
-
                 <h4>Submitted Cases</h4>
                 <button onClick={getExcel} className='btn btn-primary'>Get Excel</button>
             </div>
@@ -163,8 +156,9 @@ const SubmittedCases = (props) => {
                             return <tr key={`${item.appid}-${index + 1}`}>
                                 <td >
                                     <div onClick={() => handleViewForm(item)} style={{ cursor: 'pointer' }} className='text-primary'>
-                                    {item.appid}
+                                        {item.appid}
                                     </div>
+                                    {item.watcherEmail && item.watcherEmail}
                                     <ProblemCases cases={item} />
                                 </td>
                                 <td>

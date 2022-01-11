@@ -90,7 +90,7 @@ const AddAgent = ({ agent, allAgents, realTimeAgents, agents, realTimeforms }) =
         if (allAgents && allAgents.length > 0) {
             for (let index = 0; index < allAgents.length; index++) {
                 const element = allAgents[index];
-                console.log('element', element)
+                // console.log('element', element)
                 if (form.agentCode === element['agentCode']) {
                     alert('Same Agent Code Do not Continue!')
                 }
@@ -112,7 +112,7 @@ const AddAgent = ({ agent, allAgents, realTimeAgents, agents, realTimeforms }) =
             const element = secondary[index];
             secondarypincodes.push({ pincodes: element })
         }
-        console.log(secondarypincodes, startDate, endDate)
+        // console.log(secondarypincodes, startDate, endDate)
     }
     const uploadFile = (e) => {
         const file = e.target.files[0];
@@ -165,7 +165,7 @@ const AddAgent = ({ agent, allAgents, realTimeAgents, agents, realTimeforms }) =
                 if (agent.userId === forms.selected) {
                     forms.selected = false
                     forms.clained = false
-                    update(ref(db, `form/${forms.pincode}/${forms.key}`), {
+                    update(rtRef(db, `form/${forms.pincode}/${forms.key}`), {
                         selected: false,
                         clained: false
                     }).then(res => {
@@ -177,9 +177,7 @@ const AddAgent = ({ agent, allAgents, realTimeAgents, agents, realTimeforms }) =
                 }
             }
             if (agent.userId === agents.userId) {
-                console.log('selected', agent, agents)
-
-                update(ref(db, `agents/${agents.key}`), { uniqueId: 'Disabled', isLoggedIn: false, onCase: false, myForms: 0 }).then(res => {
+                update(rtRef(db, `agents/${agents.key}`), { uniqueId: 'Disabled', isLoggedIn: false, onCase: false, myForms: 0 }).then(res => {
                     alert('Agent Disabled')
                 }).catch(err => {
                     alert('Agent was not disabled check log')
@@ -194,8 +192,8 @@ const AddAgent = ({ agent, allAgents, realTimeAgents, agents, realTimeforms }) =
         let realAgents = rtA
         for (let index = 0; index < realAgents.length; index++) {
             const agents = realAgents[index];
-            if (agent.userId === agents.userId && agents.uniqueId !== 'Disabled') {
-                update(ref(db, `agents/${agents.key}`), { uniqueId: null }).then(res => {
+            if (agent.userId === agents.userId) {
+                update(rtRef(db, `agents/${agents.key}`), { uniqueId: null }).then(res => {
                     alert('Agent Enabled')
                 }).catch(err => {
                     alert('Agent was not enabled check log')
@@ -212,7 +210,7 @@ const AddAgent = ({ agent, allAgents, realTimeAgents, agents, realTimeforms }) =
         for (let index = 0; index < realAgents.length; index++) {
             const agents = realAgents[index];
             if (agent.userId === agents.userId) {
-                remove(ref(db, `agents/${agents.key}`)).then(res => {
+                remove(rtRef(db, `agents/${agents.key}`)).then(res => {
                     alert('Agent Deleted 1')
                 }).catch(err => {
                     alert('Agent was not deleted check log')

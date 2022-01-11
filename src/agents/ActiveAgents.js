@@ -143,7 +143,9 @@ const ActiveAgents = (props) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {reset > 0 && allData && allData.length > 0 && allData.map((item, index) => {
+                        {reset > 0 && allData && allData.length > 0 && allData.sort((a,b) => {
+                            return (b.claimed + b.submitted) - (a.claimed + a.submitted)
+                        }).map((item, index) => {
                             if (item.isLoggedIn && item.branch === props.branch) {
                                 return <tr key={item.userId}>
                                     <th>{index + 1}</th>

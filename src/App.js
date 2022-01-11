@@ -57,7 +57,7 @@ function App(props) {
       data.key = snap.id
       value.push(data)
     })
-      console.log(`${update}`, value)
+    console.log(`${update}`, value)
     // console.log('snap', value);
     // console.log('val', value)
     let val = update.toString().toUpperCase()
@@ -75,27 +75,29 @@ function App(props) {
   }, [])
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
-      // console.log('user', user)
+      console.log('user', user)
       if (user) {
+        document.cookie = `email=${user.email}`
         setIsUser(true)
       } else {
+        document.cookie = "email=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
         setIsUser(false)
       }
     })
-  },[])
+  }, [])
 
   return (
     <div className="text-center w-100">
       <Router >
-        <Navigation auth={auth?.currentUser}/>
+        <Navigation auth={auth?.currentUser} />
         <Switch>
 
           <>
             {/* {console.log('user', auth?.currentUser?.email)} */}
-            {auth?.currentUser?.email ? <> 
-            
-            <Route path='/' render={() => <Dashboard />} exact />
-            <Route path='/signup' render={() => <SignUp />} />
+            {auth?.currentUser?.email ? <>
+
+              <Route path='/' render={() => <Dashboard />} exact />
+              <Route path='/signup' render={() => <SignUp />} />
               <Route path='/forget' render={() => <Forget />} />
               <Route path='/total-agents' render={() => <TotalAgents />} />
               <Route path='/active-agents' render={() => <ActiveAgents />} />
@@ -110,7 +112,7 @@ function App(props) {
               <Route path='/oldCases' render={() => <OldCases />} />
             </>
               :
-              <Route path='/login' render={() => <Login />}  />
+              <Route path='/login' render={() => <Login />} />
             }
 
 
