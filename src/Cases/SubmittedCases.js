@@ -129,6 +129,11 @@ const SubmittedCases = (props) => {
                 <h4>Submitted Cases</h4>
                 <button onClick={getExcel} className='btn btn-primary'>Get Excel</button>
             </div>
+            <div className='d-flex sticky-top bg-white'>
+                Label:
+                <p className='text-primary me-1 ms-1'>Office</p>
+                <p className='text-success'>Resident</p>
+            </div>
             <ReactHTMLTableToExcel
                 id="test-table-xls-button"
                 className="d-none "
@@ -155,7 +160,7 @@ const SubmittedCases = (props) => {
 
                             return <tr key={`${item.appid}-${index + 1}`}>
                                 <td >
-                                    <div onClick={() => handleViewForm(item)} style={{ cursor: 'pointer' }} className='text-primary'>
+                                    <div onClick={() => handleViewForm(item)} style={{ cursor: 'pointer' }} className={item?.office?.applicantDetails ? 'text-primary' : 'text-success'}>
                                         {item.appid}
                                     </div>
                                     {item.watcherEmail && item.watcherEmail}

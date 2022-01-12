@@ -3,10 +3,11 @@ import { connect } from 'react-redux';
 import { Input } from 'reactstrap'
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import moment from 'moment';
+import { useHistory } from 'react-router-dom'
 
 const ActiveCases = (props) => {
     const formatedDate = new Date().toDateString()
-
+    let history = useHistory();
     const [allData, setAllData] = useState([])
     const [reset, setReset] = useState(0);
     const formData = (forms) => {
@@ -19,6 +20,7 @@ const ActiveCases = (props) => {
             for (let index = 0; index < newform.length; index++) {
                 const element2 = newform[index];
                 let single = form[element2]
+                single.key = element2
                 if (single.appid && !single.submitted && single.branch === props.branch) {
                     formarray.push(single)
                 }
@@ -68,8 +70,18 @@ const ActiveCases = (props) => {
         setReset(Math.random())
 
     }
-    const handleOpenForm = (form) => {
-        console.log('form', form)
+    const handleViewForm = (item) => {
+        console.log('handleViewForm', item)
+        let pincode = ''
+        for (const key in item) {
+            if (key === 'office') {
+                pincode = item?.office?.applicantDetails?.pincode
+                history.push(`office/${pincode}/${item.key}`)
+            } else if (key === 'resident') {
+                pincode = item?.resident?.applicantDetails?.pincode
+                history.push(`resident/${pincode}/${item.key}`)
+            }
+        }
     }
     const getExcel = () => {
         let table = document.getElementById('test-table-xls-button')
@@ -119,6 +131,11 @@ const ActiveCases = (props) => {
                 <h4>Active Cases</h4>
                 <button onClick={getExcel} className='btn btn-primary'>Get Excel</button>
             </div>
+            <div className='d-flex sticky-top bg-white'>
+                Label:
+                <p className='text-primary me-1 ms-1'>Office</p>
+                <p className='text-success'>Resident</p>
+            </div>
             <ReactHTMLTableToExcel
                 id="test-table-xls-button"
                 className="d-none "
@@ -143,17 +160,17 @@ const ActiveCases = (props) => {
                     <tbody>
                         {reset > 0 && allData && allData.length > 0 && allData.map((item, index) => {
                             return <tr key={`${item.tat}-${index + 1}`}>
-                                <td onClick={() => handleOpenForm(item)}>
-                                    {item.appid}
+
+                                <td >
+                                    <div onClick={() => handleViewForm(item)} style={{ cursor: 'pointer' }} className={item?.office?.applicantDetails ? 'text-primary' : 'text-success'}>
+                                        {item.appid}
+                                    </div>
                                 </td>
                                 <td>
                                     {moment(item.tat).format('ll')}
-
                                 </td>
                                 <td>
                                     {moment(item.tat).format('LT')}
-
-
                                 </td>
                                 <td>
                                     {
