@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Input, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap'
 import DropDownComp from '../components/DropDownComp'
 
-export default function VerificationObserverResident({ verification, getData, data }) {
+export default function VerificationObserverResident({ verification, getData, data, id }) {
     const [exteriorConditionsDrop, setExteriorConditionsDrop] = useState(false);
     const exteriorConditionsDroptoggle = () => setExteriorConditionsDrop(prevState => !prevState);
     const [interorConditionsDrop, setInterorConditionsDrop] = useState(false);
@@ -78,6 +78,13 @@ export default function VerificationObserverResident({ verification, getData, da
                 form[key] = data[key]
             }
             setFormdata(form)
+            if (localStorage.getItem(id)) {
+                let local = JSON.parse(localStorage.getItem(id))
+                for (const key in data) {
+                    local[key] = data[key]
+                }
+                setFormdata(local)
+            }
             setRefresh(Math.random())
             // onHandleChange({ name: data[0], value: test[1] })
         }
@@ -172,12 +179,12 @@ export default function VerificationObserverResident({ verification, getData, da
                     onChange={(e) => onHandleChange(e.currentTarget)} /> */}
                     <Dropdown isOpen={interorConditionsDrop} toggle={interorConditionsDroptoggle}>
                         <DropdownToggle>
-                        Selected {formdata['interiorConditions'].length}
+                        Selected {formdata['interiorConditions']?.length}
                         </DropdownToggle>
                         <DropdownMenu >
-                        {interiorConditions.map((item) => {
+                        {interiorConditions?.map((item) => {
                             return <div key={item} >
-                                <Input type='checkbox' value={item} checked={formdata['interiorConditions'].includes(item)} />
+                                <Input type='checkbox' value={item} checked={formdata['interiorConditions']?.includes(item)} />
                                 {item}
                             </div>
                         })}
@@ -188,12 +195,12 @@ export default function VerificationObserverResident({ verification, getData, da
                     <label>Exterior Condition</label>
                     <Dropdown isOpen={exteriorConditionsDrop} toggle={exteriorConditionsDroptoggle}>
                         <DropdownToggle>
-                        Selected {formdata['exteriorConditions'].length}
+                        Selected {formdata['exteriorConditions']?.length}
                         </DropdownToggle>
                         <DropdownMenu >
-                        {exteriorConditions.map((item) => {
+                        {exteriorConditions?.map((item) => {
                             return <div key={item} >
-                                <Input type='checkbox' value={item} checked={formdata['exteriorConditions'].includes(item)} />
+                                <Input type='checkbox' value={item} checked={formdata['exteriorConditions']?.includes(item)} />
                                 {item}
                             </div>
                         })}

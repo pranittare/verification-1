@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Input, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap'
 import DropDownComp from '../components/DropDownComp'
 
-export default function VerificationObserverOffice({ verification, getData, data }) {
+export default function VerificationObserverOffice({ verification, getData, data, id }) {
     const [refresh, setRefresh] = useState(0)
     const [formdata, setFormdata] = useState({
         verificationObserver: '',
@@ -52,6 +52,13 @@ export default function VerificationObserverOffice({ verification, getData, data
                 form[key] = data[key]
             }
             setFormdata(form)
+            if (localStorage.getItem(id)) {
+                let local = JSON.parse(localStorage.getItem(id))
+                for (const key in data) {
+                    local[key] = data[key]
+                }
+                setFormdata(local)
+            }
             setRefresh(Math.random())
             // onHandleChange({ name: data[0], value: test[1] })
         }

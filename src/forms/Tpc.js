@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Button, Input } from 'reactstrap';
 import DropDownComp from '../components/DropDownComp';
 
-export default function Tpc({ tpc, getData, data }) {
+export default function Tpc({ tpc, getData, data, id }) {
     const [refresh, setRefresh] = useState(0)
     const [formdata, setFormdata] = useState({
         TPCName1: '',
@@ -100,6 +100,13 @@ export default function Tpc({ tpc, getData, data }) {
                 form[key] = data[key]
             }
             setFormdata(form)
+            if (localStorage.getItem(id)) {
+                let local = JSON.parse(localStorage.getItem(id))
+                for (const key in data) {
+                    local[key] = data[key]
+                }
+                setFormdata(local)
+            }
             setRefresh(Math.random())
             // onHandleChange({ name: data[0], value: test[1] })
         }

@@ -15,10 +15,11 @@ import ActiveCases from './Cases/ActiveCases'
 import SubmittedCases from './Cases/SubmittedCases';
 import OldCases from './Cases/OldCases';
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, getDocs, query, where } from 'firebase/firestore/lite';
+import { getFirestore, collection, getDocs, query, where, doc } from 'firebase/firestore/lite';
 import { getDatabase, ref, onValue, get } from "firebase/database";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { connect } from 'react-redux';
+import { Button } from 'reactstrap';
 
 const firebaseConfig = {
   apiKey: "AIzaSyB9c5BdRrl55U04wioeaP5uMTclzu9trgM",
@@ -38,6 +39,7 @@ function App(props) {
   const auth = getAuth();
   // console.log('auth', auth)
   const [isUser, setIsUser] = useState(false)
+  const [top, setTop] = useState(false)
   const realtimedb = (update) => {
     const getDetails = ref(realtime, `${update}/`);
     onValue(getDetails, (snapshot) => {
@@ -63,7 +65,15 @@ function App(props) {
     let val = update.toString().toUpperCase()
     props.dispatch({ type: `F${val}`, data: value })
   }
-
+  const scrollToBottom = () => {
+    let bottom = document.getElementById('app').clientHeight
+    if (top) {
+      window.scrollTo(0, 0)
+    } else {
+      window.scrollTo(0, bottom)
+    }
+    setTop(!top)
+  }
 
   useEffect(() => {
     realtimedb('agents')
@@ -87,7 +97,8 @@ function App(props) {
   }, [])
 
   return (
-    <div className="text-center w-100">
+    <div className="text-center w-100" id='app'>
+      <Button className='fixed-bottom' onClick={scrollToBottom}>{top ? 'Top' : 'Bottom'}</Button>
       <Router >
         <Navigation auth={auth?.currentUser} />
         <Switch>

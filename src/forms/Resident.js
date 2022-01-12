@@ -1,18 +1,21 @@
 import React, { useEffect, useState } from 'react'
 import { Input, Button } from 'reactstrap'
+import { Prompt } from 'react-router-dom';
 import ApplicantDetails from './ApplicantDetails'
 import VerificationObserverResident from './VerificationObserverResident';
 import Tpc from './Tpc';
 import Geolocation from './Geolocation';
 import Collapse from '../components/Collapse';
 import { useParams } from 'react-router-dom'
+import { getDatabase, ref, update } from "firebase/database";
 import { getFormData } from '../utils/singleForm'
 import { connect } from 'react-redux';
 import DropDownComp from '../components/DropDownComp';
 import PdfMakeResident from './PdfMakeResident';
 
 const Resident = (props) => {
-    let { pincode, id } = useParams()
+    let { pincode, id } = useParams();
+    const db = getDatabase();
 
     const [getData, setGetData] = useState(false)
     const [applicantDetails, setApplicantDetails] = useState()
@@ -65,18 +68,42 @@ const Resident = (props) => {
     }
     const handleSubmit = (e) => {
         e.preventDefault()
+        // getAllData()
+        // handleSubmit1()
+        // document.getElementById('officeVerficationDetails').click()
+        // const formd = new FormData(e.currentTarget)
+        // setFormdata(formd)
+    }
+    const handleSave = () => {
+        getAllData()
+        localStorage.setItem(id, JSON.stringify(formdata))
+        console.log('handleSave', formdata)
     }
     const getAllData = () => {
-        document.getElementById('residentVerificationDetails').click()
+        // document.getElementById('residentVerificationDetails').click()
         setGetData(true)
         setTimeout(() => {
             setGetData(false)
         }, [100])
 
     }
-    useEffect(() => {
-        console.log('getData', formdata)
-    }, [getData])
+    function getCookie(cname) {
+        let name = cname + "=";
+        let ca = document.cookie.split(';');
+        for (let i = 0; i < ca.length; i++) {
+            let c = ca[i];
+            while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return "";
+    }
+    // useEffect(() => {
+    //     console.log('getData', formdata)
+    // }, [getData])
     // Form data by id
     useEffect(() => {
         if (id) {
@@ -84,7 +111,6 @@ const Resident = (props) => {
             getFormData(pincode, id)
                 .then(formsaved => {
                     let formd = formdata
-                    let applicant = {}
                     let outer = outerDetails
                     for (const key in formsaved) {
                         if (Object.hasOwnProperty.call(formsaved, key)) {
@@ -96,7 +122,7 @@ const Resident = (props) => {
                             }
                         }
                     }
-                    console.log('formsaved', formsaved)
+                    console.log('formsaved', formsaved, outer)
                     if (formsaved?.resident) {
                         for (const key in formsaved.resident.verificationDetails) {
                             let savedForm = formsaved.resident.verificationDetails
@@ -117,22 +143,30 @@ const Resident = (props) => {
                                 formd.landmark = savedForm[key]
                             }
                         }
-                        for (const key in formsaved?.resident?.applicantDetails) {
-                            applicant[key] = formsaved?.resident?.applicantDetails[key]
-                        }
+                        console.log('applicant', formsaved?.resident?.applicantDetails)
+                        setApplicantDetails(formsaved?.resident?.applicantDetails)
                         setVerificationOvserver(formsaved.resident.verificationDetails)
+                        setOuterDetails(outer)
                     }
-                    // console.log('applicant',applicant)
-                    setApplicantDetails(applicant)
                     setFormdata(formd)
-                    setOuterDetails(outer)
+                    if (localStorage.getItem(id)) {
+                        setFormdata(JSON.parse(localStorage.getItem(id)))
+                    }
                     setRefresh(Math.random())
                     console.log('formd', formd)
                 })
+            update(ref(db, `form/${pincode}/${id}`), {
+                watcherEmail: getCookie('email'),
+            });
 
         }
 
     }, [id, pincode])
+    const clearWatcher = () => {
+        update(ref(db, `form/${pincode}/${id}`), {
+            watcherEmail: '',
+        });
+    }
     let personMet = [
         { name: 'personMet', value: '', label: 'None' },
         { name: 'personMet', value: 'yes', label: 'Yes' },
@@ -241,22 +275,30 @@ const Resident = (props) => {
     const combiner = (data) => {
         let alldata = formdata
         let combined = Object.assign(alldata, data);
-        console.log('combiner', combined)
         setFormdata(combined)
     }
     return (
         <div>
-            {(refresh > 0 || true) && <PdfMakeResident data={formdata} refresh={()=> {setRefresh(Math.random())}}/>}
+            <Prompt
+                message={(location, action) => {
+                    if (action === 'POP') {
+                        // On Going Back
+                        // Need to end at submit also
+                        clearWatcher()
+                    }
+                }}
+            />
+            {(refresh > 0 || true) && <PdfMakeResident data={formdata} refresh={() => { setRefresh(Math.random()) }} />}
             <Collapse title='Applicant Details'>
-            <ApplicantDetails 
-                // ref={aplicantDeatilsRef}
-                applicantDetail={(data) => {
-                    combiner(data)
-                }} data={applicantDetails} getData={getData} outerDetails={outerDetails}/>
+                <ApplicantDetails
+                    // ref={aplicantDeatilsRef}
+                    applicantDetail={(data) => {
+                        combiner(data)
+                    }} data={applicantDetails} getData={getData} outerDetails={outerDetails} id={id} />
             </Collapse>
             <Collapse title='Verification Details'>
                 <h1>Verification Details</h1>
-                {(refresh > 0 || true) && <form className='d-flex justify-content-between flex-wrap' onSubmit={handleSubmit} >
+                {(refresh > 0 || true) && <form className='d-flex justify-content-between flex-wrap' >
                     <div>
                         <label>Visit Date</label>
                         <Input type="text" name='visitDate' value={formdata['visitDate']} onChange={(e) => onHandleChange(e.currentTarget)} />
@@ -290,7 +332,7 @@ const Resident = (props) => {
                         <DropDownComp id='resident' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={personMetRealtionwithApplicant} />
                         {/* <Input type="text" name='personMetRealtionwithApplicant' value={formdata['personMetRealtionwithApplicant']} onChange={(e) => onHandleChange(e.currentTarget)} /> */}
                     </div>
-                   {formdata['personMetRealtionwithApplicant'] === 'Others' && <div>
+                    {formdata['personMetRealtionwithApplicant'] === 'Others' && <div>
                         <label>Name and Relation with Applicant (Others)</label>
                         <Input type="text" name='personMetRealtionwithApplicantOther' value={formdata['personMetRealtionwithApplicantOther']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>}
@@ -303,7 +345,7 @@ const Resident = (props) => {
                         {/* <Input type="text" name='lessThanYrAtCurrentAddress' value={formdata['lessThanYrAtCurrentAddress']} onChange={(e) => onHandleChange(e.currentTarget)} /> */}
                         <DropDownComp id='resident' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={lessThanYrAtCurrentAddress} />
                     </div>
-                  {formdata['lessThanYrAtCurrentAddress'] === 'Yes' &&  <div>
+                    {formdata['lessThanYrAtCurrentAddress'] === 'Yes' && <div>
                         <label>Less than 1 yr at Current Address (Yes)</label>
                         <Input type="text" name='lessThanYrAtCurrentAddressNote' value={formdata['lessThanYrAtCurrentAddressNote']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>}
@@ -320,7 +362,7 @@ const Resident = (props) => {
                         <label>Doc Verified</label>
                         {/* <Input type="text" name='docVerified' value={formdata['docVerified']} onChange={
                             (e) => onHandleChange(e.currentTarget)} /> */}
-                            <DropDownComp id='resident' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={docVerified} />
+                        <DropDownComp id='resident' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={docVerified} />
                     </div>
                     <div>
                         <label>Document Details</label>
@@ -330,13 +372,13 @@ const Resident = (props) => {
                         <label>Customer Occupation</label>
                         {/* <Input type="text" name='customerOccupation' value={formdata['customerOccupation']
                     } onChange={(e) => onHandleChange(e.currentTarget)} /> */}
-                     <DropDownComp id='resident' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={customerOccupation} />
+                        <DropDownComp id='resident' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={customerOccupation} />
                     </div>
                     <div>
                         <label>Qualification</label>
                         {/* <Input type="text" name='qualification' value={formdata['qualification']} 
                         onChange={(e) => onHandleChange(e.currentTarget)} /> */}
-                         <DropDownComp id='resident' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={qualification} />
+                        <DropDownComp id='resident' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={qualification} />
                     </div>
                     <div>
                         <label>Maritial Status</label>
@@ -376,12 +418,18 @@ const Resident = (props) => {
                     </div>
                 </form>}
                 <VerificationObserverResident verification={(data) => {
-                    combiner(data)}} getData={getData} data={verificationObserver}/>
+                    combiner(data)
+                }} getData={getData} data={verificationObserver} id={id} />
                 <Tpc tpc={(data) => {
-                    combiner(data)}} getData={getData} data={verificationObserver}/>
-                <Geolocation data={verificationObserver} id={id} pincode={pincode}/>
-                <Button color='primary' onClick={getAllData}>Submit</Button>
+                    combiner(data)
+                }} getData={getData} data={verificationObserver} id={id} />
             </Collapse>
+            <Collapse title='Images and GeoLocation'>
+                <Geolocation data={verificationObserver} id={id} pincode={pincode} />
+            </Collapse>
+            <Button color='warning' onClick={handleSave}>Save</Button>
+            <Button color='primary' onClick={handleSubmit}>Submit</Button>
+
         </div>
     )
 }

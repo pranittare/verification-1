@@ -64,12 +64,16 @@ const Office = (props) => {
     const aplicantDeatilsRef = useRef()
     const handleSubmit = (e) => {
         e.preventDefault()
-        console.log('handlesubmit', formdata)
-        getAllData()
+        // getAllData()
         // handleSubmit1()
         // document.getElementById('officeVerficationDetails').click()
         // const formd = new FormData(e.currentTarget)
         // setFormdata(formd)
+    }
+    const handleSave = () => {
+        getAllData()
+        localStorage.setItem(id, JSON.stringify(formdata))
+        console.log('handleSave', formdata)
     }
     const getAllData = () => {
         setGetData(true)
@@ -147,10 +151,13 @@ const Office = (props) => {
                         }
                         console.log('applicant', formsaved?.office?.applicantDetails)
                         setApplicantDetails(formsaved?.office?.applicantDetails)
-                        setVerificationOvserver(formsaved.office.verificationDetails)
+                        setVerificationOvserver(formsaved?.office?.verificationDetails)
                         setOuterDetails(outer)
                     }
                     setFormdata(formd)
+                    if (localStorage.getItem(id)) {
+                        setFormdata(JSON.parse(localStorage.getItem(id)))
+                    }
                     setRefresh(Math.random())
                     console.log('formd', formd)
                 })
@@ -166,9 +173,9 @@ const Office = (props) => {
         });
     }
 
-    useEffect(() => {
-        console.log('getData', formdata)
-    }, [getData])
+    // useEffect(() => {
+    //     console.log('getData', formdata)
+    // }, [getData])
 
     let addressConfirmed = [
         { name: 'addressConfirmed', value: '', label: 'None' },
@@ -231,9 +238,6 @@ const Office = (props) => {
         { name: 'typeofEntity', value: 'LLP', label: 'LLP' },
         { name: 'typeofEntity', value: 'Co-op Society', label: 'Co-op Society' },
     ]
-    useEffect(() => {
-        console.log('office', getData)
-    }, [getData])
 
     // useEffect(()=>{
     //     if(refresh === 0)
@@ -243,7 +247,7 @@ const Office = (props) => {
     const combiner = (data) => {
         let alldata = formdata
         let combined = Object.assign(alldata, data);
-        console.log('combiner', combined)
+        // console.log('combiner', combined)
         setFormdata(combined)
     }
     return (
@@ -257,17 +261,17 @@ const Office = (props) => {
                     }
                 }}
             />
-            {(refresh > 0 || true) && <PdfMake data={formdata} refresh={() => { setRefresh(Math.random()); }} />}
+            {(refresh > 0 || true) && <PdfMake data={formdata} refresh={() => { setRefresh(Math.random()); }}/>}
             <Collapse title='Applicant Details'>
                 <ApplicantDetails
                     // ref={aplicantDeatilsRef}
                     applicantDetail={(data) => {
                         combiner(data)
-                    }} data={applicantDetails} getData={getData} outerDetails={outerDetails} />
+                    }} data={applicantDetails} getData={getData} outerDetails={outerDetails} id={id} />
             </Collapse>
             <Collapse title='Verification Details'>
                 <h1>Verification Details</h1>
-                {(refresh > 0 || true) && <form className='d-flex justify-content-between flex-wrap' onSubmit={handleSubmit} >
+                {(refresh > 0 || true) && <form className='d-flex justify-content-between flex-wrap' >
                     <div>
                         <label>Visit Date</label>
                         <Input type="text" name='visitDate' value={formdata['visitDate']} onChange={(e) => onHandleChange(e.currentTarget)} />
@@ -363,19 +367,25 @@ const Office = (props) => {
                         </div>
 
                     </div>
-                    <div className='d-none'>
+                    {/* <div className='d-none'>
                         <button type='submit' id='officeVerficationDetails' >Submit</button>
-                    </div>
+                    </div> */}
                 </form>}
                 <VerificationObserverOffice verification={(data) => {
                     combiner(data)
-                }} getData={getData} data={verificationObserver} />
+                }} getData={getData} data={verificationObserver} id={id} />
                 <Tpc tpc={(data) => {
                     combiner(data)
-                }} getData={getData} data={verificationObserver} />
-                <Geolocation data={verificationObserver} id={id} pincode={pincode} />
-                <Button color='primary' onClick={handleSubmit} type='submit'>Submit</Button>
+                }} getData={getData} data={verificationObserver} id={id} />
+                {/* <Geolocation data={verificationObserver} id={id} pincode={pincode} />
+                <Button color='warning' onClick={handleSave}>Save</Button>
+                <Button color='primary' onClick={handleSubmit}>Submit</Button> */}
             </Collapse>
+            <Collapse title='Images and GeoLocation'>
+                <Geolocation data={verificationObserver} id={id} pincode={pincode} />
+            </Collapse>
+            <Button color='warning' onClick={handleSave}>Save</Button>
+            <Button color='primary' onClick={handleSubmit}>Submit</Button>
         </div>
     )
 }

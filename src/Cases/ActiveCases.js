@@ -108,6 +108,10 @@ const ActiveCases = (props) => {
             }
         }, 5000)
     }, [])
+    // useEffect(() => {
+
+    // }[document.getElementById('form')])
+    // console.log('form', document.getElementById('form').clientHeight)
     return (
         <div>
             <div className='d-flex justify-content-around mb-2 mt-2'>
@@ -122,7 +126,7 @@ const ActiveCases = (props) => {
                 filename={`Active-${formatedDate}`}
                 sheet="tablexls"
                 buttonText="Download as XLS" />
-            <form className='d-flex justify-content-between flex-wrap'>
+            <form className='d-flex justify-content-between flex-wrap' id='form'>
                 <table className="table table-striped table-bordered">
                     <thead>
                         <tr>

@@ -1,11 +1,10 @@
 import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react'
 import { Button, Input, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import DropDownComp from '../components/DropDownComp';
-import { databaseUpdateQueryExactSingle } from '../utils/query'
 import { connect } from 'react-redux';
 
 const ApplicantDetails = forwardRef((props, ref) => {
-    const { applicantDetail, data, getData, vendor, agents, outerDetails } = props;
+    const { applicantDetail, data, getData, vendor, agents, outerDetails, id } = props;
 
     const initalData = {
         appid: '',
@@ -91,8 +90,7 @@ const ApplicantDetails = forwardRef((props, ref) => {
         setRefresh(Math.random())
     }
     useEffect(() => {
-        console.log('formdata data', formdata)
-
+        
         if (data) {
             let form = formdata
             for (const key in data) {
@@ -108,38 +106,51 @@ const ApplicantDetails = forwardRef((props, ref) => {
                     form['type'] = data['form']
                 }
             }
+            // console.log('form', form)
             setFormdata(form)
+            if (localStorage.getItem(id)) {
+                let local = JSON.parse(localStorage.getItem(id))
+                let temp = {}
+                for (const key in data) {
+                    if (local[key]) {
+                        temp[key] = data[key]
+                        if (key === 'bankNBFCname') {
+                            temp['bankNBFCname'] = data.bankNBFCname?.clientName ? data.bankNBFCname?.clientName : data.bankNBFCname
+                        }
+                        if (key === 'product') {
+                            temp['product'] = data.bankNBFCname?.productList[0]?.productName
+                            temp.emailList = data.bankNBFCname?.productList[0]?.emailList
+                        }          
+                    }
+                }
+                setFormdata(temp)
+            }
             // applicantDetail(form)
-            setRefresh(Math.random())
+            setRefresh(Math.random());
+            setRefresh(Math.random());
+            outerDetailsData()
         }
-
+        console.log('data', data)
     }, [data])
     useEffect(() => {
-        console.log('formdata getdata', formdata, getData)
-
         if (getData) {
             // applicantDetail(formdata)
             document.getElementById('applicationDetails').click()
         }
-    }, [getData, formdata])
-    useEffect(() => {
+    }, [getData])
+    const outerDetailsData = () =>{
         if (outerDetails) {
             let formd = formdata
             for(const outer in outerDetails) {
                 const element = outerDetails[outer]
-                for(const form in formd) {
-                    if (form === outer) {
-                        formd[outer] = element
-                        if (outer === 'selected' && element) {
-                            setSelectedAgent(element)
-                        }
-                    }
+                if (outer == 'selected') {
+                    setSelectedAgent(element)
                 }
             }
-            console.log('formd', formd)
-            setFormdata(formd)
+            setFormdata(formd);
+            setRefresh(Math.random())
         }
-    },[outerDetails])
+    }
 
     const getAgents = () => {
         let pincodeWiseAgents = []
@@ -162,7 +173,7 @@ const ApplicantDetails = forwardRef((props, ref) => {
                 }
             }
         }
-        console.log('agents', pincodeWiseAgents)
+        // console.log('agents', pincodeWiseAgents)
         return pincodeWiseAgents;
     }
   
@@ -231,7 +242,6 @@ const ApplicantDetails = forwardRef((props, ref) => {
                         <Dropdown toggle={toggleProductName} isOpen={dropdownProductNameOpen}>
                             <DropdownToggle caret>
                                 {formdata['product'] ? formdata['product'] : 'None'}
-                                {/* None */}
                             </DropdownToggle>
                             <DropdownMenu
                             >
@@ -259,7 +269,6 @@ const ApplicantDetails = forwardRef((props, ref) => {
                         <label>Pincode</label>
                         <Input type="text" name='pincode' value={formdata['pincode']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
-                    {/* // {!(formdata['type'] === 'office' || formdata['type'] === 'resident') && */}
                         <div className='pt-4'>
                             <Dropdown toggle={() => setAgentsDropdown(!agentsDropdown)} isOpen={agentsDropdown}>
                                 <DropdownToggle caret className='bg-transparent text-danger border-0'>
@@ -294,7 +303,7 @@ const ApplicantDetails = forwardRef((props, ref) => {
                         <label>Resident Address Provided</label>
                         <Input type="text" name='residenceAddressProvided' value={formdata['residenceAddressProvided']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>}
-                    {(formdata['type'] === 'office' || formdata['type'] === 'resident') &&
+                    {id &&
                         <>
                             <div >
                                 <label>Mismatch Address</label>
