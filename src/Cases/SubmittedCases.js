@@ -171,7 +171,7 @@ const SubmittedCases = (props) => {
                                         item?.office ?
                                             moment(item.office?.applicantDetails?.initiationDate).format('ll')
                                             :
-                                            moment(item.resident?.applicantDetails?.initiationDate).format('li')
+                                            moment(item.resident?.applicantDetails?.initiationDate).format('ll')
                                     }
 
                                 </td>

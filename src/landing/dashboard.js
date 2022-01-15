@@ -14,6 +14,8 @@ const Dashboard = ({ forms, agents }) => {
 
     const [casesTodayToast, setCasesTodayToast] = useState(false);
     const [casesTodayModal, setCasesToadyModal] = useState(false);
+    const [casesTotalToast, setCasesTotalToast] = useState(false);
+    const [casesTotalModal, setCasesTotalModal] = useState(false);
     const [unclaimedCasesToast, setUnclaimedCasesToast] = useState(false)
     const [unclaimedCasesModal, setUnclaimedCasesModal] = useState(false)
     // const [activeAgentsToast, setActiveAgentsToast] = useState(false)
@@ -68,6 +70,27 @@ const Dashboard = ({ forms, agents }) => {
         return a;
     }
     const casesToday = () => {
+        let casesT = []
+        let currentDate =  new Date().getDate()
+        let bankname = uniqueArray2(bankwise().bank, 'name')
+        for (let index = 0; index < bankname.length; index++) {
+            const element = bankname[index];
+            casesT.push({ name: element, data: [] })
+        }
+        for (let i = 0; i < casesT.length; i++) {
+            const bank = casesT[i];
+            for (let index = 0; index < bankwise().bank.length; index++) {
+                const element = bankwise().bank[index];
+                const casedate = new Date(element.data.tat)
+                if (bank.name === element.name && casedate.getDate() == currentDate) {
+                    bank.data.push(element)
+                }
+            }
+
+        }
+        return casesT
+    }
+    const casesTotal = () => {
         let casesT = []
         let bankname = uniqueArray2(bankwise().bank, 'name')
         for (let index = 0; index < bankname.length; index++) {
@@ -157,7 +180,7 @@ const Dashboard = ({ forms, agents }) => {
     //     return activeAgents
     // }
     const tat = () => {
-        const tat = [{ time: 'slot1', data: [] }, { time: 'slot2', data: [] }, { time: 'slot3', data: [] }, { time: 'slot4', data: [] }, { time: 'slot5', data: [] }]
+        const tat = [{ time: 'Within 4 hrs -', data: [] }, { time: '4 hrs to 8 Hr -', data: [] }, { time: '8 Hr to 12 Hr -', data: [] }, { time: '12 Hr to 24 Hr -', data: [] }, { time: 'Above 24 Hr -', data: [] }]
         const currentTime = new Date().getTime();
         for (const key in forms) {
             if (Object.hasOwnProperty.call(forms, key)) {
@@ -187,16 +210,22 @@ const Dashboard = ({ forms, agents }) => {
         }
         return tat
     }
+    const getTotal = (item) => {
+        let total = 0
+        for (let index = 0; index < item?.length; index++) {
+            const element = item[index];
+            total += element.data.length
+        }
+        return total
+    }
     useEffect(() => {
         console.log('bankwise', bankwise())
     }, [forms])
 
     return (
-        <div className='row'>
-            <div className="col-6 p-2">
-                cases Today {casesToday().map(item => (
-                    <span>({item.data.length})</span>
-                ))}
+        <div className='row bg-light pt-2'>
+            <div className="col-6">
+                cases Today ({getTotal(casesToday())})
                 <div>
                     <Button
                         color="primary"
@@ -210,7 +239,7 @@ const Dashboard = ({ forms, agents }) => {
                         <ToastBody >
                             {casesToday()?.map((item, index) => (
                                 <>
-                                    <Button color='link' key={item.name} onClick={() => setCasesToadyModal({ count: index, state: true })}>{item.name}</Button>
+                                    <Button color='link' key={item.name} onClick={() => setCasesToadyModal({ count: index, state: true })}>{item.name} - <span className='text-danger'>({item.data.length})</span></Button>
 
                                     <ModalItem item={item} open={casesTodayModal} count={index} close={() => setCasesToadyModal(false)} />
                                 </>
@@ -218,22 +247,42 @@ const Dashboard = ({ forms, agents }) => {
                         </ToastBody>
                     </Toast>
                 </div>
-                <button onClick={() => console.log('casesToday', casesToday())}>Test</button>
             </div>
-            <div className="col-6 bg-danger">
-                Total Cases
+            <div className="col-6">
+                Total Cases ({getTotal(casesTotal())})
+                <div>
+                    <Button
+                        color='danger'
+                        onClick={() => setCasesTotalToast(!casesTotalToast)}
+                    >
+                        {casesTotalToast ? "Hide Details" : "View Details"}
+                    </Button>
+                    <br />
+                    <br />
+                    <Toast isOpen={casesTotalToast} className='w-100'>
+                        <ToastBody >
+                            {casesTotal()?.map((item, index) => (
+                                <>
+                                    <Button color='link' key={item.name} onClick={() => setCasesTotalModal({ count: index, state: true })}>{item.name} - <span className='text-danger'>({item.data.length})</span></Button>
+
+                                    <ModalItem item={item} open={casesTotalModal} count={index} close={() => setCasesTotalModal(false)} />
+                                </>
+                            ))}
+                        </ToastBody>
+                    </Toast>
+                </div>
             </div>
-            <div className="col-6 bg-warning">
+            <div className="col-6">
                 Unclaimed cases ({unClaimedCases()[2]?.total})
                 {unClaimedCases().map((item, index) => {
                     if (item.data.length > 0)
                         return <div key={item.tat}>
-                            <Button color='link' key={item?.tat} onClick={() => setUnclaimedCasesModal({ count: index, state: true })}>{item?.pincodes} - {item?.data?.length}</Button>
+                            <button className='btn text-warning' key={item?.tat} onClick={() => setUnclaimedCasesModal({ count: index, state: true })}>{item?.pincodes} - {item?.data?.length}</button>
 
                             <ModalItem item={item} open={unclaimedCasesModal} count={index} close={() => setUnclaimedCasesModal(false)} />
                         </div>
                 })}
-                <button onClick={() => console.log('unClaimedCases', unClaimedCases())}>Test</button>
+                {/* <button onClick={() => console.log('unClaimedCases', unClaimedCases())}>Test</button> */}
             </div>
             {/* <div className="col-6 bg-primary">
                 Active agents
@@ -247,15 +296,15 @@ const Dashboard = ({ forms, agents }) => {
                 })}
                 <button onClick={() => console.log('activeAgents', activeAgents())}>Test</button>
             </div> */}
-            <div className="col-6 bg-success">
-                TAt
+            <div className="col-6">
+                TAT ({getTotal(tat())})
                 {tat().map((item, index) => {
                     return <div key={item.time}>
-                        <Button color='link' onClick={() => setTatModal({ count: index, state: true })}>{item?.time}</Button>
+                        <button className='btn text-success' onClick={() => setTatModal({ count: index, state: true })}>{item?.time}{item?.data.length}</button>
                         <ModalItem item={item} open={tatModal} count={index} close={() => setTatModal(false)} />
                     </div>
                 })}
-                <button onClick={() => console.log('tat', tat())}>Test</button>
+                {/* <button onClick={() => console.log('tat', tat())}>Test</button> */}
             </div>
 
             {/* <button value='update store' onClick={() => props.dispatch({ type: 'DATA', data: 'XYZ' })}>update redux</button> */}

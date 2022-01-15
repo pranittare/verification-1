@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import { getDatabase, ref, update } from "firebase/database";
 import { Prompt } from 'react-router-dom';
 import { Input, Button } from 'reactstrap'
@@ -52,6 +52,14 @@ const Office = (props) => {
         submitted: false,
         tat: ''
     })
+    const [mainouter, setMainouter] = useState({
+        tat: new Date().toString(),
+        tat1: Date.now(),
+        emailList: [],
+        branch: '',
+        key: '',
+        selected: ''
+    })
     // const [verification, setVerification] = useState()
     const [verificationObserver, setVerificationOvserver] = useState();
 
@@ -61,19 +69,40 @@ const Office = (props) => {
     // const [alldata, setAlldata] = useState([])
     const [applicantDetails, setApplicantDetails] = useState()
     const [refresh, setRefresh] = useState(0)
-    const aplicantDeatilsRef = useRef()
+    const dataSplit = () => {
+        let verfi = { verification: {}, applicant: {}, outer: {} }
+        for (const key in formdata) {
+            if (Object.hasOwnProperty.call(formdata, key)) {
+                const element = formdata[key];
+                // SEPERATION FOR APPICANT AND VERIFICATION
+                for (const key1 in applicantDetails) {
+                    if (Object.hasOwnProperty.call(applicantDetails, key1)) {
+                        const applicant = applicantDetails[key1];
+                        if (key !== key1) {
+                            verfi.verification[key] = element
+                        } else {
+                            verfi.applicant[key] = element
+                        }
+                    }
+                }
+            }
+        }
+        return verfi
+    }
     const handleSubmit = (e) => {
         e.preventDefault()
-        // getAllData()
-        // handleSubmit1()
-        // document.getElementById('officeVerficationDetails').click()
-        // const formd = new FormData(e.currentTarget)
-        // setFormdata(formd)
+        // let verification = 
+        let dataToSubmit = {
+            applicantDetails: dataSplit().applicant,
+            verificationDetails: dataSplit().verification,
+        }
+        Object.assign(dataToSubmit, mainouter)
+        console.log('handleSubmit', dataToSubmit )
     }
     const handleSave = () => {
         getAllData()
         localStorage.setItem(id, JSON.stringify(formdata))
-        console.log('handleSave', formdata)
+        // console.log('handleSave', formdata)
     }
     const getAllData = () => {
         setGetData(true)
@@ -113,9 +142,9 @@ const Office = (props) => {
             getFormData(pincode, id)
                 .then(formsaved => {
                     let formd = formdata
-                    // let applicant = {}
                     console.log('formsaved', formsaved)
                     let outer = outerDetails
+                    let mainout = mainouter
                     for (const key in formsaved) {
                         if (Object.hasOwnProperty.call(formsaved, key)) {
                             const element = formsaved[key];
@@ -123,6 +152,11 @@ const Office = (props) => {
                                 if (outerkeys === key) {
                                     outer[key] = element
                                 }
+                            }
+                            for (const main in mainouter) {
+                               if (main === key) {
+                                   mainouter[key] = element
+                               }
                             }
                         }
                     }
@@ -153,6 +187,7 @@ const Office = (props) => {
                         setApplicantDetails(formsaved?.office?.applicantDetails)
                         setVerificationOvserver(formsaved?.office?.verificationDetails)
                         setOuterDetails(outer)
+                        setMainouter(mainout)
                     }
                     setFormdata(formd)
                     if (localStorage.getItem(id)) {
@@ -172,10 +207,6 @@ const Office = (props) => {
             watcherEmail: '',
         });
     }
-
-    // useEffect(() => {
-    //     console.log('getData', formdata)
-    // }, [getData])
 
     let addressConfirmed = [
         { name: 'addressConfirmed', value: '', label: 'None' },
@@ -238,16 +269,9 @@ const Office = (props) => {
         { name: 'typeofEntity', value: 'LLP', label: 'LLP' },
         { name: 'typeofEntity', value: 'Co-op Society', label: 'Co-op Society' },
     ]
-
-    // useEffect(()=>{
-    //     if(refresh === 0)
-    //     setRefresh(Math.random())
-    // },[refresh])
-
     const combiner = (data) => {
         let alldata = formdata
         let combined = Object.assign(alldata, data);
-        // console.log('combiner', combined)
         setFormdata(combined)
     }
     return (
@@ -261,10 +285,9 @@ const Office = (props) => {
                     }
                 }}
             />
-            {(refresh > 0 || true) && <PdfMake data={formdata} refresh={() => { setRefresh(Math.random()); }}/>}
+            {(refresh > 0 || true) && <PdfMake data={formdata} refresh={() => { setRefresh(Math.random()); }} />}
             <Collapse title='Applicant Details'>
                 <ApplicantDetails
-                    // ref={aplicantDeatilsRef}
                     applicantDetail={(data) => {
                         combiner(data)
                     }} data={applicantDetails} getData={getData} outerDetails={outerDetails} id={id} />
@@ -365,11 +388,7 @@ const Office = (props) => {
                             <DropDownComp id='office' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={typeofEntity} />
 
                         </div>
-
                     </div>
-                    {/* <div className='d-none'>
-                        <button type='submit' id='officeVerficationDetails' >Submit</button>
-                    </div> */}
                 </form>}
                 <VerificationObserverOffice verification={(data) => {
                     combiner(data)
@@ -377,9 +396,6 @@ const Office = (props) => {
                 <Tpc tpc={(data) => {
                     combiner(data)
                 }} getData={getData} data={verificationObserver} id={id} />
-                {/* <Geolocation data={verificationObserver} id={id} pincode={pincode} />
-                <Button color='warning' onClick={handleSave}>Save</Button>
-                <Button color='primary' onClick={handleSubmit}>Submit</Button> */}
             </Collapse>
             <Collapse title='Images and GeoLocation'>
                 <Geolocation data={verificationObserver} id={id} pincode={pincode} />

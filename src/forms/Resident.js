@@ -59,6 +59,14 @@ const Resident = (props) => {
         submitted: false,
         tat: ''
     })
+    const [mainouter, setMainouter] = useState({
+        tat: new Date().toString(),
+        tat1: Date.now(),
+        emailList: [],
+        branch: '',
+        key: '',
+        selected: ''
+    })
     const [refresh, setRefresh] = useState(0)
     const onHandleChange = (e) => {
         let form = formdata
@@ -66,18 +74,39 @@ const Resident = (props) => {
         setFormdata(form)
         setRefresh(Math.random())
     }
+    const dataSplit = () => {
+        let verfi = { verification: {}, applicant: {}, outer: {} }
+        for (const key in formdata) {
+            if (Object.hasOwnProperty.call(formdata, key)) {
+                const element = formdata[key];
+                // SEPERATION FOR APPICANT AND VERIFICATION
+                for (const key1 in applicantDetails) {
+                    if (Object.hasOwnProperty.call(applicantDetails, key1)) {
+                        const applicant = applicantDetails[key1];
+                        if (key !== key1) {
+                            verfi.verification[key] = element
+                        } else {
+                            verfi.applicant[key] = element
+                        }
+                    }
+                }
+            }
+        }
+        return verfi
+    }
     const handleSubmit = (e) => {
         e.preventDefault()
-        // getAllData()
-        // handleSubmit1()
-        // document.getElementById('officeVerficationDetails').click()
-        // const formd = new FormData(e.currentTarget)
-        // setFormdata(formd)
+        let dataToSubmit = {
+            applicantDetails: dataSplit().applicant,
+            verificationDetails: dataSplit().verification,
+        }
+        Object.assign(dataToSubmit, mainouter)
+        console.log('handleSubmit', dataToSubmit )
     }
     const handleSave = () => {
         getAllData()
         localStorage.setItem(id, JSON.stringify(formdata))
-        console.log('handleSave', formdata)
+        // console.log('handleSave', formdata)
     }
     const getAllData = () => {
         // document.getElementById('residentVerificationDetails').click()
@@ -112,6 +141,7 @@ const Resident = (props) => {
                 .then(formsaved => {
                     let formd = formdata
                     let outer = outerDetails
+                    let mainout = mainouter
                     for (const key in formsaved) {
                         if (Object.hasOwnProperty.call(formsaved, key)) {
                             const element = formsaved[key];
@@ -120,6 +150,11 @@ const Resident = (props) => {
                                     outer[key] = element
                                 }
                             }
+                            for (const main in mainouter) {
+                                if (main === key) {
+                                    mainouter[key] = element
+                                }
+                             }
                         }
                     }
                     console.log('formsaved', formsaved, outer)
@@ -147,6 +182,7 @@ const Resident = (props) => {
                         setApplicantDetails(formsaved?.resident?.applicantDetails)
                         setVerificationOvserver(formsaved.resident.verificationDetails)
                         setOuterDetails(outer)
+                        setMainouter(mainout)
                     }
                     setFormdata(formd)
                     if (localStorage.getItem(id)) {

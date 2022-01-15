@@ -221,12 +221,12 @@ export default function VerificationObserverOffice({ verification, getData, data
                     {/* <Input type="text" name='interiorConditions' value={formdata['interiorConditions']} onChange={(e) => onHandleChange(e.currentTarget)} /> */}
                     <Dropdown isOpen={interorConditionsDrop} toggle={interorConditionsDroptoggle}>
                         <DropdownToggle>
-                        Selected {formdata['interiorConditions'].length}
+                        Selected {formdata['interiorConditions']?.length}
                         </DropdownToggle>
                         <DropdownMenu >
-                        {interiorConditions.map((item) => {
+                        {interiorConditions?.map((item) => {
                             return <div key={item} >
-                                <Input type='checkbox' value={item} checked={formdata['interiorConditions'].includes(item)} />
+                                <Input type='checkbox' value={item} checked={formdata['interiorConditions']?.includes(item)} />
                                 {item}
                             </div>
                         })}
