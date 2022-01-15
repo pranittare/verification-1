@@ -4,7 +4,7 @@ import DropDownComp from '../components/DropDownComp';
 import { connect } from 'react-redux';
 
 const ApplicantDetails = forwardRef((props, ref) => {
-    const { applicantDetail, data, getData, vendor, agents, outerDetails, id } = props;
+    const { applicantDetail, data, getData, vendor, agents, outerDetails, id, branch } = props;
 
     const initalData = {
         appid: '',
@@ -26,10 +26,17 @@ const ApplicantDetails = forwardRef((props, ref) => {
         remarks: '',
         type: ''
     }
+    const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    const months1 = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
+    const now = new Date();
+    const thisMonth = months[now.getMonth()];
+    const thisMonth1 = months1[now.getMonth()];
+    const srNumber = `${thisMonth1}-${now.getFullYear()}-${now.getTime()}`
+
     const [formdata, setFormdata] = useState({
         appid: '',
-        srNo: '',
-        month: '',
+        srNo: srNumber,
+        month: thisMonth,
         initiationDate: '',
         customerName: '',
         bankNBFCname: '',
@@ -46,10 +53,10 @@ const ApplicantDetails = forwardRef((props, ref) => {
         remarks: '',
         type: '',
         emailList: [],
-        selected: '',
-        claimed: '',
-        claimedAt: '',
-        assigned: ''
+        // selected: '',
+        // claimed: '',
+        // claimedAt: '',
+        // assigned: ''
     })
     const [refresh, setRefresh] = useState(0)
     const [dropdownBankNameOpen, setBankNameOpen] = useState(false);
@@ -59,6 +66,7 @@ const ApplicantDetails = forwardRef((props, ref) => {
     const [productList, setProductList] = useState([]);
     const [agentsDropdown, setAgentsDropdown] = useState([]);
     const [selectedAgent, setSelectedAgent] = useState('');
+    const [selectedAgentId, setSelectedAgentId] = useState('');
     const [changeAgent, setChangeAgent] = useState(false);
     // const url = document.location.pathname.split('/').length > 1
     let office = false
@@ -70,10 +78,42 @@ const ApplicantDetails = forwardRef((props, ref) => {
     }
     const handleSubmit = (e) => {
         e.preventDefault()
-        console.log('submit', formdata)
         applicantDetail(formdata)
+        let datatoSubmit = {
+            [formdata.type]: { applicantDetails: formdata },
+            completed: false,
+            submitted: false,
+            status: true,
+            allocated: true,
+            claimed: false,
+            appid: formdata.appid,
+            tat: new Date().toString(),
+            emailList: formdata.emailList,
+            branch: branch
+        }
+        if (outerDetails.selected) {
+            datatoSubmit['selected'] = selectedAgentId ? selectedAgentId : outerDetails.selected
+            datatoSubmit['claimed'] = true;
+            datatoSubmit['claimedAt'] = new Date().toDateString();
+            datatoSubmit['assigned'] = true;
+        }
+        console.log('submit', datatoSubmit, formdata)
+        // return datatoSubmit
     }
-
+    function getCookie(cname) {
+        let name = cname + "=";
+        let ca = document.cookie.split(';');
+        for (let i = 0; i < ca.length; i++) {
+            let c = ca[i];
+            while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return "";
+    }
     useImperativeHandle(ref, () => ({
 
         getData() {
@@ -90,7 +130,7 @@ const ApplicantDetails = forwardRef((props, ref) => {
         setRefresh(Math.random())
     }
     useEffect(() => {
-        
+
         if (data) {
             let form = formdata
             for (const key in data) {
@@ -120,7 +160,7 @@ const ApplicantDetails = forwardRef((props, ref) => {
                         if (key === 'product') {
                             temp['product'] = data.bankNBFCname?.productList[0]?.productName
                             temp.emailList = data.bankNBFCname?.productList[0]?.emailList
-                        }          
+                        }
                     }
                 }
                 setFormdata(temp)
@@ -138,10 +178,10 @@ const ApplicantDetails = forwardRef((props, ref) => {
             document.getElementById('applicationDetails').click()
         }
     }, [getData])
-    const outerDetailsData = () =>{
+    const outerDetailsData = () => {
         if (outerDetails) {
             let formd = formdata
-            for(const outer in outerDetails) {
+            for (const outer in outerDetails) {
                 const element = outerDetails[outer]
                 if (outer == 'selected') {
                     setSelectedAgent(element)
@@ -176,7 +216,7 @@ const ApplicantDetails = forwardRef((props, ref) => {
         // console.log('agents', pincodeWiseAgents)
         return pincodeWiseAgents;
     }
-  
+
     let mismatchAddressField = [
         { name: 'mismatchAddress', value: 'yes', label: 'Yes' },
         { name: 'mismatchAddress', value: 'no', label: 'No' }
@@ -269,20 +309,21 @@ const ApplicantDetails = forwardRef((props, ref) => {
                         <label>Pincode</label>
                         <Input type="text" name='pincode' value={formdata['pincode']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
-                        <div className='pt-4'>
-                            <Dropdown toggle={() => setAgentsDropdown(!agentsDropdown)} isOpen={agentsDropdown}>
-                                <DropdownToggle caret className='bg-transparent text-danger border-0'>
-                                    {selectedAgent ? selectedAgent : getAgents().length > 0 ? `Agents - ${getAgents().length}` : 'None'}
-                                </DropdownToggle>
-                                <DropdownMenu>
-                                    {getAgents()?.map((item, index) => {
-                                        return <DropdownItem key={item.name} onClick={() => { setSelectedAgent(item.name) }}>
-                                            {item.name}
-                                        </DropdownItem>
-                                    })}
-                                </DropdownMenu>
-                            </Dropdown>
-                        </div>
+                    <div className='pt-4'>
+                        <Dropdown toggle={() => setAgentsDropdown(!agentsDropdown)} isOpen={agentsDropdown}>
+                            <DropdownToggle caret className='bg-transparent text-danger border-0'>
+                                {selectedAgent ? selectedAgent : getAgents().length > 0 ? `Agents - ${getAgents().length}` : 'None'}
+                            </DropdownToggle>
+                            <DropdownMenu>
+                                {getAgents()?.map((item, index) => {
+                                    
+                                    return <DropdownItem key={item.name} onClick={() => { setSelectedAgent(item.name); setSelectedAgentId(item.userId) }}>
+                                        {item.name}
+                                    </DropdownItem>
+                                })}
+                            </DropdownMenu>
+                        </Dropdown>
+                    </div>
                     <div >
                         <label>Type {formdata['type']}</label>
                         <DropDownComp id='applicantDetails' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={type} value={formdata['type']} />
@@ -340,7 +381,8 @@ const ApplicantDetails = forwardRef((props, ref) => {
 const mapStateToProps = (state) => {
     return {
         vendor: state.vendors,
-        agents: state.agents
+        agents: state.agents,
+        branch: state.branch
     }
 }
 export default connect(mapStateToProps)(ApplicantDetails)

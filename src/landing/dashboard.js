@@ -340,16 +340,17 @@ const ModalItem = ({ item, open, close, count }) => {
         }
         return combined
     }
-    console.log('combined', combinedData())
+    // console.log('combined', combinedData())
     return (
         <Modal isOpen={open.state && open.count === count} toggle={() => close(!open.state)}>
             <ModalBody>
                 <div>
                     {combinedData().map(item => {
-                        return <div key={item.name || item.pincode}>
-                            <a href={`${item?.data?.applicantDetails.form}/${item?.data?.applicantDetails.pincode}/${item.id}`} target='_blank'>{item.name ? item.name : item.pincode}
+                        return <ul key={item.name || item.pincode}>
+                           <li><a href={`${item?.data?.applicantDetails.form}/${item?.data?.applicantDetails.pincode}/${item.id}`} target='_blank'>{item.name ? item.name : item.pincode}
                             </a>
-                        </div>
+                               </li> 
+                        </ul>
                     })}
                 </div>
 

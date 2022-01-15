@@ -45,14 +45,17 @@ const Geolocation = (props) => {
             });
     }
     const handleDeleteImage = (item, index) => {
+        let text = "Are you Sure?"
         console.log('delete', item, index)
         const desertRef = ref(storage, item);
-        deleteObject(desertRef).then(res => {
-            console.log('delete successfully')
-            setRefresh(Math.random())
-        }).catch(err => {
-            console.log('err', err)
-        })
+        if(window.confirm(text) == true){
+            deleteObject(desertRef).then(res => {
+                console.log('delete successfully')
+                setRefresh(Math.random())
+            }).catch(err => {
+                console.log('err', err)
+            })
+        }
     }
     const uploadImage = (file) => {
         const filePath = `forms/${pincode}/${id}/images/${file.name}`
@@ -108,6 +111,9 @@ const Geolocation = (props) => {
             </div>
             <div>
                 <h5>Images</h5>
+                <div className='w-50 my-2'>
+                <input className='form-control' type="file" id="image-file" onChange={(e) => uploadImage(e.target.files[0])}/>
+                </div>
                 <div className='d-flex justify-content-between flex-wrap'>
                     {images?.map((item, index) => {
                         return <div key={item} >
@@ -117,9 +123,7 @@ const Geolocation = (props) => {
                     })}
 
                 </div>
-                <div className='w-50 my-2'>
-                <input className='form-control' type="file" id="image-file" onChange={(e) => uploadImage(e.target.files[0])}/>
-                </div>
+               
             </div>
 
 

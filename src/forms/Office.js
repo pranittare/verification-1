@@ -70,7 +70,7 @@ const Office = (props) => {
     const [applicantDetails, setApplicantDetails] = useState()
     const [refresh, setRefresh] = useState(0)
     const dataSplit = () => {
-        let verfi = { verification: {}, applicant: {}, outer: {} }
+        let verfi = { verification: {}, applicant: {} }
         for (const key in formdata) {
             if (Object.hasOwnProperty.call(formdata, key)) {
                 const element = formdata[key];
@@ -292,7 +292,7 @@ const Office = (props) => {
                         combiner(data)
                     }} data={applicantDetails} getData={getData} outerDetails={outerDetails} id={id} />
             </Collapse>
-            <Collapse title='Verification Details'>
+          {id && <>  <Collapse title='Verification Details'>
                 <h1>Verification Details</h1>
                 {(refresh > 0 || true) && <form className='d-flex justify-content-between flex-wrap' >
                     <div>
@@ -402,6 +402,7 @@ const Office = (props) => {
             </Collapse>
             <Button color='warning' onClick={handleSave}>Save</Button>
             <Button color='primary' onClick={handleSubmit}>Submit</Button>
+            </>}
         </div>
     )
 }
