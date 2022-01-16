@@ -225,7 +225,7 @@ const Dashboard = ({ forms, agents }) => {
     return (
         <div className='row bg-light pt-2'>
             <div className="col-6">
-                cases Today ({getTotal(casesToday())})
+                Cases Today ({getTotal(casesToday())})
                 <div>
                     <Button
                         color="primary"

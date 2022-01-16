@@ -149,6 +149,9 @@ const Resident = (props) => {
                                 if (outerkeys === key) {
                                     outer[key] = element
                                 }
+                                if (key === 'agenDetails') {
+                                    outerDetails.agenDetails = element
+                                }
                             }
                             for (const main in mainouter) {
                                 if (main === key) {

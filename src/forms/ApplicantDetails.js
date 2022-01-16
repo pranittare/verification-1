@@ -2,10 +2,13 @@ import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'rea
 import { Button, Input, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import DropDownComp from '../components/DropDownComp';
 import { connect } from 'react-redux';
+import { getDatabase, set, update, remove, ref } from "firebase/database";
+import axios from 'axios';
 
 const ApplicantDetails = forwardRef((props, ref) => {
     const { applicantDetail, data, getData, vendor, agents, outerDetails, id, branch } = props;
-
+    const db = getDatabase();
+    console.log('outer', outerDetails)
     const initalData = {
         appid: '',
         srNo: '',
@@ -77,6 +80,7 @@ const ApplicantDetails = forwardRef((props, ref) => {
         multi = true
     }
     const handleSubmit = (e) => {
+        let newDate = new Date().getTime()
         e.preventDefault()
         applicantDetail(formdata)
         let datatoSubmit = {
@@ -91,14 +95,90 @@ const ApplicantDetails = forwardRef((props, ref) => {
             emailList: formdata.emailList,
             branch: branch
         }
-        if (outerDetails.selected) {
-            datatoSubmit['selected'] = selectedAgentId ? selectedAgentId : outerDetails.selected
+        if (outerDetails.selected || outerDetails?.agenDetails?.email) {
+            datatoSubmit['selected'] = selectedAgentId ? selectedAgentId : outerDetails.selected ? outerDetails.selected : outerDetails.agenDetails.email
             datatoSubmit['claimed'] = true;
             datatoSubmit['claimedAt'] = new Date().toDateString();
             datatoSubmit['assigned'] = true;
         }
+        const path = `form/${formdata.pincode}/${newDate}-${Math.round(Math.random() * 100)}`;
+        update(ref(db, path), datatoSubmit).then(res => {
+            handleToken(datatoSubmit.selected)
+            alert('Forms Sent')
+        }).catch(err => {
+            alert('Something went Wrong check and try again')
+            console.log('Form initiation', err)
+        })
         console.log('submit', datatoSubmit, formdata)
         // return datatoSubmit
+    }
+    const handleUpdateForm = () => {
+        let datatoSubmit = {
+            [formdata.type]: { applicantDetails: formdata },
+            completed: false,
+            submitted: false,
+            status: true,
+            allocated: true,
+            claimed: false,
+            appid: formdata.appid,
+            tat: new Date().toString(),
+            emailList: formdata.emailList,
+            branch: branch
+        }
+        if (outerDetails.selected || outerDetails?.agenDetails?.email) {
+            datatoSubmit['selected'] = selectedAgentId ? selectedAgentId : outerDetails.selected ? outerDetails.selected : outerDetails.agenDetails.email
+            datatoSubmit['claimed'] = true;
+            datatoSubmit['claimedAt'] = new Date().toDateString();
+            datatoSubmit['assigned'] = true;
+        }
+        const path = `form/${formdata.pincode}/${id}}`;
+        update(ref(db, path), datatoSubmit).then(res => {
+            alert('Forms Sent')
+        }).catch(err => {
+            alert('Something went Wrong check and try again')
+            console.log('Form update', err)
+        })
+        console.log('update', datatoSubmit, formdata)
+    }
+    const notificationSend = (fcm) => {
+        let body = {
+            "notification": {
+                "title": "Hey there",
+                "body": "You have a new Form"
+            },
+            "to": `${fcm}`
+        }
+        let token = 'AAAAAWZbGdE:APA91bFdoZVr9OHKs6ApB8fZIZ0kkCQLiJVdj-geB6ya18M-E77BmnjUN5XKRBZNLAlpO9KADcHTweFgmzlK74C06XHRtafMPiE1_HJxRPIUfYdd9TjLVZMbNaP1KdWm062heFQDhM2j'
+        axios.post('https://fcm.googleapis.com/fcm/send', body, { 'Authorization': `key=${token}` }).then(res => {
+            console.log('notification', res)
+        }, err => {
+            console.log('notification err', err)
+        })
+    }
+    const handleToken = (agent) => {
+        if (formdata.pincode) {
+            for (const key in agents) {
+                if (Object.hasOwnProperty.call(agents, key)) {
+                    const element = agents[key];
+                    if (!agent) {
+                        if (element.pincode == formdata.pincode) {
+                            notificationSend(element.fcmToken)
+                        }
+                        if (element.secondary && element.secondary.length > 0) {
+                            for (let index = 0; index < element.secondary.length; index++) {
+                                const second = element.secondary[index];
+                                if (second.pincodes == formdata.pincode) {
+                                    notificationSend(element.fcmToken)
+                                }
+                            }
+                        }
+
+                    } else if(agent == element.userId) {
+                        notificationSend(element.fcmToken)
+                    }
+                }
+            }
+        }
     }
     function getCookie(cname) {
         let name = cname + "=";
@@ -136,11 +216,10 @@ const ApplicantDetails = forwardRef((props, ref) => {
             for (const key in data) {
                 form[key] = data[key]
                 if (key === 'bankNBFCname') {
-                    form['bankNBFCname'] = data.bankNBFCname?.clientName ? data.bankNBFCname?.clientName : data.bankNBFCname
+                    form['bankNBFCname'] = data.bankNBFCname
                 }
                 if (key === 'product') {
-                    form['product'] = data.bankNBFCname?.productList[0]?.productName
-                    form.emailList = data.bankNBFCname?.productList[0]?.emailList
+                    form['product'] = data.product;
                 }
                 if (key === 'form') {
                     form['type'] = data['form']
@@ -155,11 +234,10 @@ const ApplicantDetails = forwardRef((props, ref) => {
                     if (local[key]) {
                         temp[key] = data[key]
                         if (key === 'bankNBFCname') {
-                            temp['bankNBFCname'] = data.bankNBFCname?.clientName ? data.bankNBFCname?.clientName : data.bankNBFCname
+                            temp['bankNBFCname'] = data.bankNBFCname;
                         }
                         if (key === 'product') {
-                            temp['product'] = data.bankNBFCname?.productList[0]?.productName
-                            temp.emailList = data.bankNBFCname?.productList[0]?.emailList
+                            temp['product'] = data.product;
                         }
                     }
                 }
@@ -256,14 +334,14 @@ const ApplicantDetails = forwardRef((props, ref) => {
                         <label>Bank/ NBFC name</label>
                         <Dropdown toggle={toggleBankName} isOpen={dropdownBankNameOpen}>
                             <DropdownToggle caret>
-                                {formdata['bankNBFCname'] ? formdata['bankNBFCname'] : 'None'}
+                                {formdata['bankNBFCname'].clientName ? formdata['bankNBFCname'].clientName : 'None'}
                             </DropdownToggle>
                             <DropdownMenu
                             >
                                 {vendor.map(item => {
                                     return <DropdownItem key={item.clientName} onClick={() => {
                                         let form = formdata
-                                        form.bankNBFCname = item.clientName
+                                        form.bankNBFCname = item
                                         setFormdata(form)
                                         setProductList(item?.productList)
                                         // setFormdata({...formdata, bankNBFCname: item.clientName})
@@ -281,15 +359,14 @@ const ApplicantDetails = forwardRef((props, ref) => {
                         <label>Product</label>
                         <Dropdown toggle={toggleProductName} isOpen={dropdownProductNameOpen}>
                             <DropdownToggle caret>
-                                {formdata['product'] ? formdata['product'] : 'None'}
+                                {formdata['product'].productName ? formdata['product'].productName : 'None'}
                             </DropdownToggle>
                             <DropdownMenu
                             >
                                 {productList?.map(item => {
                                     return <DropdownItem key={item.productName} onClick={() => {
                                         let form = formdata
-                                        form.product = item.productName
-                                        form.emailList = item.emailList
+                                        form.product = item
                                         setFormdata(form)
                                     }}
                                         value={item.productName}
@@ -312,11 +389,11 @@ const ApplicantDetails = forwardRef((props, ref) => {
                     <div className='pt-4'>
                         <Dropdown toggle={() => setAgentsDropdown(!agentsDropdown)} isOpen={agentsDropdown}>
                             <DropdownToggle caret className='bg-transparent text-danger border-0'>
-                                {selectedAgent ? selectedAgent : getAgents().length > 0 ? `Agents - ${getAgents().length}` : 'None'}
+                                {selectedAgent ? selectedAgent : outerDetails?.agenDetails?.email ? outerDetails?.agenDetails?.email : getAgents().length > 0 ? `Agents - ${getAgents().length}` : 'None'}
                             </DropdownToggle>
                             <DropdownMenu>
                                 {getAgents()?.map((item, index) => {
-                                    
+
                                     return <DropdownItem key={item.name} onClick={() => { setSelectedAgent(item.name); setSelectedAgentId(item.userId) }}>
                                         {item.name}
                                     </DropdownItem>
@@ -368,11 +445,17 @@ const ApplicantDetails = forwardRef((props, ref) => {
                         <label>Remarks If any</label>
                         <Input type="text" name='remarks' value={formdata['remarks']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
-                    <div className='pt-4'>
-                        <Button color='primary' id='applicationDetails' type="submit" >
-                            Submit
+                    {id ? <div className='pt-4'>
+                        <Button color='warning' id='applicationDetails' type="button" onClick={handleUpdateForm} >
+                            Update
                         </Button>
                     </div>
+                        :
+                        <div className='pt-4'>
+                            <Button color='primary' id='applicationDetails' type="submit" >
+                                Submit
+                            </Button>
+                        </div>}
                 </form>
             </div>}
         </div>
