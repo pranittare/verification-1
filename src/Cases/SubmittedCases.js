@@ -129,8 +129,7 @@ const SubmittedCases = (props) => {
                 <h4>Submitted Cases</h4>
                 <button onClick={getExcel} className='btn btn-primary'>Get Excel</button>
             </div>
-            <div className='d-flex sticky-top bg-white'>
-                Label:
+            <div className='d-flex sticky-top bg-white justify-content-end'>
                 <p className='text-primary me-1 ms-1'>Office</p>
                 <p className='text-success'>Resident</p>
             </div>

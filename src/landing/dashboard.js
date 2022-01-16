@@ -16,6 +16,8 @@ const Dashboard = ({ forms, agents }) => {
     const [casesTodayModal, setCasesToadyModal] = useState(false);
     const [casesTotalToast, setCasesTotalToast] = useState(false);
     const [casesTotalModal, setCasesTotalModal] = useState(false);
+    const [submittedCasesToast, setSubmittedCasesToast] = useState(false);
+    const [submittedCasesModal, setSubmittedCasesModal] = useState(false);
     const [unclaimedCasesToast, setUnclaimedCasesToast] = useState(false)
     const [unclaimedCasesModal, setUnclaimedCasesModal] = useState(false)
     // const [activeAgentsToast, setActiveAgentsToast] = useState(false)
@@ -71,7 +73,7 @@ const Dashboard = ({ forms, agents }) => {
     }
     const casesToday = () => {
         let casesT = []
-        let currentDate =  new Date().getDate()
+        let currentDate = new Date().getDate()
         let bankname = uniqueArray2(bankwise().bank, 'name')
         for (let index = 0; index < bankname.length; index++) {
             const element = bankname[index];
@@ -103,6 +105,26 @@ const Dashboard = ({ forms, agents }) => {
             for (let index = 0; index < bankwise().bank.length; index++) {
                 const element = bankwise().bank[index];
                 if (bank.name === element.name) {
+                    bank.data.push(element)
+                }
+            }
+
+        }
+        return casesT
+    }
+    const submittedCases = () => {
+        let casesT = []
+        let bankname = uniqueArray2(bankwise().bank, 'name')
+        for (let index = 0; index < bankname.length; index++) {
+            const element = bankname[index];
+            casesT.push({ name: element, data: [] })
+        }
+        // console.log('bankname', bankname)
+        for (let i = 0; i < casesT.length; i++) {
+            const bank = casesT[i];
+            for (let index = 0; index < bankwise().bank.length; index++) {
+                const element = bankwise().bank[index];
+                if (bank.name === element.name && element.data.submitted) {
                     bank.data.push(element)
                 }
             }
@@ -274,15 +296,52 @@ const Dashboard = ({ forms, agents }) => {
             </div>
             <div className="col-6">
                 Unclaimed cases ({unClaimedCases()[2]?.total})
-                {unClaimedCases().map((item, index) => {
-                    if (item.data.length > 0)
-                        return <div key={item.tat}>
-                            <button className='btn text-warning' key={item?.tat} onClick={() => setUnclaimedCasesModal({ count: index, state: true })}>{item?.pincodes} - {item?.data?.length}</button>
+                <div>
+                    <Button
+                        color='danger'
+                        onClick={() => setUnclaimedCasesToast(!unclaimedCasesToast)}
+                    >
+                        {unclaimedCasesToast ? "Hide Details" : "View Details"}
+                    </Button>
+                    <br />
+                    <br />
+                    <Toast isOpen={unclaimedCasesToast} className='w-100'>
+                        <ToastBody>
+                            {unClaimedCases().map((item, index) => {
+                                if (item.data.length > 0)
+                                    return <div key={item.tat}>
+                                        <Button color='link' key={item?.tat} onClick={() => setUnclaimedCasesModal({ count: index, state: true })}>{item?.pincodes} - <span className='text-danger'>({item.data.length})</span></Button>
 
-                            <ModalItem item={item} open={unclaimedCasesModal} count={index} close={() => setUnclaimedCasesModal(false)} />
-                        </div>
-                })}
-                {/* <button onClick={() => console.log('unClaimedCases', unClaimedCases())}>Test</button> */}
+                                        <ModalItem item={item} open={unclaimedCasesModal} count={index} close={() => setUnclaimedCasesModal(false)} />
+                                    </div>
+                            })}
+                        </ToastBody>
+                    </Toast>
+                </div>
+            </div>
+            <div className="col-6">
+                SubmitedCases Cases ({getTotal(submittedCases())})
+                <div>
+                    <Button
+                        color='primary'
+                        onClick={() => setSubmittedCasesToast(!submittedCasesToast)}
+                    >
+                        {submittedCasesToast ? "Hide Details" : "View Details"}
+                    </Button>
+                    <br />
+                    <br />
+                    <Toast isOpen={submittedCasesToast} className='w-100'>
+                        <ToastBody >
+                            {submittedCases()?.map((item, index) => (
+                                <>
+                                    <Button color='link' key={item.name} onClick={() => setSubmittedCasesModal({ count: index, state: true })}>{item.name} - <span className='text-danger'>({item.data.length})</span></Button>
+
+                                    <ModalItem item={item} open={submittedCasesModal} count={index} close={() => setSubmittedCasesModal(false)} />
+                                </>
+                            ))}
+                        </ToastBody>
+                    </Toast>
+                </div>
             </div>
             {/* <div className="col-6 bg-primary">
                 Active agents
@@ -296,7 +355,7 @@ const Dashboard = ({ forms, agents }) => {
                 })}
                 <button onClick={() => console.log('activeAgents', activeAgents())}>Test</button>
             </div> */}
-            <div className="col-6">
+            <div className="col-12">
                 TAT ({getTotal(tat())})
                 {tat().map((item, index) => {
                     return <div key={item.time}>
@@ -347,9 +406,9 @@ const ModalItem = ({ item, open, close, count }) => {
                 <div>
                     {combinedData().map(item => {
                         return <ul key={item.name || item.pincode}>
-                           <li><a href={`${item?.data?.applicantDetails.form}/${item?.data?.applicantDetails.pincode}/${item.id}`} target='_blank'>{item.name ? item.name : item.pincode}
+                            <li><a href={`${item?.data?.applicantDetails.form}/${item?.data?.applicantDetails.pincode}/${item.id}`} target='_blank'>{item.name ? item.name : item.pincode}
                             </a>
-                               </li> 
+                            </li>
                         </ul>
                     })}
                 </div>

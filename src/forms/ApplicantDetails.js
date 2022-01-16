@@ -2,7 +2,7 @@ import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'rea
 import { Button, Input, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import DropDownComp from '../components/DropDownComp';
 import { connect } from 'react-redux';
-import { getDatabase, set, update, remove, ref } from "firebase/database";
+import { getDatabase, set, update, remove, ref as rtRef } from "firebase/database";
 import axios from 'axios';
 
 const ApplicantDetails = forwardRef((props, ref) => {
@@ -32,6 +32,7 @@ const ApplicantDetails = forwardRef((props, ref) => {
     const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
     const months1 = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
     const now = new Date();
+    const iniDate = new Date().toString()
     const thisMonth = months[now.getMonth()];
     const thisMonth1 = months1[now.getMonth()];
     const srNumber = `${thisMonth1}-${now.getFullYear()}-${now.getTime()}`
@@ -40,7 +41,7 @@ const ApplicantDetails = forwardRef((props, ref) => {
         appid: '',
         srNo: srNumber,
         month: thisMonth,
-        initiationDate: '',
+        initiationDate: iniDate,
         customerName: '',
         bankNBFCname: '',
         product: '',
@@ -82,7 +83,9 @@ const ApplicantDetails = forwardRef((props, ref) => {
     const handleSubmit = (e) => {
         let newDate = new Date().getTime()
         e.preventDefault()
-        applicantDetail(formdata)
+        if (id) {
+            applicantDetail(formdata)
+        }
         let datatoSubmit = {
             [formdata.type]: { applicantDetails: formdata },
             completed: false,
@@ -95,14 +98,14 @@ const ApplicantDetails = forwardRef((props, ref) => {
             emailList: formdata.emailList,
             branch: branch
         }
-        if (outerDetails.selected || outerDetails?.agenDetails?.email) {
+        if (outerDetails && (outerDetails.selected || outerDetails?.agenDetails?.email)) {
             datatoSubmit['selected'] = selectedAgentId ? selectedAgentId : outerDetails.selected ? outerDetails.selected : outerDetails.agenDetails.email
             datatoSubmit['claimed'] = true;
             datatoSubmit['claimedAt'] = new Date().toDateString();
             datatoSubmit['assigned'] = true;
         }
         const path = `form/${formdata.pincode}/${newDate}-${Math.round(Math.random() * 100)}`;
-        update(ref(db, path), datatoSubmit).then(res => {
+        update(rtRef(db, path), datatoSubmit).then(res => {
             handleToken(datatoSubmit.selected)
             alert('Forms Sent')
         }).catch(err => {
@@ -125,14 +128,14 @@ const ApplicantDetails = forwardRef((props, ref) => {
             emailList: formdata.emailList,
             branch: branch
         }
-        if (outerDetails.selected || outerDetails?.agenDetails?.email) {
+        if (outerDetails.selected || outerDetails?.agenDetails?.email || selectedAgent) {
             datatoSubmit['selected'] = selectedAgentId ? selectedAgentId : outerDetails.selected ? outerDetails.selected : outerDetails.agenDetails.email
             datatoSubmit['claimed'] = true;
             datatoSubmit['claimedAt'] = new Date().toDateString();
             datatoSubmit['assigned'] = true;
         }
-        const path = `form/${formdata.pincode}/${id}}`;
-        update(ref(db, path), datatoSubmit).then(res => {
+        const path = `form/${formdata.pincode}/${id}`;
+        update(rtRef(db, path), datatoSubmit).then(res => {
             alert('Forms Sent')
         }).catch(err => {
             alert('Something went Wrong check and try again')
@@ -149,7 +152,7 @@ const ApplicantDetails = forwardRef((props, ref) => {
             "to": `${fcm}`
         }
         let token = 'AAAAAWZbGdE:APA91bFdoZVr9OHKs6ApB8fZIZ0kkCQLiJVdj-geB6ya18M-E77BmnjUN5XKRBZNLAlpO9KADcHTweFgmzlK74C06XHRtafMPiE1_HJxRPIUfYdd9TjLVZMbNaP1KdWm062heFQDhM2j'
-        axios.post('https://fcm.googleapis.com/fcm/send', body, { 'Authorization': `key=${token}` }).then(res => {
+        axios.post('https://fcm.googleapis.com/fcm/send', body, {headers: {'Authorization': `key=${token}`} }).then(res => {
             console.log('notification', res)
         }, err => {
             console.log('notification err', err)

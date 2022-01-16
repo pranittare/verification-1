@@ -98,7 +98,7 @@ function App(props) {
 
   return (
     <div className="text-center w-100" id='app'>
-      <Button className='fixed-bottom' onClick={scrollToBottom}>{top ? 'Top' : 'Bottom'}</Button>
+      <Button className='fixed-bottom1' onClick={scrollToBottom}>{top ? 'Top' : 'Bottom'}</Button>
       <Router >
         <Navigation auth={auth?.currentUser} />
         <Switch>
