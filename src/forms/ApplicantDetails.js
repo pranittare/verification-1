@@ -8,7 +8,7 @@ import axios from 'axios';
 const ApplicantDetails = forwardRef((props, ref) => {
     const { applicantDetail, data, getData, vendor, agents, outerDetails, id, branch } = props;
     const db = getDatabase();
-    console.log('outer', outerDetails)
+    // console.log('outer', outerDetails)
     const initalData = {
         appid: '',
         srNo: '',
@@ -98,7 +98,7 @@ const ApplicantDetails = forwardRef((props, ref) => {
             emailList: formdata.emailList,
             branch: branch
         }
-        if (outerDetails && (outerDetails.selected || outerDetails?.agenDetails?.email)) {
+        if (outerDetails && (outerDetails.selected || outerDetails?.agenDetails?.email) || selectedAgentId) {
             datatoSubmit['selected'] = selectedAgentId ? selectedAgentId : outerDetails.selected ? outerDetails.selected : outerDetails.agenDetails.email
             datatoSubmit['claimed'] = true;
             datatoSubmit['claimedAt'] = new Date().toDateString();

@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from 'react'
 import { connect } from 'react-redux';
-import { Input } from 'reactstrap'
-import { databaseUpdateQueryExactSingle } from '../utils/query'
-import { databaseUpdateQueryExactMultiple } from '../utils/query'
-import { databaseUpdateQueryRangeSingle } from '../utils/query'
-import { databaseUpdateQueryRangeMultiple } from '../utils/query'
+import { Input } from 'reactstrap';
+import {
+    databaseUpdateQueryExactSingle,
+    databaseUpdateQueryExactMultiple, databaseUpdateQueryRangeSingle, databaseUpdateQueryRangeMultiple
+} from '../utils/query';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import moment from 'moment';
+import { Link, useHistory } from 'react-router-dom';
 
 const OldCases = (props) => {
+    const history = useHistory();
     const formatedDate = new Date().toDateString()
     const [allData, setAllData] = useState([])
     const [searchData1, setSearchData1] = useState({
@@ -19,6 +23,8 @@ const OldCases = (props) => {
         start: '',
         end: '',
     })
+    const [startDate, setStartDate] = useState();
+    const [endDate, setEndDate] = useState();
     const [reset, setReset] = useState(0);
     const formData = (forms) => {
         // let formarray = []
@@ -56,27 +62,47 @@ const OldCases = (props) => {
     }
     const search1 = () => {
         if (searchData1.customerName && searchData1.bankNBFCname) {
-            setAllData(databaseUpdateQueryExactMultiple('applicantDetails.bankNBFCname', searchData1.bankNBFCname, 'applicantDetails.customerName', searchData1.customerName))
+            let data = databaseUpdateQueryExactMultiple('applicantDetails.bankNBFCname', searchData1.bankNBFCname, 'applicantDetails.customerName', searchData1.customerName)
+            data.then((res) => {
+                setAllData(res)
+            })
         }
         if (searchData1.customerName) {
-            setAllData(databaseUpdateQueryExactSingle('applicantDetails.customerName', searchData1.customerName))
-
+            let data = databaseUpdateQueryExactSingle('applicantDetails.customerName', searchData1.customerName)
+            data.then((res) => {
+                setAllData(res)
+            })
         }
         if (searchData1.bankNBFCname) {
-            setAllData(databaseUpdateQueryExactSingle('applicantDetails.bankNBFCname', searchData1.bankNBFCname))
-
+            let data = databaseUpdateQueryExactSingle('applicantDetails.bankNBFCname', searchData1.bankNBFCname)
+            data.then((res) => {
+                setAllData(res)
+            })
         }
     }
     const search2 = () => {
-        if (searchData2.start && searchData1.end) {
-
+        let start = Math.round((new Date(startDate)).getTime());
+        let end = Math.round((new Date(endDate)).getTime());
+        console.log('date', start, end)
+        if (start && end) {
+            let data = databaseUpdateQueryRangeMultiple('tat1', start, 'tat1', end)
+            data.then((res) => {
+                setAllData(res)
+            })
         }
-        if (searchData2.start) {
-
+        if (start) {
+            let data = databaseUpdateQueryRangeSingle('tat1', start)
+            data.then((res) => {
+                setAllData(res)
+            })
         }
-        if (searchData2.end) {
-
-        }
+        // muted on purpose for performance issues
+        // if (end) {
+        //     let data = databaseUpdateQueryRangeSingle('tat1', end)
+        //     data.then((res) => {
+        //         setAllData(res)
+        //     })
+        // }
     }
     const getExcel = () => {
         let table = document.getElementById('test-table-xls-button')
@@ -111,6 +137,17 @@ const OldCases = (props) => {
         setReset(Math.random())
 
     }
+    const handleViewForm = (item) => {
+        console.log('handleViewForm', item)
+        let pincode = ''
+        if (item?.applicantDetails.form == 'office') {
+            pincode = item?.applicantDetails?.pincode
+            history.push(`office/${pincode}/${item.key}`)
+        } else {
+            pincode = item?.applicantDetails?.pincode
+            history.push(`resident/${pincode}/${item.key}`)
+        }
+    }
     useEffect(() => {
         formData(props.db)
         // databaseUpdateQueryExactSingle('applicantDetails.bankNBFCname', 'TESTBANK')
@@ -142,10 +179,12 @@ const OldCases = (props) => {
                         <button className='btn btn-info' type='button' onClick={() => search1()} >Search</button>
                     </div>
                     <div className="col-2">
-                        <Input placeholder='Start Date' name='start' onChange={handleFilterSearchTime} />
+                        <DatePicker selected={startDate} onChange={(date) => setStartDate(date)} />
+                        {/* <Input placeholder='Start Date' name='start' onChange={handleFilterSearchTime} /> */}
                     </div>
                     <div className="col-2">
-                        <Input placeholder='End Date' name='end' onChange={handleFilterSearchTime} />
+                        <DatePicker selected={endDate} onChange={(date) => setEndDate(date)} />
+                        {/* <Input placeholder='End Date' name='end' onChange={handleFilterSearchTime} /> */}
                     </div>
                     <div className="col-2">
                         <button className='btn btn-info' type='button' onClick={() => search2()}>Search</button>
@@ -167,7 +206,11 @@ const OldCases = (props) => {
                         {reset && allData && allData.length > 0 && allData.map((item, index) => {
                             return <tr key={`${item.key}-${index + 1}`}>
                                 <td>
-                                    {item.applicantDetails.appid}
+                                    {/* <a style={{ cursor: 'pointer' }} > */}
+                                    <Link to={{pathname: item?.applicantDetails.form == 'office' ? `office/${item?.applicantDetails.pincode}/${item.key}` : `resident/${item?.applicantDetails.pincode}/${item.key}`, state: item}} className={item?.applicantDetails.form == 'office' ? 'text-primary' : 'text-success'}>
+                                        {item.applicantDetails.appid}
+                                    </Link>
+                                    {/* </a> */}
                                 </td>
                                 <td>
 

@@ -234,12 +234,12 @@ export default function VerificationObserverResident({ verification, getData, da
                     {/* <Input type="text" name='assetSeenAtResidence' value={formdata['assetSeenAtResidence']} onChange={(e) => onHandleChange(e.currentTarget)} /> */}
                     <Dropdown isOpen={assetSeenAtResidenceDrop} toggle={assetSeenAtResidenceDroptoggle}>
                         <DropdownToggle>
-                        Selected {formdata['assetSeenAtResidence'].length}
+                        Selected {formdata['assetSeenAtResidence']?.length}
                         </DropdownToggle>
                         <DropdownMenu >
                         {assetSeenAtResidence.map((item) => {
                             return <div key={item} >
-                                <Input type='checkbox' value={item} checked={formdata['assetSeenAtResidence'].includes(item)} />
+                                <Input type='checkbox' value={item} checked={formdata['assetSeenAtResidence']?.includes(item)} />
                                 {item}
                             </div>
                         })}

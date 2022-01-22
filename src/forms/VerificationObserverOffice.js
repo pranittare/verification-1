@@ -159,12 +159,12 @@ export default function VerificationObserverOffice({ verification, getData, data
                     {/* <Input type="text" name='exteriorCondition' value={formdata['exteriorCondition']} onChange={(e) => onHandleChange(e.currentTarget)} /> */}
                     <Dropdown isOpen={exteriorConditionsDrop} toggle={exteriorConditionsDroptoggle}>
                         <DropdownToggle>
-                        Selected {formdata['exteriorCondition'].length}
+                        Selected {formdata['exteriorCondition']?.length}
                         </DropdownToggle>
                         <DropdownMenu >
                         {exteriorCondition.map((item) => {
                             return <div key={item} >
-                                <Input type='checkbox' value={item} checked={formdata['exteriorCondition'].includes(item)} />
+                                <Input type='checkbox' value={item} checked={formdata['exteriorCondition']?.includes(item)} />
                                 {item}
                             </div>
                         })}
@@ -204,12 +204,12 @@ export default function VerificationObserverOffice({ verification, getData, data
                     {/* <Input type="text" name='assetSeenAtOffice' value={formdata['assetSeenAtOffice']} onChange={(e) => onHandleChange(e.currentTarget)} /> */}
                     <Dropdown isOpen={assetSeenAtOfficeDrop} toggle={assetSeenAtOfficeDroptoggle}>
                         <DropdownToggle>
-                        Selected {formdata['assetSeenAtOffice'].length}
+                        Selected {formdata['assetSeenAtOffice']?.length}
                         </DropdownToggle>
                         <DropdownMenu >
                         {assetSeenAtOffice.map((item) => {
                             return <div key={item} >
-                                <Input type='checkbox' value={item} checked={formdata['assetSeenAtOffice'].includes(item)} />
+                                <Input type='checkbox' value={item} checked={formdata['assetSeenAtOffice']?.includes(item)} />
                                 {item}
                             </div>
                         })}

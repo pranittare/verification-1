@@ -8,6 +8,7 @@ import {
     Modal,
     ModalBody
 } from 'reactstrap';
+import { databaseUpdateQueryCasesToday } from '../utils/query'
 import CollapseItem from '../components/Collapse';
 
 const Dashboard = ({ forms, agents }) => {
@@ -88,8 +89,24 @@ const Dashboard = ({ forms, agents }) => {
                     bank.data.push(element)
                 }
             }
-
         }
+        // not working for some reason
+        // let data = databaseUpdateQueryCasesToday()
+        // data.then(res => {
+        //     for (let index = 0; index < res.length; index++) {
+        //         const element = res[index];
+        //         const casedate = new Date(element.tat)
+        //         for (let i = 0; i < casesT.length; i++) {
+        //             const bank = casesT[i];
+        //             console.log('inside 2', element.applicantDetails.bankNBFCname, bank.name)
+        //             if (casedate.getDate() == currentDate && bank.name == element.applicantDetails.bankNBFCname) {
+        //                 bank.data.push(element)
+        //             }
+        //         }
+        //     }
+        //     console.log('res', res)
+
+        // })
         return casesT
     }
     const casesTotal = () => {
@@ -213,17 +230,13 @@ const Dashboard = ({ forms, agents }) => {
                         let formTime = new Date(singleForm.tat).getTime()
                         if (formTime > (currentTime - 14400000)) {
                             tat[0].data.push(singleForm)
-                        }
-                        if (formTime > (currentTime - 28800000)) {
+                        } else if (formTime > (currentTime - 28800000)) {
                             tat[1].data.push(singleForm)
-                        }
-                        if (formTime > (currentTime - 43200000)) {
+                        } else if (formTime > (currentTime - 43200000)) {
                             tat[2].data.push(singleForm)
-                        }
-                        if (formTime > (currentTime - 86400000)) {
+                        } else if (formTime > (currentTime - 86400000)) {
                             tat[3].data.push(singleForm)
-                        }
-                        if (formTime > (currentTime > (currentTime - 86400000))) {
+                        } else if (formTime > (currentTime > (currentTime - 86400000))) {
                             tat[4].data.push(singleForm)
                         }
                     }
@@ -320,7 +333,7 @@ const Dashboard = ({ forms, agents }) => {
                 </div>
             </div>
             <div className="col-6">
-                SubmitedCases Cases ({getTotal(submittedCases())})
+                Submited Cases ({getTotal(submittedCases())})
                 <div>
                     <Button
                         color='primary'

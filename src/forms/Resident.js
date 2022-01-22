@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { Input, Button } from 'reactstrap'
-import { Prompt } from 'react-router-dom';
 import ApplicantDetails from './ApplicantDetails'
 import VerificationObserverResident from './VerificationObserverResident';
 import Tpc from './Tpc';
 import Geolocation from './Geolocation';
 import Collapse from '../components/Collapse';
-import { useParams } from 'react-router-dom'
+import { useParams, useLocation, Prompt } from 'react-router-dom'
 import { getDatabase, ref, update } from "firebase/database";
 import { getFormData } from '../utils/singleForm'
 import { connect } from 'react-redux';
@@ -16,7 +15,9 @@ import PdfMakeResident from './PdfMakeResident';
 const Resident = (props) => {
     let { pincode, id } = useParams();
     const db = getDatabase();
-
+    let data = useLocation()?.state
+    console.log('data', data)
+    
     const [getData, setGetData] = useState(false)
     const [applicantDetails, setApplicantDetails] = useState()
     const [verificationObserver, setVerificationOvserver] = useState();
@@ -134,69 +135,132 @@ const Resident = (props) => {
     //     console.log('getData', formdata)
     // }, [getData])
     // Form data by id
+    const formFill = (formsaved) => {
+        let formd = formdata
+        let outer = outerDetails
+        let mainout = mainouter
+        for (const key in formsaved) {
+            if (Object.hasOwnProperty.call(formsaved, key)) {
+                const element = formsaved[key];
+                for (const outerkeys in outer) {
+                    if (outerkeys === key) {
+                        outer[key] = element
+                    }
+                    if (key === 'agenDetails') {
+                        outerDetails.agenDetails = element
+                    }
+                }
+                for (const main in mainouter) {
+                    if (main === key) {
+                        mainouter[key] = element
+                    }
+                 }
+            }
+        }
+        console.log('formsaved', formsaved, outer)
+        if (formsaved?.resident) {
+            for (const key in formsaved.resident.verificationDetails) {
+                let savedForm = formsaved.resident.verificationDetails
+                formd[key] = formsaved.resident.verificationDetails[key]
+                if (key === 'VisitDate') {
+                    let date = savedForm[key]
+                    let visitdateandtime = new Date(date)
+                    let dateday = visitdateandtime.getDate()
+                    let dateMonth = (visitdateandtime.getMonth() + 1)
+                    let dateYear = visitdateandtime.getFullYear()
+                    let vDate = `${dateday}/${dateMonth}/${dateYear}`
+                    let time3 = visitdateandtime.toTimeString()
+                    let time4 = time3.split('GMT')[0]
+                    formd.visitDate = vDate
+                    formd.visitedTime = time4
+                }
+                if (key === 'addressConfirmedLandmark') {
+                    formd.landmark = savedForm[key]
+                }
+            }
+            console.log('applicant', formsaved?.resident?.applicantDetails)
+            setApplicantDetails(formsaved?.resident?.applicantDetails)
+            setVerificationOvserver(formsaved.resident.verificationDetails)
+            setOuterDetails(outer)
+            setMainouter(mainout)
+        }
+        setFormdata(formd)
+        if (localStorage.getItem(id)) {
+            setFormdata(JSON.parse(localStorage.getItem(id)))
+        }
+        setRefresh(Math.random())
+        console.log('formd', formd)
+    }
+    const formFillRouter = (formsaved) => {
+        let formd = formdata
+        let outer = outerDetails
+        let mainout = mainouter
+        for (const key in formsaved) {
+            if (Object.hasOwnProperty.call(formsaved, key)) {
+                const element = formsaved[key];
+                for (const outerkeys in outer) {
+                    if (outerkeys === key) {
+                        outer[key] = element
+                    }
+                    if (key === 'agenDetails') {
+                        outerDetails.agenDetails = element
+                    }
+                }
+                for (const main in mainouter) {
+                    if (main === key) {
+                        mainouter[key] = element
+                    }
+                 }
+            }
+        }
+        console.log('formsaved', formsaved, outer)
+        if (formsaved) {
+            for (const key in formsaved.verificationDetails) {
+                let savedForm = formsaved.verificationDetails
+                formd[key] = formsaved.verificationDetails[key]
+                if (key === 'VisitDate') {
+                    let date = savedForm[key]
+                    let visitdateandtime = new Date(date)
+                    let dateday = visitdateandtime.getDate()
+                    let dateMonth = (visitdateandtime.getMonth() + 1)
+                    let dateYear = visitdateandtime.getFullYear()
+                    let vDate = `${dateday}/${dateMonth}/${dateYear}`
+                    let time3 = visitdateandtime.toTimeString()
+                    let time4 = time3.split('GMT')[0]
+                    formd.visitDate = vDate
+                    formd.visitedTime = time4
+                }
+                if (key === 'addressConfirmedLandmark') {
+                    formd.landmark = savedForm[key]
+                }
+            }
+            console.log('applicant', formsaved?.applicantDetails)
+            setApplicantDetails(formsaved?.applicantDetails)
+            setVerificationOvserver(formsaved.verificationDetails)
+            setOuterDetails(outer)
+            setMainouter(mainout)
+        }
+        setFormdata(formd)
+        if (localStorage.getItem(id)) {
+            setFormdata(JSON.parse(localStorage.getItem(id)))
+        }
+        setRefresh(Math.random())
+        console.log('formd', formd)
+    }
     useEffect(() => {
         if (id) {
             console.log(id)
-            getFormData(pincode, id)
-                .then(formsaved => {
-                    let formd = formdata
-                    let outer = outerDetails
-                    let mainout = mainouter
-                    for (const key in formsaved) {
-                        if (Object.hasOwnProperty.call(formsaved, key)) {
-                            const element = formsaved[key];
-                            for (const outerkeys in outer) {
-                                if (outerkeys === key) {
-                                    outer[key] = element
-                                }
-                                if (key === 'agenDetails') {
-                                    outerDetails.agenDetails = element
-                                }
-                            }
-                            for (const main in mainouter) {
-                                if (main === key) {
-                                    mainouter[key] = element
-                                }
-                             }
-                        }
-                    }
-                    console.log('formsaved', formsaved, outer)
-                    if (formsaved?.resident) {
-                        for (const key in formsaved.resident.verificationDetails) {
-                            let savedForm = formsaved.resident.verificationDetails
-                            formd[key] = formsaved.resident.verificationDetails[key]
-                            if (key === 'VisitDate') {
-                                let date = savedForm[key]
-                                let visitdateandtime = new Date(date)
-                                let dateday = visitdateandtime.getDate()
-                                let dateMonth = (visitdateandtime.getMonth() + 1)
-                                let dateYear = visitdateandtime.getFullYear()
-                                let vDate = `${dateday}/${dateMonth}/${dateYear}`
-                                let time3 = visitdateandtime.toTimeString()
-                                let time4 = time3.split('GMT')[0]
-                                formd.visitDate = vDate
-                                formd.visitedTime = time4
-                            }
-                            if (key === 'addressConfirmedLandmark') {
-                                formd.landmark = savedForm[key]
-                            }
-                        }
-                        console.log('applicant', formsaved?.resident?.applicantDetails)
-                        setApplicantDetails(formsaved?.resident?.applicantDetails)
-                        setVerificationOvserver(formsaved.resident.verificationDetails)
-                        setOuterDetails(outer)
-                        setMainouter(mainout)
-                    }
-                    setFormdata(formd)
-                    if (localStorage.getItem(id)) {
-                        setFormdata(JSON.parse(localStorage.getItem(id)))
-                    }
-                    setRefresh(Math.random())
-                    console.log('formd', formd)
-                })
-            update(ref(db, `form/${pincode}/${id}`), {
-                watcherEmail: getCookie('email'),
-            });
+            if (data) {
+                formFillRouter(data)
+            } else {
+                getFormData(pincode, id)
+                    .then(formsaved => {
+                        formFill(formsaved)
+                    })
+                update(ref(db, `form/${pincode}/${id}`), {
+                    watcherEmail: getCookie('email'),
+                });
+            }
 
         }
 
