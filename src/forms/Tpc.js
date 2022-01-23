@@ -51,7 +51,8 @@ export default function Tpc({ tpc, getData, data, id }) {
     }
     useEffect(() => {
         if (getData) {
-            document.getElementById('tpcdata').click()
+        tpc(formdata)
+            // document.getElementById('tpcdata').click()
         }
         // console.log('getdata', getData)
     }, [getData])

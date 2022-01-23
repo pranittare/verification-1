@@ -66,9 +66,9 @@ export default function VerificationObserverResident({ verification, getData, da
     }
     useEffect(() => {
         if (getData) {
-            document.getElementById('residentVerificationObserver').click()
+        verification(formdata)
+        // document.getElementById('residentVerificationObserver').click()
         }
-        console.log('getdata', getData)
     }, [getData])
     useEffect(() => {
         if (data) {

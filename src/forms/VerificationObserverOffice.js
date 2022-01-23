@@ -42,7 +42,8 @@ export default function VerificationObserverOffice({ verification, getData, data
     }
     useEffect(() => {
         if (getData) {
-            document.getElementById('officeVerificationObserver').click()
+            verification(formdata)
+            // document.getElementById('officeVerificationObserver').click()
         }
     }, [getData])
     useEffect(() => {

@@ -35,11 +35,11 @@ const ApplicantDetails = forwardRef((props, ref) => {
     const iniDate = new Date().toString()
     const thisMonth = months[now.getMonth()];
     const thisMonth1 = months1[now.getMonth()];
-    const srNumber = `${thisMonth1}-${now.getFullYear()}-${now.getTime()}`
+    // const srNumber = `${thisMonth1}-${now.getFullYear()}-${now.getTime()}`
 
     const [formdata, setFormdata] = useState({
         appid: '',
-        srNo: srNumber,
+        srNo: '',
         month: thisMonth,
         initiationDate: iniDate,
         customerName: '',
@@ -81,67 +81,80 @@ const ApplicantDetails = forwardRef((props, ref) => {
         multi = true
     }
     const handleSubmit = (e) => {
-        let newDate = new Date().getTime()
-        e.preventDefault()
-        if (id) {
-            applicantDetail(formdata)
+        if (formdata.contactNo) {
+            let newDate = new Date().getTime()
+            let formdat = formdata
+            const srNumber = `${thisMonth1}-${now.getFullYear()}-${new Date().getTime()}`
+            if (!formdat.srNo) {
+                formdat.srNo = srNumber
+            }
+            e.preventDefault()
+            // if (id) {
+            //     applicantDetail(formdat)
+            // }
+            let datatoSubmit = {
+                [formdat.type]: { applicantDetails: formdat },
+                completed: false,
+                submitted: false,
+                status: true,
+                allocated: true,
+                claimed: false,
+                appid: formdat.appid,
+                tat: new Date().toString(),
+                emailList: formdat.emailList,
+                branch: branch
+            }
+            if (outerDetails && (outerDetails.selected || outerDetails?.agenDetails?.email) || selectedAgentId) {
+                datatoSubmit['selected'] = selectedAgentId ? selectedAgentId : outerDetails.selected ? outerDetails.selected : outerDetails.agenDetails.email
+                datatoSubmit['claimed'] = true;
+                datatoSubmit['claimedAt'] = new Date().toDateString();
+                datatoSubmit['assigned'] = true;
+            }
+            const path = `form/${formdat.pincode}/${newDate}-${Math.round(Math.random() * 100)}`;
+            update(rtRef(db, path), datatoSubmit).then(res => {
+                handleToken(datatoSubmit.selected)
+                alert('Forms Sent')
+            }).catch(err => {
+                alert('Something went Wrong check and try again')
+                console.log('Form initiation', err)
+            })
+            console.log('submit', datatoSubmit, formdat)
+        } else {
+            alert('Contact number is Required')
         }
-        let datatoSubmit = {
-            [formdata.type]: { applicantDetails: formdata },
-            completed: false,
-            submitted: false,
-            status: true,
-            allocated: true,
-            claimed: false,
-            appid: formdata.appid,
-            tat: new Date().toString(),
-            emailList: formdata.emailList,
-            branch: branch
-        }
-        if (outerDetails && (outerDetails.selected || outerDetails?.agenDetails?.email) || selectedAgentId) {
-            datatoSubmit['selected'] = selectedAgentId ? selectedAgentId : outerDetails.selected ? outerDetails.selected : outerDetails.agenDetails.email
-            datatoSubmit['claimed'] = true;
-            datatoSubmit['claimedAt'] = new Date().toDateString();
-            datatoSubmit['assigned'] = true;
-        }
-        const path = `form/${formdata.pincode}/${newDate}-${Math.round(Math.random() * 100)}`;
-        update(rtRef(db, path), datatoSubmit).then(res => {
-            handleToken(datatoSubmit.selected)
-            alert('Forms Sent')
-        }).catch(err => {
-            alert('Something went Wrong check and try again')
-            console.log('Form initiation', err)
-        })
-        console.log('submit', datatoSubmit, formdata)
         // return datatoSubmit
     }
     const handleUpdateForm = () => {
-        let datatoSubmit = {
-            [formdata.type]: { applicantDetails: formdata },
-            completed: false,
-            submitted: false,
-            status: true,
-            allocated: true,
-            claimed: false,
-            appid: formdata.appid,
-            tat: new Date().toString(),
-            emailList: formdata.emailList,
-            branch: branch
+        if (formdata.contactNo) {
+            let datatoSubmit = {
+                [formdata.type]: { applicantDetails: formdata },
+                completed: false,
+                submitted: false,
+                status: true,
+                allocated: true,
+                claimed: false,
+                appid: formdata.appid,
+                tat: new Date().toString(),
+                emailList: formdata.emailList,
+                branch: branch
+            }
+            if (outerDetails.selected || outerDetails?.agenDetails?.email || selectedAgent) {
+                datatoSubmit['selected'] = selectedAgentId ? selectedAgentId : outerDetails.selected ? outerDetails.selected : outerDetails.agenDetails.email
+                datatoSubmit['claimed'] = true;
+                datatoSubmit['claimedAt'] = new Date().toDateString();
+                datatoSubmit['assigned'] = true;
+            }
+            const path = `form/${formdata.pincode}/${id}`;
+            update(rtRef(db, path), datatoSubmit).then(res => {
+                alert('Forms Updated')
+            }).catch(err => {
+                alert('Something went Wrong check and try again')
+                console.log('Form update', err)
+            })
+            console.log('update', datatoSubmit, formdata)
+        } else {
+            alert('Contact number is Required')
         }
-        if (outerDetails.selected || outerDetails?.agenDetails?.email || selectedAgent) {
-            datatoSubmit['selected'] = selectedAgentId ? selectedAgentId : outerDetails.selected ? outerDetails.selected : outerDetails.agenDetails.email
-            datatoSubmit['claimed'] = true;
-            datatoSubmit['claimedAt'] = new Date().toDateString();
-            datatoSubmit['assigned'] = true;
-        }
-        const path = `form/${formdata.pincode}/${id}`;
-        update(rtRef(db, path), datatoSubmit).then(res => {
-            alert('Forms Sent')
-        }).catch(err => {
-            alert('Something went Wrong check and try again')
-            console.log('Form update', err)
-        })
-        console.log('update', datatoSubmit, formdata)
     }
     const notificationSend = (fcm) => {
         let body = {
@@ -152,7 +165,7 @@ const ApplicantDetails = forwardRef((props, ref) => {
             "to": `${fcm}`
         }
         let token = 'AAAAAWZbGdE:APA91bFdoZVr9OHKs6ApB8fZIZ0kkCQLiJVdj-geB6ya18M-E77BmnjUN5XKRBZNLAlpO9KADcHTweFgmzlK74C06XHRtafMPiE1_HJxRPIUfYdd9TjLVZMbNaP1KdWm062heFQDhM2j'
-        axios.post('https://fcm.googleapis.com/fcm/send', body, {headers: {'Authorization': `key=${token}`} }).then(res => {
+        axios.post('https://fcm.googleapis.com/fcm/send', body, { headers: { 'Authorization': `key=${token}` } }).then(res => {
             console.log('notification', res)
         }, err => {
             console.log('notification err', err)
@@ -176,7 +189,7 @@ const ApplicantDetails = forwardRef((props, ref) => {
                             }
                         }
 
-                    } else if(agent == element.userId) {
+                    } else if (agent == element.userId) {
                         notificationSend(element.fcmToken)
                     }
                 }
@@ -255,8 +268,8 @@ const ApplicantDetails = forwardRef((props, ref) => {
     }, [data])
     useEffect(() => {
         if (getData) {
-            // applicantDetail(formdata)
-            document.getElementById('applicationDetails').click()
+            applicantDetail(formdata)
+            // document.getElementById('applicationDetails').click()
         }
     }, [getData])
     const outerDetailsData = () => {
@@ -410,11 +423,11 @@ const ApplicantDetails = forwardRef((props, ref) => {
                     </div>
                     <div >
                         <label>Contact No.</label>
-                        <Input type="text" name='contactNo' value={formdata['contactNo']} onChange={(e) => onHandleChange(e.currentTarget)} />
+                        <Input type="number" name='contactNo' value={formdata['contactNo']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
                     <div >
                         <label>Mobile No.</label>
-                        <Input type="text" name='mobileNo' value={formdata['mobileNo']} onChange={(e) => onHandleChange(e.currentTarget)} />
+                        <Input type="number" name='mobileNo' value={formdata['mobileNo']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
                     {formdata['type'] === 'office' && <div >
                         <label>Office Address Provided</label>

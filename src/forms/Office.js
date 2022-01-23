@@ -79,10 +79,10 @@ const Office = (props) => {
                 for (const key1 in applicantDetails) {
                     if (Object.hasOwnProperty.call(applicantDetails, key1)) {
                         const applicant = applicantDetails[key1];
-                        if (key !== key1) {
-                            verfi.verification[key] = element
-                        } else {
+                        if (key == key1) {
                             verfi.applicant[key] = element
+                        } else {
+                            verfi.verification[key] = element
                         }
                     }
                 }
@@ -152,9 +152,19 @@ const Office = (props) => {
                         outerDetails.agenDetails = element
                     }
                 }
+                // for firestore db
                 for (const main in mainouter) {
                    if (main === key) {
                        mainouter[key] = element
+                   }
+                   if (main === 'emailList') {
+                    mainouter['emailList'] = formsaved.office?.applicantDetails?.product.emailList
+                   }
+                   if (main === 'selected') {
+                       mainouter['selected'] = formsaved?.selected
+                   }
+                   if (main === 'key') {
+                       mainouter['key'] = id
                    }
                 }
             }
@@ -261,10 +271,10 @@ const Office = (props) => {
                 getFormData(pincode, id)
                     .then(formsaved => {
                        formFill(formsaved)
+                       update(ref(db, `form/${pincode}/${id}`), {
+                           watcherEmail: getCookie('email'),
+                       });
                     })
-                update(ref(db, `form/${pincode}/${id}`), {
-                    watcherEmail: getCookie('email'),
-                });
             }
         }
 

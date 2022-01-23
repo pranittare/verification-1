@@ -25,6 +25,7 @@ const Dashboard = ({ forms, agents }) => {
     // const [activeAgentsModal, setActiveAgentsModal] = useState(false)
     const [tatToast, setTatToast] = useState(false)
     const [tatModal, setTatModal] = useState(false)
+    const [oldcases, setOldCases] = useState([]);
 
     const bankwise = () => {
         let bankAndForms = { bank: [], pincode: [] }
@@ -72,6 +73,10 @@ const Dashboard = ({ forms, agents }) => {
         }
         return a;
     }
+    const oldCasesDB = () => {
+        let data = databaseUpdateQueryCasesToday()
+        data.then(res => setOldCases(res))
+    }
     const casesToday = () => {
         let casesT = []
         let currentDate = new Date().getDate()
@@ -89,24 +94,17 @@ const Dashboard = ({ forms, agents }) => {
                     bank.data.push(element)
                 }
             }
+            if (oldcases && oldcases.length > 0) {
+                for (let index = 0; index < oldcases.length; index++) {
+                    const element = oldcases[index];
+                    const casedate = new Date(element.tat)
+                    // console.log('oldcases',casedate.getDate() == currentDate, casedate.getDate(), currentDate )
+                    if (bank.name === element.applicantDetails.bankNBFCname) {
+                        bank.data.push(element)
+                    }
+                }
+            }
         }
-        // not working for some reason
-        // let data = databaseUpdateQueryCasesToday()
-        // data.then(res => {
-        //     for (let index = 0; index < res.length; index++) {
-        //         const element = res[index];
-        //         const casedate = new Date(element.tat)
-        //         for (let i = 0; i < casesT.length; i++) {
-        //             const bank = casesT[i];
-        //             console.log('inside 2', element.applicantDetails.bankNBFCname, bank.name)
-        //             if (casedate.getDate() == currentDate && bank.name == element.applicantDetails.bankNBFCname) {
-        //                 bank.data.push(element)
-        //             }
-        //         }
-        //     }
-        //     console.log('res', res)
-
-        // })
         return casesT
     }
     const casesTotal = () => {
@@ -268,6 +266,7 @@ const Dashboard = ({ forms, agents }) => {
                     >
                         {casesTodayToast ? "Hide Details" : "View Details"}
                     </Button>
+                    <Button className='ms-1' onClick={oldCasesDB}>Refresh</Button>
                     <br />
                     <br />
                     <Toast isOpen={casesTodayToast} className='w-100'>
@@ -407,6 +406,8 @@ const ModalItem = ({ item, open, close, count }) => {
                     })
                 } else if (element.resident?.applicantDetails.customerName) {
                     combined.push({ name: element.resident?.applicantDetails.customerName, data: element.resident, id: element.id })
+                } else if(element.applicantDetails?.customerName) {
+                    combined.push({ name: element.applicantDetails.customerName, data: element, id: element.key })
                 }
             }
         }

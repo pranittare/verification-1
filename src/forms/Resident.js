@@ -17,7 +17,7 @@ const Resident = (props) => {
     const db = getDatabase();
     let data = useLocation()?.state
     console.log('data', data)
-    
+
     const [getData, setGetData] = useState(false)
     const [applicantDetails, setApplicantDetails] = useState()
     const [verificationObserver, setVerificationOvserver] = useState();
@@ -102,7 +102,7 @@ const Resident = (props) => {
             verificationDetails: dataSplit().verification,
         }
         Object.assign(dataToSubmit, mainouter)
-        console.log('handleSubmit', dataToSubmit )
+        console.log('handleSubmit', dataToSubmit)
     }
     const handleSave = () => {
         getAllData()
@@ -154,7 +154,16 @@ const Resident = (props) => {
                     if (main === key) {
                         mainouter[key] = element
                     }
-                 }
+                    if (main === 'emailList') {
+                        mainouter['emailList'] = formsaved.office?.applicantDetails?.product.emailList
+                    }
+                    if (main === 'selected') {
+                        mainouter['selected'] = formsaved?.selected
+                    }
+                    if (main === 'key') {
+                        mainouter['key'] = id
+                    }
+                }
             }
         }
         console.log('formsaved', formsaved, outer)
@@ -210,7 +219,7 @@ const Resident = (props) => {
                     if (main === key) {
                         mainouter[key] = element
                     }
-                 }
+                }
             }
         }
         console.log('formsaved', formsaved, outer)
