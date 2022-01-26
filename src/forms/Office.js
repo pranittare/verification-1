@@ -202,6 +202,7 @@ const Office = (props) => {
         if (localStorage.getItem(id)) {
             setFormdata(JSON.parse(localStorage.getItem(id)))
         }
+        overallStatusCal(formd)
         setRefresh(Math.random())
         console.log('formd', formd)
     }
@@ -257,6 +258,7 @@ const Office = (props) => {
             setOuterDetails(outer)
             setMainouter(mainout)
         }
+        overallStatusCal(formd)
         setFormdata(formd)
         setRefresh(Math.random())
         console.log('formd', formd)
@@ -285,6 +287,49 @@ const Office = (props) => {
         });
     }
 
+    const overallStatusCal = (allData) => {
+        console.log('alldata', allData)
+        let orverallstatus = ''
+        if (allData.mismatchAddress == 'yes') {
+            orverallstatus = 'Not Recommended'
+        } else if (allData.constructionOfOffice == 'Temporary') {
+            orverallstatus = 'Not Recommended'
+        } else if (allData.picturePoliticalLeader == 'yes') {
+            orverallstatus = 'Not Recommended'
+
+        } else if (allData.marketReputation == 'negative') {
+            orverallstatus = 'Not Recommended'
+        } else if (allData.addressConfirmed == 'no') {
+            orverallstatus = 'Not Recommended'
+        } else if (allData.localityofOffice == 'Slum') {
+            orverallstatus = 'Not Recommended'
+        } else if (allData.marketReputation == 'negative') {
+            orverallstatus = 'Not Recommended'
+        } else if (allData.easeofLocating == 'Not Traceable') {
+            orverallstatus = 'Not Recommended'
+        } else {
+            if (allData.verificationObserver == 'Resi cum Office') {
+                orverallstatus = 'Refer'
+            } else if (allData.verificationObserver == 'Shed') {
+                orverallstatus = 'Refer'
+            } else if (allData.verificationObserver == 'Shared Office') {
+                orverallstatus = 'Refer'
+            } else if (allData.businessBoardSeen == 'no') {
+                orverallstatus = 'Refer'
+            } else if (allData.personMet == 'no') {
+                orverallstatus = 'Refer'
+            } else if (allData.lessThanYrAtCurrentAddress == 'yes') {
+                orverallstatus = 'Refer'
+            } else if (allData.businessActivityLevel == 'Low') {
+                orverallstatus = 'Refer'
+            } else {
+                orverallstatus = 'Recommended'
+            }
+        }
+        console.log('orverallstatus', orverallstatus)
+        return orverallstatus
+
+    }
     let addressConfirmed = [
         { name: 'addressConfirmed', value: '', label: 'None' },
         { name: 'addressConfirmed', value: 'yes', label: 'Yes' },
@@ -472,7 +517,7 @@ const Office = (props) => {
                 }} getData={getData} data={verificationObserver} id={id} />
                 <Tpc tpc={(data) => {
                     combiner(data)
-                }} getData={getData} data={verificationObserver} id={id} />
+                }} getData={getData} data={verificationObserver} id={id} overallstatus={overallStatusCal}/>
             </Collapse>
             <Collapse title='Images and GeoLocation'>
                 <Geolocation data={verificationObserver} id={id} pincode={pincode} />

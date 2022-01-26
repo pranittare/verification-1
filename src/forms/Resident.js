@@ -197,6 +197,7 @@ const Resident = (props) => {
         if (localStorage.getItem(id)) {
             setFormdata(JSON.parse(localStorage.getItem(id)))
         }
+        overallStatusCal(formd)
         setRefresh(Math.random())
         console.log('formd', formd)
     }
@@ -253,6 +254,7 @@ const Resident = (props) => {
         if (localStorage.getItem(id)) {
             setFormdata(JSON.parse(localStorage.getItem(id)))
         }
+        overallStatusCal(formd)
         setRefresh(Math.random())
         console.log('formd', formd)
     }
@@ -278,6 +280,54 @@ const Resident = (props) => {
         update(ref(db, `form/${pincode}/${id}`), {
             watcherEmail: '',
         });
+    }
+    const overallStatusCal = (allData) => {
+        console.log('alldata', allData)
+        let orverallstatus = ''
+        if (allData?.mismatchAddress == 'yes') {
+            orverallstatus = 'Not Recommended'
+          } else if (allData?.addressConfirmed == 'no') {
+            orverallstatus = 'Not Recommended'
+          } else if (allData?.residenceStatus == 'Multi Tenants') {
+            orverallstatus = 'Refer'
+          } else if (allData?.residenceStatus == 'Paying Guest') {
+            orverallstatus = 'Not Recommended'
+          } else if (allData?.residenceStatus == 'Friend Owned') {
+            orverallstatus = 'Not Recommended'
+          } else if (allData?.residenceStatus == 'Lodging') {
+            orverallstatus = 'Not Recommended'
+          } else if (allData?.constructionOfResidence == 'Temporary') {
+            orverallstatus = 'Not Recommended'
+          } else if (allData?.picturePoliticalLeader == 'yes') {
+            orverallstatus = 'Not Recommended'
+          } else if (allData?.marketReputation == 'negative') {
+            orverallstatus = 'Not Recommended'
+          } else if (allData?.localityOfAddress == 'Slum') {
+            orverallstatus = 'Not Recommended'
+          } else if (allData?.typeOfHouse == 'Standing Chawl') {
+            orverallstatus = 'Refer'
+          } else if (allData?.typeOfHouse == 'Sitting Chawl') {
+            orverallstatus = 'Refer'
+          } else if (allData?.marketReputation == 'negative') {
+            orverallstatus = 'Not Recommended'
+          } else if (allData?.easeofLocating == 'Not Traceable') {
+            orverallstatus = 'Not Recommended'
+          } else if (allData?.lessThanYrAtCurrentAddress == 'yes') {
+            orverallstatus = 'Refer'
+          } else {
+            if (allData?.personMet == 'no') {
+              orverallstatus = 'Refer'
+            } else if (allData?.typeOfHouse == 'Multi Tenant House (Pagdi)') {
+              orverallstatus = 'Refer'
+            } else if (allData?.easeofLocating == 'Difficult to Trace') {
+              orverallstatus = 'Refer'
+            } else {
+              orverallstatus = 'Recommended'
+      
+            }
+          }
+        console.log('orverallstatus', orverallstatus)
+        return orverallstatus
     }
     let personMet = [
         { name: 'personMet', value: '', label: 'None' },
@@ -534,7 +584,8 @@ const Resident = (props) => {
                 }} getData={getData} data={verificationObserver} id={id} />
                 <Tpc tpc={(data) => {
                     combiner(data)
-                }} getData={getData} data={verificationObserver} id={id} />
+                }} getData={getData} data={verificationObserver} id={id} overallstatus={overallStatusCal}/>
+                
             </Collapse>
             <Collapse title='Images and GeoLocation'>
                 <Geolocation data={verificationObserver} id={id} pincode={pincode} />

@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react'
 import { Button, Input } from 'reactstrap';
 import DropDownComp from '../components/DropDownComp';
 
-export default function Tpc({ tpc, getData, data, id }) {
-    const [refresh, setRefresh] = useState(0)
+export default function Tpc({ tpc, getData, data, id, overallstatus }) {
+    const [refresh, setRefresh] = useState(0);
+    const [override, setOverride] = useState(false);
     const [formdata, setFormdata] = useState({
         TPCName1: '',
         status1: '',
@@ -27,7 +28,7 @@ export default function Tpc({ tpc, getData, data, id }) {
         productSupervisor: '',
         marketReputation: '',
         TPCRemarks: '',
-        overallStatus: '',
+        overallStatus: ''
     })
 
 
@@ -100,6 +101,8 @@ export default function Tpc({ tpc, getData, data, id }) {
             for (const key in data) {
                 form[key] = data[key]
             }
+            form['overallStatus'] = data.overallStatus ? data?.overallStatus : overallstatus() ? overallstatus() : ''
+            console.log('form',form)
             setFormdata(form)
             if (localStorage.getItem(id)) {
                 let local = JSON.parse(localStorage.getItem(id))
@@ -202,7 +205,7 @@ export default function Tpc({ tpc, getData, data, id }) {
                 <div className='w-100 mt-2'>
                     <h4>Final FI Status
                         <Button color='link'>Recheck</Button>
-                        <Button color='danger' className='ms-2 me-2'>Override Changes</Button>
+                        <Button color='danger' disabled={override} onClick={()=>setOverride(true)} className='ms-2 me-2'>Override Changes</Button>
                         <Button color='info'>Show Working</Button>
                     </h4>
                 </div>
