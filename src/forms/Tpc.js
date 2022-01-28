@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import { Button, Input } from 'reactstrap';
 import DropDownComp from '../components/DropDownComp';
 
-export default function Tpc({ tpc, getData, data, id, overallstatus }) {
+export default function Tpc({ tpc, getData, data, id, overallstatusCal }) {
     const [refresh, setRefresh] = useState(0);
-    const [override, setOverride] = useState(false);
+    // const [override, setOverride] = useState(false);
     const [formdata, setFormdata] = useState({
         TPCName1: '',
         status1: '',
@@ -44,6 +44,7 @@ export default function Tpc({ tpc, getData, data, id, overallstatus }) {
     const handleSubmit = (e) => {
         // const formData = new FormData(e.currentTarget);
         e.preventDefault()
+
         // console.log('tpc', formdata)
         tpc(formdata)
         // for (let [key, value] of formData.entries()) {
@@ -52,7 +53,8 @@ export default function Tpc({ tpc, getData, data, id, overallstatus }) {
     }
     useEffect(() => {
         if (getData) {
-        tpc(formdata)
+            console.log('form', formdata)
+            tpc(formdata)
             // document.getElementById('tpcdata').click()
         }
         // console.log('getdata', getData)
@@ -94,6 +96,11 @@ export default function Tpc({ tpc, getData, data, id, overallstatus }) {
         { name: 'overallStatus', value: 'Refer', label: 'Refer' },
         { name: 'overallStatus', value: 'Not Recomended', label: 'Not Recomended' },
     ]
+    const overallStatusSetter = () => {
+        let form = formdata
+        form['overallStatus'] = data.overallStatus ? data?.overallStatus : overallstatusCal() ? overallstatusCal() : ''
+        setFormdata(form)
+    }
     useEffect(() => {
         if (data) {
             let form = formdata
@@ -101,15 +108,14 @@ export default function Tpc({ tpc, getData, data, id, overallstatus }) {
             for (const key in data) {
                 form[key] = data[key]
             }
-            form['overallStatus'] = data.overallStatus ? data?.overallStatus : overallstatus() ? overallstatus() : ''
-            console.log('form',form)
-            setFormdata(form)
             if (localStorage.getItem(id)) {
                 let local = JSON.parse(localStorage.getItem(id))
                 for (const key in data) {
                     local[key] = data[key]
                 }
                 setFormdata(local)
+            } else {
+                overallStatusSetter()
             }
             setRefresh(Math.random())
             // onHandleChange({ name: data[0], value: test[1] })
@@ -204,14 +210,13 @@ export default function Tpc({ tpc, getData, data, id, overallstatus }) {
                 </div>
                 <div className='w-100 mt-2'>
                     <h4>Final FI Status
-                        <Button color='link'>Recheck</Button>
-                        <Button color='danger' disabled={override} onClick={()=>setOverride(true)} className='ms-2 me-2'>Override Changes</Button>
-                        <Button color='info'>Show Working</Button>
+                        {/* <Button color='link'>Recheck</Button>
+                        <Button color='danger' disabled={override} onClick={() => setOverride(true)} className='ms-2 me-2'>Override Changes</Button> */}
+                        {/* <Button color='info'>Show Working</Button> */}
                     </h4>
                 </div>
                 <div>
                     <label>Status</label>
-
                     <DropDownComp id='tpc' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={overallStatus} />
 
                 </div>

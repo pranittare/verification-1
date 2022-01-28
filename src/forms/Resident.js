@@ -105,7 +105,7 @@ const Resident = (props) => {
         console.log('handleSubmit', dataToSubmit)
     }
     const handleSave = () => {
-        getAllData()
+        getAllData();
         localStorage.setItem(id, JSON.stringify(formdata))
         // console.log('handleSave', formdata)
     }
@@ -584,7 +584,7 @@ const Resident = (props) => {
                 }} getData={getData} data={verificationObserver} id={id} />
                 <Tpc tpc={(data) => {
                     combiner(data)
-                }} getData={getData} data={verificationObserver} id={id} overallstatus={overallStatusCal}/>
+                }} getData={getData} data={verificationObserver} id={id} overallstatusCal={overallStatusCal}/>
                 
             </Collapse>
             <Collapse title='Images and GeoLocation'>

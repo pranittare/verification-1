@@ -517,7 +517,7 @@ const Office = (props) => {
                 }} getData={getData} data={verificationObserver} id={id} />
                 <Tpc tpc={(data) => {
                     combiner(data)
-                }} getData={getData} data={verificationObserver} id={id} overallstatus={overallStatusCal}/>
+                }} getData={getData} data={verificationObserver} id={id} overallstatusCal={overallStatusCal}/>
             </Collapse>
             <Collapse title='Images and GeoLocation'>
                 <Geolocation data={verificationObserver} id={id} pincode={pincode} />
