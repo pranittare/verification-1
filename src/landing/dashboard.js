@@ -19,8 +19,9 @@ const Dashboard = ({ forms, agents }) => {
     const [casesTotalModal, setCasesTotalModal] = useState(false);
     const [submittedCasesToast, setSubmittedCasesToast] = useState(false);
     const [submittedCasesModal, setSubmittedCasesModal] = useState(false);
-    const [unclaimedCasesToast, setUnclaimedCasesToast] = useState(false)
-    const [unclaimedCasesModal, setUnclaimedCasesModal] = useState(false)
+    const [unclaimedCasesToast, setUnclaimedCasesToast] = useState(false);
+    const [unclaimedCasesModal, setUnclaimedCasesModal] = useState(false);
+    const [oldcasesModal, setOldcasesModal] = useState(false);
     // const [activeAgentsToast, setActiveAgentsToast] = useState(false)
     // const [activeAgentsModal, setActiveAgentsModal] = useState(false)
     const [tatToast, setTatToast] = useState(false)
@@ -74,8 +75,18 @@ const Dashboard = ({ forms, agents }) => {
         return a;
     }
     const oldCasesDB = () => {
-        let data = databaseUpdateQueryCasesToday()
-        data.then(res => setOldCases(res))
+        let data = databaseUpdateQueryCasesToday();
+        let currentDate = new Date().getDate()
+        data.then(res => {
+            let data = [];
+            for (let index = 0; index < res.length; index++) {
+                const element = res[index];
+                if (new Date(element.tat).getDate() == currentDate) {
+                    data.push(element)
+                }
+            }
+            setOldCases(data)
+        })
     }
     const casesToday = () => {
         let casesT = []
@@ -259,6 +270,18 @@ const Dashboard = ({ forms, agents }) => {
         <div className='row bg-light pt-2'>
             <div className="col-6">
                 Cases Today ({getTotal(casesToday())})
+                <div className='mb-1'>
+                    Old Cases ({oldcases.length}) <Button color='link' type='button' onClick={() => setOldcasesModal(!oldcasesModal)}>View</Button>
+                </div>
+
+                {oldcasesModal && <div>
+                    {oldcases.length > 0 && oldcases.map((item, index) =>
+                        <div key={item.applicantDetails.customerName}>
+                            clientName: {item.applicantDetails.customerName}
+                        </div>
+                        // <ModalItem item={item} open={oldcasesModal} count={index} close={() => setOldcasesModal(false)} />
+                    )}
+                </div>}
                 <div>
                     <Button
                         color="primary"
@@ -387,30 +410,41 @@ const Dashboard = ({ forms, agents }) => {
 const ModalItem = ({ item, open, close, count }) => {
     const combinedData = () => {
         let combined = [];
-        for (let index = 0; index < item.data.length; index++) {
-            const element = item.data[index];
-            if (element.data) {
-                if (element.data?.office?.applicantDetails.customerName) {
-                    combined.push({
-                        name: element.data?.office?.applicantDetails.customerName,
-                        data: element.data.office, id: element.id
-                    })
-                } else if (element.data?.resident?.applicantDetails.customerName) {
-                    combined.push({ name: element.data?.resident?.applicantDetails.customerName, data: element.data.resident, id: element.id })
-                }
-            } else {
-                if (element.office?.applicantDetails.customerName) {
-                    combined.push({
-                        name: element.office?.applicantDetails.customerName,
-                        data: element.office, id: element.id
-                    })
-                } else if (element.resident?.applicantDetails.customerName) {
-                    combined.push({ name: element.resident?.applicantDetails.customerName, data: element.resident, id: element.id })
-                } else if(element.applicantDetails?.customerName) {
-                    combined.push({ name: element.applicantDetails.customerName, data: element, id: element.key })
+        if (item.data) {
+            for (let index = 0; index < item.data.length; index++) {
+                const element = item.data[index];
+                if (element.data) {
+                    if (element.data?.office?.applicantDetails.customerName) {
+                        combined.push({
+                            name: element.data?.office?.applicantDetails.customerName,
+                            data: element.data.office, id: element.id
+                        })
+                    } else if (element.data?.resident?.applicantDetails.customerName) {
+                        combined.push({ name: element.data?.resident?.applicantDetails.customerName, data: element.data.resident, id: element.id })
+                    }
+                } else {
+                    if (element.office?.applicantDetails.customerName) {
+                        combined.push({
+                            name: element.office?.applicantDetails.customerName,
+                            data: element.office, id: element.id
+                        })
+                    } else if (element.resident?.applicantDetails.customerName) {
+                        combined.push({ name: element.resident?.applicantDetails.customerName, data: element.resident, id: element.id })
+                    } else if (element.applicantDetails?.customerName) {
+                        combined.push({ name: element.applicantDetails.customerName, data: element, id: element.key })
+                    }
                 }
             }
+        } else {
+            for (let index = 0; index < item.length; index++) {
+                const element = item[index];
+                combined.push({
+                    name: element.applicantDetails.customerName,
+                    data: element, id: element?.id
+                })
+            }
         }
+
         return combined
     }
     // console.log('combined', combinedData())
