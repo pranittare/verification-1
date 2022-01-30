@@ -14,7 +14,6 @@ const Geolocation = (props) => {
         const storageRef = ref(storage, filePath);
         getDownloadURL(storageRef)
             .then((url) => {
-                console.log('url', url)
                 setAudio(url)
             })
             .catch((error) => {
@@ -39,7 +38,6 @@ const Geolocation = (props) => {
 
                     // All the items under listRef.
                 });
-                console.log('set', temp)
             }).catch((error) => {
                 // Uh-oh, an error occurred!
             });
@@ -72,7 +70,6 @@ const Geolocation = (props) => {
         })
     }
     useEffect(() => {
-        console.log('data', data, pincode, id)
         if (data) {
             viewAudio(id, pincode)
             viewImages(id, pincode)
@@ -82,7 +79,6 @@ const Geolocation = (props) => {
         if (images.length > 0) {
             props.dispatch({ type: 'IMAGES', data: images })
         }
-        console.log('images', images)
     }, [images])
     return (
         <div className='w-100'>

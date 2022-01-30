@@ -19,7 +19,8 @@ const initialState = {
   fusers: [],
   vendors: [],
   oldcases: null,
-  images: []
+  images: [],
+  casestoday: '',
 
 }
 
@@ -85,6 +86,11 @@ function reducer(state = initialState, action) {
         ...state,
         images: action.data
       }
+      case 'CASESTODAY' :
+        return {
+          ...state,
+          casestoday: action.data
+        }
     default:
       return state
   }

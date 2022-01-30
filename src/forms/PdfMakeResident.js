@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import stamp from '../assets/stamp.jpeg'
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
-const PdfMakeResident = ({ data, images, refresh }) => {
+const PdfMakeResident = ({ data, images, refresh, download }) => {
 
     const [stamp64, setStamp64] = useState();
     const [map, setMap] = useState();
@@ -1715,7 +1715,6 @@ const PdfMakeResident = ({ data, images, refresh }) => {
         if (images && images.length > 0) {
             let myImages = [];
             images.map((item, index) => {
-                // console.log('item', item);
                 toDataURL(item, (dataUrl) => {
                     myImages.push({
                         style: 'table',
@@ -1744,11 +1743,17 @@ const PdfMakeResident = ({ data, images, refresh }) => {
                 });
             }
         }
-    }, [images.length])
+    }, [images.length]);
+    useEffect(() => {
+        if (download) {
+            document.getElementById('downloadpdf').click()
+        }
+    },[download]);
     return (
         <div>
-            <button className='btn text-primary' onClick={() => { pdfMake.createPdf(documentDefinition).open() }}>Print PDfmake</button>
-            <button className='btn text-danger' onClick={() => { refresh() }}>Load Pdf</button>
+            <button className='btn text-primary' onClick={() => { pdfMake.createPdf(documentDefinition).open() }}>View PDF</button>
+            <button className='btn text-primary' id='download' onClick={() => { pdfMake.createPdf(documentDefinition).download() }}>Download PDF</button>
+            <button className='btn text-danger' onClick={() => { refresh() }}>Refresh Pdf</button>
         </div>
     )
 }

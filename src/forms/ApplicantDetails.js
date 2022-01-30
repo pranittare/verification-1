@@ -6,7 +6,7 @@ import { getDatabase, set, update, remove, ref as rtRef } from "firebase/databas
 import axios from 'axios';
 
 const ApplicantDetails = forwardRef((props, ref) => {
-    const { applicantDetail, data, getData, vendor, agents, outerDetails, id, branch } = props;
+    const { applicantDetail, data, getData, vendor, agents, outerDetails, id, branch, casestoday } = props;
     const db = getDatabase();
     // console.log('outer', outerDetails)
     const initalData = {
@@ -71,14 +71,16 @@ const ApplicantDetails = forwardRef((props, ref) => {
     const [agentsDropdown, setAgentsDropdown] = useState([]);
     const [selectedAgent, setSelectedAgent] = useState('');
     const [selectedAgentId, setSelectedAgentId] = useState('');
-    const [changeAgent, setChangeAgent] = useState(false);
-    // const url = document.location.pathname.split('/').length > 1
-    let office = false
-    let resident = false
-    let multi = false
-
-    if (document.location.pathname.split('/')[1] === 'new') {
-        multi = true
+   
+    const prevCasesCount = () => {
+        let date = new Date().getDate()
+        if (casestoday[date]) {
+            return {[date]:casestoday[date] + 1}
+        }
+    }
+    const handleCasesToday = () => {
+        const path = `casestoday`;
+        update(rtRef(db, path), prevCasesCount()).then()
     }
     const handleSubmit = (e) => {
         if (formdata.contactNo) {
@@ -113,6 +115,7 @@ const ApplicantDetails = forwardRef((props, ref) => {
             const path = `form/${formdat.pincode}/${newDate}-${Math.round(Math.random() * 100)}`;
             update(rtRef(db, path), datatoSubmit).then(res => {
                 handleToken(datatoSubmit.selected)
+                handleCasesToday()
                 alert('Forms Sent')
             }).catch(err => {
                 alert('Something went Wrong check and try again')
@@ -443,7 +446,7 @@ const ApplicantDetails = forwardRef((props, ref) => {
                                 <label>Mismatch Address</label>
                                 <DropDownComp id='applicantDetails' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={mismatchAddressField} value={formdata['mismatchAddress']} />
                             </div>
-                            {formdata['mismatchAddress'] &&
+                            {formdata['mismatchAddress'] && formdata['mismatchAddress'] !== 'no' &&
                                 <>
                                     {formdata['type'] === 'office' && <div >
                                         <label>Visited Office Address</label>
@@ -481,7 +484,8 @@ const mapStateToProps = (state) => {
     return {
         vendor: state.vendors,
         agents: state.agents,
-        branch: state.branch
+        branch: state.branch,
+        casestoday: state.casestoday
     }
 }
 export default connect(mapStateToProps)(ApplicantDetails)

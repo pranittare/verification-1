@@ -79,6 +79,7 @@ function App(props) {
     realtimedb('agents')
     realtimedb('form')
     realtimedb('users')
+    realtimedb('casestoday')
     databaseUpdate('agents')
     databaseUpdate('vendors')
     databaseUpdate('backup')

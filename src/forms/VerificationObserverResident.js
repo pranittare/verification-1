@@ -78,13 +78,13 @@ export default function VerificationObserverResident({ verification, getData, da
                 form[key] = data[key]
             }
             setFormdata(form)
-            if (localStorage.getItem(id)) {
-                let local = JSON.parse(localStorage.getItem(id))
-                for (const key in data) {
-                    local[key] = data[key]
-                }
-                setFormdata(local)
-            }
+            // if (localStorage.getItem(id)) {
+            //     let local = JSON.parse(localStorage.getItem(id))
+            //     for (const key in data) {
+            //         local[key] = data[key]
+            //     }
+            //     setFormdata(local)
+            // }
             setRefresh(Math.random())
             // onHandleChange({ name: data[0], value: test[1] })
         }

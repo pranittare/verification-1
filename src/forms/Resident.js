@@ -5,8 +5,9 @@ import VerificationObserverResident from './VerificationObserverResident';
 import Tpc from './Tpc';
 import Geolocation from './Geolocation';
 import Collapse from '../components/Collapse';
-import { useParams, useLocation, Prompt } from 'react-router-dom'
-import { getDatabase, ref, update } from "firebase/database";
+import { useParams, useLocation, Prompt, useHistory } from 'react-router-dom'
+import { getDatabase, ref, remove, update } from "firebase/database";
+import { addDoc, collection, getFirestore } from "firebase/firestore";
 import { getFormData } from '../utils/singleForm'
 import { connect } from 'react-redux';
 import DropDownComp from '../components/DropDownComp';
@@ -15,7 +16,9 @@ import PdfMakeResident from './PdfMakeResident';
 const Resident = (props) => {
     let { pincode, id } = useParams();
     const db = getDatabase();
+    const fdb = getFirestore();
     let data = useLocation()?.state
+    const history = useHistory();
     console.log('data', data)
 
     const [getData, setGetData] = useState(false)
@@ -68,7 +71,10 @@ const Resident = (props) => {
         key: '',
         selected: ''
     })
-    const [refresh, setRefresh] = useState(0)
+    const [refresh, setRefresh] = useState(0);
+    const [loading, setLoading] = useState(false);
+    const [downloadPdf, setDownloadPdf] = useState(false);
+
     const onHandleChange = (e) => {
         let form = formdata
         form[e.name] = e.value
@@ -76,6 +82,7 @@ const Resident = (props) => {
         setRefresh(Math.random())
     }
     const dataSplit = () => {
+        setRefresh(Math.random())
         let verfi = { verification: {}, applicant: {}, outer: {} }
         for (const key in formdata) {
             if (Object.hasOwnProperty.call(formdata, key)) {
@@ -96,6 +103,7 @@ const Resident = (props) => {
         return verfi
     }
     const handleSubmit = (e) => {
+        setLoading(true)
         e.preventDefault()
         let dataToSubmit = {
             applicantDetails: dataSplit().applicant,
@@ -103,9 +111,60 @@ const Resident = (props) => {
         }
         Object.assign(dataToSubmit, mainouter)
         console.log('handleSubmit', dataToSubmit)
+        addDoc(collection(fdb, "forms"), dataToSubmit).then(res => {
+            // mail
+            let emaillist = mainouter.emailList
+            let appid = dataToSubmit.applicantDetails.appid
+            let customername = dataToSubmit.applicantDetails.customerName
+            setDownloadPdf(true)
+            handleMail(emaillist, appid, customername)
+            // remove form
+            handleRemoveForm();
+
+        }).catch(err => {
+            alert('Something went wrong check console')
+            console.log('form submission', err)
+        })
+
+        setLoading(false)
+    }
+    const handleRemoveForm = () => {
+        let path = `form/${pincode}/${id}`
+        remove(path).then(res => {
+            alert('Form Removed from RT and Submitted to Cloud')
+            history.location.push('/ActiveCases')
+        })
+    }
+    const handleMail = (emaillist, appid, customername) => {
+        let emails = emaillist.toString().replace(/,/g, ';')
+        const yourMessage = `Dear Sir/Maam, 
+    
+    Please find verification report of captioned case. 
+    
+    Regards, 
+    Team KreDT.`
+        const subject = `${appid} - ${customername} - Residence`;
+        document.location.href = `mailto:${emails}?subject=`
+            + encodeURIComponent(subject)
+            + "&body=" + encodeURIComponent(yourMessage);
     }
     const handleSave = () => {
+        setLoading(true)
         getAllData();
+        setRefresh(Math.random())
+        const path = `form/${pincode}/${id}/resident`;
+        let dataToSubmit = {
+            applicantDetails: dataSplit().applicant,
+            verificationDetails: dataSplit().verification
+        }
+        update(ref(db, path), dataToSubmit).then(res => {
+            setLoading(false)
+            alert('Forms Updated')
+        }).catch(err => {
+            setLoading(false)
+            alert('Something went Wrong check and try again')
+            console.log('Form update', err)
+        })
         localStorage.setItem(id, JSON.stringify(formdata))
         // console.log('handleSave', formdata)
     }
@@ -155,7 +214,7 @@ const Resident = (props) => {
                         mainouter[key] = element
                     }
                     if (main === 'emailList') {
-                        mainouter['emailList'] = formsaved.office?.applicantDetails?.product.emailList
+                        mainouter['emailList'] = formsaved.resident?.applicantDetails?.product.emailList
                     }
                     if (main === 'selected') {
                         mainouter['selected'] = formsaved?.selected
@@ -194,9 +253,9 @@ const Resident = (props) => {
             setMainouter(mainout)
         }
         setFormdata(formd)
-        if (localStorage.getItem(id)) {
-            setFormdata(JSON.parse(localStorage.getItem(id)))
-        }
+        // if (localStorage.getItem(id)) {
+        //     setFormdata(JSON.parse(localStorage.getItem(id)))
+        // }
         overallStatusCal(formd)
         setRefresh(Math.random())
         console.log('formd', formd)
@@ -251,28 +310,30 @@ const Resident = (props) => {
             setMainouter(mainout)
         }
         setFormdata(formd)
-        if (localStorage.getItem(id)) {
-            setFormdata(JSON.parse(localStorage.getItem(id)))
-        }
+        // if (localStorage.getItem(id)) {
+        //     setFormdata(JSON.parse(localStorage.getItem(id)))
+        // }
         overallStatusCal(formd)
         setRefresh(Math.random())
         console.log('formd', formd)
     }
     useEffect(() => {
         if (id) {
+            setLoading(true);
             console.log(id)
             if (data) {
                 formFillRouter(data)
+                setLoading(false)
             } else {
                 getFormData(pincode, id)
                     .then(formsaved => {
+                        setLoading(false)
                         formFill(formsaved)
+                        update(ref(db, `form/${pincode}/${id}`), {
+                            watcherEmail: getCookie('email'),
+                        });
                     })
-                update(ref(db, `form/${pincode}/${id}`), {
-                    watcherEmail: getCookie('email'),
-                });
             }
-
         }
 
     }, [id, pincode])
@@ -282,50 +343,49 @@ const Resident = (props) => {
         });
     }
     const overallStatusCal = (allData) => {
-        console.log('alldata', allData)
         let orverallstatus = ''
         if (allData?.mismatchAddress == 'yes') {
             orverallstatus = 'Not Recommended'
-          } else if (allData?.addressConfirmed == 'no') {
+        } else if (allData?.addressConfirmed == 'no') {
             orverallstatus = 'Not Recommended'
-          } else if (allData?.residenceStatus == 'Multi Tenants') {
+        } else if (allData?.residenceStatus == 'Multi Tenants') {
             orverallstatus = 'Refer'
-          } else if (allData?.residenceStatus == 'Paying Guest') {
+        } else if (allData?.residenceStatus == 'Paying Guest') {
             orverallstatus = 'Not Recommended'
-          } else if (allData?.residenceStatus == 'Friend Owned') {
+        } else if (allData?.residenceStatus == 'Friend Owned') {
             orverallstatus = 'Not Recommended'
-          } else if (allData?.residenceStatus == 'Lodging') {
+        } else if (allData?.residenceStatus == 'Lodging') {
             orverallstatus = 'Not Recommended'
-          } else if (allData?.constructionOfResidence == 'Temporary') {
+        } else if (allData?.constructionOfResidence == 'Temporary') {
             orverallstatus = 'Not Recommended'
-          } else if (allData?.picturePoliticalLeader == 'yes') {
+        } else if (allData?.picturePoliticalLeader == 'yes') {
             orverallstatus = 'Not Recommended'
-          } else if (allData?.marketReputation == 'negative') {
+        } else if (allData?.marketReputation == 'negative') {
             orverallstatus = 'Not Recommended'
-          } else if (allData?.localityOfAddress == 'Slum') {
+        } else if (allData?.localityOfAddress == 'Slum') {
             orverallstatus = 'Not Recommended'
-          } else if (allData?.typeOfHouse == 'Standing Chawl') {
+        } else if (allData?.typeOfHouse == 'Standing Chawl') {
             orverallstatus = 'Refer'
-          } else if (allData?.typeOfHouse == 'Sitting Chawl') {
+        } else if (allData?.typeOfHouse == 'Sitting Chawl') {
             orverallstatus = 'Refer'
-          } else if (allData?.marketReputation == 'negative') {
+        } else if (allData?.marketReputation == 'negative') {
             orverallstatus = 'Not Recommended'
-          } else if (allData?.easeofLocating == 'Not Traceable') {
+        } else if (allData?.easeofLocating == 'Not Traceable') {
             orverallstatus = 'Not Recommended'
-          } else if (allData?.lessThanYrAtCurrentAddress == 'yes') {
+        } else if (allData?.lessThanYrAtCurrentAddress == 'yes') {
             orverallstatus = 'Refer'
-          } else {
+        } else {
             if (allData?.personMet == 'no') {
-              orverallstatus = 'Refer'
+                orverallstatus = 'Refer'
             } else if (allData?.typeOfHouse == 'Multi Tenant House (Pagdi)') {
-              orverallstatus = 'Refer'
+                orverallstatus = 'Refer'
             } else if (allData?.easeofLocating == 'Difficult to Trace') {
-              orverallstatus = 'Refer'
+                orverallstatus = 'Refer'
             } else {
-              orverallstatus = 'Recommended'
-      
+                orverallstatus = 'Recommended'
+
             }
-          }
+        }
         console.log('orverallstatus', orverallstatus)
         return orverallstatus
     }
@@ -397,47 +457,19 @@ const Resident = (props) => {
         { name: 'marrried', value: 'yes', label: 'Married' },
         { name: 'marrried', value: 'no', label: 'UnMarried' }
     ]
-    // useEffect(() => {
-    //     if (verification) {
-    //         // for (let [key, value] of verification.entries()) {
-    //         //     allData1.push({ [key]: value })
-    //         // }
-    //         // setAlldata(allData1)
-    //     }
-    // }, [verification])
-    // useEffect(() => {
-    //     if (tpc) {
-    //         // for (let [key, value] of tpc.entries()) {
-    //         //     allData1.push({ [key]: value })
-    //         // }
-    //         // setAlldata(allData1)
-    //     }
-    // }, [tpc])
-    // useEffect(() => {
-    //     if (applicantDetails) {
-    //         // for (let [key, value] of applicantDetails.entries()) {
-    //         //     allData1.push({ [key]: value })
-    //         // }
-    //         // setAlldata(allData1)
-    //     }
-    // }, [applicantDetails])
-    // useEffect(() => {
-    //     if (formdata) {
-    //         // for (let [key, value] of formdata.entries()) {
-    //         //     allData1.push({ [key]: value })
-    //         // }
-    //         setAlldata(allData1)
-    //     }
-    // }, [formdata])
-    // useEffect(() => {
-    //     if (alldata) {
-    //         console.log('alldata', alldata)
-    //     }
-    // }, [alldata])
     const combiner = (data) => {
         let alldata = formdata
         let combined = Object.assign(alldata, data);
-        setFormdata(combined)
+        console.log('combiner', combined)
+        localStorage.setItem(id, JSON.stringify(combined))
+        setFormdata(combined);
+        setRefresh(Math.random())
+    }
+    const remarksfnc = () => {
+        let data = formdata
+        console.log('data', data.overallStatus)
+        let overall = `${data.overallStatus ? data.overallStatus : ''}; Date: ${data.visitDate ? data.visitDate : ''}; ${data.visitedTime ? data.visitedTime : ''}; Mismatch Address: ${data.mismatchAddress ? data.mismatchAddress : ''}; Address Confirmed: ${data.addressConfirmed ? data.addressConfirmed : ''}; Person Met: ${data.personMet ? data.personMet : ''}; Person Met Name: ${data.personMetName ? data.personMetName : ''}; Residence Status: ${data.residenceStatus ? data.residenceStatus : ''}; Customer Occupation: ${data.customerOccupation ? data.customerOccupation : ''}; Gate/Door color: ${data.gateDoorColor ? data.gateDoorColor : ''}; Locality of Address: ${data.localityOfAddress ? data.localityOfAddress : ''};  Type of House: ${data.typeOfHouse ? data.typeOfHouse : ''};Accessibility/Approachability: ${data.accessibility ? data.accessibility : ''};Ease of Locating: ${data.easeofLocating ? data.easeofLocating : ''}; Customers Attitude: ${data.customerAttitude ? data.customerAttitude : ''};Distance from Station: ${data.distancefromStation ? data.distancefromStation : ''}; Negative Area: ${data.negativeArea ? data.negativeArea : ''}; TPC1: ${data.TPCName1 ? data.TPCName1 : ''} - ${data.TPCStatus1 ? data.TPCStatus1 : ''} - ${data.tpc1Remarks ? data.tpc1Remarks : ''}; TPC2: ${data.TPCName2 ? data.TPCName2 : ''} - ${data.tpc2Status ? data.tpc2Status : ''} - ${data.tpc2Remarks ? data.tpc2Remarks : ''}; ${data.finalFIAnyRemarks ? data.finalFIAnyRemarks : ''}`;
+        return overall
     }
     return (
         <div>
@@ -450,7 +482,6 @@ const Resident = (props) => {
                     }
                 }}
             />
-            {(refresh > 0 || true) && <PdfMakeResident data={formdata} refresh={() => { setRefresh(Math.random()) }} />}
             <Collapse title='Applicant Details'>
                 <ApplicantDetails
                     // ref={aplicantDeatilsRef}
@@ -458,7 +489,7 @@ const Resident = (props) => {
                         combiner(data)
                     }} data={applicantDetails} getData={getData} outerDetails={outerDetails} id={id} />
             </Collapse>
-            <Collapse title='Verification Details'>
+            {id && <> <Collapse title='Verification Details'>
                 <h1>Verification Details</h1>
                 {(refresh > 0 || true) && <form className='d-flex justify-content-between flex-wrap' >
                     <div>
@@ -584,14 +615,22 @@ const Resident = (props) => {
                 }} getData={getData} data={verificationObserver} id={id} />
                 <Tpc tpc={(data) => {
                     combiner(data)
-                }} getData={getData} data={verificationObserver} id={id} overallstatusCal={overallStatusCal}/>
-                
+                }} getData={getData} data={verificationObserver} id={id} overallstatusCal={overallStatusCal} remarksfnc={remarksfnc} />
             </Collapse>
-            <Collapse title='Images and GeoLocation'>
-                <Geolocation data={verificationObserver} id={id} pincode={pincode} />
-            </Collapse>
-            <Button color='warning' onClick={handleSave}>Save</Button>
-            <Button color='primary' onClick={handleSubmit}>Submit</Button>
+                <Collapse title='Images and GeoLocation'>
+                    <Geolocation data={verificationObserver} id={id} pincode={pincode} />
+                </Collapse>
+                {(refresh > 0 || true) && <PdfMakeResident data={formdata} refresh={() => { setRefresh(Math.random()) }} download={downloadPdf} />}
+            
+            </>
+            }
+            {!loading ? <> <Button color='warning' onClick={handleSave}>Save</Button>
+                <Button color='primary' onClick={handleSubmit}>Submit</Button>
+            </>
+                :
+                <div class="spinner-grow text-warning" role="status">
+                </div>
+            }
 
         </div>
     )

@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import stamp from '../assets/stamp.jpeg'
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
-const PdfMake = ({ data, images, refresh }) => {
+const PdfMake = ({ data, images, refresh, download }) => {
 
     const [stamp64, setStamp64] = useState();
     const [map, setMap] = useState();
@@ -1627,10 +1627,16 @@ const PdfMake = ({ data, images, refresh }) => {
             }
         }
     }, [images.length])
+    useEffect(() => {
+        if (download) {
+            document.getElementById('downloadpdf').click()
+        }
+    },[download])
     return (
         <div>
-            <button className='btn text-primary' onClick={() => { pdfMake.createPdf(documentDefinition).open() }}>Print PDfmake</button>
-            <button className='btn text-danger' onClick={() => { refresh() }}>Load Pdf</button>
+           <button className='btn text-primary' onClick={() => { pdfMake.createPdf(documentDefinition).open() }}>View PDF</button>
+            <button className='btn text-primary' id='downloadpdf' onClick={() => { pdfMake.createPdf(documentDefinition).download() }}>Download PDF</button>
+            <button className='btn text-danger' onClick={() => { refresh() }}>Refresh Pdf</button>
         </div>
     )
 }

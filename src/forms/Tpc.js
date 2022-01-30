@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Input } from 'reactstrap';
 import DropDownComp from '../components/DropDownComp';
-
-export default function Tpc({ tpc, getData, data, id, overallstatusCal }) {
+import companyStamp from '../assets/stamp.jpeg'
+import {connect} from 'react-redux';
+const Tpc = ({ tpc, getData, data, id, overallstatusCal, remarksfnc, users }) => {
     const [refresh, setRefresh] = useState(0);
     // const [override, setOverride] = useState(false);
     const [formdata, setFormdata] = useState({
@@ -53,7 +54,7 @@ export default function Tpc({ tpc, getData, data, id, overallstatusCal }) {
     }
     useEffect(() => {
         if (getData) {
-            console.log('form', formdata)
+            console.log('tpc', formdata)
             tpc(formdata)
             // document.getElementById('tpcdata').click()
         }
@@ -97,9 +98,35 @@ export default function Tpc({ tpc, getData, data, id, overallstatusCal }) {
         { name: 'overallStatus', value: 'Not Recomended', label: 'Not Recomended' },
     ]
     const overallStatusSetter = () => {
-        let form = formdata
-        form['overallStatus'] = data.overallStatus ? data?.overallStatus : overallstatusCal() ? overallstatusCal() : ''
-        setFormdata(form)
+        let overall =  data.overallStatus ? data.overallStatus : overallstatusCal() ? overallstatusCal() : '';
+        return overall
+    }
+    const getProductSupervisor = () => {
+        let email = getCookie('email');
+        let supervisor = '';
+        for (const key in users) {
+            if (Object.hasOwnProperty.call(users, key)) {
+                const element = users[key];
+                if (element.userId === email) {
+                    supervisor = element.name
+                }
+            }
+        }
+        return supervisor;
+    }
+    const getCookie = (cname) => {
+        let name = cname + "=";
+        let ca = document.cookie.split(';');
+        for (let i = 0; i < ca.length; i++) {
+            let c = ca[i];
+            while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return "";
     }
     useEffect(() => {
         if (data) {
@@ -108,15 +135,20 @@ export default function Tpc({ tpc, getData, data, id, overallstatusCal }) {
             for (const key in data) {
                 form[key] = data[key]
             }
-            if (localStorage.getItem(id)) {
-                let local = JSON.parse(localStorage.getItem(id))
-                for (const key in data) {
-                    local[key] = data[key]
-                }
-                setFormdata(local)
-            } else {
-                overallStatusSetter()
-            }
+            // if (localStorage.getItem(id)) {
+            //     let local = JSON.parse(localStorage.getItem(id))
+            //     for (const key in data) {
+            //         local[key] = data[key]
+            //     }
+            //     local.finalFIRemarks = remarksfnc()
+            //     setFormdata(local)
+            // } else {
+                form.overallStatus = overallStatusSetter()
+                form.finalFIRemarks = remarksfnc()
+                form.productSupervisor = getProductSupervisor()
+                // console.log('form', form)
+                setFormdata(form)
+            // }
             setRefresh(Math.random())
             // onHandleChange({ name: data[0], value: test[1] })
         }
@@ -226,15 +258,15 @@ export default function Tpc({ tpc, getData, data, id, overallstatusCal }) {
                 </div>
                 <div>
                     <label>Standard Remarks</label>
-                    <Input type="text" name='finalFIAnyRemarks' value={formdata['finalFIAnyRemarks']} onChange={(e) => onHandleChange(e.currentTarget)} />
+                    <textarea className='form-control' cols='10' rows='3' type="text" name='finalFIAnyRemarks' value={formdata['finalFIAnyRemarks']} onChange={(e) => onHandleChange(e.currentTarget)} />
                 </div>
                 <div>
                     <label>Remarks</label>
-                    <Input type="text" name='finalFIRemarks' value={formdata['finalFIRemarks']} onChange={(e) => onHandleChange(e.currentTarget)} />
+                    <textarea className='form-control' cols='10' rows='3' type="text" name='finalFIRemarks' value={formdata['finalFIRemarks']} onChange={(e) => onHandleChange(e.currentTarget)} />
                 </div>
                 <div>
                     <label>Company Stamp</label>
-                    <Input type="text" />
+                    <img src={companyStamp} style={{width: 150}}/>
                 </div>
                 <div>
                     <label>Verifier Name</label>
@@ -251,3 +283,10 @@ export default function Tpc({ tpc, getData, data, id, overallstatusCal }) {
         </div>
     )
 }
+const mapStateToProps = (state) => {
+    return {
+        users: state.users
+    }
+}
+
+export default connect(mapStateToProps)(Tpc)

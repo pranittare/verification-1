@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { getDatabase, ref, update } from "firebase/database";
+import { getDatabase, ref, update, remove } from "firebase/database";
+import { addDoc, collection, getFirestore } from "firebase/firestore";
 import { Input, Button } from 'reactstrap'
 import ApplicantDetails from './ApplicantDetails'
 import Tpc from './Tpc';
@@ -7,7 +8,7 @@ import VerificationObserverOffice from './VerificationObserverOffice';
 import Geolocation from './Geolocation';
 import DropDownComp from '../components/DropDownComp';
 import Collapse from '../components/Collapse';
-import { useParams, useLocation, Prompt } from 'react-router-dom'
+import { useParams, useLocation, Prompt, useHistory } from 'react-router-dom'
 import { getFormData } from '../utils/singleForm'
 import { connect } from 'react-redux';
 import PdfMake from './PdfMake';
@@ -18,6 +19,8 @@ const Office = (props) => {
     const db = getDatabase();
     let data = useLocation()?.state
     console.log('data', data)
+    const fdb = getFirestore();
+    const history = useHistory();
     // console.log('form', props)
     const [formdata, setFormdata] = useState({
         visitDate: '',
@@ -69,7 +72,10 @@ const Office = (props) => {
     const [getData, setGetData] = useState(false)
     // const [alldata, setAlldata] = useState([])
     const [applicantDetails, setApplicantDetails] = useState()
-    const [refresh, setRefresh] = useState(0)
+    const [refresh, setRefresh] = useState(0);
+    const [loading, setLoading] = useState(false);
+    const [downloadPdf, setDownloadPdf] = useState(false);
+
     const dataSplit = () => {
         let verfi = { verification: {}, applicant: {} }
         for (const key in formdata) {
@@ -91,17 +97,68 @@ const Office = (props) => {
         return verfi
     }
     const handleSubmit = (e) => {
+        setLoading(true)
         e.preventDefault()
-        // let verification = 
         let dataToSubmit = {
             applicantDetails: dataSplit().applicant,
             verificationDetails: dataSplit().verification,
         }
         Object.assign(dataToSubmit, mainouter)
-        console.log('handleSubmit', dataToSubmit )
+        console.log('handleSubmit', dataToSubmit)
+        addDoc(collection(fdb, "forms"), dataToSubmit).then(res => {
+            // mail
+            let emaillist = mainouter.emailList
+            let appid = dataToSubmit.applicantDetails.appid
+            let customername = dataToSubmit.applicantDetails.customerName
+            setDownloadPdf(true)
+            handleMail(emaillist, appid, customername)
+            // remove form
+            handleRemoveForm();
+
+        }).catch(err => {
+            alert('Something went wrong check console')
+            console.log('form submission', err)
+        })
+
+        setLoading(false)
+    }
+    const handleRemoveForm = () => {
+        let path = `form/${pincode}/${id}`
+        remove(path).then(res => {
+            alert('Form Removed from RT and Submitted to Cloud')
+            history.location.push('/ActiveCases')
+        })
+    }
+    const handleMail = (emaillist, appid, customername) => {
+        let emails = emaillist.toString().replace(/,/g, ';')
+        const yourMessage = `Dear Sir/Maam, 
+    
+    Please find verification report of captioned case. 
+    
+    Regards, 
+    Team KreDT.`
+        const subject = `${appid} - ${customername} - Residence`;
+        document.location.href = `mailto:${emails}?subject=`
+            + encodeURIComponent(subject)
+            + "&body=" + encodeURIComponent(yourMessage);
     }
     const handleSave = () => {
-        getAllData()
+        setLoading(true)
+        getAllData();
+        setRefresh(Math.random())
+        const path = `form/${pincode}/${id}/office`;
+        let dataToSubmit = {
+            applicantDetails: dataSplit().applicant,
+            verificationDetails: dataSplit().verification
+        }
+        update(ref(db, path), dataToSubmit).then(res => {
+            setLoading(false)
+            alert('Forms Updated')
+        }).catch(err => {
+            setLoading(false)
+            alert('Something went Wrong check and try again')
+            console.log('Form update', err)
+        })
         localStorage.setItem(id, JSON.stringify(formdata))
         // console.log('handleSave', formdata)
     }
@@ -154,18 +211,18 @@ const Office = (props) => {
                 }
                 // for firestore db
                 for (const main in mainouter) {
-                   if (main === key) {
-                       mainouter[key] = element
-                   }
-                   if (main === 'emailList') {
-                    mainouter['emailList'] = formsaved.office?.applicantDetails?.product.emailList
-                   }
-                   if (main === 'selected') {
-                       mainouter['selected'] = formsaved?.selected
-                   }
-                   if (main === 'key') {
-                       mainouter['key'] = id
-                   }
+                    if (main === key) {
+                        mainouter[key] = element
+                    }
+                    if (main === 'emailList') {
+                        mainouter['emailList'] = formsaved.office?.applicantDetails?.product.emailList
+                    }
+                    if (main === 'selected') {
+                        mainouter['selected'] = formsaved?.selected
+                    }
+                    if (main === 'key') {
+                        mainouter['key'] = id
+                    }
                 }
             }
         }
@@ -199,9 +256,9 @@ const Office = (props) => {
             setMainouter(mainout)
         }
         setFormdata(formd)
-        if (localStorage.getItem(id)) {
-            setFormdata(JSON.parse(localStorage.getItem(id)))
-        }
+        // if (localStorage.getItem(id)) {
+        //     setFormdata(JSON.parse(localStorage.getItem(id)))
+        // }
         overallStatusCal(formd)
         setRefresh(Math.random())
         console.log('formd', formd)
@@ -223,9 +280,9 @@ const Office = (props) => {
                     }
                 }
                 for (const main in mainouter) {
-                   if (main === key) {
-                       mainouter[key] = element
-                   }
+                    if (main === key) {
+                        mainouter[key] = element
+                    }
                 }
             }
         }
@@ -266,16 +323,19 @@ const Office = (props) => {
     // Form data by id
     useEffect(() => {
         if (id) {
+            setLoading(true);
             console.log(id)
             if (data) {
+                setLoading(false)
                 formFillRouter(data)
             } else {
                 getFormData(pincode, id)
                     .then(formsaved => {
-                       formFill(formsaved)
-                       update(ref(db, `form/${pincode}/${id}`), {
-                           watcherEmail: getCookie('email'),
-                       });
+                        setLoading(false)
+                        formFill(formsaved)
+                        update(ref(db, `form/${pincode}/${id}`), {
+                            watcherEmail: getCookie('email'),
+                        });
                     })
             }
         }
@@ -394,7 +454,14 @@ const Office = (props) => {
     const combiner = (data) => {
         let alldata = formdata
         let combined = Object.assign(alldata, data);
-        setFormdata(combined)
+        localStorage.setItem(id, JSON.stringify(combined))
+        setFormdata(combined);
+        setRefresh(Math.random());
+    }
+    const remarksfnc = () => {
+        let data = formdata
+        let overall = `${data.overallStatus ? data.overallStatus : ''}; Date: ${data.visitDate ? data.visitDate : ''}; ${data.visitedTime ? data.visitedTime : ''}; Mismatch Address: ${data.mismatchAddress ? data.mismatchAddress : ''}; Address Confirmed: ${data.addressConfirmed ? data.addressConfirmed : ''}; Person Met: ${data.personMet ? data.personMet : ''}; Person Met Name: ${data.personMetName ? data.personMetName : ''}; Nature of Business Details: ${data.natureofBusines ? data.natureofBusines : ''};Business Board Seen: ${data.businessBoardSeen ? data.businessBoardSeen : ''}; Office Ownership: ${data.officeOwnership ? data.officeOwnership : ''};Type of Office: ${data.verificationObserver ? data.verificationObserver : ''}; Locality of Office: ${data.localityofOffice ? data.localityofOffice : ''}; Business Activity Level: ${data.businessActivityLevel ? data.businessActivityLevel : ''};Ease of Locating: ${data.easeofLocating ? data.easeofLocating : ''};Distance from Station: ${data.distancefromStation ? data.distancefromStation : ''};Negative Area: ${data.negativeArea ? data.negativeArea : ''};TPC1: ${data.TPCName1 ? data.TPCName1 : ''} - ${data.tpc1Status ? data.tpc1Status : ''} - ${data.tpc1Remarks ? data.tpc1Remarks : ''};TPC2: ${data.TPCName2 ? data.TPCName2 : ''} - ${data.tpc2Status ? data.tpc2Status : ''} - ${data.tpc2Remarks ? data.tpc2Remarks : ''}; ${data.finalFIAnyRemarks ? data.finalFIAnyRemarks : ''}`;
+        return overall
     }
     return (
         <div>
@@ -407,14 +474,13 @@ const Office = (props) => {
                     }
                 }}
             />
-            {(refresh > 0 || true) && <PdfMake data={formdata} refresh={() => { setRefresh(Math.random()); }} />}
             <Collapse title='Applicant Details'>
                 <ApplicantDetails
                     applicantDetail={(data) => {
                         combiner(data)
                     }} data={applicantDetails} getData={getData} outerDetails={outerDetails} id={id} />
             </Collapse>
-          {id && <>  <Collapse title='Verification Details'>
+            {id && <>  <Collapse title='Verification Details'>
                 <h1>Verification Details</h1>
                 {(refresh > 0 || true) && <form className='d-flex justify-content-between flex-wrap' >
                     <div>
@@ -517,14 +583,22 @@ const Office = (props) => {
                 }} getData={getData} data={verificationObserver} id={id} />
                 <Tpc tpc={(data) => {
                     combiner(data)
-                }} getData={getData} data={verificationObserver} id={id} overallstatusCal={overallStatusCal}/>
+                }} getData={getData} data={verificationObserver} id={id} overallstatusCal={overallStatusCal} remarksfnc={remarksfnc} />
+
             </Collapse>
-            <Collapse title='Images and GeoLocation'>
-                <Geolocation data={verificationObserver} id={id} pincode={pincode} />
-            </Collapse>
-            <Button color='warning' onClick={handleSave}>Save</Button>
-            <Button color='primary' onClick={handleSubmit}>Submit</Button>
-            </>}
+                <Collapse title='Images and GeoLocation'>
+                    <Geolocation data={verificationObserver} id={id} pincode={pincode} />
+                </Collapse>
+                {(refresh > 0 || true) && <PdfMake data={formdata} refresh={() => { setRefresh(Math.random()); }} download={downloadPdf} />}
+
+            </>
+            }
+            {!loading ? <> <Button color='warning' onClick={handleSave}>Save</Button>
+                <Button color='primary' onClick={handleSubmit}>Submit</Button>
+            </> :
+                <div class="spinner-grow text-warning" role="status">
+                </div>
+            }
         </div>
     )
 }

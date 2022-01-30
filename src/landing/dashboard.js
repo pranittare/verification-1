@@ -79,9 +79,11 @@ const Dashboard = ({ forms, agents }) => {
         let currentDate = new Date().getDate()
         data.then(res => {
             let data = [];
+            if(res)
             for (let index = 0; index < res.length; index++) {
                 const element = res[index];
-                if (new Date(element.tat).getDate() == currentDate) {
+                // console.log('date',new Date(element.applicantDetails.initiationDate).getDate(), currentDate)
+                if (new Date(element.applicantDetails.initiationDate).getDate() === currentDate) {
                     data.push(element)
                 }
             }
