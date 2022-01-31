@@ -56,6 +56,7 @@ const ApplicantDetails = forwardRef((props, ref) => {
         visitedresidentAddress: '',
         remarks: '',
         type: '',
+        form: '',
         emailList: [],
         // selected: '',
         // claimed: '',
@@ -83,14 +84,15 @@ const ApplicantDetails = forwardRef((props, ref) => {
         update(rtRef(db, path), prevCasesCount()).then()
     }
     const handleSubmit = (e) => {
-        if (formdata.contactNo) {
+        e.preventDefault();
+        if (formdata.mobileNo) {
             let newDate = new Date().getTime()
             let formdat = formdata
+            formdat.form = formdat.type
             const srNumber = `${thisMonth1}-${now.getFullYear()}-${new Date().getTime()}`
             if (!formdat.srNo) {
                 formdat.srNo = srNumber
             }
-            e.preventDefault()
             // if (id) {
             //     applicantDetail(formdat)
             // }
@@ -115,7 +117,7 @@ const ApplicantDetails = forwardRef((props, ref) => {
             const path = `form/${formdat.pincode}/${newDate}-${Math.round(Math.random() * 100)}`;
             update(rtRef(db, path), datatoSubmit).then(res => {
                 handleToken(datatoSubmit.selected)
-                handleCasesToday()
+                // handleCasesToday()
                 alert('Forms Sent')
             }).catch(err => {
                 alert('Something went Wrong check and try again')
@@ -123,12 +125,12 @@ const ApplicantDetails = forwardRef((props, ref) => {
             })
             console.log('submit', datatoSubmit, formdat)
         } else {
-            alert('Contact number is Required')
+            alert('Mobile number is Required')
         }
         // return datatoSubmit
     }
     const handleUpdateForm = () => {
-        if (formdata.contactNo) {
+        if (formdata.mobileNo) {
             let datatoSubmit = {
                 [formdata.type]: { applicantDetails: formdata },
                 completed: false,
@@ -156,7 +158,7 @@ const ApplicantDetails = forwardRef((props, ref) => {
             })
             console.log('update', datatoSubmit, formdata)
         } else {
-            alert('Contact number is Required')
+            alert('Mobile number is Required')
         }
     }
     const notificationSend = (fcm) => {
