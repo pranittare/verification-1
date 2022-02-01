@@ -17,14 +17,14 @@ export default function VerificationObserverResident({ verification, getData, da
         constructionOfResidence: '',
         accessibility: '',
         easeofLocating: '',
-        interiorConditions: '',
-        exteriorConditions: '',
+        interiorConditions: [],
+        exteriorConditions: [],
         areaofResidence: '',
         customerAttitude: '',
         distancefromStation: '',
         picturePoliticalLeader: '',
         politicalLeaderDetails: '',
-        assetSeenAtResidence: '',
+        assetSeenAtResidence: [],
         negativeArea: ''
     }
     const [formdata, setFormdata] = useState({
@@ -34,14 +34,14 @@ export default function VerificationObserverResident({ verification, getData, da
         constructionOfResidence: '',
         accessibility: '',
         easeofLocating: '',
-        interiorConditions: '',
-        exteriorConditions: '',
+        interiorConditions: [],
+        exteriorConditions: [],
         areaofResidence: '',
         customerAttitude: '',
         distancefromStation: '',
         picturePoliticalLeader: '',
         politicalLeaderDetails: '',
-        assetSeenAtResidence: '',
+        assetSeenAtResidence: [],
         negativeArea: ''
     })
 
@@ -66,8 +66,8 @@ export default function VerificationObserverResident({ verification, getData, da
     }
     useEffect(() => {
         if (getData) {
-        verification(formdata)
-        // document.getElementById('residentVerificationObserver').click()
+            verification(formdata)
+            // document.getElementById('residentVerificationObserver').click()
         }
     }, [getData])
     useEffect(() => {
@@ -144,7 +144,21 @@ export default function VerificationObserverResident({ verification, getData, da
     let exteriorConditions = ['Surrounding Wall', 'Gate', 'Garden', 'Car Parking', 'Lift', 'Security', 'Godown Area']
 
     let assetSeenAtResidence = ['TV', 'Fridge', 'Washing Machine', 'AC', 'Computer', 'Laptop', 'Home Theater']
-
+    const addCheckboxes = (e, item) => {
+        let form = formdata
+        form[e.target.name] = form[e.target.name].toString();
+        form[e.target.name] = form[e.target.name].split(',');
+        let data = form[e.target.name]
+        form[e.target.name] = data.filter(a => a && a)
+        if (e.target.checked) {
+            form[e.target.name]?.push(item)
+        } else {
+            let data = form[e.target.name]
+            form[e.target.name] = data.filter(a => a !== item)
+        }
+        setFormdata(form);
+        setRefresh(Math.random());
+    }
     return (
         <div>
             <h4>Verification Observer</h4>
@@ -179,15 +193,15 @@ export default function VerificationObserverResident({ verification, getData, da
                     onChange={(e) => onHandleChange(e.currentTarget)} /> */}
                     <Dropdown isOpen={interorConditionsDrop} toggle={interorConditionsDroptoggle}>
                         <DropdownToggle>
-                        Selected {formdata['interiorConditions']?.length}
+                            Selected {formdata['interiorConditions']?.length}
                         </DropdownToggle>
                         <DropdownMenu >
-                        {interiorConditions?.map((item) => {
-                            return <div key={item} >
-                                <Input type='checkbox' value={item} checked={formdata['interiorConditions']?.includes(item)} />
-                                {item}
-                            </div>
-                        })}
+                            {interiorConditions?.map((item) => {
+                                return <div key={item} >
+                                    <Input type='checkbox' name='interiorConditions' value={item} checked={formdata['interiorConditions']?.includes(item)} onChange={(e) => addCheckboxes(e, item)} />
+                                    {item}
+                                </div>
+                            })}
                         </DropdownMenu>
                     </Dropdown>
                 </div>
@@ -195,15 +209,15 @@ export default function VerificationObserverResident({ verification, getData, da
                     <label>Exterior Condition</label>
                     <Dropdown isOpen={exteriorConditionsDrop} toggle={exteriorConditionsDroptoggle}>
                         <DropdownToggle>
-                        Selected {formdata['exteriorConditions']?.length}
+                            Selected {formdata['exteriorConditions']?.length}
                         </DropdownToggle>
                         <DropdownMenu >
-                        {exteriorConditions?.map((item) => {
-                            return <div key={item} >
-                                <Input type='checkbox' value={item} checked={formdata['exteriorConditions']?.includes(item)} />
-                                {item}
-                            </div>
-                        })}
+                            {exteriorConditions?.map((item) => {
+                                return <div key={item} >
+                                    <Input type='checkbox' value={item} name='exteriorConditions' checked={formdata['exteriorConditions']?.includes(item)}  onChange={(e) => addCheckboxes(e, item)} />
+                                    {item}
+                                </div>
+                            })}
                         </DropdownMenu>
                     </Dropdown>
 
@@ -234,15 +248,15 @@ export default function VerificationObserverResident({ verification, getData, da
                     {/* <Input type="text" name='assetSeenAtResidence' value={formdata['assetSeenAtResidence']} onChange={(e) => onHandleChange(e.currentTarget)} /> */}
                     <Dropdown isOpen={assetSeenAtResidenceDrop} toggle={assetSeenAtResidenceDroptoggle}>
                         <DropdownToggle>
-                        Selected {formdata['assetSeenAtResidence']?.length}
+                            Selected {formdata['assetSeenAtResidence']?.length}
                         </DropdownToggle>
                         <DropdownMenu >
-                        {assetSeenAtResidence.map((item) => {
-                            return <div key={item} >
-                                <Input type='checkbox' value={item} checked={formdata['assetSeenAtResidence']?.includes(item)} />
-                                {item}
-                            </div>
-                        })}
+                            {assetSeenAtResidence.map((item) => {
+                                return <div key={item} >
+                                    <Input type='checkbox' value={item} name='assetSeenAtResidence' checked={formdata['assetSeenAtResidence']?.includes(item)}  onChange={(e) => addCheckboxes(e, item)} />
+                                    {item}
+                                </div>
+                            })}
                         </DropdownMenu>
                     </Dropdown>
                 </div>

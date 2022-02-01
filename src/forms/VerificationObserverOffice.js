@@ -132,8 +132,22 @@ export default function VerificationObserverOffice({ verification, getData, data
     let assetSeenAtOffice = ['AC', 'PC', 'Printer', 'Telephone', 'Fax', 'xerox']
     let interiorConditions = ['Painted', 'Carpeted', 'clean']
     let exteriorCondition =
-        ['Surrounding Wall', 'Gate', 'Garden', 'Car Parking', 'Lift', 'Security Office', 'Godown Area']
-
+        ['Surrounding Wall', 'Gate', 'Garden', 'Car Parking', 'Lift', 'Security Office', 'Godown Area'];
+    const addCheckboxes = (e, item) => {
+        let form = formdata
+        form[e.target.name] = form[e.target.name].toString();
+        form[e.target.name] = form[e.target.name].split(',');
+        let data = form[e.target.name]
+        form[e.target.name] = data.filter(a => a && a)
+        if (e.target.checked) {
+            form[e.target.name]?.push(item)
+        } else {
+            let data = form[e.target.name]
+            form[e.target.name] = data.filter(a => a !== item)
+        }
+        setFormdata(form);
+        setRefresh(Math.random());
+    }
     return (
         <div>
             <h4>Verification Observer</h4>
@@ -160,15 +174,15 @@ export default function VerificationObserverOffice({ verification, getData, data
                     {/* <Input type="text" name='exteriorCondition' value={formdata['exteriorCondition']} onChange={(e) => onHandleChange(e.currentTarget)} /> */}
                     <Dropdown isOpen={exteriorConditionsDrop} toggle={exteriorConditionsDroptoggle}>
                         <DropdownToggle>
-                        Selected {formdata['exteriorCondition']?.length}
+                            Selected {formdata['exteriorCondition']?.length}
                         </DropdownToggle>
                         <DropdownMenu >
-                        {exteriorCondition.map((item) => {
-                            return <div key={item} >
-                                <Input type='checkbox' value={item} checked={formdata['exteriorCondition']?.includes(item)} />
-                                {item}
-                            </div>
-                        })}
+                            {exteriorCondition.map((item) => {
+                                return <div key={item} >
+                                    <Input type='checkbox' value={item} name='exteriorCondition' checked={formdata['exteriorCondition']?.includes(item)} onChange={(e) => addCheckboxes(e, item)} />
+                                    {item}
+                                </div>
+                            })}
                         </DropdownMenu>
                     </Dropdown>
                 </div>
@@ -205,15 +219,15 @@ export default function VerificationObserverOffice({ verification, getData, data
                     {/* <Input type="text" name='assetSeenAtOffice' value={formdata['assetSeenAtOffice']} onChange={(e) => onHandleChange(e.currentTarget)} /> */}
                     <Dropdown isOpen={assetSeenAtOfficeDrop} toggle={assetSeenAtOfficeDroptoggle}>
                         <DropdownToggle>
-                        Selected {formdata['assetSeenAtOffice']?.length}
+                            Selected {formdata['assetSeenAtOffice']?.length}
                         </DropdownToggle>
                         <DropdownMenu >
-                        {assetSeenAtOffice.map((item) => {
-                            return <div key={item} >
-                                <Input type='checkbox' value={item} checked={formdata['assetSeenAtOffice']?.includes(item)} />
-                                {item}
-                            </div>
-                        })}
+                            {assetSeenAtOffice.map((item) => {
+                                return <div key={item} >
+                                    <Input type='checkbox' value={item} name='assetSeenAtOffice' checked={formdata['assetSeenAtOffice']?.includes(item)} onChange={(e) => addCheckboxes(e, item)} />
+                                    {item}
+                                </div>
+                            })}
                         </DropdownMenu>
                     </Dropdown>
                 </div>
@@ -222,15 +236,15 @@ export default function VerificationObserverOffice({ verification, getData, data
                     {/* <Input type="text" name='interiorConditions' value={formdata['interiorConditions']} onChange={(e) => onHandleChange(e.currentTarget)} /> */}
                     <Dropdown isOpen={interorConditionsDrop} toggle={interorConditionsDroptoggle}>
                         <DropdownToggle>
-                        Selected {formdata['interiorConditions']?.length}
+                            Selected {formdata['interiorConditions']?.length}
                         </DropdownToggle>
                         <DropdownMenu >
-                        {interiorConditions?.map((item) => {
-                            return <div key={item} >
-                                <Input type='checkbox' value={item} checked={formdata['interiorConditions']?.includes(item)} />
-                                {item}
-                            </div>
-                        })}
+                            {interiorConditions?.map((item) => {
+                                return <div key={item} >
+                                    <Input type='checkbox' value={item} name='interiorConditions' checked={formdata['interiorConditions']?.includes(item)} onChange={(e) => addCheckboxes(e, item)}/>
+                                    {item}
+                                </div>
+                            })}
                         </DropdownMenu>
                     </Dropdown>
                 </div>

@@ -13,9 +13,6 @@ const Tpc = ({ tpc, getData, data, id, overallstatusCal, remarksfnc, users }) =>
         TPCName2: '',
         status2: '',
         TPCRemark2: '',
-        TPCName3: '',
-        status3: '',
-        TPCRemark3: '',
         TVRNumber: '',
         TVRDesignation: '',
         TVRStatus: '',
@@ -189,17 +186,7 @@ const Tpc = ({ tpc, getData, data, id, overallstatusCal, remarksfnc, users }) =>
                             <td>
                                 <Input type="text" name="TPCRemark2" value={formdata['TPCRemark2']} onChange={(e) => onHandleChange(e.currentTarget)} /></td>
                         </tr>
-                        <tr>
-                            <th>3</th>
-                            <td>
-                                <Input type="text" name="TPCName3" value={formdata['TPCName3']} onChange={(e) => onHandleChange(e.currentTarget)} /></td>
-
-                            <td>
-                                <DropDownComp id='tpc' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={status3} />
-                            </td>
-                            <td>
-                                <Input type="text" name="TPCRemark3" value={formdata['TPCRemark3']} onChange={(e) => onHandleChange(e.currentTarget)} /></td>
-                        </tr>
+                        
                     </tbody>
                 </table>
                 <div className='d-flex'>

@@ -2,12 +2,14 @@ import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'rea
 import { Button, Input, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import DropDownComp from '../components/DropDownComp';
 import { connect } from 'react-redux';
-import { getDatabase, set, update, remove, ref as rtRef } from "firebase/database";
+import { getDatabase, update, ref as rtRef } from "firebase/database";
 import axios from 'axios';
+import {useHistory} from 'react-router-dom';
 
 const ApplicantDetails = forwardRef((props, ref) => {
     const { applicantDetail, data, getData, vendor, agents, outerDetails, id, branch, casestoday } = props;
     const db = getDatabase();
+    const history = useHistory();
     // console.log('outer', outerDetails)
     const initalData = {
         appid: '',
@@ -85,7 +87,7 @@ const ApplicantDetails = forwardRef((props, ref) => {
     }
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (formdata.mobileNo) {
+        if (formdata.mobileNo.length > 9) {
             let newDate = new Date().getTime()
             let formdat = formdata
             formdat.form = formdat.type
@@ -118,7 +120,8 @@ const ApplicantDetails = forwardRef((props, ref) => {
             update(rtRef(db, path), datatoSubmit).then(res => {
                 handleToken(datatoSubmit.selected)
                 // handleCasesToday()
-                alert('Forms Sent')
+                alert('Forms Sent');
+                history.push('/ActiveCases')
             }).catch(err => {
                 alert('Something went Wrong check and try again')
                 console.log('Form initiation', err)
@@ -130,7 +133,7 @@ const ApplicantDetails = forwardRef((props, ref) => {
         // return datatoSubmit
     }
     const handleUpdateForm = () => {
-        if (formdata.mobileNo) {
+        if (formdata.mobileNo.length > 9) {
             let datatoSubmit = {
                 [formdata.type]: { applicantDetails: formdata },
                 completed: false,
@@ -151,7 +154,8 @@ const ApplicantDetails = forwardRef((props, ref) => {
             }
             const path = `form/${formdata.pincode}/${id}`;
             update(rtRef(db, path), datatoSubmit).then(res => {
-                alert('Forms Updated')
+                alert('Forms Updated');
+                history.push('/ActiveCases')
             }).catch(err => {
                 alert('Something went Wrong check and try again')
                 console.log('Form update', err)
@@ -227,6 +231,13 @@ const ApplicantDetails = forwardRef((props, ref) => {
     const onHandleChange = (e) => {
         let form = formdata
         form[e.name] = e.value
+        if (form.mismatchAddress !== 'yes') {
+            if (form.type === 'resident') {
+                form.visitedresidentAddress = e.value
+            } else {
+                form.visitedOfficeAddress = e.value
+            }
+        }
         setFormdata(form)
         setRefresh(Math.random())
     }
@@ -431,7 +442,7 @@ const ApplicantDetails = forwardRef((props, ref) => {
                         <Input type="number" name='contactNo' value={formdata['contactNo']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
                     <div >
-                        <label>Mobile No.</label>
+                        <label>Mobile No. ({formdata['mobileNo'].length}/10)</label>
                         <Input type="number" name='mobileNo' value={formdata['mobileNo']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
                     {formdata['type'] === 'office' && <div >

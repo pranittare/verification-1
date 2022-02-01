@@ -3,11 +3,14 @@ import { connect } from 'react-redux';
 import { Input } from 'reactstrap'
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import moment from 'moment';
-import { useHistory } from 'react-router-dom'
+import { useHistory } from 'react-router-dom';
+import { getDatabase, remove, ref } from "firebase/database";
+
 
 const ActiveCases = (props) => {
     const formatedDate = new Date().toDateString()
     let history = useHistory();
+    const db = getDatabase();
     const [allData, setAllData] = useState([])
     const [reset, setReset] = useState(0);
     const formData = (forms) => {
@@ -70,6 +73,69 @@ const ActiveCases = (props) => {
         setReset(Math.random())
 
     }
+    const pincodeFilter = (e) => {
+        let data = allData
+        if (e.currentTarget.value) {
+            setAllData(data.filter(item => {
+                if (item?.office) {
+                    if (item?.office?.applicantDetails) {
+                        if (item?.office?.applicantDetails?.pincode) {
+                            let rval = item.office?.applicantDetails?.pincode?.toString().includes(e.currentTarget.value)
+                            return rval
+                        }
+                    }
+                } else if (item?.resident) {
+                    if (item?.resident?.applicantDetails) {
+                        if (item?.resident?.applicantDetails?.pincode) {
+                            let rval = item.resident?.applicantDetails?.pincode?.toString().includes(e.currentTarget.value)
+                            return rval
+                        }
+                    }
+                }
+            }))
+        } else {
+            formData(props.forms)
+        }
+        setReset(Math.random());
+    }
+
+    const allSearch = (e) => {
+        let data = allData
+        let val = e.currentTarget.value.toLocaleLowerCase()
+        if (e.currentTarget.value) {
+            setAllData(data.filter(item => {
+                if (item.appid.toString().toLocaleLowerCase().includes(val)) {
+                    return item
+                }
+                if (item?.office) {
+                    if (item?.office?.applicantDetails) {
+                        if (item.office?.applicantDetails?.customerName) {
+                            let rval = item.office?.applicantDetails?.customerName.toLocaleLowerCase().includes(e.currentTarget.value)
+                            return rval
+                        }
+                        if (item?.office?.applicantDetails?.pincode) {
+                            let rval = item.office?.applicantDetails?.pincode?.toString().includes(e.currentTarget.value)
+                            return rval
+                        }
+                    }
+                } else if (item?.resident) {
+                    if (item?.resident?.applicantDetails) {
+                        if (item.resident?.applicantDetails?.customerName) {
+                            let rval = item.resident?.applicantDetails?.customerName.toLocaleLowerCase().includes(e.currentTarget.value)
+                            return rval
+                        }
+                        if (item?.resident?.applicantDetails?.pincode) {
+                            let rval = item.resident?.applicantDetails?.pincode?.toString().includes(e.currentTarget.value)
+                            return rval
+                        }
+                    }
+                }
+            }))
+        } else {
+            formData(props.forms)
+        }
+        setReset(Math.random());
+    }
     const handleViewForm = (item) => {
         console.log('handleViewForm', item)
         let pincode = ''
@@ -86,6 +152,37 @@ const ActiveCases = (props) => {
     const getExcel = () => {
         let table = document.getElementById('test-table-xls-button')
         table.click()
+    }
+    const handleDelete = (item) => {
+        console.log({ item })
+        let type = '';
+        let pincode;
+        if (item?.office?.applicantDetails) {
+            type = 'office';
+            pincode = item.office.applicantDetails.pincode
+        } else if (item?.resident?.applicantDetails) {
+            type = 'resident';
+            pincode = item.resident.applicantDetails.pincode
+        }
+        if (type && pincode) {
+            const path = `form/${pincode}/${item.key}`
+            console.log('path', path)
+            remove(ref(db, path)).then(res => {
+                alert('Case Removed');
+                setReset(Math.random());
+            })
+        } else if (item.pincode && item.key) {
+                pincode = item.pincode
+                const path = `form/${pincode}/${item.key}`
+                console.log('path', path)
+                remove(ref(db, path)).then(res => {
+                    alert('Case Removed');
+                    setReset(Math.random());
+                })
+
+            } else {
+                alert('problem found delete from backend!');
+        }
     }
     useEffect(() => {
         formData(props.forms)
@@ -142,6 +239,16 @@ const ActiveCases = (props) => {
                 filename={`Active-${formatedDate}`}
                 sheet="tablexls"
                 buttonText="Download as XLS" />
+            <div className='d-flex justify-content-between'>
+                <div >
+                    <label>Pincode</label>
+                    <Input type="text" onChange={pincodeFilter} name="pincode" placeholder={'Pincode'} />
+                </div>
+                <div>
+                    <label>Search</label>
+                    <Input type="text" onChange={allSearch} placeholder={'Search all'} />
+                </div>
+            </div>
             <form className='d-flex justify-content-between flex-wrap' id='form'>
                 <table className="table table-striped table-bordered">
                     <thead>
@@ -163,6 +270,9 @@ const ActiveCases = (props) => {
                                 <td >
                                     <div onClick={() => handleViewForm(item)} style={{ cursor: 'pointer' }} className={item?.office?.applicantDetails ? 'text-primary' : 'text-success'}>
                                         {item.appid}
+                                        {getAgentName(item) && <div className='text-danger'>
+                                            Agent Name: {getAgentName(item)}
+                                        </div>}
                                     </div>
                                 </td>
                                 <td>
@@ -204,6 +314,9 @@ const ActiveCases = (props) => {
                                             item.resident?.applicantDetails?.remarks
                                     }
 
+                                </td>
+                                <td>
+                                    <button className='btn btn-danger' type='button' onClick={() => handleDelete(item)}>X</button>
                                 </td>
                             </tr>
                         })}
@@ -278,7 +391,12 @@ const ActiveCases = (props) => {
         </div>
     )
 }
+const getAgentName = (item) => {
 
+    if (item.rejectedFrom === item.selected) {
+        return ''
+    } else if (item.selected) return item.selected
+}
 const mapStateToProps = (state) => {
     return {
         forms: state.forms,

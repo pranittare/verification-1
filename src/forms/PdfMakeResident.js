@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import stamp from '../assets/stamp.jpeg'
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
-const PdfMakeResident = ({ data, images, refresh, download }) => {
+const PdfMakeResident = ({ data, images, refresh, download, initiationDate }) => {
 
     const [stamp64, setStamp64] = useState();
     const [map, setMap] = useState();
@@ -131,7 +131,7 @@ const PdfMakeResident = ({ data, images, refresh, download }) => {
                             {
                                 
                                 border: [true, true, true, true],
-                                text: data.initiationDate
+                                text: initiationDate
                             },
                         ],
 
@@ -165,7 +165,7 @@ const PdfMakeResident = ({ data, images, refresh, download }) => {
                             {
                                 
                                 border: [true, true, true, true],
-                                text: data.bankNBFCname
+                                text: data?.bankNBFCname?.clientName
                             },
                         ],
 

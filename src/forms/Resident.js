@@ -74,6 +74,7 @@ const Resident = (props) => {
     const [refresh, setRefresh] = useState(0);
     const [loading, setLoading] = useState(false);
     const [downloadPdf, setDownloadPdf] = useState(false);
+    const [initiationDate, setInitiationDate] = useState('');
 
     const onHandleChange = (e) => {
         let form = formdata
@@ -461,6 +462,8 @@ const Resident = (props) => {
         let alldata = formdata
         let combined = Object.assign(alldata, data);
         console.log('combiner', combined)
+        let init = combined
+        setInitiationDate(init.initiationDate.split('GMT')[0])
         localStorage.setItem(id, JSON.stringify(combined))
         setFormdata(combined);
         setRefresh(Math.random())
@@ -525,10 +528,8 @@ const Resident = (props) => {
                         <DropDownComp id='resident' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={personMetRealtionwithApplicant} />
                         {/* <Input type="text" name='personMetRealtionwithApplicant' value={formdata['personMetRealtionwithApplicant']} onChange={(e) => onHandleChange(e.currentTarget)} /> */}
                     </div>
-                    {formdata['personMetRealtionwithApplicant'] === 'Others' && <div>
                         <label>Name and Relation with Applicant (Others)</label>
                         <Input type="text" name='personMetRealtionwithApplicantOther' value={formdata['personMetRealtionwithApplicantOther']} onChange={(e) => onHandleChange(e.currentTarget)} />
-                    </div>}
                     <div>
                         <label>Staying in City (No. of Yrs)</label>
                         <Input type="text" name='totalYearsInCity' value={formdata['totalYearsInCity']} onChange={(e) => onHandleChange(e.currentTarget)} />
@@ -538,10 +539,8 @@ const Resident = (props) => {
                         {/* <Input type="text" name='lessThanYrAtCurrentAddress' value={formdata['lessThanYrAtCurrentAddress']} onChange={(e) => onHandleChange(e.currentTarget)} /> */}
                         <DropDownComp id='resident' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={lessThanYrAtCurrentAddress} />
                     </div>
-                    {formdata['lessThanYrAtCurrentAddress'] === 'Yes' && <div>
                         <label>Less than 1 yr at Current Address (Yes)</label>
                         <Input type="text" name='lessThanYrAtCurrentAddressNote' value={formdata['lessThanYrAtCurrentAddressNote']} onChange={(e) => onHandleChange(e.currentTarget)} />
-                    </div>}
                     <div>
                         <label>Residence Status</label>
                         {/* <Input type="text" name='residenceStatus' value={formdata['residenceStatus']} onChange={(e) => onHandleChange(e.currentTarget)} /> */}
@@ -620,7 +619,7 @@ const Resident = (props) => {
                 <Collapse title='Images and GeoLocation'>
                     <Geolocation data={verificationObserver} id={id} pincode={pincode} />
                 </Collapse>
-                {(refresh > 0 || true) && <PdfMakeResident data={formdata} refresh={() => { setRefresh(Math.random()) }} download={downloadPdf} />}
+                {(refresh > 0 || true) && <PdfMakeResident data={formdata} refresh={() => { setRefresh(Math.random()) }} download={downloadPdf} initiationDate={initiationDate}  />}
             
             </>
             }

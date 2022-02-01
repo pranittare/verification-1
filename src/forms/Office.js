@@ -75,6 +75,7 @@ const Office = (props) => {
     const [refresh, setRefresh] = useState(0);
     const [loading, setLoading] = useState(false);
     const [downloadPdf, setDownloadPdf] = useState(false);
+    const [initiationDate, setInitiationDate] = useState('');
 
     const dataSplit = () => {
         let verfi = { verification: {}, applicant: {} }
@@ -350,37 +351,37 @@ const Office = (props) => {
     const overallStatusCal = (allData) => {
         console.log('alldata', allData)
         let orverallstatus = ''
-        if (allData.mismatchAddress == 'yes') {
+        if (allData?.mismatchAddress == 'yes') {
             orverallstatus = 'Not Recommended'
-        } else if (allData.constructionOfOffice == 'Temporary') {
+        } else if (allData?.constructionOfOffice == 'Temporary') {
             orverallstatus = 'Not Recommended'
-        } else if (allData.picturePoliticalLeader == 'yes') {
+        } else if (allData?.picturePoliticalLeader == 'yes') {
             orverallstatus = 'Not Recommended'
 
-        } else if (allData.marketReputation == 'negative') {
+        } else if (allData?.marketReputation == 'negative') {
             orverallstatus = 'Not Recommended'
-        } else if (allData.addressConfirmed == 'no') {
+        } else if (allData?.addressConfirmed == 'no') {
             orverallstatus = 'Not Recommended'
-        } else if (allData.localityofOffice == 'Slum') {
+        } else if (allData?.localityofOffice == 'Slum') {
             orverallstatus = 'Not Recommended'
-        } else if (allData.marketReputation == 'negative') {
+        } else if (allData?.marketReputation == 'negative') {
             orverallstatus = 'Not Recommended'
-        } else if (allData.easeofLocating == 'Not Traceable') {
+        } else if (allData?.easeofLocating == 'Not Traceable') {
             orverallstatus = 'Not Recommended'
         } else {
-            if (allData.verificationObserver == 'Resi cum Office') {
+            if (allData?.verificationObserver == 'Resi cum Office') {
                 orverallstatus = 'Refer'
-            } else if (allData.verificationObserver == 'Shed') {
+            } else if (allData?.verificationObserver == 'Shed') {
                 orverallstatus = 'Refer'
-            } else if (allData.verificationObserver == 'Shared Office') {
+            } else if (allData?.verificationObserver == 'Shared Office') {
                 orverallstatus = 'Refer'
-            } else if (allData.businessBoardSeen == 'no') {
+            } else if (allData?.businessBoardSeen == 'no') {
                 orverallstatus = 'Refer'
-            } else if (allData.personMet == 'no') {
+            } else if (allData?.personMet == 'no') {
                 orverallstatus = 'Refer'
-            } else if (allData.lessThanYrAtCurrentAddress == 'yes') {
+            } else if (allData?.lessThanYrAtCurrentAddress == 'yes') {
                 orverallstatus = 'Refer'
-            } else if (allData.businessActivityLevel == 'Low') {
+            } else if (allData?.businessActivityLevel == 'Low') {
                 orverallstatus = 'Refer'
             } else {
                 orverallstatus = 'Recommended'
@@ -454,6 +455,8 @@ const Office = (props) => {
     const combiner = (data) => {
         let alldata = formdata
         let combined = Object.assign(alldata, data);
+        let init = combined
+        setInitiationDate(init.initiationDate.split('GMT')[0])
         localStorage.setItem(id, JSON.stringify(combined))
         setFormdata(combined);
         setRefresh(Math.random());
@@ -589,7 +592,7 @@ const Office = (props) => {
                 <Collapse title='Images and GeoLocation'>
                     <Geolocation data={verificationObserver} id={id} pincode={pincode} />
                 </Collapse>
-                {(refresh > 0 || true) && <PdfMake data={formdata} refresh={() => { setRefresh(Math.random()); }} download={downloadPdf} />}
+                {(refresh > 0 || true) && <PdfMake data={formdata} refresh={() => { setRefresh(Math.random()); }} download={downloadPdf} initiationDate={initiationDate} />}
 
             </>
             }
