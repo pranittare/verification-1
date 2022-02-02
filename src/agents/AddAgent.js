@@ -177,15 +177,17 @@ const AddAgent = ({ agent, allAgents, realTimeAgents, agents, realTimeforms }) =
                 }
             }
             if (agent.userId === agents.userId) {
-                update(rtRef(db, `agents/${agents.key}`), { uniqueId: 'Disabled', isLoggedIn: false, onCase: false, myForms: 0 }).then(res => {
-                    alert('Agent Disabled')
-                }).catch(err => {
-                    alert('Agent was not disabled check log')
-                    console.log('Disable Agent 2', err)
-                })
+               disableRealTimeAgentSingle(agents.key)
             }
         }
-
+    }
+    const disableRealTimeAgentSingle = (key) => {
+        update(rtRef(db, `agents/${key}`), { uniqueId: 'Disabled', isLoggedIn: false, onCase: false, myForms: 0 }).then(res => {
+            alert('Agent Disabled')
+        }).catch(err => {
+            alert('Agent was not disabled check log')
+            console.log('Disable Agent 2', err)
+        })
     }
     const handleEnable = () => {
         let agent = formdata
@@ -202,41 +204,54 @@ const AddAgent = ({ agent, allAgents, realTimeAgents, agents, realTimeforms }) =
             }
         }
     }
+    const removeRealTimeAgent = (key) => {
+        remove(rtRef(db, `agents/${key}`)).then(res => {
+            alert('Agent Deleted 1')
+        }).catch(err => {
+            alert('Agent was not deleted check log')
+            console.log('Agent Deleted 1', err)
+        })
+    }
+    const deleteKyc = () => {
+        const filePath = `agents/${formdata['agentCode']}`;
+        const storage = getStorage();
+        const kycDocument = ref(storage, filePath);
+        deleteObject(kycDocument).then(res => {
+            alert('KYC Deleted')
+        }).catch(err => {
+            alert('KYC was not Deleted check log')
+            console.log('Agent Deleted kyc', err);
+        })
+    }
+    const deleteDocuments = (agentCode) => {
+        deleteDoc(doc(fdb, `agents/${agentCode}`)).then(res => {
+            alert('Agent Deleted 2')
+        }).catch(err => {
+            alert('Agent was not deleted check log')
+            console.log('Agent Deleted 2', err)
+        })
+    }
     const HandleDeleteAgent = () => {
         let agent = formdata
         let realAgents = rtA
-        const filePath = `agents/${formdata['agentCode']}`;
-        const storage = getStorage();
+        
+        let agentkey;
         for (let index = 0; index < realAgents.length; index++) {
             const agents = realAgents[index];
             if (agent.userId === agents.userId) {
-                remove(rtRef(db, `agents/${agents.key}`)).then(res => {
-                    alert('Agent Deleted 1')
-                }).catch(err => {
-                    alert('Agent was not deleted check log')
-                    console.log('Agent Deleted 1', err)
-                })
+                agentkey = agents.key
             }
         }
+        removeRealTimeAgent(agentkey)
+        let agentcode;
         for (let index = 0; index < agents.length; index++) {
             const element = agents[index];
             if (agent.agentCode === element.agentCode) {
-                const kycDocument = ref(storage, filePath);
-                deleteObject(kycDocument).then(res => {
-                    alert('KYC Deleted')
-                }).catch(err => {
-                    alert('KYC was not Deleted check log')
-                    console.log('Agent Deleted kyc', err);
-                })
-                deleteDoc(doc(db, `agents/${agent.agentCode}`)).then(res => {
-                    alert('Agent Deleted 2')
-                }).catch(err => {
-                    alert('Agent was not deleted check log')
-                    console.log('Agent Deleted 2', err)
-                })
+                agentcode = element.key;
             }
         }
-
+        deleteKyc();
+        deleteDocuments(agentcode);
 
     }
     const commonAddUpdate = (db) => {

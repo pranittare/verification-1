@@ -5,7 +5,7 @@ import moment from 'moment';
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import AddAgent from './AddAgent';
 
-const TotalAgents = (props) => {
+const TotalAgents = ({agents, rtAgents, branch}) => {
     const formatedDate = new Date().toDateString()
 
     const [allData, setAllData] = useState([])
@@ -41,18 +41,36 @@ const TotalAgents = (props) => {
             }
             ))
         } else {
-            setAllData(props.agents)
+            setAllData(agents)
         }
         setReset(Math.random())
 
     }
 
+    const combineData = () => {
+        let data = []
+        for (let index = 0; index < agents.length; index++) {
+            const element = agents[index];
+            for (const key in rtAgents) {
+                if (Object.hasOwnProperty.call(rtAgents, key)) {
+                    const rtElement = rtAgents[key];
+                    if (element.userId === rtElement.userId && rtElement.uniqueId && rtElement.uniqueId !== 'Disabled' ) {
+                        element.uniqueId = rtElement.uniqueId
+                    }
+                    
+                }
+            }
+            data.push(element)
+        }
+        return data
+    }
+
     useEffect(() => {
         // console.log('agents', props.agents)
-        setAllData(props.agents)
+        setAllData(combineData())
         setReset(Math.random())
-        console.log('props', props.agents)
-    }, [props.agents])
+        console.log('props', combineData())
+    }, [agents, rtAgents])
 
     // Duplicate entries
     useEffect(() => {
@@ -110,7 +128,7 @@ const TotalAgents = (props) => {
                     <tbody>
                         {reset > 0 && allData && allData.length > 0 && allData.map((item, index) => {
                             // console.log('item', item)
-                            if (item.branch === props.branch)
+                            if (item.branch === branch)
                                 return <tr key={index}>
                                     <th>{index + 1}</th>
                                     <td >
@@ -167,7 +185,7 @@ const TotalAgents = (props) => {
                     <tbody>
                         {console.log('total',allData && allData)}
                         {reset > 0 && allData && allData.length > 0 && allData.map((item, index) => {
-                            if (item.branch === props.branch) {
+                            if (item.branch === branch) {
                             return <tr key={`${item.userId}-${item.agentCode}-${index}`}>
                                 <th>{index + 1}</th>
                                 <td>
@@ -217,7 +235,8 @@ const mapStateToProps = (state) => {
     // console.log('state', state)
     return {
         agents: state.fagents,
-        branch: state.branch
+        branch: state.branch,
+        rtAgents: state.agents
     }
 }
 export default connect(mapStateToProps)(TotalAgents)

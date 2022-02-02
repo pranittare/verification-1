@@ -270,9 +270,9 @@ const ActiveCases = (props) => {
                                 <td >
                                     <div onClick={() => handleViewForm(item)} style={{ cursor: 'pointer' }} className={item?.office?.applicantDetails ? 'text-primary' : 'text-success'}>
                                         {item.appid}
-                                        {getAgentName(item) && <div className='text-danger'>
-                                            Agent Name: {getAgentName(item)}
-                                        </div>}
+                                        {getAgentName(item) && <p><small className='text-danger'>
+                                            Agent: {getAgentName(item)}
+                                        </small></p>}
                                     </div>
                                 </td>
                                 <td>
