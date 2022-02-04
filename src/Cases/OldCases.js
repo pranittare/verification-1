@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { connect } from 'react-redux';
-import { Input } from 'reactstrap';
+import { Input, Dropdown, DropdownItem, DropdownToggle, DropdownMenu } from 'reactstrap';
 import {
     databaseUpdateQueryExactSingle,
     databaseUpdateQueryExactMultiple, databaseUpdateQueryRangeSingle, databaseUpdateQueryRangeMultiple
@@ -12,6 +12,7 @@ import moment from 'moment';
 import { Link, useHistory } from 'react-router-dom';
 
 const OldCases = (props) => {
+    const { vendors } = props;
     const history = useHistory();
     const formatedDate = new Date().toDateString()
     const [allData, setAllData] = useState([])
@@ -26,6 +27,10 @@ const OldCases = (props) => {
     const [startDate, setStartDate] = useState();
     const [endDate, setEndDate] = useState();
     const [reset, setReset] = useState(0);
+    const [dropdownBankNameOpen, setDropdownBankNameOpen] = useState(false);
+    const toggleBankName = () => {
+        setDropdownBankNameOpen(!dropdownBankNameOpen);
+    }
     const formData = (forms) => {
         // let formarray = []
         // const formKeys = Object.keys(forms)
@@ -170,7 +175,27 @@ const OldCases = (props) => {
             <form className='d-flex justify-content-between flex-wrap'>
                 <div className="row">
                     <div className="col-2">
-                        <Input placeholder='Client Name' name='bankNBFCname' onChange={(e) => handleFilterSearch(e.currentTarget)} />
+                        <Dropdown toggle={toggleBankName} isOpen={dropdownBankNameOpen}>
+                            <DropdownToggle caret>
+                                {searchData1['bankNBFCname'] ? searchData1['bankNBFCname'] : 'None'}
+                            </DropdownToggle>
+                            <DropdownMenu
+                            >
+                                {vendors?.map(item => {
+                                    return <DropdownItem key={item.clientName} onClick={() => {
+                                        let form = searchData1
+                                        form.bankNBFCname = item.clientName
+                                        setSearchData1(form)
+                                        // setFormdata({...formdata, bankNBFCname: item.clientName})
+                                    }}
+                                        value={item.clientName}
+                                        name={item.clientName}>
+                                        {item.clientName}
+                                    </DropdownItem>
+                                })}
+
+                            </DropdownMenu>
+                        </Dropdown>
                     </div>
                     <div className="col-2">
                         <Input placeholder='Customer Name' name='customerName' onChange={(e) => handleFilterSearch(e.currentTarget)} />
@@ -179,11 +204,11 @@ const OldCases = (props) => {
                         <button className='btn btn-info' type='button' onClick={() => search1()} >Search</button>
                     </div>
                     <div className="col-2">
-                        <DatePicker selected={startDate} onChange={(date) => setStartDate(date)} />
+                        <DatePicker className='form-control' placeholderText='Start Date' selected={startDate} onChange={(date) => setStartDate(date)} />
                         {/* <Input placeholder='Start Date' name='start' onChange={handleFilterSearchTime} /> */}
                     </div>
                     <div className="col-2">
-                        <DatePicker selected={endDate} onChange={(date) => setEndDate(date)} />
+                        <DatePicker className='form-control' placeholderText='End Date' selected={endDate} onChange={(date) => setEndDate(date)} />
                         {/* <Input placeholder='End Date' name='end' onChange={handleFilterSearchTime} /> */}
                     </div>
                     <div className="col-2">
@@ -199,7 +224,7 @@ const OldCases = (props) => {
                             <th scope="col"> <Input type="text" name="customerName" placeholder={'CustomerName'} onChange={handleFilter} /> </th>
                             <th scope="col"> <Input type="text" name="tat" placeholder={'TAT'} /> </th>
                             <th scope="col"> <Input type="text" name="bankNBFCname" placeholder={'ClientName'} onChange={handleFilter} /> </th>
-                            <th scope="col"> <Input type="text" name="mobileNo" placeholder={'Mobile No'} onChange={handleFilter} /> </th>
+                            <th scope="col"> <Input type="text" name="remarks" placeholder={'Remarks'} onChange={handleFilter} /> </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -207,7 +232,7 @@ const OldCases = (props) => {
                             return <tr key={`${item.key}-${index + 1}`}>
                                 <td>
                                     {/* <a style={{ cursor: 'pointer' }} > */}
-                                    <Link to={{pathname: item?.applicantDetails.form == 'office' ? `office/${item?.applicantDetails.pincode}/${item.key}` : `resident/${item?.applicantDetails.pincode}/${item.key}`, state: item}} className={item?.applicantDetails.form == 'office' ? 'text-primary' : 'text-success'}>
+                                    <Link to={{ pathname: item?.applicantDetails.form == 'office' ? `office/${item?.applicantDetails.pincode}/${item.key}` : `resident/${item?.applicantDetails.pincode}/${item.key}`, state: item }} className={item?.applicantDetails.form == 'office' ? 'text-primary' : 'text-success'}>
                                         {item.applicantDetails.appid}
                                     </Link>
                                     {/* </a> */}
@@ -235,7 +260,7 @@ const OldCases = (props) => {
 
                                 </td>
                                 <td>
-                                    {item.applicantDetails.mobileNo}
+                                    {item.applicantDetails.remarks}
 
                                 </td>
                             </tr>
@@ -247,12 +272,20 @@ const OldCases = (props) => {
                     <thead>
                         <tr>
                             <th scope="col">ApplicationID</th>
-                            <th scope="col">InitiationDate</th>
-                            <th scope="col">InitiationTime</th>
+                            <th scope="col">Login Date</th>
+                            <th scope="col">Login Time</th>
                             <th scope="col">CustomerName</th>
                             <th scope="col">TAT</th>
                             <th scope="col">ClientName</th>
-                            <th scope="col">Mobile No</th>
+                            <th scope="col">Product</th>
+                            <th scope="col">Pincode</th>
+                            <th scope="col">Address</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Submitted Date</th>
+                            <th scope="col">Submitted Time</th>
+                            <th scope="col">Product Supervisor</th>
+                            <th scope="col">Agent Name</th>
+                            <th scope="col">Remarks</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -262,7 +295,7 @@ const OldCases = (props) => {
                                     {item.applicantDetails.appid}
                                 </td>
                                 <td>
-                                    {moment(item.applicantDetails.initiationDate).format('ll')}
+                                    {moment(item.applicantDetails.initiationDate).format('L')}
                                 </td>
                                 <td>
                                     {moment(item.applicantDetails.initiationDate).format('LT')}
@@ -271,15 +304,38 @@ const OldCases = (props) => {
                                     {item.applicantDetails.customerName}
                                 </td>
                                 <td>
-                                    {moment(item.tat).format('ll')}
+                                    {moment(item.tat).fromNow()}
 
                                 </td>
                                 <td>
                                     {item.applicantDetails.bankNBFCname}
-
                                 </td>
                                 <td>
-                                    {item.applicantDetails.mobileNo}
+                                    {item.applicantDetails.product}
+                                </td>
+                                <td>
+                                    {item.applicantDetails.pincode}
+                                </td>
+                                <td>
+                                    {item.applicantDetails.visitedOfficeAddress ? item.applicantDetails.visitedOfficeAddress : item.applicantDetails.visitedresidentAddress}
+                                </td>
+                                <td>
+                                    {item.verificationDetails.overallStatus}
+                                </td>
+                                <td>
+                                    {moment(item.tat).format('L')}
+                                </td>
+                                <td>
+                                    {moment(item.tat).format('LT')}
+                                </td>
+                                <td>
+                                    {item.verificationDetails.productSupervisor}
+                                </td>
+                                <td>
+                                    {item.verificationDetails.finalFIVerifierName}
+                                </td>
+                                <td>
+                                    {item.applicantDetails.remarks}
 
                                 </td>
                             </tr>
@@ -295,7 +351,8 @@ const mapStateToProps = (state) => {
     // console.log('state', state)
     return {
         forms: state.fforms,
-        db: state.oldcases
+        db: state.oldcases,
+        vendors: state.vendors
     }
 }
 export default connect(mapStateToProps)(OldCases)

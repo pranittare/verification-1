@@ -133,6 +133,14 @@ export default function VerificationObserverOffice({ verification, getData, data
     let interiorConditions = ['Painted', 'Carpeted', 'clean']
     let exteriorCondition =
         ['Surrounding Wall', 'Gate', 'Garden', 'Car Parking', 'Lift', 'Security Office', 'Godown Area'];
+        let negativeArea = [
+            { name: 'negativeArea', value: 'Community Dominated Area', label: 'Community Dominated Area' },
+            { name: 'negativeArea', value: 'Sitting Chawl/Standing Chawl', label: 'Sitting Chawl/Standing Chawl' },
+            { name: 'negativeArea', value: 'Slum Area', label: 'Slum Area' },
+            { name: 'negativeArea', value: 'High Risk Area', label: 'High Risk Area' },
+            { name: 'negativeArea', value: 'Community Dominated/Sitting Chawl/Standing Chawl Area', label: 'Community Dominated/Sitting Chawl/Standing Chawl Area' },
+            { name: 'negativeArea', value: 'Community Dominated / Slum Area', label: 'Community Dominated / Slum Area' },
+        ]
     const addCheckboxes = (e, item) => {
         let form = formdata
         form[e.target.name] = form[e.target.name].toString();
@@ -241,7 +249,7 @@ export default function VerificationObserverOffice({ verification, getData, data
                         <DropdownMenu >
                             {interiorConditions?.map((item) => {
                                 return <div key={item} >
-                                    <Input type='checkbox' value={item} name='interiorConditions' checked={formdata['interiorConditions']?.includes(item)} onChange={(e) => addCheckboxes(e, item)}/>
+                                    <Input type='checkbox' value={item} name='interiorConditions' checked={formdata['interiorConditions']?.includes(item)} onChange={(e) => addCheckboxes(e, item)} />
                                     {item}
                                 </div>
                             })}
@@ -262,7 +270,7 @@ export default function VerificationObserverOffice({ verification, getData, data
                 </div>
                 <div>
                     <label>Negative Area</label>
-                    <Input type="text" name='negativeArea' value={formdata['negativeArea']} onChange={(e) => onHandleChange(e.currentTarget)} />
+                    <DropDownComp id='verificationObserverOffice' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={negativeArea} />
                 </div>
                 <div className='d-none'>
                     <button type='submit' id='officeVerificationObserver'>Submit</button>

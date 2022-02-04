@@ -1,16 +1,22 @@
 import React, { useState, useEffect } from 'react'
 import { connect } from 'react-redux';
-import { Input } from 'reactstrap'
+import { Input, Dropdown, DropdownItem, DropdownToggle, DropdownMenu } from 'reactstrap'
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import { useHistory } from 'react-router-dom'
 import moment from 'moment';
 import ProblemCases from './ProblemCases';
 
 const SubmittedCases = (props) => {
+    const { vendors } = props;
     let history = useHistory();
     const [allData, setAllData] = useState([])
     const [reset, setReset] = useState(0);
-    const formatedDate = new Date().toDateString()
+    const formatedDate = new Date().toDateString();
+    const [dropdownBankNameOpen, setDropdownBankNameOpen] = useState(false);
+    const toggleBankName = () => {
+        setDropdownBankNameOpen(!dropdownBankNameOpen);
+    }
+    const [selectedBank, setSelectedBank] = useState(false);
     const formData = (forms) => {
         let formarray = []
         const formKeys = Object.keys(forms)
@@ -90,6 +96,16 @@ const SubmittedCases = (props) => {
             }
         }
     }
+    const searchByBank = (a) => {
+        if (selectedBank) {
+            if (a?.office?.applicantDetails) {
+                return a.office.applicantDetails?.bankNBFCname?.clientName === selectedBank
+            } else if (a?.resident?.applicantDetails) {
+                return a.resident.applicantDetails?.bankNBFCname?.clientName === selectedBank
+            }
+        }
+        return a
+    }
     useEffect(() => {
         formData(props.forms)
         // console.log
@@ -129,9 +145,31 @@ const SubmittedCases = (props) => {
                 <h4>Submitted Cases</h4>
                 <button onClick={getExcel} className='btn btn-primary'>Get Excel</button>
             </div>
-            <div className='d-flex sticky-top bg-white justify-content-end'>
+            <div className='d-flex sticky-top bg-white justify-content-between'>
+                <div className='mb-1'>
+                    <Dropdown toggle={toggleBankName} isOpen={dropdownBankNameOpen}>
+                        <DropdownToggle caret>
+                            {selectedBank ? selectedBank : 'None'}
+                        </DropdownToggle>
+                        <DropdownMenu
+                        >
+                            <DropdownItem onClick={() => {setSelectedBank(false)}}>None</DropdownItem>
+                            {vendors?.map(item => {
+                                return <DropdownItem key={item.clientName} onClick={() => { setSelectedBank(item.clientName) }}
+                                    value={item.clientName}
+                                    name={item.clientName}>
+                                    {item.clientName}
+                                </DropdownItem>
+                            })}
+
+                        </DropdownMenu>
+                    </Dropdown>
+                </div>
+                <div className='d-flex'>
+                    
                 <p className='text-primary me-1 ms-1'>Office</p>
                 <p className='text-success'>Resident</p>
+                </div>
             </div>
             <ReactHTMLTableToExcel
                 id="test-table-xls-button"
@@ -141,6 +179,7 @@ const SubmittedCases = (props) => {
                 sheet="tablexls"
                 buttonText="Download as XLS" />
             <form className='d-flex justify-content-between flex-wrap'>
+
                 <table className="table table-striped table-bordered">
                     <thead>
                         <tr>
@@ -155,7 +194,7 @@ const SubmittedCases = (props) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {reset > 0 && allData && allData.length > 0 && allData.map((item, index) => {
+                        {reset > 0 && allData && allData.length > 0 && allData.filter(searchByBank).map((item, index) => {
 
                             return <tr key={`${item.appid}-${index + 1}`}>
                                 <td >
@@ -301,7 +340,8 @@ const SubmittedCases = (props) => {
 const mapStateToProps = (state) => {
     return {
         forms: state.forms,
-        branch: state.branch
+        branch: state.branch,
+        vendors: state.vendors
     }
 }
 export default connect(mapStateToProps)(SubmittedCases)

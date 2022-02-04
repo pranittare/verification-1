@@ -134,7 +134,7 @@ const ActiveAgents = (props) => {
                         <tr>
                             <th scope="col"> <Input type="text" name="srno" onChange={handleFilter} placeholder={'Sr.No'} /> </th>
                             <th scope="col"> <Input type="text" name="name" placeholder={'Name of Agent'} onChange={handleFilter} /> </th>
-                            <th scope="col"> <Input type="text" name="pincode" placeholder={'PINCODE'} onChange={handleFilter} /> </th>
+                            <th scope="col"> <Input type="text" name="onCase" placeholder={'On Case'} onChange={handleFilter} /> </th>
                             <th scope="col"> <Input type="text" name="lastUpdated" placeholder={'Last Updated'} onChange={handleFilter} /> </th>
                             <th scope="col"> <Input type="text" name="claimed" placeholder={'Claimed'} onChange={handleFilter} /> </th>
                             <th scope="col"> <Input type="text" name="submitted" placeholder={'Submitted'} onChange={handleFilter} /> </th>
@@ -143,7 +143,7 @@ const ActiveAgents = (props) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {reset > 0 && allData && allData.length > 0 && allData.sort((a,b) => {
+                        {reset > 0 && allData && allData.length > 0 && allData.sort((a, b) => {
                             return (b.claimed + b.submitted) - (a.claimed + a.submitted)
                         }).map((item, index) => {
                             if (item.isLoggedIn && item.branch === props.branch) {
@@ -158,14 +158,15 @@ const ActiveAgents = (props) => {
                                         {item.userId}
                                     </td>
                                     <td>
-                                        {item.pincode}
+                                        {item.onCase ? 'True' : 'False'}
+                                        {/* {item.pincode}
                                         {item?.secondary && <hr />}
                                         {item.secondary?.length > 0 && item.secondary?.map((item, index) => {
                                             return <div key={`${item.pincode}-${index}`}>
                                                 {item.pincodes}
                                             </div>
                                         })
-                                        }
+                                        } */}
                                     </td>
                                     <td>
                                         {moment(item.lastUpdated).format('lll')}
@@ -180,7 +181,7 @@ const ActiveAgents = (props) => {
 
                                     </td>
                                     <td>
-                                        {item.claimed + item.submitted}
+                                        {item.casesSubmitted}
 
                                     </td>
 
@@ -194,7 +195,7 @@ const ActiveAgents = (props) => {
                         <tr>
                             <th scope="col"> srno</th>
                             <th scope="col"> name</th>
-                            <th scope="col"> pincode</th>
+                            <th scope="col"> On Case</th>
                             <th scope="col"> lastUpdated</th>
                             <th scope="col"> claimed</th>
                             <th scope="col"> submitted</th>
@@ -211,7 +212,7 @@ const ActiveAgents = (props) => {
                                         {item.name}
                                     </td>
                                     <td>
-                                        {item.pincode}
+                                        {item.onCase ? 'True' : 'False'}
 
                                     </td>
                                     <td>
@@ -227,7 +228,7 @@ const ActiveAgents = (props) => {
 
                                     </td>
                                     <td>
-                                        {item.claimed + item.submitted}
+                                        {item.casesSubmitted}
 
                                     </td>
 

@@ -243,13 +243,13 @@ const Tpc = ({ tpc, getData, data, id, overallstatusCal, remarksfnc, users }) =>
                     <label>Agency name</label>
                     <Input type="text" name='finalFIAgencyname' value={formdata['finalFIAgencyname']} onChange={(e) => onHandleChange(e.currentTarget)} />
                 </div>
-                <div>
+                <div style={{width: 200}}>
                     <label>Standard Remarks</label>
-                    <textarea className='form-control' cols='10' rows='3' type="text" name='finalFIAnyRemarks' value={formdata['finalFIAnyRemarks']} onChange={(e) => onHandleChange(e.currentTarget)} />
+                    <textarea className='form-control' cols='10' rows='7' type="text" name='finalFIAnyRemarks' value={formdata['finalFIAnyRemarks']} onChange={(e) => onHandleChange(e.currentTarget)} />
                 </div>
-                <div>
+                <div style={{width: 200}}>
                     <label>Remarks</label>
-                    <textarea className='form-control' cols='10' rows='3' type="text" name='finalFIRemarks' value={formdata['finalFIRemarks']} onChange={(e) => onHandleChange(e.currentTarget)} />
+                    <textarea className='form-control' cols='10' rows='7' type="text" name='finalFIRemarks' value={formdata['finalFIRemarks']} onChange={(e) => onHandleChange(e.currentTarget)} />
                 </div>
                 <div>
                     <label>Company Stamp</label>

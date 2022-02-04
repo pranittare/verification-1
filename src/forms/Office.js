@@ -599,7 +599,7 @@ const Office = (props) => {
             {!loading ? <> <Button color='warning' onClick={handleSave}>Save</Button>
                 <Button color='primary' onClick={handleSubmit}>Submit</Button>
             </> :
-                <div class="spinner-grow text-warning" role="status">
+                <div className="spinner-grow text-warning" role="status">
                 </div>
             }
         </div>

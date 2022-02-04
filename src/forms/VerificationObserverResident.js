@@ -9,7 +9,7 @@ export default function VerificationObserverResident({ verification, getData, da
     const interorConditionsDroptoggle = () => setInterorConditionsDrop(prevState => !prevState);
     const [assetSeenAtResidenceDrop, setAssetSeenAtResidenceDrop] = useState(false);
     const assetSeenAtResidenceDroptoggle = () => setAssetSeenAtResidenceDrop(prevState => !prevState);
-    const [refresh, setRefresh] = useState(0)
+    const [refresh, setRefresh] = useState(0);
     const initialState = {
         localityOfAddress: '',
         typeOfHouse: '',
@@ -143,7 +143,16 @@ export default function VerificationObserverResident({ verification, getData, da
 
     let exteriorConditions = ['Surrounding Wall', 'Gate', 'Garden', 'Car Parking', 'Lift', 'Security', 'Godown Area']
 
-    let assetSeenAtResidence = ['TV', 'Fridge', 'Washing Machine', 'AC', 'Computer', 'Laptop', 'Home Theater']
+    let assetSeenAtResidence = ['TV', 'Fridge', 'Washing Machine', 'AC', 'Computer', 'Laptop', 'Home Theater'];
+
+    let negativeArea = [
+        { name: 'negativeArea', value: 'Community Dominated Area', label: 'Community Dominated Area' },
+        { name: 'negativeArea', value: 'Sitting Chawl/Standing Chawl', label: 'Sitting Chawl/Standing Chawl' },
+        { name: 'negativeArea', value: 'Slum Area', label: 'Slum Area' },
+        { name: 'negativeArea', value: 'High Risk Area', label: 'High Risk Area' },
+        { name: 'negativeArea', value: 'Community Dominated/Sitting Chawl/Standing Chawl Area', label: 'Community Dominated/Sitting Chawl/Standing Chawl Area' },
+        { name: 'negativeArea', value: 'Community Dominated / Slum Area', label: 'Community Dominated / Slum Area' },
+    ]
     const addCheckboxes = (e, item) => {
         let form = formdata
         form[e.target.name] = form[e.target.name].toString();
@@ -214,7 +223,7 @@ export default function VerificationObserverResident({ verification, getData, da
                         <DropdownMenu >
                             {exteriorConditions?.map((item) => {
                                 return <div key={item} >
-                                    <Input type='checkbox' value={item} name='exteriorConditions' checked={formdata['exteriorConditions']?.includes(item)}  onChange={(e) => addCheckboxes(e, item)} />
+                                    <Input type='checkbox' value={item} name='exteriorConditions' checked={formdata['exteriorConditions']?.includes(item)} onChange={(e) => addCheckboxes(e, item)} />
                                     {item}
                                 </div>
                             })}
@@ -253,7 +262,7 @@ export default function VerificationObserverResident({ verification, getData, da
                         <DropdownMenu >
                             {assetSeenAtResidence.map((item) => {
                                 return <div key={item} >
-                                    <Input type='checkbox' value={item} name='assetSeenAtResidence' checked={formdata['assetSeenAtResidence']?.includes(item)}  onChange={(e) => addCheckboxes(e, item)} />
+                                    <Input type='checkbox' value={item} name='assetSeenAtResidence' checked={formdata['assetSeenAtResidence']?.includes(item)} onChange={(e) => addCheckboxes(e, item)} />
                                     {item}
                                 </div>
                             })}
@@ -262,7 +271,7 @@ export default function VerificationObserverResident({ verification, getData, da
                 </div>
                 <div>
                     <label>Negative Area</label>
-                    <Input type="text" name='negativeArea' value={formdata['negativeArea']} onChange={(e) => onHandleChange(e.currentTarget)} />
+                    <DropDownComp id='verificationObserverOffice' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={negativeArea} />
                 </div>
                 <div className="d-none">
                     <button type='submit' id='residentVerificationObserver'>Submit</button>
