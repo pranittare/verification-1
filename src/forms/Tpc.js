@@ -59,21 +59,15 @@ const Tpc = ({ tpc, getData, data, id, overallstatusCal, remarksfnc, users }) =>
     }, [getData])
 
     let status1 = [
-        { name: 'status1', value: '', label: 'None' },
-        { name: 'status1', value: 'positive', label: 'Positive' },
-        { name: 'status1', value: 'negative', label: 'Negative' },
+        { name: 'TPCStatus1', value: '', label: 'None' },
+        { name: 'TPCStatus1', value: 'positive', label: 'Positive' },
+        { name: 'TPCStatus1', value: 'negative', label: 'Negative' },
     ]
 
     let status2 = [
-        { name: 'status2', value: '', label: 'None' },
-        { name: 'status2', value: 'positive', label: 'Positive' },
-        { name: 'status2', value: 'negative', label: 'Negative' },
-    ]
-
-    let status3 = [
-        { name: 'status3', value: '', label: 'None' },
-        { name: 'status3', value: 'positive', label: 'Positive' },
-        { name: 'status3', value: 'negative', label: 'Negative' },
+        { name: 'TPCStatus2', value: '', label: 'None' },
+        { name: 'TPCStatus2', value: 'positive', label: 'Positive' },
+        { name: 'TPCStatus2', value: 'negative', label: 'Negative' },
     ]
 
     let marketReputation = [
@@ -170,7 +164,7 @@ const Tpc = ({ tpc, getData, data, id, overallstatusCal, remarksfnc, users }) =>
                                 <Input type="text" name="TPCName1" value={formdata['TPCName1']} onChange={(e) => onHandleChange(e.currentTarget)} /></td>
 
                             <td>
-                                <DropDownComp id='tpc' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={status1} />
+                                <DropDownComp id='tpc' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={status1}/>
                             </td>
                             <td>
                                 <Input type="text" name="TPCRemark1" value={formdata['TPCRemark1']} onChange={(e) => onHandleChange(e.currentTarget)} /></td>
@@ -253,7 +247,7 @@ const Tpc = ({ tpc, getData, data, id, overallstatusCal, remarksfnc, users }) =>
                 </div>
                 <div>
                     <label>Company Stamp</label>
-                    <img src={companyStamp} style={{width: 150}}/>
+                    <img src={companyStamp} style={{width: 150}} alt=''/>
                 </div>
                 <div>
                     <label>Verifier Name</label>

@@ -22,7 +22,26 @@ const Resident = (props) => {
     console.log('data', data)
 
     const [getData, setGetData] = useState(false)
-    const [applicantDetails, setApplicantDetails] = useState()
+    const [applicantDetails, setApplicantDetails] = useState({
+        appid: '',
+        srNo: '',
+        month: '',
+        initiationDate: '',
+        customerName: '',
+        bankNBFCname: '',
+        product: '',
+        loaction: '',
+        pincode: '',
+        contactNo: '',
+        mobileNo: '',
+        residenceAddressProvided: '',
+        mismatchAddress: '',
+        visitedresidentAddress: '',
+        remarks: '',
+        type: '',
+        form: '',
+        emailList: [],
+    })
     const [verificationObserver, setVerificationOvserver] = useState();
     const [formdata, setFormdata] = useState({
         visitDate: '',
@@ -150,24 +169,29 @@ const Resident = (props) => {
             + "&body=" + encodeURIComponent(yourMessage);
     }
     const handleSave = () => {
-        setLoading(true)
-        getAllData();
-        setRefresh(Math.random())
-        const path = `form/${pincode}/${id}/resident`;
-        let dataToSubmit = {
-            applicantDetails: dataSplit().applicant,
-            verificationDetails: dataSplit().verification
+        if (dataSplit().applicant.appid && dataSplit().verification.visitDate) {
+            getAllData();
+            setRefresh(Math.random())
+            setLoading(true)
+            const path = `form/${pincode}/${id}/resident`;
+            let dataToSubmit = {
+                applicantDetails: dataSplit().applicant,
+                verificationDetails: dataSplit().verification
+            }
+            update(ref(db, path), dataToSubmit).then(res => {
+                setLoading(false)
+                alert('Forms Updated')
+            }).catch(err => {
+                setLoading(false)
+                alert('Something went Wrong check and try again')
+                console.log('Form update', err)
+            })
+            localStorage.setItem(id, JSON.stringify(formdata))
+        } else {
+            getAllData();
+            setRefresh(Math.random())
+            alert('Something went Wrong press save once again')
         }
-        update(ref(db, path), dataToSubmit).then(res => {
-            setLoading(false)
-            alert('Forms Updated')
-        }).catch(err => {
-            setLoading(false)
-            alert('Something went Wrong check and try again')
-            console.log('Form update', err)
-        })
-        localStorage.setItem(id, JSON.stringify(formdata))
-        // console.log('handleSave', formdata)
     }
     const getAllData = () => {
         // document.getElementById('residentVerificationDetails').click()
@@ -528,8 +552,10 @@ const Resident = (props) => {
                         <DropDownComp id='resident' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={personMetRealtionwithApplicant} />
                         {/* <Input type="text" name='personMetRealtionwithApplicant' value={formdata['personMetRealtionwithApplicant']} onChange={(e) => onHandleChange(e.currentTarget)} /> */}
                     </div>
+                    <div>
                         <label>Name and Relation with Applicant (Others)</label>
                         <Input type="text" name='personMetRealtionwithApplicantOther' value={formdata['personMetRealtionwithApplicantOther']} onChange={(e) => onHandleChange(e.currentTarget)} />
+                    </div>
                     <div>
                         <label>Staying in City (No. of Yrs)</label>
                         <Input type="text" name='totalYearsInCity' value={formdata['totalYearsInCity']} onChange={(e) => onHandleChange(e.currentTarget)} />
@@ -539,8 +565,10 @@ const Resident = (props) => {
                         {/* <Input type="text" name='lessThanYrAtCurrentAddress' value={formdata['lessThanYrAtCurrentAddress']} onChange={(e) => onHandleChange(e.currentTarget)} /> */}
                         <DropDownComp id='resident' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={lessThanYrAtCurrentAddress} />
                     </div>
+                    <div>
                         <label>Less than 1 yr at Current Address (Yes)</label>
                         <Input type="text" name='lessThanYrAtCurrentAddressNote' value={formdata['lessThanYrAtCurrentAddressNote']} onChange={(e) => onHandleChange(e.currentTarget)} />
+                    </div>
                     <div>
                         <label>Residence Status</label>
                         {/* <Input type="text" name='residenceStatus' value={formdata['residenceStatus']} onChange={(e) => onHandleChange(e.currentTarget)} /> */}
@@ -619,8 +647,8 @@ const Resident = (props) => {
                 <Collapse title='Images and GeoLocation'>
                     <Geolocation data={verificationObserver} id={id} pincode={pincode} />
                 </Collapse>
-                {(refresh > 0 || true) && <PdfMakeResident data={formdata} refresh={() => { setRefresh(Math.random()) }} download={downloadPdf} initiationDate={initiationDate}  />}
-            
+                {(refresh > 0 || true) && <PdfMakeResident data={formdata} refresh={() => { setRefresh(Math.random()) }} download={downloadPdf} initiationDate={initiationDate} />}
+
             </>
             }
             {!loading ? <> <Button color='warning' onClick={handleSave}>Save</Button>

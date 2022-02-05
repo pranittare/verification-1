@@ -71,7 +71,26 @@ const Office = (props) => {
     // const [formdata, setFormData] = useState()
     const [getData, setGetData] = useState(false)
     // const [alldata, setAlldata] = useState([])
-    const [applicantDetails, setApplicantDetails] = useState()
+    const [applicantDetails, setApplicantDetails] = useState({
+        appid: '',
+        srNo: '',
+        month: '',
+        initiationDate: '',
+        customerName: '',
+        bankNBFCname: '',
+        product: '',
+        loaction: '',
+        pincode: '',
+        contactNo: '',
+        mobileNo: '',
+        officeAddressProvided: '',
+        mismatchAddress: '',
+        visitedOfficeAddress: '',
+        remarks: '',
+        type: '',
+        form: '',
+        emailList: [],
+    })
     const [refresh, setRefresh] = useState(0);
     const [loading, setLoading] = useState(false);
     const [downloadPdf, setDownloadPdf] = useState(false);
@@ -86,6 +105,7 @@ const Office = (props) => {
                 for (const key1 in applicantDetails) {
                     if (Object.hasOwnProperty.call(applicantDetails, key1)) {
                         const applicant = applicantDetails[key1];
+                        console.log('compare', key, key1, key == key1)
                         if (key == key1) {
                             verfi.applicant[key] = element
                         } else {
@@ -144,23 +164,29 @@ const Office = (props) => {
             + "&body=" + encodeURIComponent(yourMessage);
     }
     const handleSave = () => {
-        setLoading(true)
-        getAllData();
-        setRefresh(Math.random())
-        const path = `form/${pincode}/${id}/office`;
-        let dataToSubmit = {
-            applicantDetails: dataSplit().applicant,
-            verificationDetails: dataSplit().verification
+        if (dataSplit().applicant.appid && dataSplit().verification.visitDate) {
+            getAllData();
+            setRefresh(Math.random())
+            setLoading(true)
+            const path = `form/${pincode}/${id}/office`;
+            let dataToSubmit = {
+                applicantDetails: dataSplit().applicant,
+                verificationDetails: dataSplit().verification
+            }
+            update(ref(db, path), dataToSubmit).then(res => {
+                setLoading(false)
+                alert('Forms Updated')
+            }).catch(err => {
+                setLoading(false)
+                alert('Something went Wrong check and try again')
+                console.log('Form update', err)
+            })
+            localStorage.setItem(id, JSON.stringify(formdata))
+        } else {
+            getAllData();
+            setRefresh(Math.random())
+            alert('Something went Wrong press save once again')
         }
-        update(ref(db, path), dataToSubmit).then(res => {
-            setLoading(false)
-            alert('Forms Updated')
-        }).catch(err => {
-            setLoading(false)
-            alert('Something went Wrong check and try again')
-            console.log('Form update', err)
-        })
-        localStorage.setItem(id, JSON.stringify(formdata))
         // console.log('handleSave', formdata)
     }
     const getAllData = () => {

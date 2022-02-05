@@ -370,11 +370,11 @@ const Dashboard = ({ forms, agents }) => {
                     <Toast isOpen={submittedCasesToast} className='w-100'>
                         <ToastBody >
                             {submittedCases()?.map((item, index) => (
-                                <>
-                                    <Button color='link' key={item.name} onClick={() => setSubmittedCasesModal({ count: index, state: true })}>{item.name} - <span className='text-danger'>({item.data.length})</span></Button>
+                                <div key={item.name}>
+                                    <Button color='link' onClick={() => setSubmittedCasesModal({ count: index, state: true })}>{item.name} - <span className='text-danger'>({item.data.length})</span></Button>
 
                                     <ModalItem item={item} open={submittedCasesModal} count={index} close={() => setSubmittedCasesModal(false)} />
-                                </>
+                                </div>
                             ))}
                         </ToastBody>
                     </Toast>
