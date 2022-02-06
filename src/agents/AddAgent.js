@@ -333,11 +333,10 @@ const AddAgent = ({ agent, allAgents, realTimeAgents, agents, realTimeforms }) =
         const totalRef = doc(fdb, `agents`, `${agent.key}/`)
         updateDoc(totalRef, commonAddUpdate('fs'))
             .then(res => {
-                alert('Total user update Successfull')
                 // Add update logic only for Realtime DB
                 update(rtRef(db, `agents/${realTimeAgentKey()}`), commonAddUpdate('rt'))
-                    .then(res => {
-                        alert('Update Successfull')
+                .then(res => {
+                    alert('Update Successfull')
                     })
                     .catch(err => {
                         alert('Error Occured retry')

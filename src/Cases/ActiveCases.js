@@ -8,6 +8,7 @@ import { getDatabase, remove, ref } from "firebase/database";
 
 
 const ActiveCases = (props) => {
+    const {agents} = props;
     const formatedDate = new Date().toDateString()
     let history = useHistory();
     const db = getDatabase();
@@ -172,17 +173,29 @@ const ActiveCases = (props) => {
                 setReset(Math.random());
             })
         } else if (item.pincode && item.key) {
-                pincode = item.pincode
-                const path = `form/${pincode}/${item.key}`
-                console.log('path', path)
-                remove(ref(db, path)).then(res => {
-                    alert('Case Removed');
-                    setReset(Math.random());
-                })
+            pincode = item.pincode
+            const path = `form/${pincode}/${item.key}`
+            console.log('path', path)
+            remove(ref(db, path)).then(res => {
+                alert('Case Removed');
+                setReset(Math.random());
+            })
 
-            } else {
-                alert('problem found delete from backend!');
+        } else {
+            alert('problem found delete from backend!');
         }
+    }
+    const getAgentFullName = (item) => {
+        let agentname = ''
+        for (const key in agents) {
+            if (Object.hasOwnProperty.call(agents, key)) {
+                const element = agents[key];
+                if (element.userId === item.selected) {
+                    agentname =  element.name
+                }
+            }
+        }
+        return agentname
     }
     useEffect(() => {
         formData(props.forms)
@@ -330,10 +343,15 @@ const ActiveCases = (props) => {
                             <th scope="col"> LoginDate</th>
                             <th scope="col"> LoginTime</th>
                             <th scope="col"> CustomerName</th>
+                            <th scope="col"> Type</th>
                             <th scope="col"> TAT</th>
+                            <th scope="col"> Address</th>
+                            <th scope="col"> Pincode</th>
                             <th scope="col"> ClientName</th>
                             <th scope="col"> Stage</th>
                             <th scope="col"> Remark</th>
+                            <th scope="col">Agent Name</th>
+                            <th scope="col">Mobile No.</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -359,7 +377,31 @@ const ActiveCases = (props) => {
                                     }
                                 </td>
                                 <td>
+                                    {
+                                        item?.office ?
+                                            item.office?.applicantDetails?.form
+                                            :
+                                            item.resident?.applicantDetails?.form
+                                    }
+                                </td>
+                                <td>
                                     {moment(item.tat).fromNow()}
+                                </td>
+                                <td>
+                                    {
+                                        item?.office ?
+                                            item.office?.applicantDetails?.officeAddressProvided
+                                            :
+                                            item.resident?.applicantDetails?.residenceAddressProvided
+                                    }
+                                </td>
+                                <td>
+                                    {
+                                        item?.office ?
+                                            item.office?.applicantDetails?.pincode
+                                            :
+                                            item.resident?.applicantDetails?.pincode
+                                    }
                                 </td>
                                 <td>
                                     {
@@ -382,6 +424,18 @@ const ActiveCases = (props) => {
                                     }
 
                                 </td>
+                                <td>
+                                    {getAgentFullName(item)}
+                                </td>
+                                <td>
+                                    {
+                                        item?.office ?
+                                            item.office?.applicantDetails?.mobileNo
+                                            :
+                                            item.resident?.applicantDetails?.mobileNo
+                                    }
+
+                                </td>
                             </tr>
                         })}
 
@@ -400,7 +454,8 @@ const getAgentName = (item) => {
 const mapStateToProps = (state) => {
     return {
         forms: state.forms,
-        branch: state.branch
+        branch: state.branch,
+        agents: state.agents
     }
 }
 export default connect(mapStateToProps)(ActiveCases)
