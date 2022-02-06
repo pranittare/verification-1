@@ -19,8 +19,6 @@ const Resident = (props) => {
     const fdb = getFirestore();
     let data = useLocation()?.state
     const history = useHistory();
-    console.log('data', data)
-
     const [getData, setGetData] = useState(false)
     const [applicantDetails, setApplicantDetails] = useState({
         appid: '',
@@ -103,7 +101,7 @@ const Resident = (props) => {
     }
     const dataSplit = () => {
         setRefresh(Math.random())
-        let verfi = { verification: {}, applicant: {}, outer: {} }
+        let verfi = { verification: {}, applicant: {} }
         for (const key in formdata) {
             if (Object.hasOwnProperty.call(formdata, key)) {
                 const element = formdata[key];
@@ -159,10 +157,10 @@ const Resident = (props) => {
         let emails = emaillist.toString().replace(/,/g, ';')
         const yourMessage = `Dear Sir/Maam, 
     
-    Please find verification report of captioned case. 
-    
-    Regards, 
-    Team KreDT.`
+        Please find verification report of captioned case. 
+        
+        Regards, 
+        Team KreDT.`
         const subject = `${appid} - ${customername} - Residence`;
         document.location.href = `mailto:${emails}?subject=`
             + encodeURIComponent(subject)
@@ -250,7 +248,6 @@ const Resident = (props) => {
                 }
             }
         }
-        console.log('formsaved', formsaved, outer)
         if (formsaved?.resident) {
             for (const key in formsaved.resident.verificationDetails) {
                 let savedForm = formsaved.resident.verificationDetails
@@ -271,7 +268,7 @@ const Resident = (props) => {
                     formd.landmark = savedForm[key]
                 }
             }
-            console.log('applicant', formsaved?.resident?.applicantDetails)
+            console.log('formsaved', formsaved, outer)
             setApplicantDetails(formsaved?.resident?.applicantDetails)
             setVerificationOvserver(formsaved.resident.verificationDetails)
             setOuterDetails(outer)
@@ -484,18 +481,15 @@ const Resident = (props) => {
     ]
     const combiner = (data) => {
         let alldata = formdata
-        let combined = Object.assign(alldata, data);
-        console.log('combiner', combined)
-        let init = combined
-        setInitiationDate(init.initiationDate.split('GMT')[0])
-        localStorage.setItem(id, JSON.stringify(combined))
-        setFormdata(combined);
-        setRefresh(Math.random())
+        Object.assign(alldata, data);
+        setInitiationDate(alldata.initiationDate.split('GMT')[0])
+        setFormdata(alldata);
+        setRefresh(Math.random());
     }
     const remarksfnc = () => {
         let data = formdata
-        console.log('data', data.overallStatus)
         let overall = `${data.overallStatus ? data.overallStatus : ''}; Date: ${data.visitDate ? data.visitDate : ''}; ${data.visitedTime ? data.visitedTime : ''}; Mismatch Address: ${data.mismatchAddress ? data.mismatchAddress : ''}; Address Confirmed: ${data.addressConfirmed ? data.addressConfirmed : ''}; Person Met: ${data.personMet ? data.personMet : ''}; Person Met Name: ${data.personMetName ? data.personMetName : ''}; Residence Status: ${data.residenceStatus ? data.residenceStatus : ''}; Customer Occupation: ${data.customerOccupation ? data.customerOccupation : ''}; Gate/Door color: ${data.gateDoorColor ? data.gateDoorColor : ''}; Locality of Address: ${data.localityOfAddress ? data.localityOfAddress : ''};  Type of House: ${data.typeOfHouse ? data.typeOfHouse : ''};Accessibility/Approachability: ${data.accessibility ? data.accessibility : ''};Ease of Locating: ${data.easeofLocating ? data.easeofLocating : ''}; Customers Attitude: ${data.customerAttitude ? data.customerAttitude : ''};Distance from Station: ${data.distancefromStation ? data.distancefromStation : ''}; Negative Area: ${data.negativeArea ? data.negativeArea : ''}; TPC1: ${data.TPCName1 ? data.TPCName1 : ''} - ${data.TPCStatus1 ? data.TPCStatus1 : ''} - ${data.tpc1Remarks ? data.tpc1Remarks : ''}; TPC2: ${data.TPCName2 ? data.TPCName2 : ''} - ${data.tpc2Status ? data.tpc2Status : ''} - ${data.tpc2Remarks ? data.tpc2Remarks : ''}; ${data.finalFIAnyRemarks ? data.finalFIAnyRemarks : ''}`;
+        console.log('overall', overall)
         return overall
     }
     return (

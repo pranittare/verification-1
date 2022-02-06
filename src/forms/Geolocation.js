@@ -21,7 +21,7 @@ const Geolocation = (props) => {
             });
     }
     const viewImages = (key, pincode) => {
-        const filePath = `forms/${pincode}/${key}/images/`
+        const filePath = `forms/${pincode}/${key}/images`
         const storageRef = ref(storage, filePath);
         listAll(storageRef)
             .then((res) => {
@@ -46,7 +46,7 @@ const Geolocation = (props) => {
         let text = "Are you Sure?"
         console.log('delete', item, index)
         const desertRef = ref(storage, item);
-        if(window.confirm(text) == true){
+        if (window.confirm(text) == true) {
             deleteObject(desertRef).then(res => {
                 console.log('delete successfully')
                 setRefresh(Math.random())
@@ -54,6 +54,19 @@ const Geolocation = (props) => {
                 console.log('err', err)
             })
         }
+    }
+    const toDataURL = (url, callback) => {
+        let xhRequest = new XMLHttpRequest();
+        xhRequest.onload = function () {
+            let reader = new FileReader();
+            reader.onloadend = function () {
+                callback(reader.result);
+            }
+            reader.readAsDataURL(xhRequest.response);
+        };
+        xhRequest.open('GET', url);
+        xhRequest.responseType = 'blob';
+        xhRequest.send();
     }
     const uploadImage = (file) => {
         const filePath = `forms/${pincode}/${id}/images/${file.name}`
@@ -77,9 +90,31 @@ const Geolocation = (props) => {
     }, [data])
     useEffect(() => {
         if (images.length > 0) {
-            props.dispatch({ type: 'IMAGES', data: images })
+            let dataImages = []
+            for (let index = 0; index < images.length; index++) {
+                const item = images[index];
+                toDataURL(item, (dataUrl) => {
+                    dataImages.push({
+                        style: 'table',
+                        table: {
+                            widths: [500],
+                            body: [
+                                [
+                                    {
+                                        image: dataUrl,
+                                        width: 500,
+                                    },
+                                ]
+                            ]
+                        }
+                    }
+                    );
+                    props.dispatch({ type: 'IMAGES', data: dataImages })
+                })
+            }
         }
-    }, [images])
+    }, [images.length, refresh])
+
     return (
         <div className='w-100'>
             <h3>Geolocation and Images</h3>
@@ -108,18 +143,18 @@ const Geolocation = (props) => {
             <div>
                 <h5>Images</h5>
                 <div className='w-50 my-2'>
-                <input className='form-control' type="file" id="image-file" onChange={(e) => uploadImage(e.target.files[0])}/>
+                    <input className='form-control' type="file" id="image-file" onChange={(e) => uploadImage(e.target.files[0])} />
                 </div>
                 <div className='d-flex justify-content-between flex-wrap'>
                     {images?.map((item, index) => {
                         return <div key={item} >
-                           <a href={item} target='_blank'><img src={item} /></a> 
+                            <a href={item} target='_blank'><img src={item} /></a>
                             <button onClick={() => handleDeleteImage(item, index)} className='btn btn-danger'>X</button>
                         </div>
                     })}
 
                 </div>
-               
+
             </div>
 
 

@@ -135,7 +135,6 @@ const Office = (props) => {
             handleMail(emaillist, appid, customername)
             // remove form
             handleRemoveForm();
-
         }).catch(err => {
             alert('Something went wrong check console')
             console.log('form submission', err)
@@ -375,7 +374,6 @@ const Office = (props) => {
     }
 
     const overallStatusCal = (allData) => {
-        console.log('alldata', allData)
         let orverallstatus = ''
         if (allData?.mismatchAddress == 'yes') {
             orverallstatus = 'Not Recommended'
@@ -480,11 +478,9 @@ const Office = (props) => {
     ]
     const combiner = (data) => {
         let alldata = formdata
-        let combined = Object.assign(alldata, data);
-        let init = combined
-        setInitiationDate(init.initiationDate.split('GMT')[0])
-        localStorage.setItem(id, JSON.stringify(combined))
-        setFormdata(combined);
+        Object.assign(alldata, data);
+        setInitiationDate(alldata.initiationDate.split('GMT')[0])
+        setFormdata(alldata);
         setRefresh(Math.random());
     }
     const remarksfnc = () => {

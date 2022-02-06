@@ -5,7 +5,7 @@ import moment from 'moment';
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import AddAgent from './AddAgent';
 
-const TotalAgents = ({agents, rtAgents, branch}) => {
+const TotalAgents = ({ agents, rtAgents, branch }) => {
     const formatedDate = new Date().toDateString()
 
     const [allData, setAllData] = useState([])
@@ -54,15 +54,28 @@ const TotalAgents = ({agents, rtAgents, branch}) => {
             for (const key in rtAgents) {
                 if (Object.hasOwnProperty.call(rtAgents, key)) {
                     const rtElement = rtAgents[key];
-                    if (element.userId === rtElement.userId && rtElement.uniqueId && rtElement.uniqueId !== 'Disabled' ) {
+                    if (element.userId === rtElement.userId && rtElement.uniqueId && rtElement.uniqueId !== 'Disabled') {
                         element.uniqueId = rtElement.uniqueId
                     }
-                    
+
                 }
             }
             data.push(element)
         }
         return data
+    }
+    const findDuplicate = (item) => {
+        let obj = {}
+        let dup = [];
+        for (let index = 0; index < item.length; index++) {
+            const element = item[index];
+            if (obj[element.pincodes]) {
+                dup.push(element.pincodes)
+            } else {
+                obj[element.pincodes] = element.pincodes
+            }
+        }
+        return dup;
     }
 
     useEffect(() => {
@@ -145,8 +158,13 @@ const TotalAgents = ({agents, rtAgents, branch}) => {
                                             <div>
                                                 <hr />
                                                 {item.secondaryPincodes.map((item1, index1) => {
-                                                    return <div key={item1.pincodes}>{item1.pincodes}</div>
+                                                    return <div key={item1.pincodes + '-' + index1}>
+                                                        {item1.pincodes}
+                                                    </div>
                                                 })}
+                                                {findDuplicate(item.secondaryPincodes).length > 0 && <div className='text-danger'>
+                                                    Duplicate :{findDuplicate(item.secondaryPincodes).toString()}
+                                                </div>}
                                             </div>
                                         }
 
@@ -183,45 +201,45 @@ const TotalAgents = ({agents, rtAgents, branch}) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {console.log('total',allData && allData)}
+                        {console.log('total', allData && allData)}
                         {reset > 0 && allData && allData.length > 0 && allData.map((item, index) => {
                             if (item.branch === branch) {
-                            return <tr key={`${item.userId}-${item.agentCode}-${index}`}>
-                                <th>{index + 1}</th>
-                                <td>
-                                    {item.name}
-                                </td>
-                                <td>
-                                    {item.mobile1}
-                                    <hr />
-                                    {item.mobile2}
-                                </td>
-                                <td>
-                                    {item.pincode}
-                                    {item.secondaryPincodes &&
-                                        <div>
-                                            {/* <hr /> */}
-                                            {item.secondaryPincodes.map((item1, index1) => {
-                                                return <div key={item1.pincodes}>{item1.pincodes}</div>
-                                            })}
-                                        </div>
-                                    }
+                                return <tr key={`${item.userId}-${item.agentCode}-${index}`}>
+                                    <th>{index + 1}</th>
+                                    <td>
+                                        {item.name}
+                                    </td>
+                                    <td>
+                                        {item.mobile1}
+                                        <hr />
+                                        {item.mobile2}
+                                    </td>
+                                    <td>
+                                        {item.pincode}
+                                        {item.secondaryPincodes &&
+                                            <div>
+                                                {/* <hr /> */}
+                                                {item.secondaryPincodes.map((item1, index1) => {
+                                                    return <div key={item1.pincodes}>{item1.pincodes}</div>
+                                                })}
+                                            </div>
+                                        }
 
-                                </td>
-                                <td>
-                                    {item.uniqueId ? item.uniqueId !== 'Disabled' ? 'Active' : 'InActive' : 'InActive'}
-                                </td>
-                                <td>
-                                    {moment(item.kycUpdateDate.seconds * 1000).format('ll')}
-                                </td>
-                                <td>
-                                    {moment(item.kycreneweddate.seconds * 1000).format('ll')}
-                                </td>
-                                <td>
-                                    {item.remarks}
-                                </td>
-                            </tr>
-                                
+                                    </td>
+                                    <td>
+                                        {item.uniqueId ? item.uniqueId !== 'Disabled' ? 'Active' : 'InActive' : 'InActive'}
+                                    </td>
+                                    <td>
+                                        {moment(item.kycUpdateDate.seconds * 1000).format('ll')}
+                                    </td>
+                                    <td>
+                                        {moment(item.kycreneweddate.seconds * 1000).format('ll')}
+                                    </td>
+                                    <td>
+                                        {item.remarks}
+                                    </td>
+                                </tr>
+
                             }
                         })
                         }

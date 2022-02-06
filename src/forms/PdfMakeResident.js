@@ -1690,7 +1690,7 @@ const PdfMakeResident = ({ data, images, refresh, download, initiationDate }) =>
                     ]
                 }
             },
-            ...pdfImages,
+            ...images,
 
         ],
         styles: {
@@ -1713,27 +1713,6 @@ const PdfMakeResident = ({ data, images, refresh, download, initiationDate }) =>
     };
     useEffect(() => {
         if (images && images.length > 0) {
-            let myImages = [];
-            images.map((item, index) => {
-                toDataURL(item, (dataUrl) => {
-                    myImages.push({
-                        style: 'table',
-                        table: {
-                            widths: [500],
-                            body: [
-                                [
-                                    {
-                                        image: dataUrl,
-                                        width: 500,
-                                    },
-                                ]
-                            ]
-                        }
-                    })
-                }
-                )
-            })
-            setPDFImages(myImages)
             if (stamp) {
                 toDataURL(stamp, (dataUrl) => {
                     setStamp64(dataUrl)
