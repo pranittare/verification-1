@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject, listAll } from "firebase/storage";
 import { connect } from 'react-redux';
+import stamp from '../assets/stamp.jpeg'
+
 const Geolocation = (props) => {
     const { data, id, pincode } = props
     const [audio, setAudio] = useState()
@@ -82,6 +84,18 @@ const Geolocation = (props) => {
             console.log('uploadTask error', err)
         })
     }
+    const stampAndMapBase64 = () => {
+        if (stamp) {
+            let datatosubmit = {stamp: '', map: ''}
+            toDataURL(stamp, (dataUrl) => {
+                datatosubmit.stamp = dataUrl
+            });
+            toDataURL(`https://maps.googleapis.com/maps/api/staticmap?size=300x300&maptype=hybrid&markers=${data?.region?.latitude},${data?.region?.longitude}&key=AIzaSyBPoGWXtGubXKV44J4D4ZsBtvY-lIBjEMU&zoom=16`, (dataUrl) => {
+                datatosubmit.map = dataUrl
+            });
+            props.dispatch({ type: 'STAMPANDMAP', data: datatosubmit })
+        }
+    }
     useEffect(() => {
         if (data) {
             viewAudio(id, pincode)
@@ -112,6 +126,7 @@ const Geolocation = (props) => {
                     props.dispatch({ type: 'IMAGES', data: dataImages })
                 })
             }
+            stampAndMapBase64()
         }
     }, [images.length, refresh])
 

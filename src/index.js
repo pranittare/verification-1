@@ -21,6 +21,7 @@ const initialState = {
   oldcases: null,
   images: [],
   casestoday: '',
+  stampAndMap: {}
 
 }
 
@@ -76,21 +77,27 @@ function reducer(state = initialState, action) {
         ...state,
         auth: action.data
       }
-    case 'FVENDORS' : 
+    case 'FVENDORS':
       return {
         ...state,
         vendors: action.data
       }
-    case 'IMAGES' :
+    case 'IMAGES':
       return {
         ...state,
         images: action.data
       }
-      case 'CASESTODAY' :
-        return {
-          ...state,
-          casestoday: action.data
-        }
+    case 'CASESTODAY':
+      return {
+        ...state,
+        casestoday: action.data
+      }
+    case 'STAMPANDMAP':
+      return {
+        ...state,
+        stampAndMap: action.data
+      }
+    
     default:
       return state
   }

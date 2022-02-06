@@ -18,7 +18,6 @@ const Office = (props) => {
     let { pincode, id } = useParams()
     const db = getDatabase();
     let data = useLocation()?.state
-    console.log('data', data)
     const fdb = getFirestore();
     const history = useHistory();
     // console.log('form', props)
@@ -105,7 +104,6 @@ const Office = (props) => {
                 for (const key1 in applicantDetails) {
                     if (Object.hasOwnProperty.call(applicantDetails, key1)) {
                         const applicant = applicantDetails[key1];
-                        console.log('compare', key, key1, key == key1)
                         if (key == key1) {
                             verfi.applicant[key] = element
                         } else {

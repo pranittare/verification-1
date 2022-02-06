@@ -2,27 +2,12 @@ import React, { useEffect, useState } from 'react'
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 import { connect } from 'react-redux';
-import stamp from '../assets/stamp.jpeg'
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
-const PdfMakeResident = ({ data, images, refresh, download, initiationDate }) => {
+const PdfMakeResident = ({ data, images, download, initiationDate, stampAndMap }) => {
 
-    const [stamp64, setStamp64] = useState();
-    const [map, setMap] = useState();
-    const [pdfImages, setPDFImages] = useState([])
-    const toDataURL = (url, callback) => {
-        let xhRequest = new XMLHttpRequest();
-        xhRequest.onload = function () {
-            let reader = new FileReader();
-            reader.onloadend = function () {
-                callback(reader.result);
-            }
-            reader.readAsDataURL(xhRequest.response);
-        };
-        xhRequest.open('GET', url);
-        xhRequest.responseType = 'blob';
-        xhRequest.send();
-    }
+    const {stamp, map} = stampAndMap
+   
     const documentDefinition = {
         content: [
             {
@@ -1593,7 +1578,7 @@ const PdfMakeResident = ({ data, images, refresh, download, initiationDate }) =>
                             {
                                 
                                 border: [true, true, true, true],
-                                image: stamp64,
+                                image: stamp,
                                 width: 150,
                             },
                         ],
@@ -1711,35 +1696,24 @@ const PdfMakeResident = ({ data, images, refresh, download, initiationDate }) =>
 
         }
     };
-    useEffect(() => {
-        if (images && images.length > 0) {
-            if (stamp) {
-                toDataURL(stamp, (dataUrl) => {
-                    setStamp64(dataUrl)
-                });
-                toDataURL(`https://maps.googleapis.com/maps/api/staticmap?size=300x300&maptype=hybrid&markers=${data?.region?.latitude},${data?.region?.longitude}&key=AIzaSyBPoGWXtGubXKV44J4D4ZsBtvY-lIBjEMU&zoom=16`, (dataUrl) => {
-                    setMap(dataUrl)
-                });
-            }
-        }
-    }, [images.length]);
+    
     useEffect(() => {
         if (download) {
-            document.getElementById('downloadpdf').click()
+            document.getElementById('download').click()
         }
     },[download]);
     return (
         <div>
             <button className='btn text-primary' onClick={() => { pdfMake.createPdf(documentDefinition).open() }}>View PDF</button>
             <button className='btn text-primary' id='download' onClick={() => { pdfMake.createPdf(documentDefinition).download() }}>Download PDF</button>
-            <button className='btn text-danger' onClick={() => { refresh() }}>Refresh Pdf</button>
         </div>
     )
 }
 
 const mapStateToProps = (state) => {
     return {
-        images: state.images
+        images: state.images,
+        stampAndMap: state.stampAndMap
     }
 }
 export default connect(mapStateToProps)(PdfMakeResident); 
