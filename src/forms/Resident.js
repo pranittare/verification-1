@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { Input, Button } from 'reactstrap'
 import ApplicantDetails from './ApplicantDetails'
 import VerificationObserverResident from './VerificationObserverResident';
@@ -92,6 +92,9 @@ const Resident = (props) => {
     const [loading, setLoading] = useState(false);
     const [downloadPdf, setDownloadPdf] = useState(false);
     const [initiationDate, setInitiationDate] = useState('');
+    const verificationObserverRef = useRef(null);
+    const TPCRef = useRef(null);
+    const ADref = useRef(null);
 
     const onHandleChange = (e) => {
         let form = formdata
@@ -99,12 +102,11 @@ const Resident = (props) => {
         setFormdata(form)
         setRefresh(Math.random())
     }
-    const dataSplit = () => {
-        setRefresh(Math.random())
+    const dataSplit = (alldata) => {
         let verfi = { verification: {}, applicant: {} }
-        for (const key in formdata) {
-            if (Object.hasOwnProperty.call(formdata, key)) {
-                const element = formdata[key];
+        for (const key in alldata) {
+            if (Object.hasOwnProperty.call(alldata, key)) {
+                const element = alldata[key];
                 // SEPERATION FOR APPICANT AND VERIFICATION
                 for (const key1 in applicantDetails) {
                     if (Object.hasOwnProperty.call(applicantDetails, key1)) {
@@ -124,8 +126,8 @@ const Resident = (props) => {
         setLoading(true)
         e.preventDefault()
         let dataToSubmit = {
-            applicantDetails: dataSplit().applicant,
-            verificationDetails: dataSplit().verification,
+            applicantDetails: dataSplit(combiner()).applicant,
+            verificationDetails: dataSplit(combiner()).verification,
         }
         Object.assign(dataToSubmit, mainouter)
         console.log('handleSubmit', dataToSubmit)
@@ -167,37 +169,26 @@ const Resident = (props) => {
             + "&body=" + encodeURIComponent(yourMessage);
     }
     const handleSave = () => {
-        if (dataSplit().applicant.appid && dataSplit().verification.visitDate) {
-            getAllData();
-            setRefresh(Math.random())
-            setLoading(true)
-            const path = `form/${pincode}/${id}/resident`;
-            let dataToSubmit = {
-                applicantDetails: dataSplit().applicant,
-                verificationDetails: dataSplit().verification
-            }
-            update(ref(db, path), dataToSubmit).then(res => {
-                setLoading(false)
-                alert('Forms Updated')
-            }).catch(err => {
-                setLoading(false)
-                alert('Something went Wrong check and try again')
-                console.log('Form update', err)
-            })
-            localStorage.setItem(id, JSON.stringify(formdata))
-        } else {
-            getAllData();
-            setRefresh(Math.random())
-            alert('Something went Wrong press save once again')
+        // getAllData();
+        if (dataSplit(combiner()).applicant.appid && dataSplit(combiner()).verification.visitDate) {
+        setLoading(true)
+        // setRefresh(Math.random())
+        const path = `form/${pincode}/${id}/resident`;
+        let dataToSubmit = {
+            applicantDetails: dataSplit(combiner()).applicant,
+            verificationDetails: dataSplit(combiner()).verification
         }
-    }
-    const getAllData = () => {
-        // document.getElementById('residentVerificationDetails').click()
-        setGetData(true)
-        setTimeout(() => {
-            setGetData(false)
-        }, [100])
-
+        console.log('data', dataToSubmit)
+        update(ref(db, path), dataToSubmit).then(res => {
+            setLoading(false)
+            alert('Forms Updated')
+        }).catch(err => {
+            setLoading(false)
+            alert('Something went Wrong check and try again')
+            console.log('Form update', err)
+        })
+        localStorage.setItem(id, JSON.stringify(formdata))
+        } 
     }
     function getCookie(cname) {
         let name = cname + "=";
@@ -479,12 +470,15 @@ const Resident = (props) => {
         { name: 'marrried', value: 'yes', label: 'Married' },
         { name: 'marrried', value: 'no', label: 'UnMarried' }
     ]
-    const combiner = (data) => {
-        let alldata = formdata
-        Object.assign(alldata, data);
-        setInitiationDate(alldata.initiationDate.split('GMT')[0])
+    const combiner = () => {
+        const VOdata = verificationObserverRef.current.getFormData();
+        const Tpdata = TPCRef.current.getFormData();
+        const Addata = ADref.current.getFormData();
+        const alldata = { ...formdata, ...Addata, ...VOdata, ...Tpdata }
+        console.log('alldata', alldata)
+        setInitiationDate(alldata.initiationDate.split('GMT')[0]);
         setFormdata(alldata);
-        setRefresh(Math.random());
+        return alldata
     }
     const remarksfnc = () => {
         let data = formdata
@@ -492,6 +486,7 @@ const Resident = (props) => {
         console.log('overall', overall)
         return overall
     }
+
     return (
         <div>
             <Prompt
@@ -504,15 +499,11 @@ const Resident = (props) => {
                 }}
             />
             <Collapse title='Applicant Details'>
-                <ApplicantDetails
-                    // ref={aplicantDeatilsRef}
-                    applicantDetail={(data) => {
-                        combiner(data)
-                    }} data={applicantDetails} getData={getData} outerDetails={outerDetails} id={id} />
+                <ApplicantDetails data={applicantDetails} outerDetails={outerDetails} id={id} ref={ADref} />
             </Collapse>
             {id && <> <Collapse title='Verification Details'>
                 <h1>Verification Details</h1>
-                {(refresh > 0 || true) && <form className='d-flex justify-content-between flex-wrap' >
+                <form className='d-flex justify-content-between flex-wrap' >
                     <div>
                         <label>Visit Date</label>
                         <Input type="text" name='visitDate' value={formdata['visitDate']} onChange={(e) => onHandleChange(e.currentTarget)} />
@@ -630,26 +621,22 @@ const Resident = (props) => {
                     <div className='d-none'>
                         <button type='submit' id='residentVerificationDetails'>Submit</button>
                     </div>
-                </form>}
-                <VerificationObserverResident verification={(data) => {
-                    combiner(data)
-                }} getData={getData} data={verificationObserver} id={id} />
-                <Tpc tpc={(data) => {
-                    combiner(data)
-                }} getData={getData} data={verificationObserver} id={id} overallstatusCal={overallStatusCal} remarksfnc={remarksfnc} />
+                </form>
+                <VerificationObserverResident data={verificationObserver} id={id} ref={verificationObserverRef} />
+                <Tpc data={verificationObserver} id={id} overallstatusCal={overallStatusCal} remarksfnc={remarksfnc} ref={TPCRef} />
             </Collapse>
                 <Collapse title='Images and GeoLocation'>
                     <Geolocation data={verificationObserver} id={id} pincode={pincode} />
                 </Collapse>
-                {(refresh > 0 || true) && <PdfMakeResident data={formdata} refresh={() => { setRefresh(Math.random()) }} download={downloadPdf} initiationDate={initiationDate} />}
+                <PdfMakeResident data={formdata} refresh={() => { setRefresh(Math.random()) }} download={downloadPdf} initiationDate={initiationDate} />
 
             </>
             }
-            {!loading ? <> <Button color='warning' onClick={handleSave}>Save</Button>
+            {!loading ? <> <Button className='mr-2' color='warning' onClick={handleSave}>Save</Button>
                 <Button color='primary' onClick={handleSubmit}>Submit</Button>
             </>
                 :
-                <div class="spinner-grow text-warning" role="status">
+                <div className="spinner-grow text-warning" role="status">
                 </div>
             }
 

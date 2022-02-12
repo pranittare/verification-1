@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react'
-import { Input, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap'
+import React, { useEffect, useState, forwardRef, useImperativeHandle } from 'react'
+import { Input, Dropdown, DropdownToggle, DropdownMenu } from 'reactstrap'
 import DropDownComp from '../components/DropDownComp'
 
-export default function VerificationObserverOffice({ verification, getData, data, id }) {
+const VerificationObserverOffice = forwardRef(({ data, id }, ref) => {
     const [refresh, setRefresh] = useState(0)
-    const [formdata, setFormdata] = useState({
+    const initialState = {
         verificationObserver: '',
         localityofOffice: '',
         constructionOfOffice: '',
@@ -23,7 +23,8 @@ export default function VerificationObserverOffice({ verification, getData, data
         docVerified: '',
         documentDetails: '',
         negativeArea: '',
-    })
+    }
+    const [formdata, setFormdata] = useState(initialState)
     const [exteriorConditionsDrop, setExteriorConditionsDrop] = useState(false);
     const exteriorConditionsDroptoggle = () => setExteriorConditionsDrop(prevState => !prevState);
     const [interorConditionsDrop, setInterorConditionsDrop] = useState(false);
@@ -38,14 +39,8 @@ export default function VerificationObserverOffice({ verification, getData, data
     }
     const handleSubmit = (e) => {
         e.preventDefault()
-        verification(formdata)
+        // verification(formdata)
     }
-    useEffect(() => {
-        if (getData) {
-            verification(formdata)
-            // document.getElementById('officeVerificationObserver').click()
-        }
-    }, [getData])
     useEffect(() => {
         if (data) {
             let form = formdata
@@ -133,14 +128,14 @@ export default function VerificationObserverOffice({ verification, getData, data
     let interiorConditions = ['Painted', 'Carpeted', 'clean']
     let exteriorCondition =
         ['Surrounding Wall', 'Gate', 'Garden', 'Car Parking', 'Lift', 'Security Office', 'Godown Area'];
-        let negativeArea = [
-            { name: 'negativeArea', value: 'Community Dominated Area', label: 'Community Dominated Area' },
-            { name: 'negativeArea', value: 'Sitting Chawl/Standing Chawl', label: 'Sitting Chawl/Standing Chawl' },
-            { name: 'negativeArea', value: 'Slum Area', label: 'Slum Area' },
-            { name: 'negativeArea', value: 'High Risk Area', label: 'High Risk Area' },
-            { name: 'negativeArea', value: 'Community Dominated/Sitting Chawl/Standing Chawl Area', label: 'Community Dominated/Sitting Chawl/Standing Chawl Area' },
-            { name: 'negativeArea', value: 'Community Dominated / Slum Area', label: 'Community Dominated / Slum Area' },
-        ]
+    let negativeArea = [
+        { name: 'negativeArea', value: 'Community Dominated Area', label: 'Community Dominated Area' },
+        { name: 'negativeArea', value: 'Sitting Chawl/Standing Chawl', label: 'Sitting Chawl/Standing Chawl' },
+        { name: 'negativeArea', value: 'Slum Area', label: 'Slum Area' },
+        { name: 'negativeArea', value: 'High Risk Area', label: 'High Risk Area' },
+        { name: 'negativeArea', value: 'Community Dominated/Sitting Chawl/Standing Chawl Area', label: 'Community Dominated/Sitting Chawl/Standing Chawl Area' },
+        { name: 'negativeArea', value: 'Community Dominated / Slum Area', label: 'Community Dominated / Slum Area' },
+    ]
     const addCheckboxes = (e, item) => {
         let form = formdata
         form[e.target.name] = form[e.target.name].toString();
@@ -156,6 +151,19 @@ export default function VerificationObserverOffice({ verification, getData, data
         setFormdata(form);
         setRefresh(Math.random());
     }
+    useImperativeHandle(ref, () => ({
+
+        getFormData() {
+            const refData = { ...formdata }
+            for (const key in refData) {
+                if (initialState[key] === undefined)
+                    delete refData[key]
+            }
+            return refData
+            // applicantDetail(formdata)
+        }
+
+    }));
     return (
         <div>
             <h4>Verification Observer</h4>
@@ -279,4 +287,7 @@ export default function VerificationObserverOffice({ verification, getData, data
             }
         </div>
     )
-}
+})
+
+
+export default VerificationObserverOffice;

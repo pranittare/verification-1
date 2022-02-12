@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 import { connect } from 'react-redux';
@@ -7,7 +7,9 @@ pdfMake.vfs = pdfFonts.pdfMake.vfs;
 const PdfMakeResident = ({ data, images, download, initiationDate, stampAndMap }) => {
 
     const {stamp, map} = stampAndMap
-   
+    let assetSeenAtResident = data?.assetSeenAtResidence?.toString()
+    let exteriorConditons = data?.exteriorConditions?.toString()
+    let interiorConditions = data?.interiorConditions?.toString()
     const documentDefinition = {
         content: [
             {
@@ -173,7 +175,7 @@ const PdfMakeResident = ({ data, images, download, initiationDate, stampAndMap }
                             {
                                 
                                 border: [true, true, true, true],
-                                text: data.product
+                                text: data?.product?.productName
                             },
                             {
                                 
@@ -1068,7 +1070,7 @@ const PdfMakeResident = ({ data, images, download, initiationDate, stampAndMap }
                             {
                                 
                                 border: [true, true, true, true],
-                                text: data.assetSeen
+                                text: assetSeenAtResident
                             },
                         ],
 
@@ -1090,7 +1092,7 @@ const PdfMakeResident = ({ data, images, download, initiationDate, stampAndMap }
                             {
                                 
                                 border: [true, true, true, true],
-                                text: data.interior
+                                text: interiorConditions
                             },
                             {
                                 
@@ -1101,7 +1103,7 @@ const PdfMakeResident = ({ data, images, download, initiationDate, stampAndMap }
                             {
                                 
                                 border: [true, true, true, true],
-                                text: data.exteriorconditions
+                                text: exteriorConditons
 
                             },
 

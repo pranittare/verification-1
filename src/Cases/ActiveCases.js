@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { connect } from 'react-redux';
-import { Input } from 'reactstrap'
+import { Input } from 'reactstrap';
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import moment from 'moment';
 import { useHistory } from 'react-router-dom';
@@ -8,12 +8,13 @@ import { getDatabase, remove, ref } from "firebase/database";
 
 
 const ActiveCases = (props) => {
-    const {agents} = props;
+    const { agents } = props;
     const formatedDate = new Date().toDateString()
     let history = useHistory();
     const db = getDatabase();
     const [allData, setAllData] = useState([])
     const [reset, setReset] = useState(0);
+    const [tooltip, setTooltip] = useState();
     const formData = (forms) => {
         const formKeys = Object.keys(forms)
         let formarray = []
@@ -191,7 +192,7 @@ const ActiveCases = (props) => {
             if (Object.hasOwnProperty.call(agents, key)) {
                 const element = agents[key];
                 if (element.userId === item.selected) {
-                    agentname =  element.name
+                    agentname = element.name
                 }
             }
         }
@@ -278,14 +279,13 @@ const ActiveCases = (props) => {
                     </thead>
                     <tbody>
                         {reset > 0 && allData && allData.length > 0 && allData.map((item, index) => {
-                            return <tr key={`${item.tat}-${index + 1}`}>
+                            return <tr key={`${item.tat}-${index + 1}`} onMouseOver={() => setTooltip(index)}>
 
                                 <td >
                                     <div onClick={() => handleViewForm(item)} style={{ cursor: 'pointer' }} className={item?.office?.applicantDetails ? 'text-primary' : 'text-success'}>
-                                        {item.appid}
-                                        {getAgentName(item) && <p><small className='text-danger'>
-                                            Agent: {getAgentName(item)}
-                                        </small></p>}
+                                        <button type="button" class="btn text-primary" data-toggle="tooltip" data-placement="top" title={`${getAgentName(item)}`}>
+                                            {item.appid}
+                                        </button>
                                     </div>
                                 </td>
                                 <td>

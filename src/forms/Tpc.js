@@ -1,38 +1,43 @@
-import React, { useEffect, useState } from 'react';
+import React, { forwardRef, useEffect, useState, useImperativeHandle } from 'react';
 import { Button, Input } from 'reactstrap';
 import DropDownComp from '../components/DropDownComp';
 import companyStamp from '../assets/stamp.jpeg'
-import {connect} from 'react-redux';
-const Tpc = ({ tpc, getData, data, id, overallstatusCal, remarksfnc, users }) => {
+import {useSelector} from 'react-redux';
+
+const dict = {
+    TPCName1: '',
+    status1: '',
+    TPCRemark1: '',
+    TPCName2: '',
+    status2: '',
+    TPCRemark2: '',
+    TVRNumber: '',
+    TVRDesignation: '',
+    TVRStatus: '',
+    TVRBusinessName: '',
+    TVRNoofyearsinBusiness: '',
+    TVRRemarks: '',
+    finalFIAgencyname: '',
+    finalFIAnyRemarks: '',
+    finalFIRemarks: '',
+    finalFIVerifierName: '',
+    productSupervisor: '',
+    marketReputation: '',
+    TPCRemarks: '',
+    overallStatus: ''
+}
+
+const Tpc = forwardRef(({ data, id, overallstatusCal, remarksfnc }, ref) => {
     const [refresh, setRefresh] = useState(0);
+    const users = useSelector((state)=> state.users)
+
     // const [override, setOverride] = useState(false);
-    const [formdata, setFormdata] = useState({
-        TPCName1: '',
-        status1: '',
-        TPCRemark1: '',
-        TPCName2: '',
-        status2: '',
-        TPCRemark2: '',
-        TVRNumber: '',
-        TVRDesignation: '',
-        TVRStatus: '',
-        TVRBusinessName: '',
-        TVRNoofyearsinBusiness: '',
-        TVRRemarks: '',
-        finalFIAgencyname: '',
-        finalFIAnyRemarks: '',
-        finalFIRemarks: '',
-        finalFIVerifierName: '',
-        productSupervisor: '',
-        marketReputation: '',
-        TPCRemarks: '',
-        overallStatus: ''
-    })
+    const [formdata, setFormdata] = useState(dict)
 
 
     const onHandleChange = (e) => {
         // name
-        let form = formdata
+        let form = {...formdata}
         form[e.name] = e.value
         // console.log(e, form[e.name] )
         setFormdata(form)
@@ -44,20 +49,11 @@ const Tpc = ({ tpc, getData, data, id, overallstatusCal, remarksfnc, users }) =>
         e.preventDefault()
 
         // console.log('tpc', formdata)
-        tpc(formdata)
+        // tpc(formdata)
         // for (let [key, value] of formData.entries()) {
         //     console.log(key, value);
         // }
     }
-    useEffect(() => {
-        if (getData) {
-            console.log('tpc', formdata)
-            tpc(formdata)
-            // document.getElementById('tpcdata').click()
-        }
-        // console.log('getdata', getData)
-    }, [getData])
-
     let status1 = [
         { name: 'TPCStatus1', value: '', label: 'None' },
         { name: 'TPCStatus1', value: 'positive', label: 'Positive' },
@@ -121,7 +117,7 @@ const Tpc = ({ tpc, getData, data, id, overallstatusCal, remarksfnc, users }) =>
     }
     useEffect(() => {
         if (data) {
-            let form = formdata
+            let form = {...formdata}
             // console.log('data', data)
             for (const key in data) {
                 form[key] = data[key]
@@ -144,6 +140,19 @@ const Tpc = ({ tpc, getData, data, id, overallstatusCal, remarksfnc, users }) =>
             // onHandleChange({ name: data[0], value: test[1] })
         }
     }, [data])
+    useImperativeHandle(ref, () => ({
+
+        getFormData() {
+            const refData = {...formdata}
+            for(const key in refData){
+                if(dict[key] === undefined)
+                delete refData[key]
+            }
+            return refData
+            // applicantDetail(formdata)
+        }
+
+    }));
     return (
         <div>
             <h4>TPC Confirmation</h4>
@@ -263,11 +272,6 @@ const Tpc = ({ tpc, getData, data, id, overallstatusCal, remarksfnc, users }) =>
             </form>
         </div>
     )
-}
-const mapStateToProps = (state) => {
-    return {
-        users: state.users
-    }
-}
+})
 
-export default connect(mapStateToProps)(Tpc)
+export default Tpc

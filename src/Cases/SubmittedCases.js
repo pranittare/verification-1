@@ -106,6 +106,12 @@ const SubmittedCases = (props) => {
         }
         return a
     }
+    const getAgentName = (item) => {
+
+        if (item.rejectedFrom === item.selected) {
+            return ''
+        } else if (item.selected) return item.selected
+    }
     useEffect(() => {
         formData(props.forms)
         // console.log
@@ -153,7 +159,7 @@ const SubmittedCases = (props) => {
                         </DropdownToggle>
                         <DropdownMenu
                         >
-                            <DropdownItem onClick={() => {setSelectedBank(false)}}>None</DropdownItem>
+                            <DropdownItem onClick={() => { setSelectedBank(false) }}>None</DropdownItem>
                             {vendors?.map(item => {
                                 return <DropdownItem key={item.clientName} onClick={() => { setSelectedBank(item.clientName) }}
                                     value={item.clientName}
@@ -166,9 +172,9 @@ const SubmittedCases = (props) => {
                     </Dropdown>
                 </div>
                 <div className='d-flex'>
-                    
-                <p className='text-primary me-1 ms-1'>Office</p>
-                <p className='text-success'>Resident</p>
+
+                    <p className='text-primary me-1 ms-1'>Office</p>
+                    <p className='text-success'>Resident</p>
                 </div>
             </div>
             <ReactHTMLTableToExcel
@@ -199,7 +205,9 @@ const SubmittedCases = (props) => {
                             return <tr key={`${item.appid}-${index + 1}`}>
                                 <td >
                                     <div onClick={() => handleViewForm(item)} style={{ cursor: 'pointer' }} className={item?.office?.applicantDetails ? 'text-primary' : 'text-success'}>
-                                        {item.appid}
+                                        <button type="button" class="btn text-primary" data-toggle="tooltip" data-placement="top" title={`${getAgentName(item)}`}>
+                                            {item.appid}
+                                        </button>
                                     </div>
                                     {item.watcherEmail && item.watcherEmail}
                                     <ProblemCases cases={item} />

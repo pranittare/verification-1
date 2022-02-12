@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react'
-import { Input, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap'
+import React, { useEffect, useState, forwardRef, useImperativeHandle } from 'react'
+import { Input, Dropdown, DropdownToggle, DropdownMenu } from 'reactstrap'
 import DropDownComp from '../components/DropDownComp'
 
-export default function VerificationObserverResident({ verification, getData, data, id }) {
+const VerificationObserverResident = forwardRef(({ data, id }, ref) => {
     const [exteriorConditionsDrop, setExteriorConditionsDrop] = useState(false);
     const exteriorConditionsDroptoggle = () => setExteriorConditionsDrop(prevState => !prevState);
     const [interorConditionsDrop, setInterorConditionsDrop] = useState(false);
@@ -27,23 +27,7 @@ export default function VerificationObserverResident({ verification, getData, da
         assetSeenAtResidence: [],
         negativeArea: ''
     }
-    const [formdata, setFormdata] = useState({
-        localityOfAddress: '',
-        typeOfHouse: '',
-        typeOfHouseOthers: '',
-        constructionOfResidence: '',
-        accessibility: '',
-        easeofLocating: '',
-        interiorConditions: [],
-        exteriorConditions: [],
-        areaofResidence: '',
-        customerAttitude: '',
-        distancefromStation: '',
-        picturePoliticalLeader: '',
-        politicalLeaderDetails: '',
-        assetSeenAtResidence: [],
-        negativeArea: ''
-    })
+    const [formdata, setFormdata] = useState(initialState)
 
     const onHandleChange = (e) => {
         // name
@@ -58,18 +42,12 @@ export default function VerificationObserverResident({ verification, getData, da
     const handleSubmit = (e) => {
         // const formdata = new FormData(e.currentTarget)
         e.preventDefault()
-        verification(formdata)
+        // verification(formdata)
         // setData(formdata)
         // for (let [key, value] of formData.entries()) {
         //     console.log(key, value);
         // }
     }
-    useEffect(() => {
-        if (getData) {
-            verification(formdata)
-            // document.getElementById('residentVerificationObserver').click()
-        }
-    }, [getData])
     useEffect(() => {
         if (data) {
             let form = formdata
@@ -154,7 +132,7 @@ export default function VerificationObserverResident({ verification, getData, da
         { name: 'negativeArea', value: 'Community Dominated / Slum Area', label: 'Community Dominated / Slum Area' },
     ]
     const addCheckboxes = (e, item) => {
-        let form = formdata
+        let form = {...formdata}
         form[e.target.name] = form[e.target.name].toString();
         form[e.target.name] = form[e.target.name].split(',');
         let data = form[e.target.name]
@@ -168,6 +146,20 @@ export default function VerificationObserverResident({ verification, getData, da
         setFormdata(form);
         setRefresh(Math.random());
     }
+
+    useImperativeHandle(ref, () => ({
+
+        getFormData() {
+            const refData = {...formdata}
+            for(const key in refData){
+                if(initialState[key] === undefined)
+                delete refData[key]
+            }
+            return refData
+            // applicantDetail(formdata)
+        }
+
+    }));
     return (
         <div>
             <h4>Verification Observer</h4>
@@ -280,4 +272,8 @@ export default function VerificationObserverResident({ verification, getData, da
             }
         </div>
     )
-}
+})
+
+export default VerificationObserverResident
+
+

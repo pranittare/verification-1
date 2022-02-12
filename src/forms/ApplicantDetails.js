@@ -1,36 +1,15 @@
 import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react'
 import { Button, Input, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import DropDownComp from '../components/DropDownComp';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { getDatabase, update, ref as rtRef } from "firebase/database";
 import axios from 'axios';
-import {useHistory} from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
-const ApplicantDetails = forwardRef((props, ref) => {
-    const { applicantDetail, data, getData, vendor, agents, outerDetails, id, branch, casestoday } = props;
+const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDetails, id }, ref) => {
     const db = getDatabase();
     const history = useHistory();
-    // console.log('outer', outerDetails)
-    const initalData = {
-        appid: '',
-        srNo: '',
-        month: '',
-        initiationDate: '',
-        customerName: '',
-        bankNBFCname: '',
-        product: '',
-        loaction: '',
-        pincode: '',
-        contactNo: '',
-        mobileNo: '',
-        officeAddressProvided: '',
-        residenceAddressProvided: '',
-        mismatchAddress: '',
-        visitedOfficeAddress: '',
-        visitedresidentAddress: '',
-        remarks: '',
-        type: ''
-    }
+   
     const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
     const months1 = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
     const now = new Date();
@@ -38,8 +17,7 @@ const ApplicantDetails = forwardRef((props, ref) => {
     const thisMonth = months[now.getMonth()];
     const thisMonth1 = months1[now.getMonth()];
     // const srNumber = `${thisMonth1}-${now.getFullYear()}-${now.getTime()}`
-
-    const [formdata, setFormdata] = useState({
+    const initalData = {
         appid: '',
         srNo: '',
         month: thisMonth,
@@ -60,11 +38,8 @@ const ApplicantDetails = forwardRef((props, ref) => {
         type: '',
         form: '',
         emailList: [],
-        // selected: '',
-        // claimed: '',
-        // claimedAt: '',
-        // assigned: ''
-    })
+    }
+    const [formdata, setFormdata] = useState(initalData)
     const [refresh, setRefresh] = useState(0)
     const [dropdownBankNameOpen, setBankNameOpen] = useState(false);
     const toggleBankName = () => setBankNameOpen(!dropdownBankNameOpen);
@@ -74,11 +49,14 @@ const ApplicantDetails = forwardRef((props, ref) => {
     const [agentsDropdown, setAgentsDropdown] = useState([]);
     const [selectedAgent, setSelectedAgent] = useState('');
     const [selectedAgentId, setSelectedAgentId] = useState('');
-   
+    const vendor = useSelector(state => state.vendors);
+    const agents = useSelector(state => state.agents);
+    const branch = useSelector(state => state.branch);
+    const casestoday = useSelector(state => state.casestoday);
     const prevCasesCount = () => {
         let date = new Date().getDate()
         if (casestoday[date]) {
-            return {[date]:casestoday[date] + 1}
+            return { [date]: casestoday[date] + 1 }
         }
     }
     const handleCasesToday = () => {
@@ -87,7 +65,7 @@ const ApplicantDetails = forwardRef((props, ref) => {
     }
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (formdata.mobileNo.length > 9) {
+        if (formdata.mobileNo.length === 10 && formdata.loaction) {
             let newDate = new Date().getTime()
             let formdat = formdata
             formdat.form = formdat.type
@@ -128,12 +106,12 @@ const ApplicantDetails = forwardRef((props, ref) => {
             })
             console.log('submit', datatoSubmit, formdat)
         } else {
-            alert('Mobile number is Required')
+            alert('Mobile number and Location is Required')
         }
         // return datatoSubmit
     }
     const handleUpdateForm = () => {
-        if (formdata.mobileNo.length > 9) {
+        if (formdata.mobileNo.length === 10 && formdata.loaction) {
             let datatoSubmit = {
                 [formdata.type]: { applicantDetails: formdata },
                 completed: false,
@@ -142,7 +120,6 @@ const ApplicantDetails = forwardRef((props, ref) => {
                 allocated: true,
                 claimed: false,
                 appid: formdata.appid,
-                tat: new Date().toString(),
                 emailList: formdata.emailList,
                 branch: branch
             }
@@ -162,7 +139,7 @@ const ApplicantDetails = forwardRef((props, ref) => {
             })
             console.log('update', datatoSubmit, formdata)
         } else {
-            alert('Mobile number is Required')
+            alert('Mobile number and Location is Required')
         }
     }
     const notificationSend = (fcm) => {
@@ -219,25 +196,17 @@ const ApplicantDetails = forwardRef((props, ref) => {
         }
         return "";
     }
-    useImperativeHandle(ref, () => ({
-
-        getData() {
-            return formdata
-            // applicantDetail(formdata)
-        }
-
-    }));
-
     const onHandleChange = (e) => {
         let form = formdata
         form[e.name] = e.value
         if (form.mismatchAddress !== 'yes') {
             if (form.type === 'resident') {
-                form.visitedresidentAddress = e.value
+                form.visitedresidentAddress = form.residenceAddressProvided
             } else {
-                form.visitedOfficeAddress = e.value
+                form.visitedOfficeAddress = form.officeAddressProvided
             }
         }
+        console.log('form', form)
         setFormdata(form)
         setRefresh(Math.random())
     }
@@ -277,17 +246,24 @@ const ApplicantDetails = forwardRef((props, ref) => {
             }
             // applicantDetail(form)
             setRefresh(Math.random());
-            setRefresh(Math.random());
             outerDetailsData()
         }
         console.log('data', data)
     }, [data])
-    useEffect(() => {
-        if (getData) {
-            applicantDetail(formdata)
-            // document.getElementById('applicationDetails').click()
+    const formdataFiltered = () => {
+        const refData = {...formdata}
+        for(const key in refData){
+            if(initalData[key] === undefined)
+            delete refData[key]
         }
-    }, [getData])
+        return refData
+    }
+    useImperativeHandle(ref, () => ({
+        getFormData() {
+            return formdataFiltered()
+        }
+
+    }));
     const outerDetailsData = () => {
         if (outerDetails) {
             let formd = formdata
@@ -340,7 +316,7 @@ const ApplicantDetails = forwardRef((props, ref) => {
     return (
         <div>
             <h1>Applicant Details</h1>
-            {(refresh || true) && <div>
+             <div>
                 <form className='d-flex justify-content-between flex-wrap' onSubmit={handleSubmit}>
                     <div >
                         <label>App.Id/Lead id</label>
@@ -411,7 +387,7 @@ const ApplicantDetails = forwardRef((props, ref) => {
                         </Dropdown>
                     </div>
                     <div >
-                        <label>Location</label>
+                        <label className='text-danger'>Location</label>
                         <Input type="text" name='loaction' value={formdata['loaction']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
                     <div >
@@ -421,10 +397,10 @@ const ApplicantDetails = forwardRef((props, ref) => {
                     <div className='pt-4'>
                         <Dropdown toggle={() => setAgentsDropdown(!agentsDropdown)} isOpen={agentsDropdown}>
                             <DropdownToggle caret className='bg-transparent text-danger border-0'>
-                                {selectedAgent ? selectedAgent : outerDetails?.agenDetails?.email ? outerDetails?.agenDetails?.email : getAgents().length > 0 ? `Agents - ${getAgents().length}` : 'None'}
+                                {selectedAgent ? selectedAgent : outerDetails?.agenDetails?.email ? outerDetails?.agenDetails?.email : getAgents().filter(a => a.uniqueId !== 'Disabled').length > 0 ? `Agents - ${getAgents().filter(a => a.uniqueId !== 'Disabled').length}` : 'None'}
                             </DropdownToggle>
                             <DropdownMenu>
-                                {getAgents()?.map((item, index) => {
+                                {getAgents()?.filter(a => a.uniqueId !== 'Disabled').map((item, index) => {
 
                                     return <DropdownItem key={item.name} onClick={() => { setSelectedAgent(item.name); setSelectedAgentId(item.userId) }}>
                                         {item.name}
@@ -439,10 +415,10 @@ const ApplicantDetails = forwardRef((props, ref) => {
                     </div>
                     <div >
                         <label>Contact No.</label>
-                        <Input type="number" name='contactNo' value={formdata['contactNo']} onChange={(e) => onHandleChange(e.currentTarget)} />
+                        <Input type="text" name='contactNo' value={formdata['contactNo']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
                     <div >
-                        <label>Mobile No. ({formdata['mobileNo'].length}/10)</label>
+                        <label className={formdata['mobileNo'].length > 9 ?'text-danger' : ''}>Mobile No. ({formdata['mobileNo'].length}/10)</label>
                         <Input type="number" name='mobileNo' value={formdata['mobileNo']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
                     {formdata['type'] === 'office' && <div >
@@ -489,16 +465,9 @@ const ApplicantDetails = forwardRef((props, ref) => {
                             </Button>
                         </div>}
                 </form>
-            </div>}
+            </div>
         </div>
     )
 })
-const mapStateToProps = (state) => {
-    return {
-        vendor: state.vendors,
-        agents: state.agents,
-        branch: state.branch,
-        casestoday: state.casestoday
-    }
-}
-export default connect(mapStateToProps)(ApplicantDetails)
+
+export default ApplicantDetails;

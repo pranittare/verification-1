@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { getDatabase, ref, update, remove } from "firebase/database";
 import { addDoc, collection, getFirestore } from "firebase/firestore";
 import { Input, Button } from 'reactstrap'
@@ -94,12 +94,15 @@ const Office = (props) => {
     const [loading, setLoading] = useState(false);
     const [downloadPdf, setDownloadPdf] = useState(false);
     const [initiationDate, setInitiationDate] = useState('');
+    const verificationObserverRef = useRef(null);
+    const TPCRef = useRef(null);
+    const ADref = useRef(null);
 
-    const dataSplit = () => {
+    const dataSplit = (alldata) => {
         let verfi = { verification: {}, applicant: {} }
-        for (const key in formdata) {
-            if (Object.hasOwnProperty.call(formdata, key)) {
-                const element = formdata[key];
+        for (const key in alldata) {
+            if (Object.hasOwnProperty.call(alldata, key)) {
+                const element = alldata[key];
                 // SEPERATION FOR APPICANT AND VERIFICATION
                 for (const key1 in applicantDetails) {
                     if (Object.hasOwnProperty.call(applicantDetails, key1)) {
@@ -119,8 +122,8 @@ const Office = (props) => {
         setLoading(true)
         e.preventDefault()
         let dataToSubmit = {
-            applicantDetails: dataSplit().applicant,
-            verificationDetails: dataSplit().verification,
+            applicantDetails: dataSplit(combiner()).applicant,
+            verificationDetails: dataSplit(combiner()).verification,
         }
         Object.assign(dataToSubmit, mainouter)
         console.log('handleSubmit', dataToSubmit)
@@ -161,14 +164,12 @@ const Office = (props) => {
             + "&body=" + encodeURIComponent(yourMessage);
     }
     const handleSave = () => {
-        if (dataSplit().applicant.appid && dataSplit().verification.visitDate) {
-            getAllData();
-            setRefresh(Math.random())
+        if (dataSplit(combiner()).applicant.appid && dataSplit(combiner()).verification.visitDate) {
             setLoading(true)
             const path = `form/${pincode}/${id}/office`;
             let dataToSubmit = {
-                applicantDetails: dataSplit().applicant,
-                verificationDetails: dataSplit().verification
+                applicantDetails: dataSplit(combiner()).applicant,
+                verificationDetails: dataSplit(combiner()).verification
             }
             update(ref(db, path), dataToSubmit).then(res => {
                 setLoading(false)
@@ -179,19 +180,8 @@ const Office = (props) => {
                 console.log('Form update', err)
             })
             localStorage.setItem(id, JSON.stringify(formdata))
-        } else {
-            getAllData();
-            setRefresh(Math.random())
-            alert('Something went Wrong press save once again')
         }
         // console.log('handleSave', formdata)
-    }
-    const getAllData = () => {
-        setGetData(true)
-        setTimeout(() => {
-            setGetData(false)
-        }, [100])
-
     }
     const onHandleChange = (e) => {
         // name
@@ -474,12 +464,16 @@ const Office = (props) => {
         { name: 'typeofEntity', value: 'LLP', label: 'LLP' },
         { name: 'typeofEntity', value: 'Co-op Society', label: 'Co-op Society' },
     ]
-    const combiner = (data) => {
-        let alldata = formdata
-        Object.assign(alldata, data);
-        setInitiationDate(alldata.initiationDate.split('GMT')[0])
+   
+    const combiner = () => {
+        const VOdata = verificationObserverRef.current.getFormData();
+        const Tpdata = TPCRef.current.getFormData();
+        const Addata = ADref.current.getFormData();
+        const alldata = { ...formdata, ...Addata, ...VOdata, ...Tpdata }
+        console.log('alldata', alldata)
+        setInitiationDate(alldata.initiationDate.split('GMT')[0]);
         setFormdata(alldata);
-        setRefresh(Math.random());
+        return alldata
     }
     const remarksfnc = () => {
         let data = formdata
@@ -498,14 +492,11 @@ const Office = (props) => {
                 }}
             />
             <Collapse title='Applicant Details'>
-                <ApplicantDetails
-                    applicantDetail={(data) => {
-                        combiner(data)
-                    }} data={applicantDetails} getData={getData} outerDetails={outerDetails} id={id} />
+                <ApplicantDetails data={applicantDetails} outerDetails={outerDetails} id={id} ref={ADref}/>
             </Collapse>
             {id && <>  <Collapse title='Verification Details'>
                 <h1>Verification Details</h1>
-                {(refresh > 0 || true) && <form className='d-flex justify-content-between flex-wrap' >
+                <form className='d-flex justify-content-between flex-wrap' >
                     <div>
                         <label>Visit Date</label>
                         <Input type="text" name='visitDate' value={formdata['visitDate']} onChange={(e) => onHandleChange(e.currentTarget)} />
@@ -600,19 +591,15 @@ const Office = (props) => {
 
                         </div>
                     </div>
-                </form>}
-                <VerificationObserverOffice verification={(data) => {
-                    combiner(data)
-                }} getData={getData} data={verificationObserver} id={id} />
-                <Tpc tpc={(data) => {
-                    combiner(data)
-                }} getData={getData} data={verificationObserver} id={id} overallstatusCal={overallStatusCal} remarksfnc={remarksfnc} />
+                </form>
+                <VerificationObserverOffice data={verificationObserver} id={id} ref={verificationObserverRef} />
+                <Tpc data={verificationObserver} id={id} overallstatusCal={overallStatusCal} remarksfnc={remarksfnc} ref={TPCRef} />
 
             </Collapse>
                 <Collapse title='Images and GeoLocation'>
                     <Geolocation data={verificationObserver} id={id} pincode={pincode} />
                 </Collapse>
-                {(refresh > 0 || true) && <PdfMake data={formdata} refresh={() => { setRefresh(Math.random()); }} download={downloadPdf} initiationDate={initiationDate} />}
+                 <PdfMake data={formdata} refresh={() => { setRefresh(Math.random()); }} download={downloadPdf} initiationDate={initiationDate} />
 
             </>
             }

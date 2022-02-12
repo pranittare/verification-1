@@ -6,6 +6,9 @@ pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 const PdfMake = ({ data, images, download, initiationDate, stampAndMap }) => {
     const {stamp, map} = stampAndMap
+    let assetSeenAtResident = data?.assetSeenAtResidence?.toString()
+    let exteriorConditons = data?.exteriorConditions?.toString()
+    let interiorConditions = data?.interiorConditions?.toString()
     const documentDefinition = {
         content: [
             {
@@ -969,7 +972,7 @@ const PdfMake = ({ data, images, download, initiationDate, stampAndMap }) => {
                             {
 
                                 border: [true, true, true, true],
-                                text: data.assetSeen
+                                text: assetSeenAtResident
 
                             },
 
@@ -982,7 +985,7 @@ const PdfMake = ({ data, images, download, initiationDate, stampAndMap }) => {
                             {
 
                                 border: [true, true, true, true],
-                                text: data.interior
+                                text: interiorConditions
                             },
 
                         ],
@@ -1006,7 +1009,7 @@ const PdfMake = ({ data, images, download, initiationDate, stampAndMap }) => {
                             {
 
                                 border: [true, true, true, true],
-                                text: data.exteriorconditions
+                                text: exteriorConditons
                             }
                         ],
 
