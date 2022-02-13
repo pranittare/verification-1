@@ -470,13 +470,12 @@ const Office = (props) => {
         const Tpdata = TPCRef.current.getFormData();
         const Addata = ADref.current.getFormData();
         const alldata = { ...formdata, ...Addata, ...VOdata, ...Tpdata }
-        console.log('alldata', alldata)
+        alldata.finalFIRemarks = remarksfnc(alldata)
         setInitiationDate(alldata.initiationDate.split('GMT')[0]);
         setFormdata(alldata);
         return alldata
     }
-    const remarksfnc = () => {
-        let data = formdata
+    const remarksfnc = (data) => {
         let overall = `${data.overallStatus ? data.overallStatus : ''}; Date: ${data.visitDate ? data.visitDate : ''}; ${data.visitedTime ? data.visitedTime : ''}; Mismatch Address: ${data.mismatchAddress ? data.mismatchAddress : ''}; Address Confirmed: ${data.addressConfirmed ? data.addressConfirmed : ''}; Person Met: ${data.personMet ? data.personMet : ''}; Person Met Name: ${data.personMetName ? data.personMetName : ''}; Nature of Business Details: ${data.natureofBusines ? data.natureofBusines : ''};Business Board Seen: ${data.businessBoardSeen ? data.businessBoardSeen : ''}; Office Ownership: ${data.officeOwnership ? data.officeOwnership : ''};Type of Office: ${data.verificationObserver ? data.verificationObserver : ''}; Locality of Office: ${data.localityofOffice ? data.localityofOffice : ''}; Business Activity Level: ${data.businessActivityLevel ? data.businessActivityLevel : ''};Ease of Locating: ${data.easeofLocating ? data.easeofLocating : ''};Distance from Station: ${data.distancefromStation ? data.distancefromStation : ''};Negative Area: ${data.negativeArea ? data.negativeArea : ''};TPC1: ${data.TPCName1 ? data.TPCName1 : ''} - ${data.tpc1Status ? data.tpc1Status : ''} - ${data.tpc1Remarks ? data.tpc1Remarks : ''};TPC2: ${data.TPCName2 ? data.TPCName2 : ''} - ${data.tpc2Status ? data.tpc2Status : ''} - ${data.tpc2Remarks ? data.tpc2Remarks : ''}; ${data.finalFIAnyRemarks ? data.finalFIAnyRemarks : ''}`;
         return overall
     }
@@ -593,7 +592,7 @@ const Office = (props) => {
                     </div>
                 </form>
                 <VerificationObserverOffice data={verificationObserver} id={id} ref={verificationObserverRef} />
-                <Tpc data={verificationObserver} id={id} overallstatusCal={overallStatusCal} remarksfnc={remarksfnc} ref={TPCRef} />
+                <Tpc data={verificationObserver} id={id} ref={TPCRef} />
 
             </Collapse>
                 <Collapse title='Images and GeoLocation'>

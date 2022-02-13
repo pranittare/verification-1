@@ -11,7 +11,10 @@ import { addDoc, collection, getFirestore } from "firebase/firestore";
 import { getFormData } from '../utils/singleForm'
 import { connect } from 'react-redux';
 import DropDownComp from '../components/DropDownComp';
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL, deleteObject, listAll } from "firebase/storage";
 import PdfMakeResident from './PdfMakeResident';
+import stamp from '../assets/stamp.jpeg'
+
 
 const Resident = (props) => {
     let { pincode, id } = useParams();
@@ -92,9 +95,13 @@ const Resident = (props) => {
     const [loading, setLoading] = useState(false);
     const [downloadPdf, setDownloadPdf] = useState(false);
     const [initiationDate, setInitiationDate] = useState('');
+    const [images, setImages] = useState([]);
+    const [stamp, setStamp] = useState('');
+    const [map, setMap] = useState('')
     const verificationObserverRef = useRef(null);
     const TPCRef = useRef(null);
     const ADref = useRef(null);
+    const storage = getStorage();
 
     const onHandleChange = (e) => {
         let form = formdata
@@ -171,24 +178,24 @@ const Resident = (props) => {
     const handleSave = () => {
         // getAllData();
         if (dataSplit(combiner()).applicant.appid && dataSplit(combiner()).verification.visitDate) {
-        setLoading(true)
-        // setRefresh(Math.random())
-        const path = `form/${pincode}/${id}/resident`;
-        let dataToSubmit = {
-            applicantDetails: dataSplit(combiner()).applicant,
-            verificationDetails: dataSplit(combiner()).verification
+            setLoading(true)
+            // setRefresh(Math.random())
+            const path = `form/${pincode}/${id}/resident`;
+            let dataToSubmit = {
+                applicantDetails: dataSplit(combiner()).applicant,
+                verificationDetails: dataSplit(combiner()).verification
+            }
+            console.log('data', dataToSubmit)
+            update(ref(db, path), dataToSubmit).then(res => {
+                setLoading(false)
+                alert('Forms Updated')
+            }).catch(err => {
+                setLoading(false)
+                alert('Something went Wrong check and try again')
+                console.log('Form update', err)
+            })
+            localStorage.setItem(id, JSON.stringify(formdata))
         }
-        console.log('data', dataToSubmit)
-        update(ref(db, path), dataToSubmit).then(res => {
-            setLoading(false)
-            alert('Forms Updated')
-        }).catch(err => {
-            setLoading(false)
-            alert('Something went Wrong check and try again')
-            console.log('Form update', err)
-        })
-        localStorage.setItem(id, JSON.stringify(formdata))
-        } 
     }
     function getCookie(cname) {
         let name = cname + "=";
@@ -204,9 +211,6 @@ const Resident = (props) => {
         }
         return "";
     }
-    // useEffect(() => {
-    //     console.log('getData', formdata)
-    // }, [getData])
     // Form data by id
     const formFill = (formsaved) => {
         let formd = formdata
@@ -355,6 +359,7 @@ const Resident = (props) => {
             watcherEmail: '',
         });
     }
+
     const overallStatusCal = (allData) => {
         let orverallstatus = ''
         if (allData?.mismatchAddress == 'yes') {
@@ -475,13 +480,13 @@ const Resident = (props) => {
         const Tpdata = TPCRef.current.getFormData();
         const Addata = ADref.current.getFormData();
         const alldata = { ...formdata, ...Addata, ...VOdata, ...Tpdata }
-        console.log('alldata', alldata)
+        alldata.finalFIRemarks = remarksfnc(alldata)
         setInitiationDate(alldata.initiationDate.split('GMT')[0]);
         setFormdata(alldata);
+        setRefresh(Math.random())
         return alldata
     }
-    const remarksfnc = () => {
-        let data = formdata
+    const remarksfnc = (data) => {
         let overall = `${data.overallStatus ? data.overallStatus : ''}; Date: ${data.visitDate ? data.visitDate : ''}; ${data.visitedTime ? data.visitedTime : ''}; Mismatch Address: ${data.mismatchAddress ? data.mismatchAddress : ''}; Address Confirmed: ${data.addressConfirmed ? data.addressConfirmed : ''}; Person Met: ${data.personMet ? data.personMet : ''}; Person Met Name: ${data.personMetName ? data.personMetName : ''}; Residence Status: ${data.residenceStatus ? data.residenceStatus : ''}; Customer Occupation: ${data.customerOccupation ? data.customerOccupation : ''}; Gate/Door color: ${data.gateDoorColor ? data.gateDoorColor : ''}; Locality of Address: ${data.localityOfAddress ? data.localityOfAddress : ''};  Type of House: ${data.typeOfHouse ? data.typeOfHouse : ''};Accessibility/Approachability: ${data.accessibility ? data.accessibility : ''};Ease of Locating: ${data.easeofLocating ? data.easeofLocating : ''}; Customers Attitude: ${data.customerAttitude ? data.customerAttitude : ''};Distance from Station: ${data.distancefromStation ? data.distancefromStation : ''}; Negative Area: ${data.negativeArea ? data.negativeArea : ''}; TPC1: ${data.TPCName1 ? data.TPCName1 : ''} - ${data.TPCStatus1 ? data.TPCStatus1 : ''} - ${data.tpc1Remarks ? data.tpc1Remarks : ''}; TPC2: ${data.TPCName2 ? data.TPCName2 : ''} - ${data.tpc2Status ? data.tpc2Status : ''} - ${data.tpc2Remarks ? data.tpc2Remarks : ''}; ${data.finalFIAnyRemarks ? data.finalFIAnyRemarks : ''}`;
         console.log('overall', overall)
         return overall
@@ -623,12 +628,12 @@ const Resident = (props) => {
                     </div>
                 </form>
                 <VerificationObserverResident data={verificationObserver} id={id} ref={verificationObserverRef} />
-                <Tpc data={verificationObserver} id={id} overallstatusCal={overallStatusCal} remarksfnc={remarksfnc} ref={TPCRef} />
+               <Tpc data={verificationObserver} id={id} ref={TPCRef} />
             </Collapse>
                 <Collapse title='Images and GeoLocation'>
-                    <Geolocation data={verificationObserver} id={id} pincode={pincode} />
+                    <Geolocation data={verificationObserver} id={id} pincode={pincode} images={images} stamp={stamp}/>
                 </Collapse>
-                <PdfMakeResident data={formdata} refresh={() => { setRefresh(Math.random()) }} download={downloadPdf} initiationDate={initiationDate} />
+                <PdfMakeResident data={formdata} refresh={() => { setRefresh(Math.random()) }} download={downloadPdf} initiationDate={initiationDate} images={images} stamp={stamp} map={map}/>
 
             </>
             }

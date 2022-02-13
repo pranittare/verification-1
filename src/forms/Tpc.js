@@ -2,7 +2,7 @@ import React, { forwardRef, useEffect, useState, useImperativeHandle } from 'rea
 import { Button, Input } from 'reactstrap';
 import DropDownComp from '../components/DropDownComp';
 import companyStamp from '../assets/stamp.jpeg'
-import {useSelector} from 'react-redux';
+import { useSelector } from 'react-redux';
 
 const dict = {
     TPCName1: '',
@@ -27,33 +27,7 @@ const dict = {
     overallStatus: ''
 }
 
-const Tpc = forwardRef(({ data, id, overallstatusCal, remarksfnc }, ref) => {
-    const [refresh, setRefresh] = useState(0);
-    const users = useSelector((state)=> state.users)
-
-    // const [override, setOverride] = useState(false);
-    const [formdata, setFormdata] = useState(dict)
-
-
-    const onHandleChange = (e) => {
-        // name
-        let form = {...formdata}
-        form[e.name] = e.value
-        // console.log(e, form[e.name] )
-        setFormdata(form)
-        setRefresh(Math.random())
-        // console.log(form)
-    }
-    const handleSubmit = (e) => {
-        // const formData = new FormData(e.currentTarget);
-        e.preventDefault()
-
-        // console.log('tpc', formdata)
-        // tpc(formdata)
-        // for (let [key, value] of formData.entries()) {
-        //     console.log(key, value);
-        // }
-    }
+const Tpc = forwardRef(({ data, id }, ref) => {
     let status1 = [
         { name: 'TPCStatus1', value: '', label: 'None' },
         { name: 'TPCStatus1', value: 'positive', label: 'Positive' },
@@ -84,9 +58,31 @@ const Tpc = forwardRef(({ data, id, overallstatusCal, remarksfnc }, ref) => {
         { name: 'overallStatus', value: 'Refer', label: 'Refer' },
         { name: 'overallStatus', value: 'Not Recomended', label: 'Not Recomended' },
     ]
-    const overallStatusSetter = () => {
-        let overall =  data.overallStatus ? data.overallStatus : overallstatusCal() ? overallstatusCal() : '';
-        return overall
+    const remarksfnc = (data) => {
+        if (data.form === 'office') {
+            let overall = `${data.overallStatus ? data.overallStatus : ''}; Date: ${data.visitDate ? data.visitDate : ''}; ${data.visitedTime ? data.visitedTime : ''}; Mismatch Address: ${data.mismatchAddress ? data.mismatchAddress : ''}; Address Confirmed: ${data.addressConfirmed ? data.addressConfirmed : ''}; Person Met: ${data.personMet ? data.personMet : ''}; Person Met Name: ${data.personMetName ? data.personMetName : ''}; Nature of Business Details: ${data.natureofBusines ? data.natureofBusines : ''};Business Board Seen: ${data.businessBoardSeen ? data.businessBoardSeen : ''}; Office Ownership: ${data.officeOwnership ? data.officeOwnership : ''};Type of Office: ${data.verificationObserver ? data.verificationObserver : ''}; Locality of Office: ${data.localityofOffice ? data.localityofOffice : ''}; Business Activity Level: ${data.businessActivityLevel ? data.businessActivityLevel : ''};Ease of Locating: ${data.easeofLocating ? data.easeofLocating : ''};Distance from Station: ${data.distancefromStation ? data.distancefromStation : ''};Negative Area: ${data.negativeArea ? data.negativeArea : ''};TPC1: ${data.TPCName1 ? data.TPCName1 : ''} - ${data.tpc1Status ? data.tpc1Status : ''} - ${data.tpc1Remarks ? data.tpc1Remarks : ''};TPC2: ${data.TPCName2 ? data.TPCName2 : ''} - ${data.tpc2Status ? data.tpc2Status : ''} - ${data.tpc2Remarks ? data.tpc2Remarks : ''}; ${data.finalFIAnyRemarks ? data.finalFIAnyRemarks : ''}`;
+            return overall
+        } else {
+            let overall = `${data.overallStatus ? data.overallStatus : ''}; Date: ${data.visitDate ? data.visitDate : ''}; ${data.visitedTime ? data.visitedTime : ''}; Mismatch Address: ${data.mismatchAddress ? data.mismatchAddress : ''}; Address Confirmed: ${data.addressConfirmed ? data.addressConfirmed : ''}; Person Met: ${data.personMet ? data.personMet : ''}; Person Met Name: ${data.personMetName ? data.personMetName : ''}; Residence Status: ${data.residenceStatus ? data.residenceStatus : ''}; Customer Occupation: ${data.customerOccupation ? data.customerOccupation : ''}; Gate/Door color: ${data.gateDoorColor ? data.gateDoorColor : ''}; Locality of Address: ${data.localityOfAddress ? data.localityOfAddress : ''};  Type of House: ${data.typeOfHouse ? data.typeOfHouse : ''};Accessibility/Approachability: ${data.accessibility ? data.accessibility : ''};Ease of Locating: ${data.easeofLocating ? data.easeofLocating : ''}; Customers Attitude: ${data.customerAttitude ? data.customerAttitude : ''};Distance from Station: ${data.distancefromStation ? data.distancefromStation : ''}; Negative Area: ${data.negativeArea ? data.negativeArea : ''}; TPC1: ${data.TPCName1 ? data.TPCName1 : ''} - ${data.TPCStatus1 ? data.TPCStatus1 : ''} - ${data.tpc1Remarks ? data.tpc1Remarks : ''}; TPC2: ${data.TPCName2 ? data.TPCName2 : ''} - ${data.tpc2Status ? data.tpc2Status : ''} - ${data.tpc2Remarks ? data.tpc2Remarks : ''}; ${data.finalFIAnyRemarks ? data.finalFIAnyRemarks : ''}`;
+            console.log('overall', overall)
+            return overall
+        }
+    }
+    const [refresh, setRefresh] = useState(0);
+    const users = useSelector((state) => state.users)
+
+    const [formdata, setFormdata] = useState(dict)
+    const onHandleChange = (e) => {
+        let form = { ...formdata }
+        form[e.name] = e.value
+        if (e.name == 'overallStatus') {
+            form.finalFIRemarks = remarksfnc(form)
+        } 
+        setFormdata(form)
+        setRefresh(Math.random())
+    }
+    const handleSubmit = (e) => {
+        e.preventDefault()
     }
     const getProductSupervisor = () => {
         let email = getCookie('email');
@@ -106,10 +102,10 @@ const Tpc = forwardRef(({ data, id, overallstatusCal, remarksfnc }, ref) => {
         let ca = document.cookie.split(';');
         for (let i = 0; i < ca.length; i++) {
             let c = ca[i];
-            while (c.charAt(0) == ' ') {
+            while (c.charAt(0) === ' ') {
                 c = c.substring(1);
             }
-            if (c.indexOf(name) == 0) {
+            if (c.indexOf(name) === 0) {
                 return c.substring(name.length, c.length);
             }
         }
@@ -117,36 +113,23 @@ const Tpc = forwardRef(({ data, id, overallstatusCal, remarksfnc }, ref) => {
     }
     useEffect(() => {
         if (data) {
-            let form = {...formdata}
-            // console.log('data', data)
+            let form = { ...formdata }
             for (const key in data) {
                 form[key] = data[key]
             }
-            // if (localStorage.getItem(id)) {
-            //     let local = JSON.parse(localStorage.getItem(id))
-            //     for (const key in data) {
-            //         local[key] = data[key]
-            //     }
-            //     local.finalFIRemarks = remarksfnc()
-            //     setFormdata(local)
-            // } else {
-                form.overallStatus = overallStatusSetter()
-                form.finalFIRemarks = remarksfnc()
-                form.productSupervisor = getProductSupervisor()
-                // console.log('form', form)
-                setFormdata(form)
-            // }
+            form.productSupervisor = getProductSupervisor()
+            form.finalFIRemarks = remarksfnc(data)
+            setFormdata(form)
             setRefresh(Math.random())
-            // onHandleChange({ name: data[0], value: test[1] })
         }
     }, [data])
     useImperativeHandle(ref, () => ({
 
         getFormData() {
-            const refData = {...formdata}
-            for(const key in refData){
-                if(dict[key] === undefined)
-                delete refData[key]
+            const refData = { ...formdata }
+            for (const key in refData) {
+                if (dict[key] === undefined)
+                    delete refData[key]
             }
             return refData
             // applicantDetail(formdata)
@@ -173,7 +156,7 @@ const Tpc = forwardRef(({ data, id, overallstatusCal, remarksfnc }, ref) => {
                                 <Input type="text" name="TPCName1" value={formdata['TPCName1']} onChange={(e) => onHandleChange(e.currentTarget)} /></td>
 
                             <td>
-                                <DropDownComp id='tpc' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={status1}/>
+                                <DropDownComp id='tpc' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={status1} />
                             </td>
                             <td>
                                 <Input type="text" name="TPCRemark1" value={formdata['TPCRemark1']} onChange={(e) => onHandleChange(e.currentTarget)} /></td>
@@ -189,7 +172,7 @@ const Tpc = forwardRef(({ data, id, overallstatusCal, remarksfnc }, ref) => {
                             <td>
                                 <Input type="text" name="TPCRemark2" value={formdata['TPCRemark2']} onChange={(e) => onHandleChange(e.currentTarget)} /></td>
                         </tr>
-                        
+
                     </tbody>
                 </table>
                 <div className='d-flex'>
@@ -246,17 +229,17 @@ const Tpc = forwardRef(({ data, id, overallstatusCal, remarksfnc }, ref) => {
                     <label>Agency name</label>
                     <Input type="text" name='finalFIAgencyname' value={formdata['finalFIAgencyname']} onChange={(e) => onHandleChange(e.currentTarget)} />
                 </div>
-                <div style={{width: 200}}>
+                <div style={{ width: 200 }}>
                     <label>Standard Remarks</label>
                     <textarea className='form-control' cols='10' rows='7' type="text" name='finalFIAnyRemarks' value={formdata['finalFIAnyRemarks']} onChange={(e) => onHandleChange(e.currentTarget)} />
                 </div>
-                <div style={{width: 200}}>
+                <div style={{ width: 200 }}>
                     <label>Remarks</label>
                     <textarea className='form-control' cols='10' rows='7' type="text" name='finalFIRemarks' value={formdata['finalFIRemarks']} onChange={(e) => onHandleChange(e.currentTarget)} />
                 </div>
                 <div>
                     <label>Company Stamp</label>
-                    <img src={companyStamp} style={{width: 150}} alt=''/>
+                    <img src={companyStamp} style={{ width: 150 }} alt='' />
                 </div>
                 <div>
                     <label>Verifier Name</label>
