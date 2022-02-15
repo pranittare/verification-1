@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { Input, Dropdown, DropdownItem, DropdownToggle, DropdownMenu } from 'reactstrap';
 import {
     databaseUpdateQueryExactSingle,
@@ -12,7 +12,6 @@ import moment from 'moment';
 import { Link, useHistory } from 'react-router-dom';
 
 const OldCases = (props) => {
-    const { vendors } = props;
     const history = useHistory();
     const formatedDate = new Date().toDateString()
     const [allData, setAllData] = useState([])
@@ -31,6 +30,9 @@ const OldCases = (props) => {
     const toggleBankName = () => {
         setDropdownBankNameOpen(!dropdownBankNameOpen);
     }
+    // const forms = useSelector(state => state.fforms)
+    // const db = useSelector(state => state.oldcases)
+    const vendors = useSelector(state => state.vendors)
     const formData = (forms) => {
         // let formarray = []
         // const formKeys = Object.keys(forms)
@@ -176,7 +178,7 @@ const OldCases = (props) => {
                 <div className="row">
                     <div className="col-2">
                         <Dropdown toggle={toggleBankName} isOpen={dropdownBankNameOpen}>
-                            <DropdownToggle caret>
+                            <DropdownToggle caret className='text-wrap'>
                                 {searchData1['bankNBFCname'] ? searchData1['bankNBFCname'] : 'None'}
                             </DropdownToggle>
                             <DropdownMenu
@@ -224,7 +226,7 @@ const OldCases = (props) => {
                             <th scope="col"> <Input type="text" name="customerName" placeholder={'CustomerName'} onChange={handleFilter} /> </th>
                             <th scope="col"> <Input type="text" name="tat" placeholder={'TAT'} /> </th>
                             <th scope="col"> <Input type="text" name="bankNBFCname" placeholder={'ClientName'} onChange={handleFilter} /> </th>
-                            <th scope="col"> <Input type="text" name="remarks" placeholder={'Remarks'} onChange={handleFilter} /> </th>
+                            <th scope="col"> <Input type="text" name="overallStatus" placeholder={'Status'} onChange={handleFilter} /> </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -260,7 +262,8 @@ const OldCases = (props) => {
 
                                 </td>
                                 <td>
-                                    {item.applicantDetails.remarks}
+                                    {item.verificationDetails.overallStatus}
+                                    {/* {item.applicantDetails.remarks} */}
 
                                 </td>
                             </tr>
@@ -347,12 +350,5 @@ const OldCases = (props) => {
         </div>
     )
 }
-const mapStateToProps = (state) => {
-    // console.log('state', state)
-    return {
-        forms: state.fforms,
-        db: state.oldcases,
-        vendors: state.vendors
-    }
-}
-export default connect(mapStateToProps)(OldCases)
+
+export default OldCases;

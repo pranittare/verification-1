@@ -324,7 +324,7 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
                     </div>
                     <div >
                         <label>Sr.No</label>
-                        <Input type="text" name='srNo' value={formdata['srNo']} onChange={(e) => onHandleChange(e.currentTarget)} />
+                        <Input type="text" disabled name='srNo' value={formdata['srNo']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
                     <div >
                         <label>Month</label>

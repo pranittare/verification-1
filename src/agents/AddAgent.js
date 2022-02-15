@@ -6,10 +6,10 @@ import { doc, deleteDoc, addDoc, updateDoc, getFirestore, Timestamp } from "fire
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import moment from 'moment';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import DropDownComp from '../components/DropDownComp';
 
-const AddAgent = ({ agent, allAgents, realTimeAgents, agents, realTimeforms }) => {
+const AddAgent = ({ agent, allAgents }) => {
 
     const [modal, setModal] = useState(false);
     const [refresh, setRefresh] = useState(0)
@@ -59,7 +59,9 @@ const AddAgent = ({ agent, allAgents, realTimeAgents, agents, realTimeforms }) =
         remarks: '',
         branch: ''
     })
-
+    const realTimeAgents = useSelector(state => state.agents);
+    const agents = useSelector(state => state.fagents);
+    const realTimeforms = useSelector(state => state.forms);
     const toggle = () => {
         setFormdata(initalState)
         setModal(!modal)
@@ -103,16 +105,6 @@ const AddAgent = ({ agent, allAgents, realTimeAgents, agents, realTimeforms }) =
         setFormdata(form)
         setRefresh(Math.random())
         // console.log(form)
-    }
-    const onSubmit = () => {
-        let form = formdata
-        let secondarypincodes = []
-        let secondary = form['pincodes'].replace(/\s/g, "X").split(',')
-        for (let index = 0; index < secondary.length; index++) {
-            const element = secondary[index];
-            secondarypincodes.push({ pincodes: element })
-        }
-        // console.log(secondarypincodes, startDate, endDate)
     }
     const uploadFile = (e) => {
         const file = e.target.files[0];
@@ -170,6 +162,7 @@ const AddAgent = ({ agent, allAgents, realTimeAgents, agents, realTimeforms }) =
                         clained: false
                     }).then(res => {
                         alert('Forms disabled')
+                        window.location.reload()
                     }).catch(err => {
                         alert('Forms were not disabled check log')
                         console.log('Disable Agent 1', err)
@@ -177,7 +170,7 @@ const AddAgent = ({ agent, allAgents, realTimeAgents, agents, realTimeforms }) =
                 }
             }
             if (agent.userId === agents.userId) {
-               disableRealTimeAgentSingle(agents.key)
+                disableRealTimeAgentSingle(agents.key)
             }
         }
     }
@@ -197,6 +190,7 @@ const AddAgent = ({ agent, allAgents, realTimeAgents, agents, realTimeforms }) =
             if (agent.userId === agents.userId) {
                 update(rtRef(db, `agents/${agents.key}`), { uniqueId: null }).then(res => {
                     alert('Agent Enabled')
+                    window.location.reload()
                 }).catch(err => {
                     alert('Agent was not enabled check log')
                     console.log('Agent Enabled', err)
@@ -234,7 +228,7 @@ const AddAgent = ({ agent, allAgents, realTimeAgents, agents, realTimeforms }) =
     const HandleDeleteAgent = () => {
         let agent = formdata
         let realAgents = rtA
-        
+
         let agentkey;
         for (let index = 0; index < realAgents.length; index++) {
             const agents = realAgents[index];
@@ -335,8 +329,9 @@ const AddAgent = ({ agent, allAgents, realTimeAgents, agents, realTimeforms }) =
             .then(res => {
                 // Add update logic only for Realtime DB
                 update(rtRef(db, `agents/${realTimeAgentKey()}`), commonAddUpdate('rt'))
-                .then(res => {
-                    alert('Update Successfull')
+                    .then(res => {
+                        alert('Update Successfull')
+                        window.location.reload()
                     })
                     .catch(err => {
                         alert('Error Occured retry')
@@ -505,7 +500,7 @@ const AddAgent = ({ agent, allAgents, realTimeAgents, agents, realTimeforms }) =
                             <div >
                                 <label>Upload Doc</label>
                                 <Input type="file" className='form-control' onClick={(e) => uploadFile(e)} />
-                                {downloadUrl && <a href={downloadUrl} target='_blank'>Click here to Download the Document</a>}
+                                {downloadUrl && <a href={downloadUrl} target='_blank' rel="noreferrer">Click here to Download the Document</a>}
                             </div>
                             <div >
                                 <label>Password</label>
@@ -515,8 +510,8 @@ const AddAgent = ({ agent, allAgents, realTimeAgents, agents, realTimeforms }) =
                         </div>
                         <div className='col-12'>
                             <label>Secondary Pincode</label>
-                            {formdata['pincodes'].split(',').map((item) => {
-                                return <span className="badge bg-info text-dark ms-2" key={item}>{item}</span>
+                            {formdata['pincodes'].split(',').map((item, index) => {
+                                return <span className="badge bg-info text-dark ms-2" key={`${item}-${index}`}>{item}</span>
 
                             })
                             }
@@ -536,7 +531,6 @@ const AddAgent = ({ agent, allAgents, realTimeAgents, agents, realTimeforms }) =
                     </div>}
                 </ModalBody>
                 <ModalFooter>
-                    <Button color="primary" onClick={onSubmit}>Submit</Button>{' '}
                     <Button color="secondary" onClick={toggle}>Cancel</Button>
                     {updateField ? formdata['name'] ? <Button color="warning" onClick={handleUpdateUser}>Update User</Button> : agent?.name && <Button color="warning" onClick={handleAddUser}>Add User</Button> : <Button color="warning" onClick={handleAddUser}>Add User</Button>}
                 </ModalFooter>
@@ -544,12 +538,4 @@ const AddAgent = ({ agent, allAgents, realTimeAgents, agents, realTimeforms }) =
         </div>
     )
 }
-const mapStateToProps = (state) => {
-    // console.log('state', state)
-    return {
-        realTimeAgents: state.agents,
-        agents: state.fagents,
-        realTimeforms: state.forms,
-    }
-}
-export default connect(mapStateToProps)(AddAgent)
+export default AddAgent;

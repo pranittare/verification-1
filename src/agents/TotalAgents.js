@@ -77,6 +77,12 @@ const TotalAgents = ({ agents, rtAgents, branch }) => {
         }
         return dup;
     }
+    const agentStatus = (item) => {
+        if (item.uniqueId === 'Disabled') {
+            return 'InActive';
+        }
+        return 'Active';
+    }
 
     useEffect(() => {
         // console.log('agents', props.agents)
@@ -142,7 +148,7 @@ const TotalAgents = ({ agents, rtAgents, branch }) => {
                         {reset > 0 && allData && allData.length > 0 && allData.map((item, index) => {
                             // console.log('item', item)
                             if (item.branch === branch)
-                                return <tr key={index}>
+                                return <tr key={item.name}>
                                     <th>{index + 1}</th>
                                     <td >
                                         <AddAgent agent={item} />
@@ -170,7 +176,7 @@ const TotalAgents = ({ agents, rtAgents, branch }) => {
 
                                     </td>
                                     <td>
-                                        {item.uniqueId ? item.uniqueId !== 'Disabled' ? 'Active' : 'InActive' : 'InActive'}
+                                        {agentStatus(item)}
                                     </td>
                                     <td>
                                         {moment(item.kycUpdateDate.seconds * 1000).format('ll')}
@@ -201,7 +207,6 @@ const TotalAgents = ({ agents, rtAgents, branch }) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {console.log('total', allData && allData)}
                         {reset > 0 && allData && allData.length > 0 && allData.map((item, index) => {
                             if (item.branch === branch) {
                                 return <tr key={`${item.userId}-${item.agentCode}-${index}`}>
@@ -218,7 +223,6 @@ const TotalAgents = ({ agents, rtAgents, branch }) => {
                                         {item.pincode}
                                         {item.secondaryPincodes &&
                                             <div>
-                                                {/* <hr /> */}
                                                 {item.secondaryPincodes.map((item1, index1) => {
                                                     return <div key={item1.pincodes}>{item1.pincodes}</div>
                                                 })}
@@ -227,7 +231,7 @@ const TotalAgents = ({ agents, rtAgents, branch }) => {
 
                                     </td>
                                     <td>
-                                        {item.uniqueId ? item.uniqueId !== 'Disabled' ? 'Active' : 'InActive' : 'InActive'}
+                                        {agentStatus(item)}
                                     </td>
                                     <td>
                                         {moment(item.kycUpdateDate.seconds * 1000).format('ll')}
