@@ -167,21 +167,21 @@ const VerificationObserverOffice = forwardRef(({ data, id }, ref) => {
     return (
         <div>
             <h4>Verification Observer</h4>
-            {(refresh > 0 || true) && <form className='d-flex justify-content-between flex-wrap' onSubmit={handleSubmit} >
+            {(refresh > 0 || true) && <form className='d-flex justify-content-around flex-wrap' onSubmit={handleSubmit} >
                 <div>
                     <label>Type of Office</label>
 
                     <DropDownComp id='verificationObserverOffice' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={verificationObserver} />
                 </div>
-                <div>
+                <div className='mx-3'>
                     <label>Locality of Office</label>
                     <DropDownComp id='verificationObserverOffice' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={localityofOffice} />
                 </div>
-                <div>
+                <div className='mx-3'>
                     <label>Construction Of Office</label>
                     <DropDownComp id='verificationObserverOffice' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={constructionOfOffice} />
                 </div>
-                <div>
+                <div className='mx-3'>
                     <label>Ease of Locating</label>
                     <DropDownComp id='verificationObserverOffice' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={easeofLocating} />
                 </div>
@@ -202,15 +202,15 @@ const VerificationObserverOffice = forwardRef(({ data, id }, ref) => {
                         </DropdownMenu>
                     </Dropdown>
                 </div>
-                <div>
+                <div className='mx-3'>
                     <label>Approx Area of Office (sq.ft)</label>
                     <Input type="text" name='approxAreaofOffice' value={formdata['approxAreaofOffice']} onChange={(e) => onHandleChange(e.currentTarget)} />
                 </div>
-                <div>
+                <div style={{width: 300}}>
                     <label>Business Activity Level</label>
                     <DropDownComp id='verificationObserverOffice' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={businessActivityLevel} />
                 </div>
-                <div>
+                <div className='mx-3'>
                     <label>No. of Employees Working in Office/ Business or Seen in Premises</label>
                     <Input type="text" name='noOfEmployeesWorkinginPremises' value={formdata['noOfEmployeesWorkinginPremises']} onChange={(e) => onHandleChange(e.currentTarget)} />
                 </div>
@@ -222,7 +222,7 @@ const VerificationObserverOffice = forwardRef(({ data, id }, ref) => {
                     <label>Distance from Neareast Railway Station</label>
                     <Input type="text" name='distanceFromRailwayStation' value={formdata['distanceFromRailwayStation']} onChange={(e) => onHandleChange(e.currentTarget)} />
                 </div>
-                <div>
+                <div className='mx-3'>
                     <label>Picture Political Leader</label>
                     <DropDownComp id='verificationObserverOffice' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={picturePoliticalLeader} />
                 </div>
@@ -230,7 +230,7 @@ const VerificationObserverOffice = forwardRef(({ data, id }, ref) => {
                     <label>Political Leader Details</label>
                     <Input type="text" name='politicalLeaderDetails' value={formdata['politicalLeaderDetails']} onChange={(e) => onHandleChange(e.currentTarget)} />
                 </div>
-                <div>
+                <div className='mx-3'>
                     <label>Asset Seen At Office</label>
                     {/* <Input type="text" name='assetSeenAtOffice' value={formdata['assetSeenAtOffice']} onChange={(e) => onHandleChange(e.currentTarget)} /> */}
                     <Dropdown isOpen={assetSeenAtOfficeDrop} toggle={assetSeenAtOfficeDroptoggle}>
@@ -247,7 +247,7 @@ const VerificationObserverOffice = forwardRef(({ data, id }, ref) => {
                         </DropdownMenu>
                     </Dropdown>
                 </div>
-                <div>
+                <div className='mx-3'>
                     <label>Interior Conditions</label>
                     {/* <Input type="text" name='interiorConditions' value={formdata['interiorConditions']} onChange={(e) => onHandleChange(e.currentTarget)} /> */}
                     <Dropdown isOpen={interorConditionsDrop} toggle={interorConditionsDroptoggle}>
@@ -264,7 +264,7 @@ const VerificationObserverOffice = forwardRef(({ data, id }, ref) => {
                         </DropdownMenu>
                     </Dropdown>
                 </div>
-                <div>
+                <div style={{width: 200}}>
                     <label>Stock Level</label>
                     <DropDownComp id='verificationObserverOffice' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={stockLevel} />
                 </div>

@@ -97,6 +97,7 @@ const Office = (props) => {
     const verificationObserverRef = useRef(null);
     const TPCRef = useRef(null);
     const ADref = useRef(null);
+    const [pdfViewed, setpdfViewed] = useState(false);
 
     const dataSplit = (alldata) => {
         let verfi = { verification: {}, applicant: {} }
@@ -173,7 +174,10 @@ const Office = (props) => {
             }
             update(ref(db, path), dataToSubmit).then(res => {
                 setLoading(false)
-                alert('Forms Updated')
+                alert('Forms Updated');
+                if(pdfViewed) {
+                    window.location.reload();
+                }
             }).catch(err => {
                 setLoading(false)
                 alert('Something went Wrong check and try again')
@@ -480,7 +484,7 @@ const Office = (props) => {
         return overall
     }
     return (
-        <div>
+        <div className='mx-3'>
             <Prompt
                 message={(location, action) => {
                     if (action === 'POP') {
@@ -494,8 +498,8 @@ const Office = (props) => {
                 <ApplicantDetails data={applicantDetails} outerDetails={outerDetails} id={id} ref={ADref}/>
             </Collapse>
             {id && <>  <Collapse title='Verification Details'>
-                <h1>Verification Details</h1>
-                <form className='d-flex justify-content-between flex-wrap' >
+                <h4 className='my-2'>Verification Details</h4>
+                <form className='d-flex justify-content-around flex-wrap' >
                     <div>
                         <label>Visit Date</label>
                         <Input type="text" name='visitDate' value={formdata['visitDate']} onChange={(e) => onHandleChange(e.currentTarget)} />
@@ -504,12 +508,12 @@ const Office = (props) => {
                         <label>Visited Time:</label>
                         <Input type="text" name='visitedTime' value={formdata['visitedTime']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
-                    <div>
+                    <div className='mx-3'>
                         <label>Address Confirmed</label>
                         <DropDownComp id='office' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={addressConfirmed} />
 
                     </div>
-                    <div>
+                    <div className='mx-3'>
                         <label>Business Board Seen</label>
                         <DropDownComp id='office' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={businessBoardSeen} />
 
@@ -575,7 +579,6 @@ const Office = (props) => {
                         <label>Details(Income/Designation)</label>
                         <Input type="text" name='detailsIncomeDesignation' value={formdata['detailsIncomeDesignation']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
-                    <div className='d-flex'>
                         <div className='pe-4'>
                             <label>Additional Income</label>
                             <Input type="text" name='additionalIncome' value={formdata['additionalIncome']} onChange={(e) => onHandleChange(e.currentTarget)} />
@@ -589,7 +592,6 @@ const Office = (props) => {
                             <DropDownComp id='office' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={typeofEntity} />
 
                         </div>
-                    </div>
                 </form>
                 <VerificationObserverOffice data={verificationObserver} id={id} ref={verificationObserverRef} />
                 <Tpc data={verificationObserver} id={id} ref={TPCRef} />
@@ -598,7 +600,7 @@ const Office = (props) => {
                 <Collapse title='Images and GeoLocation'>
                     <Geolocation data={verificationObserver} id={id} pincode={pincode} />
                 </Collapse>
-                 <PdfMake data={formdata} refresh={() => { setRefresh(Math.random()); }} download={downloadPdf} initiationDate={initiationDate} />
+                 <PdfMake data={formdata} refresh={() => { setRefresh(Math.random()); }} download={downloadPdf} initiationDate={initiationDate} setpdfViewed={()=> setpdfViewed(true)} />
 
             </>
             }

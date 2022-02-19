@@ -163,7 +163,7 @@ const VerificationObserverResident = forwardRef(({ data, id }, ref) => {
     return (
         <div>
             <h4>Verification Observer</h4>
-            {(refresh > 0 || true) && <form className='d-flex justify-content-between flex-wrap' onSubmit={handleSubmit} >
+            {(refresh > 0 || true) && <form className='d-flex justify-content-around flex-wrap' onSubmit={handleSubmit} >
                 <div>
                     <label>Locality of Address</label>
                     <DropDownComp id='verificationObserverResident' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={localityOfAddress} />
@@ -228,19 +228,19 @@ const VerificationObserverResident = forwardRef(({ data, id }, ref) => {
                     <label>Area of Residence (sq.ft)</label>
                     <Input type="text" name='areaofResidence' value={formdata['areaofResidence']} onChange={(e) => onHandleChange(e.currentTarget)} />
                 </div>
-                <div>
+                <div className='mx-2'>
                     <label>Customer Attitude</label>
                     <DropDownComp id='verificationObserverResident' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={customerAttitude} />
                 </div>
-                <div>
+                <div className='mx-2'>
                     <label>Distance from Station</label>
                     <Input type="text" name='distancefromStation' value={formdata['distancefromStation']} onChange={(e) => onHandleChange(e.currentTarget)} />
                 </div>
-                <div>
+                <div className='mx-3'>
                     <label>Picture Political Leader</label>
                     <DropDownComp id='verificationObserverResident' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={picturePoliticalLeader} />
                 </div>
-                <div>
+                <div className='mx-3'>
                     <label>Political Leader Details</label>
                     <Input type="text" name='politicalLeaderDetails' value={formdata['politicalLeaderDetails']} onChange={(e) => onHandleChange(e.currentTarget)} />
                 </div>

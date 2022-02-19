@@ -139,7 +139,7 @@ const Tpc = forwardRef(({ data, id }, ref) => {
     return (
         <div>
             <h4>TPC Confirmation</h4>
-            <form className='d-flex justify-content-between flex-wrap' onSubmit={handleSubmit}>
+            <form className='d-flex justify-content-around flex-wrap' onSubmit={handleSubmit}>
                 <table className="table table-striped table-bordered">
                     <thead>
                         <tr>
@@ -237,17 +237,20 @@ const Tpc = forwardRef(({ data, id }, ref) => {
                     <label>Remarks</label>
                     <textarea className='form-control' cols='10' rows='7' type="text" name='finalFIRemarks' value={formdata['finalFIRemarks']} onChange={(e) => onHandleChange(e.currentTarget)} />
                 </div>
-                <div>
+                <div className='mx-3'>
                     <label>Company Stamp</label>
                     <img src={companyStamp} style={{ width: 150 }} alt='' />
                 </div>
-                <div>
+                <div className='d-flex'>
+                <div className='mx-3'>
                     <label>Verifier Name</label>
                     <Input type="text" name='finalFIVerifierName' value={formdata['finalFIVerifierName']} onChange={(e) => onHandleChange(e.currentTarget)} />
                 </div>
                 <div>
                     <label>Product Supervisor</label>
                     <Input type="text" name='productSupervisor' value={formdata['productSupervisor']} onChange={(e) => onHandleChange(e.currentTarget)} />
+                </div>
+
                 </div>
                 <div className='d-none'>
                     <Button id='tpcdata' type='submit'>Submit</Button>

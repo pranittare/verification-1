@@ -101,6 +101,7 @@ const Resident = (props) => {
     const verificationObserverRef = useRef(null);
     const TPCRef = useRef(null);
     const ADref = useRef(null);
+    const [pdfViewed, setpdfViewed] = useState(false);
     const storage = getStorage();
 
     const onHandleChange = (e) => {
@@ -189,6 +190,9 @@ const Resident = (props) => {
             update(ref(db, path), dataToSubmit).then(res => {
                 setLoading(false)
                 alert('Forms Updated')
+                if(pdfViewed) {
+                    window.location.reload();
+                }
             }).catch(err => {
                 setLoading(false)
                 alert('Something went Wrong check and try again')
@@ -493,7 +497,7 @@ const Resident = (props) => {
     }
 
     return (
-        <div>
+        <div className='mx-2'>
             <Prompt
                 message={(location, action) => {
                     if (action === 'POP') {
@@ -507,8 +511,8 @@ const Resident = (props) => {
                 <ApplicantDetails data={applicantDetails} outerDetails={outerDetails} id={id} ref={ADref} />
             </Collapse>
             {id && <> <Collapse title='Verification Details'>
-                <h1>Verification Details</h1>
-                <form className='d-flex justify-content-between flex-wrap' >
+                <h4 className='my-2'>Verification Details</h4>
+                <form className='d-flex justify-content-around flex-wrap' >
                     <div>
                         <label>Visit Date</label>
                         <Input type="text" name='visitDate' value={formdata['visitDate']} onChange={(e) => onHandleChange(e.currentTarget)} />
@@ -555,7 +559,7 @@ const Resident = (props) => {
                         {/* <Input type="text" name='lessThanYrAtCurrentAddress' value={formdata['lessThanYrAtCurrentAddress']} onChange={(e) => onHandleChange(e.currentTarget)} /> */}
                         <DropDownComp id='resident' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={lessThanYrAtCurrentAddress} />
                     </div>
-                    <div>
+                    <div className='mx-3'>
                         <label>Less than 1 yr at Current Address (Yes)</label>
                         <Input type="text" name='lessThanYrAtCurrentAddressNote' value={formdata['lessThanYrAtCurrentAddressNote']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
@@ -633,7 +637,7 @@ const Resident = (props) => {
                 <Collapse title='Images and GeoLocation'>
                     <Geolocation data={verificationObserver} id={id} pincode={pincode} images={images} stamp={stamp}/>
                 </Collapse>
-                <PdfMakeResident data={formdata} refresh={() => { setRefresh(Math.random()) }} download={downloadPdf} initiationDate={initiationDate} images={images} stamp={stamp} map={map}/>
+                <PdfMakeResident data={formdata} refresh={() => { setRefresh(Math.random()) }} download={downloadPdf} initiationDate={initiationDate} setpdfViewed={()=> setpdfViewed(true)}/>
 
             </>
             }

@@ -4,7 +4,7 @@ import pdfFonts from "pdfmake/build/vfs_fonts";
 import { connect } from 'react-redux';
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
-const PdfMake = ({ data, images, download, initiationDate, stampAndMap }) => {
+const PdfMake = ({ data, images, download, initiationDate, stampAndMap, setpdfViewed }) => {
     const {stamp, map} = stampAndMap
     let assetSeenAtResident = data?.assetSeenAtResidence?.toString()
     let exteriorConditons = data?.exteriorConditions?.toString()
@@ -1587,8 +1587,8 @@ const PdfMake = ({ data, images, download, initiationDate, stampAndMap }) => {
     },[download])
     return (
         <div>
-           <button className='btn text-primary' onClick={() => { pdfMake.createPdf(documentDefinition).open() }}>View PDF</button>
-            <button className='btn text-primary' id='downloadpdf' onClick={() => { pdfMake.createPdf(documentDefinition).download() }}>Download PDF</button>
+           <button className='btn text-primary' onClick={() => { pdfMake.createPdf(documentDefinition).open(); setpdfViewed(true) }}>View PDF</button>
+            <button className='btn text-primary' id='downloadpdf' onClick={() => { pdfMake.createPdf(documentDefinition).download(); setpdfViewed(true) }}>Download PDF</button>
         </div>
     )
 }
