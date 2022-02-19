@@ -351,6 +351,7 @@ const Office = (props) => {
                     .then(formsaved => {
                         setLoading(false)
                         formFill(formsaved)
+                        console.log('formsaved',formsaved)
                         update(ref(db, `form/${pincode}/${id}`), {
                             watcherEmail: getCookie('email'),
                         });

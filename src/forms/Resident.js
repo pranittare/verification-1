@@ -71,6 +71,7 @@ const Resident = (props) => {
         dependents: '',
         children: '',
         officeAddress: '',
+        totalYearsAtCurrentAddress: ''
     })
     const [outerDetails, setOuterDetails] = useState({
         allocated: false,
@@ -553,6 +554,10 @@ const Resident = (props) => {
                     <div>
                         <label>Staying in City (No. of Yrs)</label>
                         <Input type="text" name='totalYearsInCity' value={formdata['totalYearsInCity']} onChange={(e) => onHandleChange(e.currentTarget)} />
+                    </div>
+                    <div>
+                        <label>Staying at Current Address (No. of Yrs)</label>
+                        <Input type="text" name='totalYearsAtCurrentAddress' value={formdata["totalYearsAtCurrentAddress"]} onChange={(e) => onHandleChange(e.currentTarget)}/>
                     </div>
                     <div>
                         <label>Less than 1 yr at Current Address</label>

@@ -277,7 +277,6 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
             setRefresh(Math.random())
         }
     }
-
     const getAgents = () => {
         let pincodeWiseAgents = []
         if (formdata.pincode) {
@@ -454,9 +453,9 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
                         <Input type="text" name='remarks' value={formdata['remarks']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
                     {id ? <div className='pt-4'>
-                        <Button color='warning' id='applicationDetails' type="button" onClick={handleUpdateForm} >
+                       {!outerDetails.submitted && <Button color='warning' id='applicationDetails' type="button" onClick={handleUpdateForm} >
                             Update
-                        </Button>
+                        </Button>}
                     </div>
                         :
                         <div className='pt-4'>
