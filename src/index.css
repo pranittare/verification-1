@@ -21,8 +21,12 @@ code {
     /* left: 0; */
     z-index: 1030;
 }
-input{
+.dropdown .dropdown-toggle{
+  min-width: 140px;
+  max-width: 160px;
+}
+/* div input.form-control{
   min-width: 200px;
   margin-right: 20px;
   margin-left: 20px;
-}
+} */

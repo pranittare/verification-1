@@ -11,18 +11,22 @@ import { addDoc, collection, getFirestore } from "firebase/firestore";
 import { getFormData } from '../utils/singleForm'
 import { connect } from 'react-redux';
 import DropDownComp from '../components/DropDownComp';
-import { getStorage, ref as storageRef, uploadBytes, getDownloadURL, deleteObject, listAll } from "firebase/storage";
-import PdfMakeResident from './PdfMakeResident';
-import stamp from '../assets/stamp.jpeg'
+// import { getStorage, ref as storageRef, uploadBytes, getDownloadURL, deleteObject, listAll } from "firebase/storage";
+// import PdfMakeResident from './PdfMakeResident';
+// import stamp from '../assets/stamp.jpeg'
+import pdfMake from "pdfmake/build/pdfmake";
+import pdfFonts from "pdfmake/build/vfs_fonts";
+// import PdfMake from './PdfMake';
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
+// import "./form.css"
 
 
-const Resident = (props) => {
+const Resident = ({ images, stampAndMap }) => {
     let { pincode, id } = useParams();
     const db = getDatabase();
     const fdb = getFirestore();
     let data = useLocation()?.state
     const history = useHistory();
-    const [getData, setGetData] = useState(false)
     const [applicantDetails, setApplicantDetails] = useState({
         appid: '',
         srNo: '',
@@ -94,16 +98,10 @@ const Resident = (props) => {
     })
     const [refresh, setRefresh] = useState(0);
     const [loading, setLoading] = useState(false);
-    const [downloadPdf, setDownloadPdf] = useState(false);
     const [initiationDate, setInitiationDate] = useState('');
-    const [images, setImages] = useState([]);
-    const [stamp, setStamp] = useState('');
-    const [map, setMap] = useState('')
     const verificationObserverRef = useRef(null);
     const TPCRef = useRef(null);
     const ADref = useRef(null);
-    const [pdfViewed, setpdfViewed] = useState(false);
-    const storage = getStorage();
 
     const onHandleChange = (e) => {
         let form = formdata
@@ -139,13 +137,13 @@ const Resident = (props) => {
             verificationDetails: dataSplit(combiner()).verification,
         }
         Object.assign(dataToSubmit, mainouter)
+        pdfMake.createPdf(documentDefinition).download();
         console.log('handleSubmit', dataToSubmit)
         addDoc(collection(fdb, "forms"), dataToSubmit).then(res => {
             // mail
             let emaillist = mainouter.emailList
             let appid = dataToSubmit.applicantDetails.appid
             let customername = dataToSubmit.applicantDetails.customerName
-            setDownloadPdf(true)
             handleMail(emaillist, appid, customername)
             // remove form
             handleRemoveForm();
@@ -191,9 +189,6 @@ const Resident = (props) => {
             update(ref(db, path), dataToSubmit).then(res => {
                 setLoading(false)
                 alert('Forms Updated')
-                if(pdfViewed) {
-                    window.location.reload();
-                }
             }).catch(err => {
                 setLoading(false)
                 alert('Something went Wrong check and try again')
@@ -278,7 +273,6 @@ const Resident = (props) => {
         // if (localStorage.getItem(id)) {
         //     setFormdata(JSON.parse(localStorage.getItem(id)))
         // }
-        overallStatusCal(formd)
         setRefresh(Math.random())
         console.log('formd', formd)
     }
@@ -335,7 +329,6 @@ const Resident = (props) => {
         // if (localStorage.getItem(id)) {
         //     setFormdata(JSON.parse(localStorage.getItem(id)))
         // }
-        overallStatusCal(formd)
         setRefresh(Math.random())
         console.log('formd', formd)
     }
@@ -487,15 +480,1715 @@ const Resident = (props) => {
         const alldata = { ...formdata, ...Addata, ...VOdata, ...Tpdata }
         alldata.finalFIRemarks = remarksfnc(alldata)
         setInitiationDate(alldata.initiationDate.split('GMT')[0]);
+        if(!alldata.overallStatus){
+            alldata.overallStatus = overallStatusCal(alldata)
+        }
         setFormdata(alldata);
         setRefresh(Math.random())
         return alldata
     }
     const remarksfnc = (data) => {
-        let overall = `${data.overallStatus ? data.overallStatus : ''}; Date: ${data.visitDate ? data.visitDate : ''}; ${data.visitedTime ? data.visitedTime : ''}; Mismatch Address: ${data.mismatchAddress ? data.mismatchAddress : ''}; Address Confirmed: ${data.addressConfirmed ? data.addressConfirmed : ''}; Person Met: ${data.personMet ? data.personMet : ''}; Person Met Name: ${data.personMetName ? data.personMetName : ''}; Residence Status: ${data.residenceStatus ? data.residenceStatus : ''}; Customer Occupation: ${data.customerOccupation ? data.customerOccupation : ''}; Gate/Door color: ${data.gateDoorColor ? data.gateDoorColor : ''}; Locality of Address: ${data.localityOfAddress ? data.localityOfAddress : ''};  Type of House: ${data.typeOfHouse ? data.typeOfHouse : ''};Accessibility/Approachability: ${data.accessibility ? data.accessibility : ''};Ease of Locating: ${data.easeofLocating ? data.easeofLocating : ''}; Customers Attitude: ${data.customerAttitude ? data.customerAttitude : ''};Distance from Station: ${data.distancefromStation ? data.distancefromStation : ''}; Negative Area: ${data.negativeArea ? data.negativeArea : ''}; TPC1: ${data.TPCName1 ? data.TPCName1 : ''} - ${data.TPCStatus1 ? data.TPCStatus1 : ''} - ${data.tpc1Remarks ? data.tpc1Remarks : ''}; TPC2: ${data.TPCName2 ? data.TPCName2 : ''} - ${data.tpc2Status ? data.tpc2Status : ''} - ${data.tpc2Remarks ? data.tpc2Remarks : ''}; ${data.finalFIAnyRemarks ? data.finalFIAnyRemarks : ''}`;
+        console.log('data', data)
+        let overall = `${data.overallStatus ? data.overallStatus : 'NA'} |  Date: ${data.visitDate ? data.visitDate : 'NA'} |  ${data.visitedTime ? data.visitedTime : 'NA'} |  Mismatch Address: ${data.mismatchAddress ? data.mismatchAddress : 'NA'} |  Address Confirmed: ${data.addressConfirmed ? data.addressConfirmed : 'NA'} |  Person Met: ${data.personMet ? data.personMet : 'NA'} |  Person Met Name: ${data.personMetName ? data.personMetName : 'NA'} |  Residence Status: ${data.residenceStatus ? data.residenceStatus : 'NA'} |  Customer Occupation: ${data.customerOccupation ? data.customerOccupation : 'NA'} |  Gate/Door color: ${data.gateDoorColor ? data.gateDoorColor : 'NA'} |  Locality of Address: ${data.localityOfAddress ? data.localityOfAddress : 'NA'} |   Type of House: ${data.typeOfHouse ? data.typeOfHouse : 'NA'} | Accessibility/Approachability: ${data.accessibility ? data.accessibility : 'NA'} | Ease of Locating: ${data.easeofLocating ? data.easeofLocating : 'NA'} |  Customers Attitude: ${data.customerAttitude ? data.customerAttitude : 'NA'} | Distance from Station: ${data.distancefromStation ? data.distancefromStation : 'NA'} |  Negative Area: ${data.negativeArea ? data.negativeArea : 'NA'} | TPC1: ${data.TPCName1 ? data.TPCName1 : 'NA'} - ${data.TPCStatus1 ? data.TPCStatus1 : 'NA'} - ${data.TPCRemark1 ? data.TPCRemark1 : 'NA'} | TPC2: ${data.TPCName2 ? data.TPCName2 : 'NA'} - ${data.TPCStatus2 ? data.TPCStatus2 : 'NA'} - ${data.TPCRemark2 ? data.TPCRemark2 : 'NA'} | ${data.finalFIAnyRemarks ? data.finalFIAnyRemarks : 'NA'}`;
         console.log('overall', overall)
         return overall
     }
+    // PDF MAKE CONTENT
+
+    const {stamp, map} = stampAndMap
+    let assetSeenAtResident = formdata?.assetSeenAtResidence?.toString()
+    let exteriorConditons = formdata?.exteriorConditions?.toString()
+    let interiorConditions = formdata?.interiorConditions?.toString()
+    const documentDefinition = {
+        content: [
+            {
+                style: 'table',
+                table: {
+                    widths: [525],
+                    body: [
+                        [
+
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#358fd4',
+                                text: 'Residence Verification Report',
+                                color: 'white',
+                                alignment: 'center',
+                                fontSize: 18,
+                            },
+
+                        ],
+
+                    ]
+                }
+            },
+            // { text: 'Residential Report', color: 'purple', alignment: 'center', 
+            // fontSize: 18,border: [true, true, true, true], fillColor: '#ccc' },
+            // { text: 'Applicant Details', style: 'header' },
+            {
+                style: 'table',
+                table: {
+                    widths: [525],
+                    body: [
+                        [
+
+                            {
+                                border: [true, true, true, true],
+                                fillColor: '#88c0eb',
+                                text: 'Applicant Details',
+                                fontSize: 14,
+
+                            },
+
+                        ],
+
+                    ]
+                }
+            },
+            {
+                style: 'table',
+                table: {
+                    widths: [100, 150, 100, 150],
+                    body: [
+                        [
+
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'App.Id/Lead id'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.appid
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Sr.No'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.srNo
+                            },
+                        ],
+
+                    ]
+                }
+            },
+            {
+                style: 'table',
+                table: {
+                    widths: [100, 150, 100, 150],
+                    body: [
+                        [
+
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Month'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.month
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Initiation Date'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: initiationDate
+                            },
+                        ],
+
+                    ]
+                }
+            },
+            {
+                style: 'table',
+                table: {
+                    widths: [100, 150, 100, 150],
+                    body: [
+                        [
+
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Customer Name'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.customerName
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Bank/ NBFC name'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata?.bankNBFCname?.clientName
+                            },
+                        ],
+
+                    ]
+                }
+            },
+            {
+                style: 'table',
+                table: {
+                    widths: [100, 150, 100, 150],
+                    body: [
+                        [
+
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Product'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata?.product?.productName
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Location'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.loaction
+                            },
+                        ],
+
+                    ]
+                }
+            },
+            {
+                style: 'table',
+                table: {
+                    widths: [100, 150, 100, 150],
+                    body: [
+                        [
+
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Pincode'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.pincode
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Contact No'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.contactNo
+                            },
+                        ],
+
+                    ]
+                }
+            },
+            {
+                style: 'table',
+                table: {
+                    widths: [100, 420],
+                    body: [
+                        [
+
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Mobile No'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.mobileNo
+                            },
+                        ],
+
+                    ]
+                }
+            },
+            {
+                style: 'table',
+                table: {
+                    widths: [100, 420],
+                    body: [
+                        [
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Residence Address Provided'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.residenceAddressProvided
+                            },
+                        ],
+
+                    ]
+                }
+            },
+            {
+                style: 'table',
+                table: {
+                    widths: [100, 150, 100, 150],
+                    body: [
+                        [
+
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Mismatch Address'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.mismatchAddress
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Visited Address'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.visitedresidentAddress
+                            },
+                            // {
+                            //   
+                            //   border: [true, true, true, true],
+                            //   fillColor: '#ccc',
+                            //   text: 'Distance from Station(Km)'
+                            // },
+                            // {
+                            //   
+                            //   border: [true, true, true, true],
+                            //   text: formdata.distancefromNeareastStation
+                            // },
+                        ],
+
+                    ]
+                }
+            },
+            // {
+            //   style: 'table',
+            //   table: {
+            //     widths: [100, 150, 100, 150],
+            //     body: [
+            //       [
+
+
+            //         // {
+            //         //   
+            //         //   border: [true, true, true, true],
+            //         //   fillColor: '#ccc',
+            //         //   text: 'Nearest Landmark'
+            //         // },
+            //         // {
+            //         //   
+            //         //   border: [true, true, true, true],
+            //         //   text: formdata.nearestLandMark
+            //         // },
+
+
+            //       ],
+
+            //     ]
+            //   }
+            // },
+            {
+                style: 'table',
+                table: {
+                    widths: [525],
+                    body: [
+                        [
+
+                            {
+                                border: [true, true, true, true],
+                                fillColor: '#88c0eb',
+                                text: 'Verification Report',
+                                fontSize: 14,
+
+                            },
+
+                        ],
+
+                    ]
+                }
+            },
+            // { text: 'Verification Report', style: 'header' },
+            {
+                style: 'table',
+                table: {
+                    widths: [100, 150, 100, 150],
+                    body: [
+                        [
+
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Visit Date'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.visitDate
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Visited Time'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.visitedTime
+                            },
+                        ],
+
+                    ]
+                }
+            },
+            {
+                style: 'table',
+                table: {
+                    widths: [100, 150, 100, 150],
+                    body: [
+                        [
+
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Address Confirmed'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.addressConfirmed
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Nearest Landmark'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.landmark
+                            },
+                        ],
+
+                    ]
+                }
+            },
+            {
+                style: 'table',
+                table: {
+                    widths: [100, 150, 100, 150],
+                    body: [
+                        [
+
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Person Met'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.personMet
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Person Met Name'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.personMetName
+                            },
+
+                        ],
+
+                    ]
+                }
+            },
+            {
+                style: 'table',
+                table: {
+                    widths: [100, 150, 100, 150],
+                    body: [
+                        [
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Person Met Age'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.personMetAge
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Relationship with Applicant'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.personMetRealtionwithApplicant
+                            },
+                        ],
+                    ]
+                }
+            },
+
+            {
+                style: 'table',
+                table: {
+                    widths: [100, 150, 100, 150],
+                    body: [
+                        [
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Name and Relationship with Applicant (Others)'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.personMetRealtionwithApplicantOther
+                            },
+
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Staying in City (No. of Yrs)'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.totalYearsInCity
+                            },
+                        ],
+
+                    ]
+                }
+            },
+            {
+                style: 'table',
+                table: {
+                    widths: [100, 150, 100, 150],
+                    body: [
+                        [
+
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Staying at Current Address (No. of Yrs)'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.totalYearsAtCurrentAddress
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Less than 1 yr at Current Address'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.lessThanYrAtCurrentAddress
+                            },
+                        ],
+
+                    ]
+                }
+            },
+            {
+                style: 'table',
+                table: {
+                    widths: [100, 150, 100, 150],
+                    body: [
+                        [
+
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Less than 1 yr at Current Address (Prev.Address)'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.lessThanYrAtCurrentAddressNote
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Residence Status'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.residenceStatus
+                            },
+                        ],
+
+                    ]
+                }
+            },
+            {
+                style: 'table',
+                table: {
+                    widths: [100, 150, 100, 150],
+                    body: [
+                        [
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Customer Occupation'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.customerOccupation
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Qualification'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.qualification
+                            },
+
+                        ],
+
+                    ]
+                }
+            },
+            {
+                style: 'table',
+                table: {
+                    widths: [100, 150, 100, 150],
+                    body: [
+                        [
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Marital Status'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.marrried
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Gate/Door color & Bldg Color'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.gateDoorColor
+                            },
+
+
+                        ],
+
+                    ]
+                }
+            },
+            {
+                style: 'table',
+                table: {
+                    widths: [100, 150, 100, 150],
+                    body: [
+                        [
+
+
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'No of Family Members'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.noOfFamilyMembers
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Earning Members'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.earningMembers
+                            },
+                            // GAte
+
+
+                        ],
+
+                    ]
+                }
+            },
+            {
+                style: 'table',
+                table: {
+                    widths: [100, 150, 100, 150],
+                    body: [
+                        [
+
+
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Dependents'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.dependents
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Children'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.children
+                            },
+                        ],
+
+                    ]
+                }
+            },
+
+            {
+                style: 'table',
+                table: {
+                    widths: [100, 150, 100, 150],
+                    body: [
+                        [
+
+
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Office Name'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.officeName
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Designation'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.designation
+                            },
+                        ],
+
+                    ]
+                }
+            },
+
+            {
+                style: 'table',
+                table: {
+                    widths: [100, 420],
+                    body: [
+                        [
+
+
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Office Address'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.officeAddress
+                            },
+                        ],
+
+                    ]
+                }
+            },
+            {
+                style: 'table',
+                table: {
+                    widths: [100, 150, 100, 150],
+                    body: [
+                        [
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Doc Verified'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.docVerified
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Document Details'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.documentDetails
+                            },
+
+
+                        ],
+
+                    ]
+                }
+            },
+            {
+                style: 'table',
+                table: {
+                    widths: [525],
+                    body: [
+                        [
+
+                            {
+                                border: [true, true, true, true],
+                                fillColor: '#88c0eb',
+                                text: "Verifier's Observation",
+                                fontSize: 14,
+
+                            },
+
+                        ],
+
+                    ]
+                }
+            },
+            // { text: 'Verification Observer', style: 'header' },
+            // {
+            //   style: 'table',
+            //   table: {
+            //     widths: [100, 150, 100, 150],
+            //     body: [
+            //       [
+
+            //         {
+            //           
+            //           border: [true, true, true, true],
+            //           fillColor: '#ccc',
+            //           text: 'Customer Name Verified From'
+            //         },
+            //         {
+            //           
+            //           border: [true, true, true, true],
+            //           text: formdata.customerNameVerifiedFrom.toString()
+            //         },
+            //         {
+            //           
+            //           border: [true, true, true, true],
+            //           fillColor: '#ccc',
+            //           text: 'Customer Name Verified From Others'
+            //         },
+            //         {
+            //           
+            //           border: [true, true, true, true],
+            //           text: formdata.customerNameVerifiedFromOther
+            //         },
+            //       ],
+
+            //     ]
+            //   }
+            // },
+            {
+                style: 'table',
+                table: {
+                    widths: [100, 150, 100, 150],
+                    body: [
+                        [
+
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Locality of Address'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.localityOfAddress
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Type of House'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.typeOfHouse
+                            },
+                        ],
+
+                    ]
+                }
+            },
+            {
+                style: 'table',
+                table: {
+                    widths: [100, 150, 100, 150],
+                    body: [
+                        [
+
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Type of House Others'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.typeOfHouseOthers
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Construction Of Residence'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.constructionOfResidence
+                            },
+                        ],
+
+                    ]
+                }
+            },
+            {
+                style: 'table',
+                table: {
+                    widths: [100, 150, 100, 150],
+                    body: [
+                        [
+
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Accessibility/Approachibility'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.accessibility
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Area of Residence (sq.ft)'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.areaofResidence
+                            },
+
+                        ],
+
+                    ]
+                }
+            },
+            // {
+            //   style: 'table',
+            //   table: {
+            //     widths: [525],
+            //     body: [
+            //       [
+
+            //         {
+            //           border: [true, true, true, true],
+            //           fillColor: '#88c0eb',
+            //           text: "Verifier's Observation",
+            //           fontSize: 14,
+
+            //         },
+
+            //       ],
+
+            //     ]
+            //   }
+            // },
+            {
+                style: 'table',
+                table: {
+                    widths: [100, 425],
+                    body: [
+                        [
+
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Ease of Locating'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.easeofLocating
+                            }
+
+                        ],
+
+                    ]
+                }
+            },
+            {
+                style: 'table',
+                table: {
+                    widths: [100, 150, 100, 150],
+                    body: [
+                        [
+
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Customer Attitude'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.customerAttitude
+                            },
+
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Asset Seen At Residence'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: assetSeenAtResident
+                            },
+                        ],
+
+                    ]
+                }
+            },
+            {
+                style: 'table',
+                table: {
+                    widths: [100, 150, 100, 150],
+                    body: [
+                        [
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Interior Conditions'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: interiorConditions
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Exterior Condition'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: exteriorConditons
+
+                            },
+
+                            // {
+                            //   
+                            //   border: [true, true, true, true],
+                            //   fillColor: '#ccc',
+                            //   text: 'Vehical Owned'
+                            // },
+                            // {
+                            //   
+                            //   border: [true, true, true, true],
+                            //   text: formdata.vehicalOwned
+                            // },
+                        ],
+
+                    ]
+                }
+            },
+            {
+                style: 'table',
+                table: {
+                    widths: [100, 150, 100, 150],
+                    body: [
+                        [
+
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Distance from Station(Km)'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.distancefromStation
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Negative Area'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.negativeArea
+                            },
+                        ],
+
+                    ]
+                }
+            },
+            {
+                style: 'table',
+                table: {
+                    widths: [100, 150, 100, 150],
+                    body: [
+                        [
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Picture Political Leader'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.picturePoliticalLeader
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Political Leader Details'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.politicalLeaderDetails
+                            },
+
+                        ],
+
+                    ]
+                }
+            },
+            {
+                style: 'table',
+                table: {
+                    widths: [525],
+                    body: [
+                        [
+
+                            {
+                                border: [true, true, true, true],
+                                fillColor: '#88c0eb',
+                                text: 'TPC Confirmation',
+                                fontSize: 14,
+
+                            },
+
+                        ],
+
+                    ]
+                }
+            },
+            // { text: 'TPC Confirmation', style: 'header' },
+            {
+                style: 'table',
+                table: {
+                    widths: [10, 130, 100, 260],
+
+                    body: [
+                        [
+                            {
+                                fillColor: '#ccc',
+                                text: '#'
+                            },
+                            {
+                                fillColor: '#ccc',
+                                text: 'Name'
+                            },
+                            {
+                                fillColor: '#ccc',
+                                text: 'Status'
+                            },
+                            {
+                                fillColor: '#ccc',
+                                text: 'Remark /Contact Number'
+                            },
+                            // {
+                            //   fillColor: '#ccc',
+                            //   text: 'Contact Number'
+                            // },
+                        ],
+                        // ['#', 'Name', 'Status',
+                        //   'Remark', 'Contact Number',
+                        // ],
+                        ['1', formdata.TPCName1, formdata.TPCStatus1, formdata.TPCRemark1]
+                    ]
+                }
+            },
+            {
+                style: 'table',
+                table: {
+                    widths: [10, 130, 100, 260],
+
+                    body: [
+                        [
+                            {
+                                fillColor: '#ccc',
+                                text: '#'
+                            },
+                            {
+                                fillColor: '#ccc',
+                                text: 'Name'
+                            },
+                            {
+                                fillColor: '#ccc',
+                                text: 'Status'
+                            },
+                            {
+                                fillColor: '#ccc',
+                                text: 'Remark /Contact Number'
+                            },
+                            // {
+                            //   fillColor: '#ccc',
+                            //   text: 'Contact Number'
+                            // },
+                        ],
+                        // ['#', 'Name', 'Status',
+                        //   'Remark', 'Contact Number',
+                        // ],
+                        ['2', formdata.TPCName2, formdata.TPCStatus2, formdata.TPCRemark2]
+                    ]
+                }
+            },
+            // {
+            //   style: 'table',
+            //   table: {
+            //     widths: [10, 130, 100, 150, 100],
+
+            //     body: [
+            //       [
+            //         {
+            //           fillColor: '#ccc',
+            //           text: '#'
+            //         },
+            //         {
+            //           fillColor: '#ccc',
+            //           text: 'Name'
+            //         },
+            //         {
+            //           fillColor: '#ccc',
+            //           text: 'Status'
+            //         },
+            //         {
+            //           fillColor: '#ccc',
+            //           text: 'Remark'
+            //         },
+            //         {
+            //           fillColor: '#ccc',
+            //           text: 'Contact Number'
+            //         },
+            //       ],
+            //       // ['#', 'Name', 'Status',
+            //       //   'Remark', 'Contact Number',
+            //       // ],
+            //       ['3', formdata.TPCName3, formdata.TPCStatus3, formdata.TPCRemark3,
+            //         formdata.TPCContactnumber3]
+            //     ]
+            //   }
+            // },
+            {
+                style: 'table',
+                table: {
+                    widths: [100, 150, 100, 150],
+                    body: [
+                        [
+
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Market Reputation/Dedup Check'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.marketReputation
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Remarks'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.TPCRemarks
+                            },
+                        ],
+
+                    ]
+                }
+            },
+            {
+                style: 'table',
+                table: {
+                    widths: [525],
+                    body: [
+                        [
+
+                            {
+                                border: [true, true, true, true],
+                                fillColor: '#88c0eb',
+                                text: 'TVR Comments',
+                                fontSize: 14,
+
+                            },
+
+                        ],
+
+                    ]
+                }
+            },
+            // { text: 'TVR Comments', style: 'header' },
+            {
+                style: 'table',
+                table: {
+                    widths: [100, 150, 100, 150],
+                    body: [
+                        [
+
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Number'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.TVRNumber
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Designation'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.TVRDesignation
+                            },
+                        ],
+
+                    ]
+                }
+            },
+            {
+                style: 'table',
+                table: {
+                    widths: [100, 150, 100, 150],
+                    body: [
+                        [
+
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Status'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.TVRStatus
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Business Name'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.TVRBusinessName
+                            },
+                        ],
+
+                    ]
+                }
+            },
+            {
+                style: 'table',
+                table: {
+                    widths: [100, 150, 100, 150],
+                    body: [
+                        [
+
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'No of years in Business'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.TVRNoofyearsinBusiness
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Remarks'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.TVRRemarks
+                            },
+                        ],
+
+                    ]
+                }
+            },
+            {
+                style: 'table',
+                table: {
+                    widths: [525],
+                    body: [
+                        [
+
+                            {
+                                border: [true, true, true, true],
+                                fillColor: '#88c0eb',
+                                text: 'Final Status',
+                                fontSize: 14,
+
+                            },
+
+                        ],
+
+                    ]
+                }
+            },
+            // { text: 'Final FI Status', style: 'header' },
+            {
+                style: 'table',
+                table: {
+                    widths: [100, 150, 100, 150],
+                    body: [
+                        [
+
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'OverAll Status'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.overallStatus
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Agency name'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.finalFIAgencyname
+                            },
+                        ],
+
+                    ]
+                }
+            },
+            {
+                style: 'table',
+                table: {
+                    widths: [100, 420],
+                    body: [
+                        [
+
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Standard Remark'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.finalFIAnyRemarks
+                            },
+
+                        ],
+
+                    ]
+                }
+            },
+            {
+                style: 'table',
+                table: {
+                    widths: [100, 150, 100, 150],
+                    body: [
+                        [
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Remarks'
+                            },
+                            {
+                                border: [true, true, true, true],
+                                text: formdata.finalFIRemarks
+                            },
+
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Company Stamp'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                image: stamp,
+                                width: 150,
+                            },
+                        ],
+
+                    ]
+                }
+            },
+            {
+                style: 'table',
+                table: {
+                    widths: [100, 150, 100, 150],
+                    body: [
+                        [
+
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Product Supervisor'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.productSupervisor
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Verifier Name'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: formdata.finalFIVerifierName
+                            },
+                        ],
+
+                    ]
+                }
+            },
+            {
+                style: 'table',
+                table: {
+
+                    widths: [100, 420],
+                    body: [
+                        [
+                            {
+                                
+                                border: [true, true, true, true],
+                                fillColor: '#ccc',
+                                text: 'Verification Note'
+                            },
+                            {
+                                
+                                fontSize: 9,
+                                border: [true, true, true, true],
+                                text: 'The Observation/photograph provided in the report is purely based on photograph taken in approximate vincity of the address provided. We, as a process, do not check or collect any documentary evidence to check the authenticity of the information gathered. Neither we certify the correctness of observation nor the photograph is admissible as an evidence. Photograph is additional information provided by us as customary practice without any corresponding liabilities. We do takecare of tagging photos/observation to the appropriate case/applicant, however, considering visual transmission of data, erros can not be eliminated.  ',
+                                // pageBreak: 'before'
+                            },
+
+
+
+                        ],
+
+
+                    ]
+                }
+            },
+            {
+                style: 'table',
+                margin: [0, 20],
+                table: {
+
+                    widths: [250, 270],
+                    body: [
+                        [
+                            {
+                                image: map,
+                                width: 200,
+                                pageBreak: 'before'
+                            },
+                            {
+                                
+                                border: [true, true, true, true],
+                                text: `Geo Tagging \n\n Latitude: ${formdata?.region?.latitude} \n Longitude: ${formdata?.region?.longitude} \n ${formdata?.locName}`,
+                                link: `http://maps.google.com/maps?q=${formdata?.region?.latitude} +, + ${formdata?.region?.longitude}`,
+                                color: 'blue',
+                                pageBreak: 'before'
+                            },
+
+                        ]
+                    ]
+                }
+            },
+            ...images,
+
+        ],
+        styles: {
+            header: {
+                fontSize: 14,
+                bold: true,
+                color: '#2984c4'
+                // text-align:center
+            },
+            table: {
+                fontSize: 9
+            },
+            mainheader: {
+                fontSize: 16,
+                fillColor: '#bf9728',
+                color: 'black'
+            }
+
+        }
+    };
+
+    // PDF MAKE END
 
     return (
         <div className='mx-2'>
@@ -640,10 +2333,13 @@ const Resident = (props) => {
                <Tpc data={verificationObserver} id={id} ref={TPCRef} />
             </Collapse>
                 <Collapse title='Images and GeoLocation'>
-                    <Geolocation data={verificationObserver} id={id} pincode={pincode} images={images} stamp={stamp}/>
+                    <Geolocation data={verificationObserver} id={id} pincode={pincode}/>
                 </Collapse>
-                <PdfMakeResident data={formdata} refresh={() => { setRefresh(Math.random()) }} download={downloadPdf} initiationDate={initiationDate} setpdfViewed={()=> setpdfViewed(true)}/>
-
+                {/* <PdfMakeResident data={formdata} refresh={() => { setRefresh(Math.random()) }} download={downloadPdf} initiationDate={initiationDate} setpdfViewed={()=> setpdfViewed(true)}/> */}
+                <div>
+                    <button className='btn text-primary' onClick={() => { pdfMake.createPdf(documentDefinition).open() }}>View PDF</button>
+                    <button className='btn text-primary' id='downloadpdf' onClick={() => { pdfMake.createPdf(documentDefinition).download() }}>Download PDF</button>
+                </div>
             </>
             }
             {!loading ? <> <Button className='mr-2' color='warning' onClick={handleSave}>Save</Button>
@@ -660,7 +2356,8 @@ const Resident = (props) => {
 const mapStateToProps = (state) => {
     return {
         vendor: state.vendors,
-        images: state.images
+        images: state.images,
+        stampAndMap: state.stampAndMap
     }
 }
 export default connect(mapStateToProps)(Resident)

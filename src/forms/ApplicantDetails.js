@@ -340,7 +340,7 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
                     <div >
                         <label>Bank/ NBFC name</label>
                         <Dropdown toggle={toggleBankName} isOpen={dropdownBankNameOpen}>
-                            <DropdownToggle caret>
+                            <DropdownToggle caret className='text-truncate'>
                                 {formdata['bankNBFCname'].clientName ? formdata['bankNBFCname'].clientName : 'None'}
                             </DropdownToggle>
                             <DropdownMenu
@@ -365,7 +365,7 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
                     <div >
                         <label>Product</label>
                         <Dropdown toggle={toggleProductName} isOpen={dropdownProductNameOpen}>
-                            <DropdownToggle caret>
+                            <DropdownToggle caret className='text-truncate'>
                                 {formdata['product'].productName ? formdata['product'].productName : 'None'}
                             </DropdownToggle>
                             <DropdownMenu
@@ -393,9 +393,10 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
                         <label>Pincode</label>
                         <Input type="text" name='pincode' value={formdata['pincode']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
-                    <div className='pt-4'>
+                    <div>
+                    <label>Agent Name</label>
                         <Dropdown toggle={() => setAgentsDropdown(!agentsDropdown)} isOpen={agentsDropdown}>
-                            <DropdownToggle caret className='bg-transparent text-danger border-0'>
+                            <DropdownToggle caret className='text-truncate'>
                                 {selectedAgent ? selectedAgent : outerDetails?.agenDetails?.email ? outerDetails?.agenDetails?.email : getAgents().filter(a => a.uniqueId !== 'Disabled').length > 0 ? `Agents - ${getAgents().filter(a => a.uniqueId !== 'Disabled').length}` : 'None'}
                             </DropdownToggle>
                             <DropdownMenu>

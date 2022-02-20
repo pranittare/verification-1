@@ -15,8 +15,8 @@ import ActiveCases from './Cases/ActiveCases'
 import SubmittedCases from './Cases/SubmittedCases';
 import OldCases from './Cases/OldCases';
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, getDocs, query, where, doc } from 'firebase/firestore/lite';
-import { getDatabase, ref, onValue, get } from "firebase/database";
+import { getFirestore, collection, getDocs } from 'firebase/firestore/lite';
+import { getDatabase, ref, onValue} from "firebase/database";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { connect } from 'react-redux';
 import { Button } from 'reactstrap';
@@ -86,7 +86,6 @@ function App(props) {
   }, [])
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
-      console.log('user', user)
       if (user) {
         document.cookie = `email=${user.email}`
         setIsUser(true)

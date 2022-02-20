@@ -129,6 +129,7 @@ const VerificationObserverOffice = forwardRef(({ data, id }, ref) => {
     let exteriorCondition =
         ['Surrounding Wall', 'Gate', 'Garden', 'Car Parking', 'Lift', 'Security Office', 'Godown Area'];
     let negativeArea = [
+        { name: 'negativeArea', value: '', label: 'None' },
         { name: 'negativeArea', value: 'Community Dominated Area', label: 'Community Dominated Area' },
         { name: 'negativeArea', value: 'Sitting Chawl/Standing Chawl', label: 'Sitting Chawl/Standing Chawl' },
         { name: 'negativeArea', value: 'Slum Area', label: 'Slum Area' },

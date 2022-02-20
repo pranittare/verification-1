@@ -205,7 +205,7 @@ const SubmittedCases = (props) => {
                             return <tr key={`${item.appid}-${index + 1}`}>
                                 <td >
                                     <div onClick={() => handleViewForm(item)} style={{ cursor: 'pointer' }} className={item?.office?.applicantDetails ? 'text-primary' : 'text-success'}>
-                                        <button type="button" class="btn text-primary" data-toggle="tooltip" data-placement="top" title={`${getAgentName(item)}`}>
+                                        <button type="button" className="btn text-primary" data-toggle="tooltip" data-placement="top" title={`${getAgentName(item)}`}>
                                             {item.appid}
                                         </button>
                                     </div>

@@ -124,6 +124,7 @@ const VerificationObserverResident = forwardRef(({ data, id }, ref) => {
     let assetSeenAtResidence = ['TV', 'Fridge', 'Washing Machine', 'AC', 'Computer', 'Laptop', 'Home Theater'];
 
     let negativeArea = [
+        { name: 'negativeArea', value: '', label: 'None' },
         { name: 'negativeArea', value: 'Community Dominated Area', label: 'Community Dominated Area' },
         { name: 'negativeArea', value: 'Sitting Chawl/Standing Chawl', label: 'Sitting Chawl/Standing Chawl' },
         { name: 'negativeArea', value: 'Slum Area', label: 'Slum Area' },

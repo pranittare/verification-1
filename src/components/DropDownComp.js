@@ -19,7 +19,7 @@ const DropDownComp = ({ onHandleChange, formdata, dropDowmArry, id, other, value
     return (
         <div>
             <Dropdown isOpen={addressConfirmedOpen} toggle={addressConfirmedtoggle}>
-                <DropdownToggle caret className='text-capitalize'>
+                <DropdownToggle caret className='text-capitalize text-truncate'>
                   {/* {console.log('drop', dropDowmArry)} */}
                     {formdata[dropDowmArry[0].name] ? formdata[dropDowmArry[0].name] : value ? value :'None'}
                 </DropdownToggle>

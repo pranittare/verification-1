@@ -119,6 +119,7 @@ const Tpc = forwardRef(({ data, id }, ref) => {
             }
             form.productSupervisor = getProductSupervisor()
             form.finalFIRemarks = remarksfnc(data)
+            console.log('form', form)
             setFormdata(form)
             setRefresh(Math.random())
         }
