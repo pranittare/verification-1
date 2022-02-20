@@ -7,7 +7,7 @@ import Navigation from './header/navigation';
 import Dashboard from './landing/dashboard';
 import TotalAgents from './agents/TotalAgents'
 import ActiveAgents from './agents/ActiveAgents';
-import Billing from './clients/Billing';
+import Vendor from './clients/Vendor';
 import Office from './forms/Office';
 import Resident from './forms/Resident';
 import Multi from './forms/Multi';
@@ -112,7 +112,7 @@ function App(props) {
               <Route path='/forget' render={() => <Forget />} />
               <Route path='/total-agents' render={() => <TotalAgents />} />
               <Route path='/active-agents' render={() => <ActiveAgents />} />
-              <Route path='/clients' render={() => <Billing />} />
+              <Route path='/clients' render={() => <Vendor />} />
               <Route path='/new' render={() => <Multi />} />
               <Route path='/office' exact render={() => <Office />} />
               <Route path='/office/:pincode/:id' render={() => <Office />} />

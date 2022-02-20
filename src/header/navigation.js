@@ -19,6 +19,8 @@ const Navigation = ({ auth }) => {
                     <DropdownItem divider></DropdownItem>
                     <DropdownItem><Link className="nav-link" to='/active-agents'>Active Agents</Link></DropdownItem>
                     <DropdownItem><Link className="nav-link" to='/total-agents'>Total Agents</Link></DropdownItem>
+                    <DropdownItem divider></DropdownItem>
+                    <DropdownItem><Link className="nav-link" to='/clients'>Clients</Link></DropdownItem>
                 </DropdownMenu>}
             </Dropdown>
             {/* <button className='btn' onClick={toggle}>exp</button> */}
