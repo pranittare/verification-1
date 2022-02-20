@@ -92,11 +92,9 @@ const Office = ({ images, stampAndMap }) => {
     })
     const [refresh, setRefresh] = useState(0);
     const [loading, setLoading] = useState(false);
-    const [initiationDate, setInitiationDate] = useState('');
     const verificationObserverRef = useRef(null);
     const TPCRef = useRef(null);
     const ADref = useRef(null);
-    const [pdfViewed, setpdfViewed] = useState(false);
 
     const dataSplit = (alldata) => {
         let verfi = { verification: {}, applicant: {} }
@@ -184,14 +182,10 @@ const Office = ({ images, stampAndMap }) => {
         // console.log('handleSave', formdata)
     }
     const onHandleChange = (e) => {
-        // name
         let form = formdata
-        // console.log(e)
         form[e.name] = e.value
-        // console.log(e, form[e.name] )
         setFormdata(form)
         setRefresh(Math.random())
-        // console.log(form)
     }
     function getCookie(cname) {
         let name = cname + "=";
@@ -474,7 +468,7 @@ const Office = ({ images, stampAndMap }) => {
         if(!alldata.overallStatus){
             alldata.overallStatus = overallStatusCal(alldata)
         }
-        setInitiationDate(alldata.initiationDate.split('GMT')[0]);
+        alldata.newinitiationDate = alldata.initiationDate.split('GMT')[0];
         setFormdata(alldata);
         return alldata
     }
@@ -599,7 +593,7 @@ const Office = ({ images, stampAndMap }) => {
                             {
 
                                 border: [true, true, true, true],
-                                text: initiationDate
+                                text: formdata.newinitiationDate
                             },
                         ],
 

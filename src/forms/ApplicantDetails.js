@@ -2,7 +2,7 @@ import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'rea
 import { Button, Input, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import DropDownComp from '../components/DropDownComp';
 import { useSelector } from 'react-redux';
-import { getDatabase, update, ref as rtRef } from "firebase/database";
+import { getDatabase, update, ref as rtRef, set } from "firebase/database";
 import axios from 'axios';
 import { useHistory } from 'react-router-dom';
 
@@ -130,7 +130,7 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
                 datatoSubmit['assigned'] = true;
             }
             const path = `form/${formdata.pincode}/${id}`;
-            update(rtRef(db, path), datatoSubmit).then(res => {
+            set(rtRef(db, path), datatoSubmit).then(res => {
                 alert('Forms Updated');
                 history.push('/ActiveCases')
             }).catch(err => {
@@ -206,7 +206,6 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
                 form.visitedOfficeAddress = form.officeAddressProvided
             }
         }
-        console.log('form', form)
         setFormdata(form)
         setRefresh(Math.random())
     }
@@ -248,7 +247,7 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
             setRefresh(Math.random());
             outerDetailsData()
         }
-        console.log('data', data)
+        // console.log('data', data)
     }, [data])
     const formdataFiltered = () => {
         const refData = {...formdata}

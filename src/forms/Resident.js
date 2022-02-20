@@ -98,7 +98,6 @@ const Resident = ({ images, stampAndMap }) => {
     })
     const [refresh, setRefresh] = useState(0);
     const [loading, setLoading] = useState(false);
-    const [initiationDate, setInitiationDate] = useState('');
     const verificationObserverRef = useRef(null);
     const TPCRef = useRef(null);
     const ADref = useRef(null);
@@ -479,7 +478,8 @@ const Resident = ({ images, stampAndMap }) => {
         const Addata = ADref.current.getFormData();
         const alldata = { ...formdata, ...Addata, ...VOdata, ...Tpdata }
         alldata.finalFIRemarks = remarksfnc(alldata)
-        setInitiationDate(alldata.initiationDate.split('GMT')[0]);
+        // setInitiationDate(alldata.initiationDate.split('GMT')[0]);
+        alldata.newinitiationDate = alldata.initiationDate.split('GMT')[0];
         if(!alldata.overallStatus){
             alldata.overallStatus = overallStatusCal(alldata)
         }
@@ -607,7 +607,7 @@ const Resident = ({ images, stampAndMap }) => {
                             {
                                 
                                 border: [true, true, true, true],
-                                text: initiationDate
+                                text: formdata.newinitiationDate
                             },
                         ],
 
