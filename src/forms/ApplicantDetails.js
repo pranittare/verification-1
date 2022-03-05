@@ -9,7 +9,7 @@ import { useHistory } from 'react-router-dom';
 const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDetails, id }, ref) => {
     const db = getDatabase();
     const history = useHistory();
-   
+
     const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
     const months1 = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
     const now = new Date();
@@ -31,7 +31,7 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
         mobileNo: '',
         officeAddressProvided: '',
         residenceAddressProvided: '',
-        mismatchAddress: '',
+        mismatchAddress: 'no',
         visitedOfficeAddress: '',
         visitedresidentAddress: '',
         remarks: '',
@@ -53,6 +53,10 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
     const agents = useSelector(state => state.agents);
     const branch = useSelector(state => state.branch);
     const casestoday = useSelector(state => state.casestoday);
+    const [mismatchDropdown, setMismatchDropdown] = useState(false);
+    const mismatchToggle = () => {
+        setMismatchDropdown(!mismatchDropdown)
+    }
     const prevCasesCount = () => {
         let date = new Date().getDate()
         if (casestoday[date]) {
@@ -197,7 +201,7 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
         return "";
     }
     const onHandleChange = (e) => {
-        let form = formdata
+        let form = { ...formdata }
         form[e.name] = e.value
         if (form.mismatchAddress !== 'yes') {
             if (form.type === 'resident') {
@@ -210,10 +214,20 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
         setRefresh(Math.random())
     }
     useEffect(() => {
+        if (formdata['mismatchAddress'] === 'yes') {
+            let form = { ...formdata }
+            form.visitedOfficeAddress = ''
+            form.visitedresidentAddress = ''
+            setFormdata(form)
+            setRefresh(Math.random())
+        }
+    }, [formdata['mismatchAddress']])
+    useEffect(() => {
 
         if (data) {
             let form = formdata
             for (const key in data) {
+                console.log('key', key, data[key])
                 form[key] = data[key]
                 if (key === 'bankNBFCname') {
                     form['bankNBFCname'] = data.bankNBFCname
@@ -225,24 +239,23 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
                     form['type'] = data['form']
                 }
             }
-            // console.log('form', form)
             setFormdata(form)
-            if (localStorage.getItem(id)) {
-                let local = JSON.parse(localStorage.getItem(id))
-                let temp = {}
-                for (const key in data) {
-                    if (local[key]) {
-                        temp[key] = data[key]
-                        if (key === 'bankNBFCname') {
-                            temp['bankNBFCname'] = data.bankNBFCname;
-                        }
-                        if (key === 'product') {
-                            temp['product'] = data.product;
-                        }
-                    }
-                }
-                setFormdata(temp)
-            }
+            // if (localStorage.getItem(id)) {
+            //     let local = JSON.parse(localStorage.getItem(id))
+            //     let temp = {}
+            //     for (const key in data) {
+            //         if (local[key]) {
+            //             temp[key] = data[key]
+            //             if (key === 'bankNBFCname') {
+            //                 temp['bankNBFCname'] = data.bankNBFCname;
+            //             }
+            //             if (key === 'product') {
+            //                 temp['product'] = data.product;
+            //             }
+            //         }
+            //     }
+            //     setFormdata(temp)
+            // }
             // applicantDetail(form)
             setRefresh(Math.random());
             outerDetailsData()
@@ -250,11 +263,12 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
         // console.log('data', data)
     }, [data])
     const formdataFiltered = () => {
-        const refData = {...formdata}
-        for(const key in refData){
-            if(initalData[key] === undefined)
-            delete refData[key]
+        const refData = { ...formdata }
+        for (const key in refData) {
+            if (initalData[key] === undefined)
+                delete refData[key]
         }
+        console.log({ refData });
         return refData
     }
     useImperativeHandle(ref, () => ({
@@ -300,11 +314,10 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
         // console.log('agents', pincodeWiseAgents)
         return pincodeWiseAgents;
     }
-
-    let mismatchAddressField = [
-        { name: 'mismatchAddress', value: 'yes', label: 'Yes' },
-        { name: 'mismatchAddress', value: 'no', label: 'No' }
-    ]
+    // let mismatchAddressField = [
+    //     { name: 'mismatchAddress', value: 'yes', label: 'Yes' },
+    //     { name: 'mismatchAddress', value: 'no', label: 'No' }
+    // ]
 
     let type = [
         { name: 'type', value: 'resident', label: 'Resident' },
@@ -314,7 +327,7 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
     return (
         <div>
             <h1>Applicant Details</h1>
-             <div>
+            <div>
                 <form className='d-flex justify-content-between flex-wrap' onSubmit={handleSubmit}>
                     <div >
                         <label>App.Id/Lead id</label>
@@ -393,7 +406,7 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
                         <Input type="text" name='pincode' value={formdata['pincode']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
                     <div>
-                    <label>Agent Name</label>
+                        <label>Agent Name</label>
                         <Dropdown toggle={() => setAgentsDropdown(!agentsDropdown)} isOpen={agentsDropdown}>
                             <DropdownToggle caret className='text-truncate'>
                                 {selectedAgent ? selectedAgent : outerDetails?.agenDetails?.email ? outerDetails?.agenDetails?.email : getAgents().filter(a => a.uniqueId !== 'Disabled').length > 0 ? `Agents - ${getAgents().filter(a => a.uniqueId !== 'Disabled').length}` : 'None'}
@@ -417,7 +430,7 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
                         <Input type="text" name='contactNo' value={formdata['contactNo']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
                     <div >
-                        <label className={formdata['mobileNo'].length > 9 ?'text-danger' : ''}>Mobile No. ({formdata['mobileNo'].length}/10)</label>
+                        <label className={formdata['mobileNo'].length > 9 ? 'text-danger' : ''}>Mobile No. ({formdata['mobileNo'].length}/10)</label>
                         <Input type="number" name='mobileNo' value={formdata['mobileNo']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
                     {formdata['type'] === 'office' && <div >
@@ -432,7 +445,16 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
                         <>
                             <div >
                                 <label>Mismatch Address</label>
-                                <DropDownComp id='applicantDetails' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={mismatchAddressField} value={formdata['mismatchAddress']} />
+                                <Dropdown isOpen={mismatchDropdown} toggle={mismatchToggle}>
+                                    <DropdownToggle>
+                                        {formdata.mismatchAddress}
+                                    </DropdownToggle>
+                                    <DropdownMenu>
+                                        <DropdownItem name='mismatchAddress' value='no' onClick={(e) => onHandleChange(e.currentTarget)}>No</DropdownItem>
+                                        <DropdownItem name='mismatchAddress' value='yes' onClick={(e) => onHandleChange(e.currentTarget)}>Yes</DropdownItem>
+                                    </DropdownMenu>
+                                </Dropdown>
+                                {/* <DropDownComp id='applicantDetails' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={mismatchAddressField} value={formdata['mismatchAddress']} /> */}
                             </div>
                             {formdata['mismatchAddress'] && formdata['mismatchAddress'] !== 'no' &&
                                 <>
@@ -453,7 +475,7 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
                         <Input type="text" name='remarks' value={formdata['remarks']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
                     {id ? <div className='pt-4'>
-                       {!outerDetails.submitted && <Button color='warning' id='applicationDetails' type="button" onClick={handleUpdateForm} >
+                        {!outerDetails.submitted && <Button color='warning' id='applicationDetails' type="button" onClick={handleUpdateForm} >
                             Update
                         </Button>}
                     </div>

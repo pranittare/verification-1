@@ -20,7 +20,7 @@ import { getDatabase, ref, onValue} from "firebase/database";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { connect } from 'react-redux';
 import { Button } from 'reactstrap';
-
+import './App.css';
 const firebaseConfig = {
   apiKey: "AIzaSyB9c5BdRrl55U04wioeaP5uMTclzu9trgM",
   authDomain: "verification-43844.firebaseapp.com",

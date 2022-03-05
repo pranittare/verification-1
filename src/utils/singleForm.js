@@ -6,7 +6,6 @@ export const getFormData = (pincode, formId) => {
     const promise  = new Promise((resolve, reject) => {
         const db = getDatabase()
         const formRef = ref(db, `form/${pincode}/${formId}`)
-        console.log('formref', formRef)
         onValue(formRef, (snapshot) => {
             console.log(snapshot.val());
             // if(snapshot)

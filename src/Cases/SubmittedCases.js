@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react'
 import { connect } from 'react-redux';
-import { Input, Dropdown, DropdownItem, DropdownToggle, DropdownMenu } from 'reactstrap'
+import { Input, Dropdown, DropdownItem, DropdownToggle, DropdownMenu, Button } from 'reactstrap'
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import { useHistory } from 'react-router-dom'
 import moment from 'moment';
-import ProblemCases from './ProblemCases';
+import { getDatabase, remove, ref } from "firebase/database";
+
 
 const SubmittedCases = (props) => {
     const { vendors } = props;
+    const db = getDatabase();
     let history = useHistory();
     const [allData, setAllData] = useState([])
     const [reset, setReset] = useState(0);
@@ -112,6 +114,37 @@ const SubmittedCases = (props) => {
             return ''
         } else if (item.selected) return item.selected
     }
+    const handleDelete = (item) => {
+        console.log({ item })
+        let type = '';
+        let pincode;
+        if (item?.office?.applicantDetails) {
+            type = 'office';
+            pincode = item.office.applicantDetails.pincode
+        } else if (item?.resident?.applicantDetails) {
+            type = 'resident';
+            pincode = item.resident.applicantDetails.pincode
+        }
+        if (type && pincode) {
+            const path = `form/${pincode}/${item.key}`
+            console.log('path', path)
+            remove(ref(db, path)).then(res => {
+                alert('Case Removed');
+                setReset(Math.random());
+            })
+        } else if (item.pincode && item.key) {
+            pincode = item.pincode
+            const path = `form/${pincode}/${item.key}`
+            console.log('path', path)
+            remove(ref(db, path)).then(res => {
+                alert('Case Removed');
+                setReset(Math.random());
+            })
+
+        } else {
+            alert('problem found delete from backend!');
+        }
+    }
     useEffect(() => {
         formData(props.forms)
         // console.log
@@ -197,6 +230,7 @@ const SubmittedCases = (props) => {
                             <th scope="col"><Input type="text" onChange={handleFilter} name="clientName" placeholder={'ClientName'} /></th>
                             <th scope="col"><Input type="text" onChange={handleFilter} name="TPCName1" placeholder={'Stage'} /></th>
                             <th scope="col"><Input type="text" onChange={handleFilter} name="remarks" placeholder={'Remark'} /></th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -205,12 +239,12 @@ const SubmittedCases = (props) => {
                             return <tr key={`${item.appid}-${index + 1}`}>
                                 <td >
                                     <div onClick={() => handleViewForm(item)} style={{ cursor: 'pointer' }} className={item?.office?.applicantDetails ? 'text-primary' : 'text-success'}>
-                                        <button type="button" className="btn text-primary" data-toggle="tooltip" data-placement="top" title={`${getAgentName(item)}`}>
+                                        <p type="button" data-toggle="tooltip" data-placement="top" title={`${getAgentName(item)}`}>
                                             {item.appid}
-                                        </button>
+                                        </p>
                                     </div>
                                     {item.watcherEmail && item.watcherEmail}
-                                    <ProblemCases cases={item} />
+                                    {/* <ProblemCases cases={item} /> */}
                                 </td>
                                 <td>
                                     {
@@ -261,6 +295,9 @@ const SubmittedCases = (props) => {
                                             item.resident?.applicantDetails?.remarks
                                     }
 
+                                </td>
+                                <td>
+                                    <Button color='danger' onClick={()=>handleDelete(item)}>X</Button>
                                 </td>
                             </tr>
                         })}
