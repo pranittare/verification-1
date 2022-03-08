@@ -2354,15 +2354,15 @@ const Resident = () => {
             {id && <> <Collapse title='Verification Details'>
                 <h4 className='my-2'>Verification Details</h4>
                 <form className='d-flex justify-content-around flex-wrap' >
-                    <div>
+                    <div className='formInputBoxSpacing'>
                         <label>Visit Date</label>
                         <Input type="text" name='visitDate' value={formdata['visitDate']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
-                    <div>
+                    <div className='formInputBoxSpacing'>
                         <label>Visited Time</label>
                         <Input type="text" name='visitedTime' value={formdata['visitedTime']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
-                    <div>
+                    <div className='formInputBoxSpacing'>
                         <label>Address Confirmed</label>
                         <Dropdown isOpen={addressConfirmedDropdown} toggle={addressConfirmedToggle}>
                             <DropdownToggle>

@@ -101,6 +101,7 @@ const OldCases = (props) => {
             let data = databaseUpdateQueryRangeSingle('tat1', start)
             data.then((res) => {
                 setAllData(res)
+                console.log(res, 'res')
             })
         }
         // muted on purpose for performance issues
@@ -289,6 +290,9 @@ const OldCases = (props) => {
                             <th scope="col">Product Supervisor</th>
                             <th scope="col">Agent Name</th>
                             <th scope="col">Remarks</th>
+                            <th scope="col">Type</th>
+                            <th scope="col">Mobile No</th>
+                            <th scope="col">Contact No</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -341,6 +345,9 @@ const OldCases = (props) => {
                                     {item.applicantDetails.remarks}
 
                                 </td>
+                                <td>{item.applicantDetails.form}</td>
+                                <td>{item.applicantDetails.mobileNo}</td>
+                                <td>{item.applicantDetails.contactNo}</td>
                             </tr>
                         })
                         }

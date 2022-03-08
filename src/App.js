@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Login from './auth/login'
 import SignUp from './auth/signup'
 import Forget from './auth/forget'
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 import Navigation from './header/navigation';
 import Dashboard from './landing/dashboard';
 import TotalAgents from './agents/TotalAgents'
@@ -121,9 +121,13 @@ function App(props) {
               <Route path='/ActiveCases' render={() => <ActiveCases />} />
               <Route path='/SubmittedCases' render={() => <SubmittedCases />} />
               <Route path='/oldCases' render={() => <OldCases />} />
+              <Redirect from="/login" to="/" />
             </>
               :
+              <>
               <Route path='/login' render={() => <Login />} />
+              <Redirect from="/" to="/login" />
+              </>
             }
 
 
@@ -136,7 +140,7 @@ function App(props) {
   );
 }
 const mapStateToProps = (state) => {
-  // console.log('state', state)
+  
   return {
     query: state.data
   }

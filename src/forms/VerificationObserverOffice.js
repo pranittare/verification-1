@@ -207,15 +207,16 @@ const VerificationObserverOffice = forwardRef(({ data, id }, ref) => {
                     <label>Approx Area of Office (sq.ft)</label>
                     <Input type="text" name='approxAreaofOffice' value={formdata['approxAreaofOffice']} onChange={(e) => onHandleChange(e.currentTarget)} />
                 </div>
-                <div style={{width: 300}}>
+                <div>
                     <label>Business Activity Level</label>
                     <DropDownComp id='verificationObserverOffice' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={businessActivityLevel} />
                 </div>
-                <div className='mx-3'>
-                    <label>No. of Employees Working in Office/ Business or Seen in Premises</label>
+                <div  className='mx-3'> 
+                    <label  className='wid_200 text-truncate' >No. of Employees Working in Office/ Business or Seen in Premises</label>
                     <Input type="text" name='noOfEmployeesWorkinginPremises' value={formdata['noOfEmployeesWorkinginPremises']} onChange={(e) => onHandleChange(e.currentTarget)} />
+                
                 </div>
-                <div>
+                <div className='formInputBoxSpacing'>
                     <label>Within Municipal Limits</label>
                     <DropDownComp id='verificationObserverOffice' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={withinMunicipalLimits} />
                 </div>

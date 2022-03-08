@@ -352,6 +352,7 @@ const ActiveCases = (props) => {
                             <th scope="col"> Remark</th>
                             <th scope="col">Agent Name</th>
                             <th scope="col">Mobile No.</th>
+                            <th scope="col">Contact No.</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -435,6 +436,14 @@ const ActiveCases = (props) => {
                                             item.resident?.applicantDetails?.mobileNo
                                     }
 
+                                </td>
+                                <td>
+                                    {
+                                        item?.office ?
+                                        item.office?.applicantDetails?.contactNo
+                                        :
+                                        item.resident?.applicantDetails?.contactNo
+                                    }
                                 </td>
                             </tr>
                         })}
