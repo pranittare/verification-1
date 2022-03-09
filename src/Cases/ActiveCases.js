@@ -283,9 +283,9 @@ const ActiveCases = (props) => {
 
                                 <td >
                                     <div onClick={() => handleViewForm(item)} style={{ cursor: 'pointer' }} className={item?.office?.applicantDetails ? 'text-primary' : 'text-success'}>
-                                        <button type="button" class="btn text-primary" data-toggle="tooltip" data-placement="top" title={`${getAgentName(item)}`}>
+                                        <p type="button" data-toggle="tooltip" data-placement="top" title={`${getAgentName(item)}`}>
                                             {item.appid}
-                                        </button>
+                                        </p>
                                     </div>
                                 </td>
                                 <td>

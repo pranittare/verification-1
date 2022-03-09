@@ -13,21 +13,17 @@ import { getFormData } from '../utils/singleForm'
 import { connect } from 'react-redux';
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL, deleteObject, listAll } from "firebase/storage";
 import stampImg from '../assets/stamp.jpeg';
-// import "./form.css"
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
-// import PdfMake from './PdfMake';
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 
 const Office = () => {
-    // let allData1 = []
     let { pincode, id } = useParams()
     const db = getDatabase();
     let data = useLocation()?.state
     const fdb = getFirestore();
     const history = useHistory();
-    // console.log('form', props)
     const [formdata, setFormdata] = useState({
         visitDate: '',
         visitedTime: '',
@@ -319,9 +315,6 @@ const Office = () => {
             }
         }
         if (formsaved?.office) {
-            // for (const key in formsaved?.office?.applicantDetails) {
-            //     applicant[key] = formsaved?.office?.applicantDetails[key]
-            // }
             for (const key in formsaved.office.verificationDetails) {
                 let savedForm = formsaved.office.verificationDetails
                 formd[key] = savedForm[key]
@@ -341,7 +334,6 @@ const Office = () => {
                     formd.landmark = savedForm[key]
                 }
             }
-            console.log('applicant', formsaved?.office?.applicantDetails)
             setApplicantDetails(formsaved?.office?.applicantDetails)
             setVerificationOvserver(formsaved?.office?.verificationDetails)
             setOuterDetails(outer)
@@ -349,9 +341,6 @@ const Office = () => {
         }
         viewImages()
         setFormdata(formd)
-        // if (localStorage.getItem(id)) {
-        //     setFormdata(JSON.parse(localStorage.getItem(id)))
-        // }
         overallStatusCal(formd)
         setRefresh(Math.random())
         console.log('formd', formd)
@@ -380,9 +369,6 @@ const Office = () => {
             }
         }
         if (formsaved) {
-            // for (const key in formsaved?.office?.applicantDetails) {
-            //     applicant[key] = formsaved?.office?.applicantDetails[key]
-            // }
             for (const key in formsaved.verificationDetails) {
                 let savedForm = formsaved.verificationDetails
                 formd[key] = savedForm[key]
@@ -402,7 +388,6 @@ const Office = () => {
                     formd.landmark = savedForm[key]
                 }
             }
-            console.log('applicant', formsaved?.applicantDetails)
             setApplicantDetails(formsaved?.applicantDetails)
             setVerificationOvserver(formsaved?.verificationDetails)
             setOuterDetails(outer)
@@ -411,7 +396,6 @@ const Office = () => {
         viewImages()
         setFormdata(formd)
         setRefresh(Math.random())
-        console.log('formd', formd)
     }
     // Form data by id
     useEffect(() => {
@@ -602,7 +586,6 @@ const Office = () => {
         return alldata
     }
     const remarksfnc = (data) => {
-        console.log('data', data)
         let overall = `${data.overallStatus ? data.overallStatus : 'NA'} | Date: ${data.visitDate ? data.visitDate : 'NA'} | ${data.visitedTime ? data.visitedTime : 'NA'} | Mismatch Address: ${data.mismatchAddress ? data.mismatchAddress : 'NA'} | Address Confirmed: ${data.addressConfirmed ? data.addressConfirmed : 'NA'} | Person Met: ${data.personMet ? data.personMet : 'NA'} | Person Met Name: ${data.personMetName ? data.personMetName : 'NA'} | Nature of Business Details: ${data.natureofBusines ? data.natureofBusines : 'NA'} |Business Board Seen: ${data.businessBoardSeen ? data.businessBoardSeen : 'NA'} | Office Ownership: ${data.officeOwnership ? data.officeOwnership : 'NA'} |Type of Office: ${data.verificationObserver ? data.verificationObserver : 'NA'} | Locality of Office: ${data.localityofOffice ? data.localityofOffice : 'NA'} | Business Activity Level: ${data.businessActivityLevel ? data.businessActivityLevel : 'NA'} |Ease of Locating: ${data.easeofLocating ? data.easeofLocating : 'NA'} |Distance from Station: ${data.distancefromStation ? data.distancefromStation : 'NA'} |Negative Area: ${data.negativeArea ? data.negativeArea : 'NA'} |TPC1: ${data.TPCName1 ? data.TPCName1 : 'NA'} - ${data.TPCStatus1 ? data.TPCStatus1 : 'NA'} - ${data.TPCRemark1 ? data.TPCRemark1 : 'NA'} |TPC2: ${data.TPCName2 ? data.TPCName2 : 'NA'} - ${data.TPCStatus2 ? data.TPCStatus2 : 'NA'} - ${data.TPCRemark2 ? data.TPCRemark2 : 'NA'} | ${data.finalFIAnyRemarks ? data.finalFIAnyRemarks : 'NA'}`;
         return overall
     }
@@ -621,7 +604,6 @@ const Office = () => {
     }
     // PDF MAKE CONTENT
 
-    // const { stamp, map } = stampAndMap
     const pdffnc = () => {
         viewImages()
         const VOdata = verificationObserverRef.current.getFormData();
@@ -2356,9 +2338,7 @@ const Office = () => {
 }
 const mapStateToProps = (state) => {
     return {
-        vendor: state.vendors,
-        // images: state.images,
-        // stampAndMap: state.stampAndMap
+        vendor: state.vendors
     }
 }
 export default connect(mapStateToProps)(Office)

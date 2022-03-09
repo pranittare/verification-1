@@ -12,13 +12,10 @@ import { getFormData } from '../utils/singleForm'
 import { connect } from 'react-redux';
 import DropDownComp from '../components/DropDownComp';
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL, deleteObject, listAll } from "firebase/storage";
-// import PdfMakeResident from './PdfMakeResident';
 import stampImg from '../assets/stamp.jpeg';
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
-// import PdfMake from './PdfMake';
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
-// import "./form.css"
 
 
 const Resident = () => {
@@ -354,11 +351,7 @@ const Resident = () => {
         }
         viewImages()
         setFormdata(formd)
-        // if (localStorage.getItem(id)) {
-        //     setFormdata(JSON.parse(localStorage.getItem(id)))
-        // }
         setRefresh(Math.random())
-        console.log('formd', formd)
     }
     const formFillRouter = (formsaved) => {
         let formd = formdata
@@ -382,7 +375,6 @@ const Resident = () => {
                 }
             }
         }
-        console.log('formsaved', formsaved, outer)
         if (formsaved) {
             for (const key in formsaved.verificationDetails) {
                 let savedForm = formsaved.verificationDetails
@@ -403,7 +395,6 @@ const Resident = () => {
                     formd.landmark = savedForm[key]
                 }
             }
-            console.log('applicant', formsaved?.applicantDetails)
             setApplicantDetails(formsaved?.applicantDetails)
             setVerificationOvserver(formsaved.verificationDetails)
             setOuterDetails(outer)
@@ -415,7 +406,6 @@ const Resident = () => {
         //     setFormdata(JSON.parse(localStorage.getItem(id)))
         // }
         setRefresh(Math.random())
-        console.log('formd', formd)
     }
     useEffect(() => {
         if (id) {
@@ -529,7 +519,6 @@ const Resident = () => {
 
             }
         }
-        console.log('orverallstatus', orverallstatus)
         return orverallstatus
     }
     let personMet = [
@@ -614,9 +603,7 @@ const Resident = () => {
         return alldata
     }
     const remarksfnc = (data) => {
-        // console.log('data', data)
         let overall = `${data.overallStatus ? data.overallStatus : 'NA'} |  Date: ${data.visitDate ? data.visitDate : 'NA'} |  ${data.visitedTime ? data.visitedTime : 'NA'} |  Mismatch Address: ${data.mismatchAddress ? data.mismatchAddress : 'NA'} |  Address Confirmed: ${data.addressConfirmed ? data.addressConfirmed : 'NA'} |  Person Met: ${data.personMet ? data.personMet : 'NA'} |  Person Met Name: ${data.personMetName ? data.personMetName : 'NA'} |  Residence Status: ${data.residenceStatus ? data.residenceStatus : 'NA'} |  Customer Occupation: ${data.customerOccupation ? data.customerOccupation : 'NA'} |  Gate/Door color: ${data.gateDoorColor ? data.gateDoorColor : 'NA'} |  Locality of Address: ${data.localityOfAddress ? data.localityOfAddress : 'NA'} |   Type of House: ${data.typeOfHouse ? data.typeOfHouse : 'NA'} | Accessibility/Approachability: ${data.accessibility ? data.accessibility : 'NA'} | Ease of Locating: ${data.easeofLocating ? data.easeofLocating : 'NA'} |  Customers Attitude: ${data.customerAttitude ? data.customerAttitude : 'NA'} | Distance from Station: ${data.distancefromStation ? data.distancefromStation : 'NA'} |  Negative Area: ${data.negativeArea ? data.negativeArea : 'NA'} | TPC1: ${data.TPCName1 ? data.TPCName1 : 'NA'} - ${data.TPCStatus1 ? data.TPCStatus1 : 'NA'} - ${data.TPCRemark1 ? data.TPCRemark1 : 'NA'} | TPC2: ${data.TPCName2 ? data.TPCName2 : 'NA'} - ${data.TPCStatus2 ? data.TPCStatus2 : 'NA'} - ${data.TPCRemark2 ? data.TPCRemark2 : 'NA'} | ${data.finalFIAnyRemarks ? data.finalFIAnyRemarks : 'NA'}`;
-        // console.log('overall', overall)
         return overall
     }
     // PDF MAKE CONTENT
@@ -626,14 +613,12 @@ const Resident = () => {
         const Addata = ADref.current.getFormData();
         const alldata = { ...formdata, ...Addata, ...VOdata, ...Tpdata }
         alldata.finalFIRemarks = remarksfnc(alldata)
-        // setInitiationDate(alldata.initiationDate.split('GMT')[0]);
         alldata.newinitiationDate = alldata.initiationDate.split('GMT')[0];
         alldata.overallStatus = overallStatusCal(alldata)
         setFormdata(alldata);
         setRefresh(Math.random());
     }
 
-    // const {stamp, map} = stampAndMap
     const pdffnc = () => {
         viewImages()
         const VOdata = verificationObserverRef.current.getFormData();
@@ -2513,9 +2498,7 @@ const Resident = () => {
 }
 const mapStateToProps = (state) => {
     return {
-        vendor: state.vendors,
-        // images: state.images,
-        // stampAndMap: state.stampAndMap
+        vendor: state.vendors
     }
 }
 export default connect(mapStateToProps)(Resident)

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject, listAll } from "firebase/storage";
 import { connect } from 'react-redux';
-import stamp from '../assets/stamp.jpeg'
+// import stamp from '../assets/stamp.jpeg'
 
 const Geolocation = (props) => {
     const { data, id, pincode } = props
@@ -57,19 +57,19 @@ const Geolocation = (props) => {
             })
         }
     }
-    const toDataURL = (url, callback) => {
-        let xhRequest = new XMLHttpRequest();
-        xhRequest.onload = function () {
-            let reader = new FileReader();
-            reader.onloadend = function () {
-                callback(reader.result);
-            }
-            reader.readAsDataURL(xhRequest.response);
-        };
-        xhRequest.open('GET', url);
-        xhRequest.responseType = 'blob';
-        xhRequest.send();
-    }
+    // const toDataURL = (url, callback) => {
+    //     let xhRequest = new XMLHttpRequest();
+    //     xhRequest.onload = function () {
+    //         let reader = new FileReader();
+    //         reader.onloadend = function () {
+    //             callback(reader.result);
+    //         }
+    //         reader.readAsDataURL(xhRequest.response);
+    //     };
+    //     xhRequest.open('GET', url);
+    //     xhRequest.responseType = 'blob';
+    //     xhRequest.send();
+    // }
     const uploadImage = (file) => {
         const filePath = `forms/${pincode}/${id}/images/${file.name}`
         const storageRef = ref(storage, filePath);
@@ -84,51 +84,51 @@ const Geolocation = (props) => {
             console.log('uploadTask error', err)
         })
     }
-    const stampAndMapBase64 = () => {
-        if (stamp) {
-            let datatosubmit = {stamp: '', map: ''}
-            toDataURL(stamp, (dataUrl) => {
-                datatosubmit.stamp = dataUrl
-            });
-            toDataURL(`https://maps.googleapis.com/maps/api/staticmap?size=300x300&maptype=hybrid&markers=${data?.region?.latitude},${data?.region?.longitude}&key=AIzaSyBPoGWXtGubXKV44J4D4ZsBtvY-lIBjEMU&zoom=16`, (dataUrl) => {
-                datatosubmit.map = dataUrl
-            });
-            props.dispatch({ type: 'STAMPANDMAP', data: datatosubmit })
-        }
-    }
+    // const stampAndMapBase64 = () => {
+    //     if (stamp) {
+    //         let datatosubmit = {stamp: '', map: ''}
+    //         toDataURL(stamp, (dataUrl) => {
+    //             datatosubmit.stamp = dataUrl
+    //         });
+    //         toDataURL(`https://maps.googleapis.com/maps/api/staticmap?size=300x300&maptype=hybrid&markers=${data?.region?.latitude},${data?.region?.longitude}&key=AIzaSyBPoGWXtGubXKV44J4D4ZsBtvY-lIBjEMU&zoom=16`, (dataUrl) => {
+    //             datatosubmit.map = dataUrl
+    //         });
+    //         props.dispatch({ type: 'STAMPANDMAP', data: datatosubmit })
+    //     }
+    // }
     useEffect(() => {
         if (data) {
             viewAudio(id, pincode)
             viewImages(id, pincode)
         }
     }, [data])
-    useEffect(() => {
-        if (images.length > 0) {
-            let dataImages = []
-            for (let index = 0; index < images.length; index++) {
-                const item = images[index];
-                toDataURL(item, (dataUrl) => {
-                    dataImages.push({
-                        style: 'table',
-                        table: {
-                            widths: [500],
-                            body: [
-                                [
-                                    {
-                                        image: dataUrl,
-                                        width: 500,
-                                    },
-                                ]
-                            ]
-                        }
-                    }
-                    );
-                    props.dispatch({ type: 'IMAGES', data: dataImages })
-                })
-            }
-            stampAndMapBase64()
-        }
-    }, [images.length, refresh])
+    // useEffect(() => {
+    //     if (images.length > 0) {
+    //         let dataImages = []
+    //         for (let index = 0; index < images.length; index++) {
+    //             const item = images[index];
+    //             toDataURL(item, (dataUrl) => {
+    //                 dataImages.push({
+    //                     style: 'table',
+    //                     table: {
+    //                         widths: [500],
+    //                         body: [
+    //                             [
+    //                                 {
+    //                                     image: dataUrl,
+    //                                     width: 500,
+    //                                 },
+    //                             ]
+    //                         ]
+    //                     }
+    //                 }
+    //                 );
+    //                 props.dispatch({ type: 'IMAGES', data: dataImages })
+    //             })
+    //         }
+    //         stampAndMapBase64()
+    //     }
+    // }, [images.length, refresh])
 
     return (
         <div className='w-100'>

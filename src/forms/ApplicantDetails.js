@@ -108,7 +108,6 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
                 alert('Something went Wrong check and try again')
                 console.log('Form initiation', err)
             })
-            console.log('submit', datatoSubmit, formdat)
         } else {
             alert('Mobile number and Location is Required')
         }
@@ -141,7 +140,6 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
                 alert('Something went Wrong check and try again')
                 console.log('Form update', err)
             })
-            console.log('update', datatoSubmit, formdata)
         } else {
             alert('Mobile number and Location is Required')
         }
@@ -227,7 +225,6 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
         if (data) {
             let form = formdata
             for (const key in data) {
-                console.log('key', key, data[key])
                 form[key] = data[key]
                 if (key === 'bankNBFCname') {
                     form['bankNBFCname'] = data.bankNBFCname
@@ -240,27 +237,9 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
                 }
             }
             setFormdata(form)
-            // if (localStorage.getItem(id)) {
-            //     let local = JSON.parse(localStorage.getItem(id))
-            //     let temp = {}
-            //     for (const key in data) {
-            //         if (local[key]) {
-            //             temp[key] = data[key]
-            //             if (key === 'bankNBFCname') {
-            //                 temp['bankNBFCname'] = data.bankNBFCname;
-            //             }
-            //             if (key === 'product') {
-            //                 temp['product'] = data.product;
-            //             }
-            //         }
-            //     }
-            //     setFormdata(temp)
-            // }
-            // applicantDetail(form)
             setRefresh(Math.random());
             outerDetailsData()
         }
-        // console.log('data', data)
     }, [data])
     const formdataFiltered = () => {
         const refData = { ...formdata }
@@ -268,7 +247,7 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
             if (initalData[key] === undefined)
                 delete refData[key]
         }
-        console.log({ refData });
+        // console.log({ refData });
         return refData
     }
     useImperativeHandle(ref, () => ({
@@ -311,7 +290,6 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
                 }
             }
         }
-        // console.log('agents', pincodeWiseAgents)
         return pincodeWiseAgents;
     }
     // let mismatchAddressField = [

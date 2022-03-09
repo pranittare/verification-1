@@ -30,41 +30,22 @@ const VerificationObserverResident = forwardRef(({ data, id }, ref) => {
     const [formdata, setFormdata] = useState(initialState)
 
     const onHandleChange = (e) => {
-        // name
         let form = formdata
-        console.log(e)
         form[e.name] = e.value
-        // console.log(e, form[e.name] )
         setFormdata(form)
         setRefresh(Math.random())
-        // console.log(form)
     }
     const handleSubmit = (e) => {
-        // const formdata = new FormData(e.currentTarget)
         e.preventDefault()
-        // verification(formdata)
-        // setData(formdata)
-        // for (let [key, value] of formData.entries()) {
-        //     console.log(key, value);
-        // }
     }
     useEffect(() => {
         if (data) {
             let form = formdata
-            // console.log('data', data)
             for (const key in data) {
                 form[key] = data[key]
             }
             setFormdata(form)
-            // if (localStorage.getItem(id)) {
-            //     let local = JSON.parse(localStorage.getItem(id))
-            //     for (const key in data) {
-            //         local[key] = data[key]
-            //     }
-            //     setFormdata(local)
-            // }
             setRefresh(Math.random())
-            // onHandleChange({ name: data[0], value: test[1] })
         }
     }, [data])
     let localityOfAddress = [

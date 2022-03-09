@@ -7,7 +7,7 @@ export const getFormData = (pincode, formId) => {
         const db = getDatabase()
         const formRef = ref(db, `form/${pincode}/${formId}`)
         onValue(formRef, (snapshot) => {
-            console.log(snapshot.val());
+            // console.log(snapshot.val());
             // if(snapshot)
             resolve(snapshot.val())
         })

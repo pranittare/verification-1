@@ -90,10 +90,14 @@ const OldCases = (props) => {
     const search2 = () => {
         let start = Math.round((new Date(startDate)).getTime());
         let end = Math.round((new Date(endDate)).getTime());
-        console.log('date', start, end)
         if (start && end) {
             let data = databaseUpdateQueryRangeMultiple('tat1', start, 'tat1', end)
             data.then((res) => {
+                for (let index = 0; index < res.length; index++) {
+                    const element = res[index];
+                    console.log(element.applicantDetails?.bankNBFCname)
+                }
+                console.table('date', res)
                 setAllData(res)
             })
         }
@@ -110,6 +114,16 @@ const OldCases = (props) => {
         //         setAllData(res)
         //     })
         // }
+    }
+    const getBank = (bank) => {
+        if (bank.clientName) {
+            return bank.clientName
+        }
+        return bank
+    }
+    const getProduct = (prod) => {
+        if(prod.productName) return prod.productName;
+        return prod;
     }
     const getExcel = () => {
         let table = document.getElementById('test-table-xls-button')
@@ -231,39 +245,32 @@ const OldCases = (props) => {
                     </thead>
                     <tbody>
                         {reset && allData && allData.length > 0 && allData.map((item, index) => {
-                            return <tr key={`${item.key}-${index + 1}`}>
+                            return <tr key={`${item?.key}-${index + 1}`}>
                                 <td>
-                                    {/* <a style={{ cursor: 'pointer' }} > */}
-                                    <Link to={{ pathname: item?.applicantDetails.form == 'office' ? `office/${item?.applicantDetails.pincode}/${item.key}` : `resident/${item?.applicantDetails.pincode}/${item.key}`, state: item }} className={item?.applicantDetails.form == 'office' ? 'text-primary' : 'text-success'}>
-                                        {item.applicantDetails.appid}
+                                    <Link to={{ pathname: item?.applicantDetails?.form == 'office' ? `office/${item?.applicantDetails?.pincode}/${item.key}` : `resident/${item?.applicantDetails?.pincode}/${item.key}`, state: item }} className={item?.applicantDetails?.form == 'office' ? 'text-primary' : 'text-success'}>
+                                        {item?.applicantDetails?.appid}
                                     </Link>
-                                    {/* </a> */}
                                 </td>
                                 <td>
 
-                                    {moment(item.applicantDetails.initiationDate).format('ll')}
+                                    {moment(item?.applicantDetails?.initiationDate).format('ll')}
                                 </td>
                                 <td>
-                                    {moment(item.applicantDetails.initiationDate).format('LT')}
+                                    {moment(item?.applicantDetails?.initiationDate).format('LT')}
 
                                 </td>
                                 <td>
-                                    {item.applicantDetails.customerName}
+                                    {item?.applicantDetails?.customerName}
                                 </td>
                                 <td>
-
-                                    {/* {moment(item.initiationDate).diff(item.tat, 'hours')} */}
-
-                                    {moment(item.tat).format('LT')}
-
+                                    {moment(item?.tat).format('LT')}
                                 </td>
                                 <td>
-                                    {item.applicantDetails.bankNBFCname}
+                                    {getBank(item?.applicantDetails?.bankNBFCname)}
 
                                 </td>
                                 <td>
-                                    {item.verificationDetails.overallStatus}
-                                    {/* {item.applicantDetails.remarks} */}
+                                    {item?.verificationDetails?.overallStatus}
 
                                 </td>
                             </tr>
@@ -295,50 +302,51 @@ const OldCases = (props) => {
                         {reset > 0 && allData && allData.length > 0 && allData.map((item, index) => {
                             return <tr key={`${item.key}-${index + 1}`}>
                                 <td>
-                                    {item.applicantDetails.appid}
+                                    {item?.applicantDetails?.appid}
                                 </td>
                                 <td>
-                                    {moment(item.applicantDetails.initiationDate).format('L')}
+                                    {moment(item?.applicantDetails?.initiationDate).format('L')}
                                 </td>
                                 <td>
-                                    {moment(item.applicantDetails.initiationDate).format('LT')}
+                                    {moment(item?.applicantDetails?.initiationDate).format('LT')}
                                 </td>
                                 <td>
-                                    {item.applicantDetails.customerName}
+                                    {item?.applicantDetails?.customerName}
                                 </td>
                                 <td>
-                                    {moment(item.tat).fromNow()}
+                                    {moment(item?.tat).fromNow()}
 
                                 </td>
                                 <td>
-                                    {item.applicantDetails.bankNBFCname}
+                                    {getBank(item?.applicantDetails?.bankNBFCname)}
                                 </td>
                                 <td>
-                                    {item.applicantDetails.product}
+                                    {/* {item?.applicantDetails?.product} */}
+                                    {getProduct(item.applicantDetails.product)}
                                 </td>
                                 <td>
-                                    {item.applicantDetails.pincode}
+                                    {item?.applicantDetails?.pincode}
                                 </td>
                                 <td>
-                                    {item.applicantDetails.visitedOfficeAddress ? item.applicantDetails.visitedOfficeAddress : item.applicantDetails.visitedresidentAddress}
+                                    {item?.applicantDetails?.visitedOfficeAddress ? item?.applicantDetails?.visitedOfficeAddress : item?.applicantDetails?.visitedresidentAddress}
                                 </td>
                                 <td>
-                                    {item.verificationDetails.overallStatus}
+                                    {item?.verificationDetails?.overallStatus}
                                 </td>
                                 <td>
-                                    {moment(item.tat).format('L')}
+                                    {moment(item?.tat).format('L')}
                                 </td>
                                 <td>
-                                    {moment(item.tat).format('LT')}
+                                    {moment(item?.tat).format('LT')}
                                 </td>
                                 <td>
-                                    {item.verificationDetails.productSupervisor}
+                                    {item?.verificationDetails?.productSupervisor}
                                 </td>
                                 <td>
-                                    {item.verificationDetails.finalFIVerifierName}
+                                    {item?.verificationDetails?.finalFIVerifierName}
                                 </td>
                                 <td>
-                                    {item.applicantDetails.remarks}
+                                    {item?.applicantDetails?.remarks}
 
                                 </td>
                             </tr>
