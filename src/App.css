@@ -6,3 +6,15 @@ label{
 /* input.form-control{
     width: 200px !important;
 }; */
+
+.formInputBoxSpacing {
+    margin-right: 10px;
+}
+
+
+.wid_200{
+    width: 200px;
+    margin-bottom: 0px;
+    height: 19.5px;
+    margin-top: 6px;
+}

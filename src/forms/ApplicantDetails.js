@@ -381,7 +381,7 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
                     </div>
                     <div >
                         <label>Pincode</label>
-                        <Input type="text" name='pincode' value={formdata['pincode']} onChange={(e) => onHandleChange(e.currentTarget)} />
+                        <Input className='formInputBoxSpacing' type="text" name='pincode' value={formdata['pincode']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
                     <div>
                         <label>Agent Name</label>
@@ -419,38 +419,40 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
                         <label>Resident Address Provided</label>
                         <Input type="text" name='residenceAddressProvided' value={formdata['residenceAddressProvided']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>}
-                    {id &&
-                        <>
-                            <div >
-                                <label>Mismatch Address</label>
-                                <Dropdown isOpen={mismatchDropdown} toggle={mismatchToggle}>
-                                    <DropdownToggle>
-                                        {formdata.mismatchAddress}
-                                    </DropdownToggle>
-                                    <DropdownMenu>
-                                        <DropdownItem name='mismatchAddress' value='no' onClick={(e) => onHandleChange(e.currentTarget)}>No</DropdownItem>
-                                        <DropdownItem name='mismatchAddress' value='yes' onClick={(e) => onHandleChange(e.currentTarget)}>Yes</DropdownItem>
-                                    </DropdownMenu>
-                                </Dropdown>
-                                {/* <DropDownComp id='applicantDetails' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={mismatchAddressField} value={formdata['mismatchAddress']} /> */}
-                            </div>
-                            {formdata['mismatchAddress'] && formdata['mismatchAddress'] !== 'no' &&
-                                <>
-                                    {formdata['type'] === 'office' && <div >
-                                        <label>Visited Office Address</label>
-                                        <Input type="text" name='visitedOfficeAddress' value={formdata['visitedOfficeAddress']} onChange={(e) => onHandleChange(e.currentTarget)} />
-                                    </div>}
-                                    {formdata['type'] === 'resident' && <div >
-                                        <label>Visited Resident Address</label>
-                                        <Input type="text" name='visitedresidentAddress' value={formdata['visitedresidentAddress']} onChange={(e) => onHandleChange(e.currentTarget)} />
-                                    </div>}
-                                </>
-                            }
-                        </>
-                    }
-                    <div >
-                        <label>Remarks If any</label>
-                        <Input type="text" name='remarks' value={formdata['remarks']} onChange={(e) => onHandleChange(e.currentTarget)} />
+                    <div style={{ display: 'flex' }}>
+                        {id &&
+                            <>
+                                <div >
+                                    <label>Mismatch Address</label>
+                                    <Dropdown isOpen={mismatchDropdown} toggle={mismatchToggle}>
+                                        <DropdownToggle>
+                                            {formdata.mismatchAddress}
+                                        </DropdownToggle>
+                                        <DropdownMenu>
+                                            <DropdownItem name='mismatchAddress' value='no' onClick={(e) => onHandleChange(e.currentTarget)}>No</DropdownItem>
+                                            <DropdownItem name='mismatchAddress' value='yes' onClick={(e) => onHandleChange(e.currentTarget)}>Yes</DropdownItem>
+                                        </DropdownMenu>
+                                    </Dropdown>
+                                    {/* <DropDownComp id='applicantDetails' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={mismatchAddressField} value={formdata['mismatchAddress']} /> */}
+                                </div>
+                                {formdata['mismatchAddress'] && formdata['mismatchAddress'] !== 'no' &&
+                                    <>
+                                        {formdata['type'] === 'office' && <div >
+                                            <label>Visited Office Address</label>
+                                            <Input type="text" name='visitedOfficeAddress' value={formdata['visitedOfficeAddress']} onChange={(e) => onHandleChange(e.currentTarget)} />
+                                        </div>}
+                                        {formdata['type'] === 'resident' && <div >
+                                            <label>Visited Resident Address</label>
+                                            <Input type="text" name='visitedresidentAddress' value={formdata['visitedresidentAddress']} onChange={(e) => onHandleChange(e.currentTarget)} />
+                                        </div>}
+                                    </>
+                                }
+                            </>
+                        }
+                        <div style={{ marginLeft: 20 }}>
+                            <label>Remarks If any</label>
+                            <Input type="text" name='remarks' value={formdata['remarks']} onChange={(e) => onHandleChange(e.currentTarget)} />
+                        </div>
                     </div>
                     {id ? <div className='pt-4'>
                         {!outerDetails.submitted && <Button color='warning' id='applicationDetails' type="button" onClick={handleUpdateForm} >

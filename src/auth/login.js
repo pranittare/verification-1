@@ -46,7 +46,7 @@ function Login(props) {
       Login
       <div className='container'>
         <Label id="basic-addon1">User Name</Label>
-        <InputGroup className="mb-3">
+        <InputGroup className="mb-3" style={{width:'40%', marginLeft:'auto', marginRight:'auto'}}>
           <Input
             placeholder="User Id"
             aria-label="Recipient's username"
@@ -57,7 +57,7 @@ function Login(props) {
         </InputGroup>
 
         <Label id="basic-addon1">Password</Label>
-        <InputGroup className="mb-3">
+        <div className="mb-3" style={{width:'40%', marginLeft:'auto', marginRight:'auto'}}>
           <Input
             placeholder="Password"
             aria-label="Recipient's username"
@@ -66,7 +66,7 @@ function Login(props) {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-        </InputGroup>
+        </div>
         <br />
         <Dropdown isOpen={dropdownOpen} toggle={toggle}>
           <DropdownToggle caret className='text-capitalize'>

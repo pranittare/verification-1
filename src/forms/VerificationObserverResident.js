@@ -146,19 +146,19 @@ const VerificationObserverResident = forwardRef(({ data, id }, ref) => {
         <div>
             <h4>Verification Observer</h4>
             {(refresh > 0 || true) && <form className='d-flex justify-content-around flex-wrap' onSubmit={handleSubmit} >
-                <div>
+                <div className='formInputBoxSpacing'>
                     <label>Locality of Address</label>
                     <DropDownComp id='verificationObserverResident' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={localityOfAddress} />
                 </div>
-                <div>
+                <div className='formInputBoxSpacing'>
                     <label>Type of House</label>
                     <DropDownComp id='verificationObserverResident' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={typeOfHouse} />
                 </div>
-                <div>
+                <div className='formInputBoxSpacing'>
                     <label>Type of House Others</label>
                     <Input type="text" name='typeOfHouseOthers' value={formdata['typeOfHouseOthers']} onChange={(e) => onHandleChange(e.currentTarget)} />
                 </div>
-                <div>
+                <div className='formInputBoxSpacing'>
                     <label>Construction Of Residence</label>
                     <DropDownComp id='verificationObserverResident' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={constructionOfResidence} />
                 </div>
@@ -166,7 +166,7 @@ const VerificationObserverResident = forwardRef(({ data, id }, ref) => {
                     <label>Accessibility/Approachibility</label>
                     <DropDownComp id='verificationObserverResident' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={accessibility} />
                 </div>
-                <div>
+                <div className='formInputBoxSpacing'>
                     <label>Ease of Locating</label>
                     <DropDownComp id='verificationObserverResident' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={easeofLocating} />
                 </div>

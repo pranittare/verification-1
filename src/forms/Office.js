@@ -2255,8 +2255,8 @@ const Office = () => {
                         <DropDownComp id='office' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={personMetNameDesignation} />
 
                     </div>
-                    <div>
-                        <label>No of Yrs in present Employment/Business & Total Yrs of Exp</label>
+                    <div style={{display:'flex', flexDirection:'column'}}>
+                        <label style={{width:200}} className='text-truncate' >No of Yrs in present Employment/Business & Total Yrs of Exp</label>
                         <Input type="text" name='totalYearsExp' value={formdata['totalYearsExp']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
                     <div>
