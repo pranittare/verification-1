@@ -7,17 +7,50 @@ import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 const Vendor = ({ vendors }) => {
     console.log('vendors', vendors)
 
-    const [clientInfo, setClientInfo] = useState()
-    
+    const [clientInfo, setClientInfo] = useState({
+        vendorCode: '',
+        clientName: '',
+        location: '',
+        address: '',
+        gstNo: '',
+        agreementDate: '',
+        renewalDate: '',
+        localCost: '',
+        ICGLCost: '',
+        OGLCost: '',
+        contactPerson: '',
+        contactNo: ''
+    })
+    const [vendorCode, setVendorCode] = useState()
+    const [clientName, setClientName] = useState()
+    const [location, setLocation] = useState()
+    const [address, setAddress] = useState()
+    const [gstNo, setGstNo] = useState()
+    const [agreementDate, setAgreementDate] = useState()
+    const [renewalDate, setRenewalDate] = useState()
+    const [localCost, setLocalCost] = useState()
+    const [ICGLCost, setICGLCost] = useState()
+    const [OGLCost, setOGLCost] = useState()
+    const [contactPerson, setContactPerson] = useState()
+    const [contactNo, setContactNo] = useState()
+
+    const onHandleChange = (e) => {
+        let clientForm = { ...clientInfo }
+        clientForm[e.name] = e.value
+        setClientInfo(clientForm)
+    }
 
     const toggle = () => {
         setClientInfo(false)
-        
     }
 
-useEffect(()=>{
-console.log('clientInfo', clientInfo)
-},[clientInfo])
+    useEffect(() => {
+        console.log('clientInfo', clientInfo)
+        let { vendorCode, clientName, location, address, gstNo, agreementDate, renewalDate, localCost, ICGLCost, OGLCost, contactPerson, contactNo } = clientInfo
+        if (vendorCode || clientName || location || address || gstNo || agreementDate || renewalDate || localCost || ICGLCost || OGLCost || contactPerson || contactNo) {
+            setVendorCode(vendorCode)
+        }
+    }, [clientInfo])
 
     return (
         <div>
@@ -26,14 +59,130 @@ console.log('clientInfo', clientInfo)
             <div>
                 <Modal isOpen={clientInfo}>
                     <ModalHeader>
-                        Title
+                        {clientInfo?.clientName}
                     </ModalHeader>
                     <ModalBody>
-                        {clientInfo?.clientName}
+                        <div className='row'>
+
+                            <div className='col-6'>
+                                <div>
+                                    <label>Vendor Code</label>
+                                    <input name='vendorCode' value={clientInfo.vendorCode} onChange={(e) => onHandleChange(e.target)} />
+                                </div>
+
+                                <div>
+                                    <label>Client Name</label>
+                                    <input name='clientName' value={clientInfo.clientName} onChange={(e) => onHandleChange(e.target)} />
+                                </div>
+
+                                <div>
+                                    <label>Location</label>
+                                    <input name='location' value={clientInfo.location} onChange={(e) => onHandleChange(e.target)} />
+                                </div>
+
+                                <div>
+                                    <label>Address</label>
+                                    <input name='address' value={clientInfo.address} onChange={(e) => onHandleChange(e.target)} />
+                                </div>
+
+                                <div>
+                                    <label>GST No.</label>
+                                    <input name='gstNo' value={clientInfo.gstNo} onChange={(e) => onHandleChange(e.target)} />
+                                </div>
+
+                                <div>
+                                    <label>Agreement Date</label>
+                                    <input name='agreementDate' value={clientInfo.agreementDate} onChange={(e) => onHandleChange(e.target)} />
+                                </div>
+                            </div>
+
+                            <div className='col-6'>
+                                <div>
+                                    <label>Renewal Date</label>
+                                    <input name='renewalDate' value={clientInfo.renewalDate} onChange={(e) => onHandleChange(e.target)} />
+                                </div>
+
+                                <div>
+                                    <label>Local Cost</label>
+                                    <input name='localCost' value={clientInfo.localCost} onChange={(e) => onHandleChange(e.target)} />
+                                </div>
+
+                                <div>
+                                    <label>ICGL Cost</label>
+                                    <input name='ICGLCost' value={clientInfo.ICGLCost} onChange={(e) => onHandleChange(e.target)} />
+                                </div>
+
+                                <div>
+                                    <label>OGL Cost</label>
+                                    <input name='OGLCost' value={clientInfo.OGLCost} onChange={(e) => onHandleChange(e.target)} />
+                                </div>
+
+                                <div>
+                                    <label>Contact Person</label>
+                                    <input name='contactPerson' value={clientInfo.contactPerson} onChange={(e) => onHandleChange(e.target)} />
+                                </div>
+
+                                <div>
+                                    <label>Contact No.</label>
+                                    <input name='contactNo' value={clientInfo.contactNo} onChange={(e) => onHandleChange(e.target)} />
+                                </div>
+                            </div>
+
+                            <div className='col-12'>
+                                <button style={{ marginTop: 20 }}>Add Product</button>
+                                <div>
+                                    <label>Product</label>
+                                    <p>(Add atLeast 1 email id per product!)</p>
+                                    <div className='d-flex'>
+                                        <input className='form-control' />
+                                        <button className='text-danger' style={{ border: 'none', padding: 8, backgroundColor: 'transparent' }}>X</button>
+                                    </div>
+                                    <button className='mt-2'>Add Email</button>
+                                    <p>Email Id</p>
+                                    <div className='d-flex'>
+                                        <input className='form-control' />
+                                        <button className='text-danger' style={{ border: 'none', padding: 8, backgroundColor: 'transparent' }}>X</button>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label>Product</label>
+                                    <p>(Add atLeast 1 email id per product!)</p>
+                                    <div className='d-flex'>
+                                        <input className='form-control' />
+                                        <button className='text-danger' style={{ border: 'none', padding: 8, backgroundColor: 'transparent' }}>X</button>
+                                    </div>
+                                    <button className='mt-2'>Add Email</button>
+                                    <p>Email Id</p>
+                                    <div className='d-flex'>
+                                        <input className='form-control' />
+                                        <button className='text-danger' style={{ border: 'none', padding: 8, backgroundColor: 'transparent' }}>X</button>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label>Product</label>
+                                    <p>(Add atLeast 1 email id per product!)</p>
+                                    <div className='d-flex'>
+                                        <input className='form-control' />
+                                        <button className='text-danger' style={{ border: 'none', padding: 8, backgroundColor: 'transparent' }}>X</button>
+                                    </div>
+                                    <button className='mt-2'>Add Email</button>
+                                    <p>Email Id</p>
+                                    <div className='d-flex'>
+                                        <input className='form-control' />
+                                        <button className='text-danger' style={{ border: 'none', padding: 8, backgroundColor: 'transparent' }}>X</button>
+                                    </div>
+                                </div>
+                                <br />
+                                <p>Upload Docs</p>
+                                <button>Choose File</button>
+                            </div>
+
+                        </div>
+
                     </ModalBody>
                     <ModalFooter>
                         <button> Add </button>
-                        <button onClick={()=>toggle()}> Cancel </button>
+                        <button onClick={() => toggle()}> Cancel </button>
                     </ModalFooter>
                 </Modal>
             </div>
@@ -51,7 +200,7 @@ console.log('clientInfo', clientInfo)
                 </thead>
                 <tbody>
                     {vendors.map((item, index) => {
-                        return <tr>
+                        return <tr key={index}>
                             <th scope="row">{index + 1}</th>
                             <td>
                                 {/* {{item.agreementDate.seconds * 1000 | date:'mediumDate'}}  */}
@@ -59,7 +208,7 @@ console.log('clientInfo', clientInfo)
                             </td>
                             <td>
                                 <button className="btn text-primary" data-toggle="modal"
-                                    data-target="#exampleModal" onClick={()=>setClientInfo(item)} >
+                                    data-target="#exampleModal" onClick={() => setClientInfo(item)} >
                                     {item.clientName}
                                 </button>
                             </td>
