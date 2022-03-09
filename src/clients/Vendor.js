@@ -21,18 +21,6 @@ const Vendor = ({ vendors }) => {
         contactPerson: '',
         contactNo: ''
     })
-    const [vendorCode, setVendorCode] = useState()
-    const [clientName, setClientName] = useState()
-    const [location, setLocation] = useState()
-    const [address, setAddress] = useState()
-    const [gstNo, setGstNo] = useState()
-    const [agreementDate, setAgreementDate] = useState()
-    const [renewalDate, setRenewalDate] = useState()
-    const [localCost, setLocalCost] = useState()
-    const [ICGLCost, setICGLCost] = useState()
-    const [OGLCost, setOGLCost] = useState()
-    const [contactPerson, setContactPerson] = useState()
-    const [contactNo, setContactNo] = useState()
 
     const onHandleChange = (e) => {
         let clientForm = { ...clientInfo }
@@ -43,14 +31,6 @@ const Vendor = ({ vendors }) => {
     const toggle = () => {
         setClientInfo(false)
     }
-
-    useEffect(() => {
-        console.log('clientInfo', clientInfo)
-        let { vendorCode, clientName, location, address, gstNo, agreementDate, renewalDate, localCost, ICGLCost, OGLCost, contactPerson, contactNo } = clientInfo
-        if (vendorCode || clientName || location || address || gstNo || agreementDate || renewalDate || localCost || ICGLCost || OGLCost || contactPerson || contactNo) {
-            setVendorCode(vendorCode)
-        }
-    }, [clientInfo])
 
     return (
         <div>
@@ -92,14 +72,14 @@ const Vendor = ({ vendors }) => {
 
                                 <div>
                                     <label>Agreement Date</label>
-                                    <input name='agreementDate' value={clientInfo.agreementDate} onChange={(e) => onHandleChange(e.target)} />
+                                    <input name='agreementDate' value={moment(clientInfo?.agreementDate?.seconds * 1000).format("MMM Do YYYY")} onChange={(e) => onHandleChange(e.target)} />
                                 </div>
                             </div>
 
                             <div className='col-6'>
                                 <div>
                                     <label>Renewal Date</label>
-                                    <input name='renewalDate' value={clientInfo.renewalDate} onChange={(e) => onHandleChange(e.target)} />
+                                    <input name='renewalDate' value={moment(clientInfo?.renewalDate?.seconds * 1000).format("MMM Do YYYY")} onChange={(e) => onHandleChange(e.target)} />
                                 </div>
 
                                 <div>
