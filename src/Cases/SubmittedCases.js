@@ -30,8 +30,8 @@ const SubmittedCases = (props) => {
             for (let index = 0; index < newform.length; index++) {
                 const element2 = newform[index];
                 let single = form[element2]
-                single.key = element2
                 if (single.submitted && single.branch === props.branch) {
+                    single.key = element2
                     formarray.push(single)
                 }
                 // console.log('form', single)
