@@ -20,22 +20,70 @@ const Vendor = ({ vendors }) => {
         OGLCost: '',
         contactPerson: '',
         contactNo: '',
-        productList: []
-    })
+        productList: [],
+        newEmail: '',
+        newProduct: ''
+    });
+
+
+    const [addProduct, setAddProduct] = useState(false);
+    const [addEmail, setAddEmail] = useState(false);
 
     const onHandleChange = (e) => {
         let clientForm = { ...clientInfo }
         clientForm[e.name] = e.value
         setClientInfo(clientForm)
     }
+    const onHandleChangeProduct = (e, index) => {
+        let productForm = { ...clientInfo }
+        productForm.productList[index].productName = e.value
+        setClientInfo(productForm)
+    }
+    const onHandleChangeEdit = (e, index, index1) => {
+        let emailList = { ...clientInfo }
+        emailList.productList[index1].emailList[index].email = e.value
+        setClientInfo(emailList)
+    }
+    const addProductFnc = () => {
+        let form = { ...clientInfo }
+        form.productList.push({ productName: form.newProduct, emailList: [] })
+        setClientInfo(form)
+        setAddProduct(false)
+        setAddEmail(false)
+    }
+    const addEmailfnc = (index) => {
+        let form = { ...clientInfo }
+        form.productList[index].emailList.push({ email: form.newEmail })
+        setClientInfo(form)
+        setAddProduct(false)
+        setAddEmail(false)
+
+    }
     const [product, setProduct] = useState();
     const [productDropdown, setProductDropdown] = useState(false);
     const toggleProduct = () => {
         setProductDropdown(!productDropdown);
     }
+    const onHandleDeleteEmail = (emailIndex, productIndex) => {
+        let form = { ...clientInfo }
+        form.productList[productIndex].emailList.splice(emailIndex, 1)
+        setClientInfo(form)
+
+    }
+    const onHandleDeleteProduct = (productIndex) => {
+        let form = { ...clientInfo }
+        form.productList.splice(productIndex, 1)
+        setClientInfo(form)
+    }
 
     const toggle = () => {
         setClientInfo(false);
+    }
+    const toggleAddProduct = () => {
+        setAddProduct(!addProduct)
+    }
+    const toggleAddEmail = () => {
+        setAddEmail(!addEmail)
     }
 
     return (
@@ -115,42 +163,52 @@ const Vendor = ({ vendors }) => {
                             </div>
 
                             <div className='col-12'>
-                                <Button className='mt-2'>Add Product</Button>
-                                <Dropdown isOpen={productDropdown}>
-                                    <DropdownToggle onClick={toggleProduct}>
-                                        {product ? product : 'None'}
+                                <Button className='mt-2' onClick={toggleAddProduct}>Add Product</Button>
+                                {addProduct && <div>
+                                    <p className='my-1'>Product Name</p>
+                                    <div className='d-flex'>
+                                        <Input value={clientInfo.newProduct} onChange={(e) => onHandleChange(e.target)} name='newProduct' />
+                                        <Button color='primary' outline style={{ border: 'none', fontSize: '25px' }} onClick={addProductFnc}>+</Button>
+                                    </div>
+                                </div>}
+                                <Dropdown className='mt-2' isOpen={productDropdown}>
+                                    <DropdownToggle onClick={toggleProduct} color='primary'>
+                                        {product ? product.item.productName : 'None'}
                                     </DropdownToggle>
-                                    <DropdownMenu>
-                                    {clientInfo?.productList?.map(item => {
-                                        return <DropdownItem key={item?.productName} onClick={()=> setProductDropdown(true)}>
-                                              <div className='d-flex'>
-                                            <Input value={item?.productName} onClick={()=>setProduct(item?.productName)}/>
-                                            <Button color='danger' outline style={{border: 'none'}} onClick={()=> alert('del')}>X</Button>
-                                        </div>
-                                        </DropdownItem>
-                                })}
+                                    <DropdownMenu className='overflow-auto' style={{ maxHeight: 300 }}>
+                                        {clientInfo?.productList?.map((item, index) => {
+                                            return <DropdownItem key={item?.productName} onClick={() => setProductDropdown(true)}>
+                                                <div className='d-flex'>
+                                                    <Input value={item?.productName} onClick={() => setProduct({ item, index })} name={item?.productName} onChange={(e) => onHandleChangeProduct(e.target, index)} />
+                                                    <Button color='danger' outline style={{ border: 'none' }} onClick={() => onHandleDeleteProduct(index)}>X</Button>
+                                                </div>
+                                            </DropdownItem>
+                                        })}
 
                                     </DropdownMenu>
                                 </Dropdown>
-                                {clientInfo?.productList?.map(item => {
-                                    return <div>
-                                        <label>Product</label>
-                                        <p>(Add atLeast 1 email id per product!)</p>
+                                {product && <div>
+                                    <Button color='success' onClick={toggleAddEmail} className='my-2'>Add Email</Button>
+                                    {addEmail && <div>
+                                        <p className='my-1'>Email Id</p>
                                         <div className='d-flex'>
-                                            <Input value={item?.productName} />
-                                            <Button color='danger' outline style={{border: 'none'}}>X</Button>
+                                            <Input value={clientInfo.newEmail} onChange={(e) => onHandleChange(e.target)} name='newEmail' />
+                                            <Button onClick={() => addEmailfnc(product.index)} color='primary' outline style={{ border: 'none', fontSize: '25px' }}>+</Button>
                                         </div>
-                                        <Button className='mt-2'>Add Email</Button>
-                                        {item?.emailList?.map(item1 => {
-                                            return <div><p>Email Id</p>
-                                                <div className='d-flex'>
-                                                    <Input value={item1.email}/>
-                                                    <Button color='danger' outline style={{border: 'none'}}>X</Button>
-                                                </div>
+                                    </div>}
+                                </div>
+                                }
+                                <div className='overflow-auto' style={{ maxHeight: 300 }}>
+                                    {product?.item.emailList?.map((item1, index) => {
+                                        return <div><p className='my-1'>Email Id</p>
+                                            <div className='d-flex'>
+                                                <Input value={item1.email} onChange={(e) => onHandleChangeEdit(e.target, index, product.index)} />
+                                                <Button color='danger' onClick={() => onHandleDeleteEmail(index, product.index)} outline style={{ border: 'none' }}>X</Button>
                                             </div>
-                                        })}
-                                    </div>
-                                })}
+                                        </div>
+                                    })}
+
+                                </div>
                                 <br />
                                 <p>Upload Docs</p>
                                 <Button>Choose File</Button>
@@ -160,7 +218,7 @@ const Vendor = ({ vendors }) => {
 
                     </ModalBody>
                     <ModalFooter>
-                        <Button color='primary'> Add </Button>
+                        <Button color='primary' onClick={() => console.log('form', clientInfo)}> Add </Button>
                         <Button color='danger' onClick={() => toggle()}> Cancel </Button>
                     </ModalFooter>
                 </Modal>
