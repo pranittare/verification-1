@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import { getDatabase, update, ref as rtRef, set } from "firebase/database";
 import axios from 'axios';
 import { useHistory } from 'react-router-dom';
+import Alert from '../components/Alert';
 
 const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDetails, id }, ref) => {
     const db = getDatabase();
@@ -57,6 +58,10 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
     const mismatchToggle = () => {
         setMismatchDropdown(!mismatchDropdown)
     }
+    const [alertMessage, setAlertMessage] = useState('');
+    const [oldTat, setoldTat] = useState('');
+
+
     const prevCasesCount = () => {
         let date = new Date().getDate()
         if (casestoday[date]) {
@@ -102,14 +107,14 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
             update(rtRef(db, path), datatoSubmit).then(res => {
                 handleToken(datatoSubmit.selected)
                 // handleCasesToday()
-                alert('Forms Sent');
+                setAlertMessage('Form Sent')
                 history.push('/ActiveCases')
             }).catch(err => {
-                alert('Something went Wrong check and try again')
+                setAlertMessage('Something went Wrong check and try again')
                 console.log('Form initiation', err)
             })
         } else {
-            alert('Mobile number and Location is Required')
+            setAlertMessage('Mobile number and Location is Required')
         }
         // return datatoSubmit
     }
@@ -124,24 +129,26 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
                 claimed: false,
                 appid: formdata.appid,
                 emailList: formdata.emailList,
-                branch: branch
+                branch: branch,
+                tat: outerDetails.tat,
             }
             if (outerDetails.selected || outerDetails?.agenDetails?.email || selectedAgent) {
                 datatoSubmit['selected'] = selectedAgentId ? selectedAgentId : outerDetails.selected ? outerDetails.selected : outerDetails.agenDetails.email
                 datatoSubmit['claimed'] = true;
-                datatoSubmit['claimedAt'] = new Date().toDateString();
+                datatoSubmit['claimedAt'] = outerDetails.claimedAt;
+                // datatoSubmit['claimedAt'] = new Date().toDateString();
                 datatoSubmit['assigned'] = true;
             }
             const path = `form/${formdata.pincode}/${id}`;
             set(rtRef(db, path), datatoSubmit).then(res => {
-                alert('Forms Updated');
+                setAlertMessage('Forms Updated');
                 history.push('/ActiveCases')
             }).catch(err => {
-                alert('Something went Wrong check and try again')
+                setAlertMessage('Something went Wrong check and try again')
                 console.log('Form update', err)
             })
         } else {
-            alert('Mobile number and Location is Required')
+            setAlertMessage('Mobile number and Location is Required')
         }
     }
     const notificationSend = (fcm) => {
@@ -304,6 +311,7 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
 
     return (
         <div>
+            {alertMessage && <Alert message={alertMessage} setMessage={(data) => setAlertMessage(data)} />}
             <h1>Applicant Details</h1>
             <div>
                 <form className='d-flex justify-content-between flex-wrap' onSubmit={handleSubmit}>
@@ -381,7 +389,7 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
                     </div>
                     <div >
                         <label>Pincode</label>
-                        <Input className='formInputBoxSpacing' type="text" name='pincode' value={formdata['pincode']} onChange={(e) => onHandleChange(e.currentTarget)} />
+                        <Input className='formInputBoxSpacing' type="number" name='pincode' value={formdata['pincode']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
                     <div>
                         <label>Agent Name</label>

@@ -15,6 +15,7 @@ import { getStorage, ref as storageRef, uploadBytes, getDownloadURL, deleteObjec
 import stampImg from '../assets/stamp.jpeg';
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
+import Alert from "../components/Alert"
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 
@@ -101,7 +102,8 @@ const Office = () => {
     const [addressConfirmedDropdown, setaddressConfirmedDropdown] = useState('')
     const addressConfirmedToggle = () => {
         setaddressConfirmedDropdown(!addressConfirmedDropdown);
-    }
+    }    
+    const [alertMessage, setAlertMessage] = useState('');
     const dataSplit = (alldata) => {
         let verfi = { verification: {}, applicant: {} }
         for (const key in alldata) {
@@ -142,7 +144,7 @@ const Office = () => {
         // remove form
         handleRemoveForm();
         // }).catch(err => {
-        //     alert('Something went wrong check console')
+        //     setAlertMessage('Something went wrong check console')
         //     console.log('form submission', err)
         // })
 
@@ -152,7 +154,7 @@ const Office = () => {
         let path = `form/${pincode}/${id}`
         const remref = ref(db, path);
         remove(remref).then(res => {
-            alert('Form Removed from RT and Submitted to Cloud')
+            setAlertMessage('Form Removed from RT and Submitted to Cloud')
             history.push('/ActiveCases')
         })
     }
@@ -252,10 +254,10 @@ const Office = () => {
             console.log('handleSave', dataToSubmit)
             update(ref(db, path), dataToSubmit).then(res => {
                 setLoading(false)
-                alert('Forms Updated');
+                setAlertMessage('Forms Updated');
             }).catch(err => {
                 setLoading(false)
-                alert('Something went Wrong check and try again')
+                setAlertMessage('Something went Wrong check and try again')
                 console.log('Form update', err)
             })
             // localStorage.setItem(id, JSON.stringify(formdata))
@@ -336,6 +338,7 @@ const Office = () => {
             }
             setApplicantDetails(formsaved?.office?.applicantDetails)
             setVerificationOvserver(formsaved?.office?.verificationDetails)
+            console.log('outer', outer)
             setOuterDetails(outer)
             setMainouter(mainout)
         }
@@ -407,7 +410,7 @@ const Office = () => {
                 formFillRouter(data)
             } else {
                 getFormData(pincode, id)
-                    .then(formsaved => {
+                .then(formsaved => {
                         setLoading(false)
                         formFill(formsaved)
                         console.log('formsaved', formsaved)
@@ -2200,6 +2203,7 @@ const Office = () => {
                     }
                 }}
             />
+           {alertMessage && <Alert message={alertMessage} setMessage={(data)=>setAlertMessage(data)}/>}
             <Collapse title='Applicant Details'>
                 <ApplicantDetails data={applicantDetails} outerDetails={outerDetails} id={id} ref={ADref} />
             </Collapse>

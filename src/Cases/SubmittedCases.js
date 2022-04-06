@@ -5,7 +5,7 @@ import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import { useHistory } from 'react-router-dom'
 import moment from 'moment';
 import { getDatabase, remove, ref } from "firebase/database";
-
+import Alert from '../components/Alert';
 
 const SubmittedCases = (props) => {
     const { vendors } = props;
@@ -18,7 +18,8 @@ const SubmittedCases = (props) => {
     const toggleBankName = () => {
         setDropdownBankNameOpen(!dropdownBankNameOpen);
     }
-    const [selectedBank, setSelectedBank] = useState(false);
+    const [selectedBank, setSelectedBank] = useState(false);    
+    const [alertMessage, setAlertMessage] = useState('');
     const formData = (forms) => {
         let formarray = []
         const formKeys = Object.keys(forms)
@@ -129,7 +130,7 @@ const SubmittedCases = (props) => {
             const path = `form/${pincode}/${item.key}`
             console.log('path', path)
             remove(ref(db, path)).then(res => {
-                alert('Case Removed');
+                setAlertMessage('Case Removed');
                 setReset(Math.random());
             })
         } else if (item.pincode && item.key) {
@@ -137,12 +138,12 @@ const SubmittedCases = (props) => {
             const path = `form/${pincode}/${item.key}`
             console.log('path', path)
             remove(ref(db, path)).then(res => {
-                alert('Case Removed');
+                setAlertMessage('Case Removed');
                 setReset(Math.random());
             })
 
         } else {
-            alert('problem found delete from backend!');
+            setAlertMessage('problem found delete from backend!');
         }
     }
     useEffect(() => {
@@ -180,6 +181,7 @@ const SubmittedCases = (props) => {
     }, [])
     return (
         <div>
+           {alertMessage && <Alert message={alertMessage} setMessage={(data)=>setAlertMessage(data)}/>}
             <div className='d-flex justify-content-around mb-2 mt-2'>
                 <h4>Submitted Cases</h4>
                 <button onClick={getExcel} className='btn btn-primary'>Get Excel</button>

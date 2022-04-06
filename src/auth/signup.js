@@ -5,6 +5,7 @@ import { useHistory } from 'react-router-dom'
 import { connect } from 'react-redux';
 import { createUser } from '../utils/createUser'
 import { getDatabase, ref, set } from "firebase/database";
+import Alert from '../components/Alert';
 
 function SignUp({ agentsTotal, agentsActive, usersTotal }) {
     const db = getDatabase();
@@ -26,6 +27,7 @@ function SignUp({ agentsTotal, agentsActive, usersTotal }) {
         branches: '',
         agentBranches: ''
     })
+    const [alertMessage, setAlertMessage] = useState('');
 
     const toggle = () => setOpen(!dropdownOpen);
 
@@ -52,7 +54,7 @@ function SignUp({ agentsTotal, agentsActive, usersTotal }) {
     const onHandleSubmit = () => {
         const { agentId, agentPassword, primaryPincode, userId, name, userPassword, pincode, level, branches, agentName, secondaryPincode } = formdata
         if (!branches) {
-            alert('Please Select branch')
+            setAlertMessage('Please Select branch')
         }
         if (selector === 'agent') {
             // console.log(
@@ -82,7 +84,7 @@ function SignUp({ agentsTotal, agentsActive, usersTotal }) {
             //     .catch((error) => {
             //         const errorCode = error.code;
             //         const errorMessage = error.message;
-            //         alert('Something went Wrong')
+            //         setAlertMessage('Something went Wrong')
             //         console.log('err', errorCode, errorMessage)
             //         // ..
             //     });
@@ -104,7 +106,7 @@ function SignUp({ agentsTotal, agentsActive, usersTotal }) {
             //     // Add user info to database everything
             //     const user = userCredential.user;
             createUser(userId, userPassword).then(res => {
-                alert(`User created ${res.user.email}`)
+                setAlertMessage(`User created ${res.user.email}`)
                 let data = {
                     userId: userId,
                     password: userPassword,
@@ -117,13 +119,13 @@ function SignUp({ agentsTotal, agentsActive, usersTotal }) {
                 }
 
                 set(ref(db, 'users/'), data).then(res => {
-                    alert('Real time Database Updated')
+                    setAlertMessage('Real time Database Updated')
                 }).catch(err => {
-                    alert('Something went Wrong check log and database')
+                    setAlertMessage('Something went Wrong check log and database')
                     console.log('err create user', err)
                 })
             }).catch(err => {
-                alert('User registration Error')
+                setAlertMessage('User registration Error')
                 console.log('user Registration', err)
             })
 
@@ -135,7 +137,7 @@ function SignUp({ agentsTotal, agentsActive, usersTotal }) {
             // .catch((error) => {
             //     const errorCode = error.code;
             //     const errorMessage = error.message;
-            //     alert('Something went Wrong')
+            //     setAlertMessage('Something went Wrong')
             //     console.log('err', errorCode, errorMessage)
             //     // ..
             // });
@@ -162,7 +164,7 @@ function SignUp({ agentsTotal, agentsActive, usersTotal }) {
             for (let index = 0; index < agentsTotal.length; index++) {
                 const element = agentsTotal[index];
                 if (element.userId === value) {
-                    alert(`Agent Name found ${element.name}`)
+                    setAlertMessage(`Agent Name found ${element.name}`)
                     if (element.secondaryPincodes?.length > 0) {
                         console.log('element', element)
                         let form = formdata
@@ -181,7 +183,7 @@ function SignUp({ agentsTotal, agentsActive, usersTotal }) {
                 const element1 = agentKeys[j];
                 let agent = agentsActive[element1]
                 if (agent.userId === value) {
-                    alert(`Douplicate entry found in Active Agents: Agent Name ${agent.name}`)
+                    setAlertMessage(`Douplicate entry found in Active Agents: Agent Name ${agent.name}`)
                 }
             }
         }
@@ -193,7 +195,7 @@ function SignUp({ agentsTotal, agentsActive, usersTotal }) {
                 const element1 = userKeys[j];
                 let user = usersTotal[element1]
                 if (user.userId === value) {
-                    alert(`Douplicate entry found in Users: User Name ${user.name} : Level ${user.level}`)
+                    setAlertMessage(`Douplicate entry found in Users: User Name ${user.name} : Level ${user.level}`)
                 }
             }
         }
@@ -202,6 +204,7 @@ function SignUp({ agentsTotal, agentsActive, usersTotal }) {
 
     return (
         <div>
+           {alertMessage && <Alert message={alertMessage} setMessage={(data)=>setAlertMessage(data)}/>}
             SignUp
             <div className='d-flex justify-content-around'>
                 <FormGroup check>

@@ -8,6 +8,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import moment from 'moment';
 import { connect, useSelector } from 'react-redux';
 import DropDownComp from '../components/DropDownComp';
+import Alert from '../components/Alert';
 
 const AddAgent = ({ agent, allAgents }) => {
 
@@ -66,6 +67,8 @@ const AddAgent = ({ agent, allAgents }) => {
         setFormdata(initalState)
         setModal(!modal)
     };
+    const [alertMessage, setAlertMessage] = useState('');
+
     const addOrUpdate = (form) => {
         // let form = formdata
         if (form.name) {
@@ -94,10 +97,10 @@ const AddAgent = ({ agent, allAgents }) => {
                 const element = allAgents[index];
                 // console.log('element', element)
                 if (form.agentCode === element['agentCode']) {
-                    alert('Same Agent Code Do not Continue!')
+                    setAlertMessage('Same Agent Code Do not Continue!')
                 }
                 if (form.name === element['name']) {
-                    alert('Same Agent Name Do not Continue!')
+                    setAlertMessage('Same Agent Name Do not Continue!')
                 }
 
             }
@@ -115,12 +118,12 @@ const AddAgent = ({ agent, allAgents }) => {
             const storageRef = ref(storage, filePath);
             uploadBytes(storageRef, file).then((snapshot) => {
                 // console.log('Uploaded a blob or file!');
-                alert('Upload Successful')
+                setAlertMessage('Upload Successful')
 
             });
 
         } else {
-            alert('Upload Cancelled')
+            setAlertMessage('Upload Cancelled')
         }
     }
     const downloadUrlfnc = (agentCode) => {
@@ -131,7 +134,7 @@ const AddAgent = ({ agent, allAgents }) => {
                 setDownloadUrl(url)
             })
             .catch((error) => {
-                alert('Kyc Document not found')
+                setAlertMessage('Kyc Document not found')
                 // Handle any errors
             });
     }
@@ -161,10 +164,10 @@ const AddAgent = ({ agent, allAgents }) => {
                         selected: false,
                         clained: false
                     }).then(res => {
-                        alert('Forms disabled')
+                        setAlertMessage('Forms disabled')
                         window.location.reload()
                     }).catch(err => {
-                        alert('Forms were not disabled check log')
+                        setAlertMessage('Forms were not disabled check log')
                         console.log('Disable Agent 1', err)
                     })
                 }
@@ -176,9 +179,9 @@ const AddAgent = ({ agent, allAgents }) => {
     }
     const disableRealTimeAgentSingle = (key) => {
         update(rtRef(db, `agents/${key}`), { uniqueId: 'Disabled', isLoggedIn: false, onCase: false, myForms: 0 }).then(res => {
-            alert('Agent Disabled')
+            setAlertMessage('Agent Disabled')
         }).catch(err => {
-            alert('Agent was not disabled check log')
+            setAlertMessage('Agent was not disabled check log')
             console.log('Disable Agent 2', err)
         })
     }
@@ -189,10 +192,10 @@ const AddAgent = ({ agent, allAgents }) => {
             const agents = realAgents[index];
             if (agent.userId === agents.userId) {
                 update(rtRef(db, `agents/${agents.key}`), { uniqueId: null }).then(res => {
-                    alert('Agent Enabled')
+                    setAlertMessage('Agent Enabled')
                     window.location.reload()
                 }).catch(err => {
-                    alert('Agent was not enabled check log')
+                    setAlertMessage('Agent was not enabled check log')
                     console.log('Agent Enabled', err)
                 })
             }
@@ -200,9 +203,9 @@ const AddAgent = ({ agent, allAgents }) => {
     }
     const removeRealTimeAgent = (key) => {
         remove(rtRef(db, `agents/${key}`)).then(res => {
-            alert('Agent Deleted 1')
+            setAlertMessage('Agent Deleted 1')
         }).catch(err => {
-            alert('Agent was not deleted check log')
+            setAlertMessage('Agent was not deleted check log')
             console.log('Agent Deleted 1', err)
         })
     }
@@ -211,17 +214,17 @@ const AddAgent = ({ agent, allAgents }) => {
         const storage = getStorage();
         const kycDocument = ref(storage, filePath);
         deleteObject(kycDocument).then(res => {
-            alert('KYC Deleted')
+            setAlertMessage('KYC Deleted')
         }).catch(err => {
-            alert('KYC was not Deleted check log')
+            setAlertMessage('KYC was not Deleted check log')
             console.log('Agent Deleted kyc', err);
         })
     }
     const deleteDocuments = (agentCode) => {
         deleteDoc(doc(fdb, `agents/${agentCode}`)).then(res => {
-            alert('Agent Deleted 2')
+            setAlertMessage('Agent Deleted 2')
         }).catch(err => {
-            alert('Agent was not deleted check log')
+            setAlertMessage('Agent was not deleted check log')
             console.log('Agent Deleted 2', err)
         })
     }
@@ -300,10 +303,10 @@ const AddAgent = ({ agent, allAgents }) => {
 
         addDoc(doc(fdb, `agents`), commonAddUpdate())
             .then(res => {
-                alert('Total user update Successfull')
+                setAlertMessage('Total user update Successfull')
             })
             .catch(err => {
-                alert('Total user update Error')
+                setAlertMessage('Total user update Error')
                 console.log('Total user', err)
             })
     }
@@ -330,17 +333,17 @@ const AddAgent = ({ agent, allAgents }) => {
                 // Add update logic only for Realtime DB
                 update(rtRef(db, `agents/${realTimeAgentKey()}`), commonAddUpdate('rt'))
                     .then(res => {
-                        alert('Update Successfull')
+                        setAlertMessage('Update Successfull')
                         window.location.reload()
                     })
                     .catch(err => {
-                        alert('Error Occured retry')
+                        setAlertMessage('Error Occured retry')
                         console.log('total users real time update error', err)
                     })
             })
             .catch(err => {
                 if (err) {
-                    alert('Total user update Error')
+                    setAlertMessage('Total user update Error')
                     console.log('Total user', err)
 
                 }
@@ -423,6 +426,7 @@ const AddAgent = ({ agent, allAgents }) => {
     }, [])
     return (
         <div>
+           {alertMessage && <Alert message={alertMessage} setMessage={(data)=>setAlertMessage(data)}/>}
             <Button color={agent ? "link" : "danger"} onClick={toggle}>{agent ? agent.name : 'Add Agent'}</Button>
             <Modal isOpen={modal} toggle={toggle} >
                 <ModalHeader toggle={toggle}>Modal title</ModalHeader>

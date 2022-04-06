@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { connect } from 'react-redux';
-import { Input } from 'reactstrap';
+import { Button, Input, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import moment from 'moment';
 import { useHistory } from 'react-router-dom';
 import { getDatabase, remove, ref } from "firebase/database";
+import Alert from '../components/Alert';
 
 
 const ActiveCases = (props) => {
@@ -15,6 +16,12 @@ const ActiveCases = (props) => {
     const [allData, setAllData] = useState([])
     const [reset, setReset] = useState(0);
     const [tooltip, setTooltip] = useState();
+    const [alertMessage, setAlertMessage] = useState('');
+    const [agentList, setAgentList] = useState([]);
+    const [agentsDropdown, setAgentsDropdown] = useState([]);
+    const [selectedAgent, setSelectedAgent] = useState();
+    const [currentIndex ,setCurrentIndex] = useState();
+
     const formData = (forms) => {
         const formKeys = Object.keys(forms)
         let formarray = []
@@ -170,7 +177,7 @@ const ActiveCases = (props) => {
             const path = `form/${pincode}/${item.key}`
             console.log('path', path)
             remove(ref(db, path)).then(res => {
-                alert('Case Removed');
+                setAlertMessage('Case Removed');
                 setReset(Math.random());
             })
         } else if (item.pincode && item.key) {
@@ -178,13 +185,35 @@ const ActiveCases = (props) => {
             const path = `form/${pincode}/${item.key}`
             console.log('path', path)
             remove(ref(db, path)).then(res => {
-                alert('Case Removed');
+                setAlertMessage('Case Removed');
                 setReset(Math.random());
             })
 
         } else {
-            alert('problem found delete from backend!');
+            setAlertMessage('problem found delete from backend!');
         }
+    }
+    const getAgents = (pincode, index) => {
+        let agentsList1 = []
+        for (const key in agents) {
+            if (Object.hasOwnProperty.call(agents, key)) {
+                const element = agents[key];
+                if (element.pincode === pincode) {
+                    agentsList1.push(element)
+                } else {
+                    if (element.secondary) {
+                        for (let index = 0; index < element.secondary.length; index++) {
+                            const item = element.secondary[index];
+                            if (item?.pincodes == pincode) {
+                                agentsList1.push(element)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        setCurrentIndex(index)
+        setAgentList(agentsList1);
     }
     const getAgentFullName = (item) => {
         let agentname = ''
@@ -226,7 +255,7 @@ const ActiveCases = (props) => {
                     }, {})
 
                 var duplicates = Object.keys(uniq).filter((a) => uniq[a] > 1)
-                alert(`Duplicate Entries Found: ${duplicates.join(', ')}`)
+                setAlertMessage(`Duplicate Entries Found: ${duplicates.join(', ')}`)
                 console.log('duplicates', duplicates)
             }
         }, 5000)
@@ -237,6 +266,7 @@ const ActiveCases = (props) => {
     // console.log('form', document.getElementById('form').clientHeight)
     return (
         <div>
+            {alertMessage && <Alert message={alertMessage} setMessage={(data) => setAlertMessage(data)} />}
             <div className='d-flex justify-content-around mb-2 mt-2'>
 
                 <h4>Active Cases</h4>
@@ -253,15 +283,9 @@ const ActiveCases = (props) => {
                 filename={`Active-${formatedDate}`}
                 sheet="tablexls"
                 buttonText="Download as XLS" />
-            <div className='d-flex justify-content-between'>
-                <div >
-                    <label>Pincode</label>
-                    <Input type="text" onChange={pincodeFilter} name="pincode" placeholder={'Pincode'} />
-                </div>
-                <div>
-                    <label>Search</label>
-                    <Input type="text" onChange={allSearch} placeholder={'Search all'} />
-                </div>
+            <div className='d-flex justify-content-around'>
+                <Input type="text" onChange={pincodeFilter} name="pincode" placeholder={'Pincode'} />
+                <Input type="text" onChange={allSearch} placeholder={'Search all'} style={{ marginLeft: 50 }} />
             </div>
             <form className='d-flex justify-content-between flex-wrap' id='form'>
                 <table className="table table-striped table-bordered">
@@ -316,6 +340,12 @@ const ActiveCases = (props) => {
                                 </td>
                                 <td>
                                     {item.claimed ? 'Claimed' : item.assigned ? 'Assigned' : ''}
+                                    <br />
+                                    <Button color='success' onClick={() => getAgents(item?.office ?
+                                        item.office?.applicantDetails?.pincode
+                                        :
+                                        item.resident?.applicantDetails?.pincode, index)}>Force</Button>
+                                       {agentList.length > 0 && currentIndex === index && <DropDownAgentsList agentList={agentList} selectedAgent={selectedAgent} setSelectedAgent={setSelectedAgent}/>}
                                     {/* Assigned {item?.assigned ? 'true' : 'false'}
                                     Claimed {item?.claimed ? 'true' : 'false'} */}
                                 </td>
@@ -440,9 +470,9 @@ const ActiveCases = (props) => {
                                 <td>
                                     {
                                         item?.office ?
-                                        item.office?.applicantDetails?.contactNo
-                                        :
-                                        item.resident?.applicantDetails?.contactNo
+                                            item.office?.applicantDetails?.contactNo
+                                            :
+                                            item.resident?.applicantDetails?.contactNo
                                     }
                                 </td>
                             </tr>
@@ -452,6 +482,27 @@ const ActiveCases = (props) => {
                 </table>
             </form>
         </div>
+    )
+}
+const DropDownAgentsList = ({
+    selectedAgent,
+    agentList, 
+    setSelectedAgent }) => {
+        const [dropdownAgent, setDropdownAgent] = useState(false);
+    return (
+        <Dropdown toggle={() => setDropdownAgent(!dropdownAgent)} isOpen={dropdownAgent} className="mt-1">
+            <DropdownToggle caret className='text-truncate'>
+                {selectedAgent ? selectedAgent.name : 'None'}
+            </DropdownToggle>
+            <DropdownMenu>
+                {agentList?.filter(a => a.uniqueId !== 'Disabled').map((item, index) => {
+
+                    return <DropdownItem key={item.name} onClick={() => setSelectedAgent(item)}>
+                        {item.name}
+                    </DropdownItem>
+                })}
+            </DropdownMenu>
+        </Dropdown>
     )
 }
 const getAgentName = (item) => {
