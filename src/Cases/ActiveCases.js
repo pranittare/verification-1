@@ -4,8 +4,9 @@ import { Button, Input, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } f
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import moment from 'moment';
 import { useHistory } from 'react-router-dom';
-import { getDatabase, remove, ref } from "firebase/database";
+import { getDatabase, remove, ref, update } from "firebase/database";
 import Alert from '../components/Alert';
+import axios from 'axios';
 
 
 const ActiveCases = (props) => {
@@ -20,7 +21,7 @@ const ActiveCases = (props) => {
     const [agentList, setAgentList] = useState([]);
     const [agentsDropdown, setAgentsDropdown] = useState([]);
     const [selectedAgent, setSelectedAgent] = useState();
-    const [currentIndex ,setCurrentIndex] = useState();
+    const [currentIndex, setCurrentIndex] = useState();
 
     const formData = (forms) => {
         const formKeys = Object.keys(forms)
@@ -345,7 +346,7 @@ const ActiveCases = (props) => {
                                         item.office?.applicantDetails?.pincode
                                         :
                                         item.resident?.applicantDetails?.pincode, index)}>Force</Button>
-                                       {agentList.length > 0 && currentIndex === index && <DropDownAgentsList agentList={agentList} selectedAgent={selectedAgent} setSelectedAgent={setSelectedAgent}/>}
+                                    {agentList.length > 0 && currentIndex === index && <DropDownAgentsList agentList={agentList} selectedAgent={selectedAgent} setSelectedAgent={setSelectedAgent} form={item} setAlertMessage={(data) => setAlertMessage(data)} />}
                                     {/* Assigned {item?.assigned ? 'true' : 'false'}
                                     Claimed {item?.claimed ? 'true' : 'false'} */}
                                 </td>
@@ -486,9 +487,51 @@ const ActiveCases = (props) => {
 }
 const DropDownAgentsList = ({
     selectedAgent,
-    agentList, 
-    setSelectedAgent }) => {
-        const [dropdownAgent, setDropdownAgent] = useState(false);
+    agentList,
+    setSelectedAgent,
+    form,
+    setAlertMessage
+}) => {
+    const realTime = getDatabase();
+    const [dropdownAgent, setDropdownAgent] = useState(false);
+    const notificationSend = (fcm) => {
+        let body = {
+            "notification": {
+                "title": "Hey there",
+                "body": "You have a new Form"
+            },
+            "to": `${fcm}`
+        }
+        let token = 'AAAAAWZbGdE:APA91bFdoZVr9OHKs6ApB8fZIZ0kkCQLiJVdj-geB6ya18M-E77BmnjUN5XKRBZNLAlpO9KADcHTweFgmzlK74C06XHRtafMPiE1_HJxRPIUfYdd9TjLVZMbNaP1KdWm062heFQDhM2j'
+        axios.post('https://fcm.googleapis.com/fcm/send', body, { headers: { 'Authorization': `key=${token}` } }).then(res => {
+            console.log('notification', res)
+        }, err => {
+            console.log('notification err', err)
+        })
+    }
+    const forceAgent = (agent) => {
+        if (agent.fcmToken) {
+            let dataToUpdate = {
+                claimed: true,
+                selected: agent.userId,
+                claimedAt: new Date().toDateString(),
+                assigned: true
+            }
+            let pincode = form?.office ?
+                form.office?.applicantDetails?.pincode
+                :
+                form.resident?.applicantDetails?.pincode
+            let path = ref(realTime, `form/${pincode}/${form.key}`)
+            console.log('agent',agent, path, form)
+            update(path, dataToUpdate)
+            notificationSend(agent.fcmToken)
+            setAlertMessage(`Form Allocated to ${agent.userId}`)
+        } else {
+            alert('Check the agent if he is disabled')
+        }
+        setSelectedAgent(agent)
+
+    }
     return (
         <Dropdown toggle={() => setDropdownAgent(!dropdownAgent)} isOpen={dropdownAgent} className="mt-1">
             <DropdownToggle caret className='text-truncate'>
@@ -497,7 +540,7 @@ const DropDownAgentsList = ({
             <DropdownMenu>
                 {agentList?.filter(a => a.uniqueId !== 'Disabled').map((item, index) => {
 
-                    return <DropdownItem key={item.name} onClick={() => setSelectedAgent(item)}>
+                    return <DropdownItem key={item.name} onClick={() => forceAgent(item)}>
                         {item.name}
                     </DropdownItem>
                 })}

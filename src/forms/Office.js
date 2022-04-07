@@ -605,6 +605,14 @@ const Office = () => {
         setFormdata(alldata);
         setRefresh(Math.random());
     }
+    const updatedRegion = (data) => {
+        let verification = formdata
+        verification.locName = data.locName
+        let region = verification.region
+        region.latitude = data?.latitude
+        region.longitude = data?.longitude
+        setVerificationOvserver(verification)
+    }
     // PDF MAKE CONTENT
 
     const pdffnc = () => {
@@ -2317,7 +2325,7 @@ const Office = () => {
 
             </Collapse>
                 <Collapse title='Images and GeoLocation'>
-                    <Geolocation data={verificationObserver} id={id} pincode={pincode} />
+                    <Geolocation data={verificationObserver} id={id} pincode={pincode} type={'office'} updatedRegion={(data)=>updatedRegion(data)}/>
                 </Collapse>
                 {/* <PdfMake data={formdata} refresh={() => { setRefresh(Math.random()); }}  initiationDate={initiationDate} setpdfViewed={()=> setpdfViewed(true)} />
                  <hr />

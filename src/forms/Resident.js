@@ -206,11 +206,29 @@ const Resident = () => {
             // localStorage.setItem(id, JSON.stringify(formdata))
         }
     }
+    function rotateBase64Image(base64data, callback) {
+        var canvas = document.getElementById("c");
+        var ctx = canvas.getContext("2d");
+    
+        var image = new Image();
+        image.src = base64data;
+        image.onload = function() {
+            ctx.translate(image.width, image.height);
+            if (image.width > image.height) {
+                ctx.rotate(180 * Math.PI / 180);
+            }
+            ctx.drawImage(image, 0, 0); 
+            window.eval(""+callback+"('"+canvas.toDataURL()+"')");
+        };
+    
+    }
     const toDataURL = (url, callback) => {
         let xhRequest = new XMLHttpRequest();
         xhRequest.onload = function () {
             let reader = new FileReader();
             reader.onloadend = function () {
+                
+                // callback(rotateBase64Image(reader.result, 'callback'));
                 callback(reader.result);
             }
             reader.readAsDataURL(xhRequest.response);
@@ -265,7 +283,11 @@ const Resident = () => {
                             [
                                 {
                                     image: dataUrl,
-                                    width: 500,
+                                    // width: 'auto',
+                                    // height: 500
+                                    fit: [500, 1200],
+                                    pageBreak: 'after'
+                                    // width: 500,
                                 },
                             ]
                         ]
@@ -619,7 +641,14 @@ const Resident = () => {
         setFormdata(alldata);
         setRefresh(Math.random());
     }
-
+    const updatedRegion = (data) => {
+        let verification = formdata
+        verification.locName = data.locName
+        let region = verification.region
+        region.latitude = data?.latitude
+        region.longitude = data?.longitude
+        setVerificationOvserver(verification)
+    }
     const pdffnc = () => {
         viewImages()
         const VOdata = verificationObserverRef.current.getFormData();
@@ -2476,7 +2505,7 @@ const Resident = () => {
                 <Tpc data={verificationObserver} id={id} ref={TPCRef} overallStatus1={formdata.overallStatus} />
             </Collapse>
                 <Collapse title='Images and GeoLocation'>
-                    <Geolocation data={verificationObserver} id={id} pincode={pincode} />
+                    <Geolocation data={verificationObserver} id={id} pincode={pincode} type={'resident'} updatedRegion={(data)=>updatedRegion(data)}/>
                 </Collapse>
                 {/* <PdfMakeResident data={formdata} refresh={() => { setRefresh(Math.random()) }} download={downloadPdf} initiationDate={initiationDate} setpdfViewed={()=> setpdfViewed(true)}/> */}
                 {images.length === images64.length && <div>

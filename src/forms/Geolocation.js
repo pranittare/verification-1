@@ -1,15 +1,26 @@
 import React, { useEffect, useState } from 'react'
 import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject, listAll } from "firebase/storage";
+import { getDatabase, update, ref as rtRef, set } from "firebase/database";
 import { connect } from 'react-redux';
+import Alert from '../components/Alert';
 // import stamp from '../assets/stamp.jpeg'
 
 const Geolocation = (props) => {
-    const { data, id, pincode } = props
+    const { data, id, pincode, type, updatedRegion } = props
     const [audio, setAudio] = useState()
     const [images, setImages] = useState([])
-    const [refresh, setRefresh] = useState(0)
+    const [refresh, setRefresh] = useState(0);
+    const [uploadMap, setUploadMap] = useState(false);
+    const initialData = {
+        latitude: '',
+        longitude: '',
+        locName: ''
+    }
+    const [region, setRegion] = useState(initialData)
+    const [alertMessage, setAlertMessage] = useState('');
 
     const storage = getStorage();
+    const realTime = getDatabase();
 
     const viewAudio = (key, pincode) => {
         const filePath = `forms/${pincode}/${key}/audio/newAudio`
@@ -43,6 +54,24 @@ const Geolocation = (props) => {
             }).catch((error) => {
                 // Uh-oh, an error occurred!
             });
+    }
+    const handleCordinateChange = (e) => {
+        let data = region
+        data[e.placeholder] = e.value
+        setRegion(data)
+        setRefresh(Math.random())
+    }
+    const handleReplaceRegion = () => {
+        const path = `form/${pincode}/${id}/${type}/verificationDetails/region`
+        const path2 = `form/${pincode}/${id}/${type}/verificationDetails/`
+        updatedRegion(region)
+        const refRegion = rtRef(realTime, path)
+        const refLocName = rtRef(realTime, path2)
+        update(refRegion, { latitude: region.latitude, longitude: region.longitude })
+        update(refLocName, { locName: region.locName })
+        setRegion(initialData)
+        setAlertMessage('Changes done')
+
     }
     const handleDeleteImage = (item, index) => {
         let text = "Are you Sure?"
@@ -133,6 +162,7 @@ const Geolocation = (props) => {
     return (
         <div className='w-100'>
             <h3>Geolocation and Images</h3>
+            {alertMessage && <Alert message={alertMessage} setMessage={setAlertMessage} />}
             <div>
                 <h5>Audio</h5>
                 <a href={audio} target="_blank"
@@ -140,20 +170,51 @@ const Geolocation = (props) => {
             </div>
             <div>
                 <h5>Map</h5>
-                <div className='d-flex justify-content-center'>
-                    <img src={`https://maps.googleapis.com/maps/api/staticmap?size=300x300&maptype=hybrid&markers=${data?.region?.latitude},${data?.region?.longitude}&key=AIzaSyBPoGWXtGubXKV44J4D4ZsBtvY-lIBjEMU&zoom=16`}
-                        alt="" id="imagemap" />
-                    <a className='mt-3' href={`http://maps.google.com/maps?q=${data?.region?.latitude} +, + ${data?.region?.longitude}" target="_blank`}>
-                        <strong>
-                            Latitude: {data?.region?.latitude}
-                            <br />
-                            Longitude: {data?.region?.longitude}
-                        </strong>
-                    </a>
-
+                <div className='d-flex my-2'>
+                    <input className='form-control' placeholder='latitude' onChange={(e) => handleCordinateChange(e.target)} value={region.latitude} />
+                    <input className='form-control' placeholder='longitude' onChange={(e) => handleCordinateChange(e.target)} value={region.longitude} />
                 </div>
-                <br />
-                <p>{data?.locName}</p>
+                <input className='form-control my-2' placeholder='locName' onChange={(e) => handleCordinateChange(e.target)} value={region.locName} />
+                <div>
+                    {region.longitude &&
+                        <div>
+                            <div className='d-flex justify-content-center'>
+                                <img src={`https://maps.googleapis.com/maps/api/staticmap?size=300x300&maptype=hybrid&markers=${region?.latitude},${region?.longitude}&key=AIzaSyBPoGWXtGubXKV44J4D4ZsBtvY-lIBjEMU&zoom=16`}
+                                    alt="" id="imagemap" />
+                                <a className='mt-3' href={`http://maps.google.com/maps?q=${region?.latitude} +, + ${region?.longitude}" target="_blank`}>
+                                    <strong>
+                                        Latitude: {region?.latitude}
+                                        <br />
+                                        Longitude: {region?.longitude}
+                                    </strong>
+                                </a>
+
+                            </div>
+                            <br />
+                            <p>{region?.locName}</p>
+                            <button className='btn btn-danger' onClick={handleReplaceRegion}>Replace</button>
+
+                        </div>
+                    }
+                </div>
+                <button className='btn btn-warning' onClick={() => setUploadMap(!uploadMap)}>Hide/Unhide</button>
+                {!uploadMap &&
+                    <div>
+                        <div className='d-flex justify-content-center'>
+                            <img src={`https://maps.googleapis.com/maps/api/staticmap?size=300x300&maptype=hybrid&markers=${data?.region?.latitude},${data?.region?.longitude}&key=AIzaSyBPoGWXtGubXKV44J4D4ZsBtvY-lIBjEMU&zoom=16`}
+                                alt="" id="imagemap" />
+                            <a className='mt-3' href={`http://maps.google.com/maps?q=${data?.region?.latitude} +, + ${data?.region?.longitude}" target="_blank`}>
+                                <strong>
+                                    Latitude: {data?.region?.latitude}
+                                    <br />
+                                    Longitude: {data?.region?.longitude}
+                                </strong>
+                            </a>
+
+                        </div>
+                        <br />
+                        <p>{data?.locName}</p>
+                    </div>}
             </div>
             <div>
                 <h5>Images</h5>
