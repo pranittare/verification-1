@@ -194,7 +194,7 @@ const Office = () => {
                     let imageRef = storageRef(storage, itemRef._location.path_)
                     getDownloadURL(imageRef).then((x) => {
                         temp.push(x)
-                        allImagestoBase64(temp)
+                        allImagestoBase64(temp, x)
                         setImages(temp)
                         setRefresh(Math.random())
                     }).catch(err => {
@@ -217,7 +217,7 @@ const Office = () => {
             });
         }
     }
-    const allImagestoBase64 = (temp) => {
+    const allImagestoBase64 = (temp, link) => {
         let dataImages = []
         for (let index = 0; index < temp.length; index++) {
             const item = temp[index];
@@ -231,6 +231,7 @@ const Office = () => {
                                 {
                                     image: dataUrl,
                                     width: 500,
+                                    link: link
                                 },
                             ]
                         ]

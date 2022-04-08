@@ -207,9 +207,12 @@ const Resident = () => {
         }
     }
     function rotateBase64Image(base64data, callback) {
-        var canvas = document.getElementById("c");
+        const promise = new Promise((resolve, reject)=>{
+
+        var canvas = document.createElement('canvas');
+        // var canvas = document.getElementById("c");
         var ctx = canvas.getContext("2d");
-    
+        
         var image = new Image();
         image.src = base64data;
         image.onload = function() {
@@ -218,17 +221,21 @@ const Resident = () => {
                 ctx.rotate(180 * Math.PI / 180);
             }
             ctx.drawImage(image, 0, 0); 
-            window.eval(""+callback+"('"+canvas.toDataURL()+"')");
+            console.log('cb', canvas)
+            // window.eval(""+callback+"('"+canvas.toDataURL()+"')");
+            resolve()
         };
+        image.onerror(reject)
+    })
     
     }
     const toDataURL = (url, callback) => {
         let xhRequest = new XMLHttpRequest();
         xhRequest.onload = function () {
             let reader = new FileReader();
-            reader.onloadend = function () {
-                
-                // callback(rotateBase64Image(reader.result, 'callback'));
+            reader.onloadend = async function () {
+            //    await rotateBase64Image(reader.result, 'callback')
+                // callback();
                 callback(reader.result);
             }
             reader.readAsDataURL(xhRequest.response);
@@ -247,7 +254,7 @@ const Resident = () => {
                     let imageRef = storageRef(storage, itemRef._location.path_)
                     getDownloadURL(imageRef).then((x) => {
                         temp.push(x)
-                        allImagestoBase64(temp)
+                        allImagestoBase64(temp, x)
                         setImages(temp)
                         setRefresh(Math.random())
                     }).catch(err => {
@@ -270,7 +277,7 @@ const Resident = () => {
             });
         }
     }
-    const allImagestoBase64 = (temp) => {
+    const allImagestoBase64 = (temp, link) => {
         let dataImages = []
         for (let index = 0; index < temp.length; index++) {
             const item = temp[index];
@@ -283,11 +290,9 @@ const Resident = () => {
                             [
                                 {
                                     image: dataUrl,
-                                    // width: 'auto',
-                                    // height: 500
-                                    fit: [500, 1200],
-                                    pageBreak: 'after'
-                                    // width: 500,
+                                    width: 500,
+                                    // fit: [500, 1200],
+                                    link: link
                                 },
                             ]
                         ]
@@ -2363,6 +2368,7 @@ const Resident = () => {
                     }
                 }}
             />
+            <div id='c' />
            {alertMessage && <Alert message={alertMessage} setMessage={(data)=>setAlertMessage(data)}/>}
             <Collapse title='Applicant Details'>
                 <ApplicantDetails data={applicantDetails} outerDetails={outerDetails} id={id} ref={ADref} />
