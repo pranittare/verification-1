@@ -120,8 +120,10 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
     }
     const handleUpdateForm = () => {
         if (formdata.mobileNo.length === 10 && formdata.loaction) {
+            let formdat = {...formdata}
+            formdat.form = formdat.type
             let datatoSubmit = {
-                [formdata.type]: { applicantDetails: formdata },
+                [formdata.type]: { applicantDetails: formdat },
                 completed: false,
                 submitted: false,
                 status: true,
