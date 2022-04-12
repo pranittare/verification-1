@@ -252,6 +252,7 @@ const Office = () => {
                 applicantDetails: dataSplit(combiner()).applicant,
                 verificationDetails: dataSplit(combiner()).verification
             }
+            dataToSubmit.applicantDetails.mismatchAddress = combiner().mismatchAddress
             console.log('handleSave', dataToSubmit)
             update(ref(db, path), dataToSubmit).then(res => {
                 setLoading(false)
@@ -320,7 +321,7 @@ const Office = () => {
         if (formsaved?.office) {
             for (const key in formsaved.office.verificationDetails) {
                 let savedForm = formsaved.office.verificationDetails
-                formd[key] = savedForm[key]
+                formd[key] = formsaved.office.verificationDetails[key]
                 if (key === 'VisitDate') {
                     let date = savedForm[key]
                     let visitdateandtime = new Date(date)
@@ -338,8 +339,8 @@ const Office = () => {
                 }
             }
             setApplicantDetails(formsaved?.office?.applicantDetails)
-            setVerificationOvserver(formsaved?.office?.verificationDetails)
-            console.log('outer', outer)
+            setVerificationOvserver(formsaved.office.verificationDetails)
+            console.log('outer', formsaved.office)
             setOuterDetails(outer)
             setMainouter(mainout)
         }
@@ -393,7 +394,7 @@ const Office = () => {
                 }
             }
             setApplicantDetails(formsaved?.applicantDetails)
-            setVerificationOvserver(formsaved?.verificationDetails)
+            setVerificationOvserver(formsaved.verificationDetails)
             setOuterDetails(outer)
             setMainouter(mainout)
         }
@@ -2322,15 +2323,12 @@ const Office = () => {
                     </div>
                 </form>
                 <VerificationObserverOffice data={verificationObserver} id={id} ref={verificationObserverRef} />
-                {refresh && <Tpc data={verificationObserver} id={id} ref={TPCRef} overallStatus1={formdata.overallStatus} />}
+                <Tpc data={verificationObserver} id={id} ref={TPCRef} overallStatus1={formdata.overallStatus} />
 
             </Collapse>
                 <Collapse title='Images and GeoLocation'>
                     <Geolocation data={verificationObserver} id={id} pincode={pincode} type={'office'} updatedRegion={(data)=>updatedRegion(data)}/>
                 </Collapse>
-                {/* <PdfMake data={formdata} refresh={() => { setRefresh(Math.random()); }}  initiationDate={initiationDate} setpdfViewed={()=> setpdfViewed(true)} />
-                 <hr />
-                 <hr /> */}
                 {images.length === images64.length && <div>
                     <button className='btn text-primary' onClick={() => { pdfMake.createPdf(pdffnc()).open() }}>View PDF</button>
                     <button className='btn text-primary' id='downloadpdf' onClick={() => { pdfMake.createPdf(pdffnc()).download() }}>Download PDF</button>

@@ -297,11 +297,11 @@ const Dashboard = ({ forms, agents }) => {
                     <Toast isOpen={casesTodayToast} className='w-100'>
                         <ToastBody >
                             {casesToday()?.map((item, index) => (
-                                <>
-                                    <Button color='link' key={item.name} onClick={() => setCasesToadyModal({ count: index, state: true })}>{item.name} - <span className='text-danger'>({item.data.length})</span></Button>
+                                <div key={item.name}>
+                                    <Button color='link'  onClick={() => setCasesToadyModal({ count: index, state: true })}>{item.name} - <span className='text-danger'>({item.data.length})</span></Button>
 
                                     <ModalItem item={item} open={casesTodayModal} count={index} close={() => setCasesToadyModal(false)} />
-                                </>
+                                </div>
                             ))}
                         </ToastBody>
                     </Toast>
@@ -321,11 +321,11 @@ const Dashboard = ({ forms, agents }) => {
                     <Toast isOpen={casesTotalToast} className='w-100'>
                         <ToastBody >
                             {casesTotal()?.map((item, index) => (
-                                <>
-                                    <Button color='link' key={item.name} onClick={() => setCasesTotalModal({ count: index, state: true })}>{item.name} - <span className='text-danger'>({item.data.length})</span></Button>
+                                <div key={item.name}>
+                                    <Button color='link' onClick={() => setCasesTotalModal({ count: index, state: true })}>{item.name} - <span className='text-danger'>({item.data.length})</span></Button>
 
                                     <ModalItem item={item} open={casesTotalModal} count={index} close={() => setCasesTotalModal(false)} />
-                                </>
+                                </div>
                             ))}
                         </ToastBody>
                     </Toast>

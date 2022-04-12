@@ -60,7 +60,7 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
     }
     const [alertMessage, setAlertMessage] = useState('');
     const [oldTat, setoldTat] = useState('');
-
+    const [loading, setLoading] = useState(false);
 
     const prevCasesCount = () => {
         let date = new Date().getDate()
@@ -72,9 +72,24 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
         const path = `casestoday`;
         update(rtRef(db, path), prevCasesCount()).then()
     }
+    const formValidation = () => {
+        const {mobileNo, loaction, pincode, appid, officeAddressProvided, residenceAddressProvided, customerName, type} = formdata
+        if (mobileNo.length <= 9 && mobileNo.length >= 11 && !loaction && !pincode && !appid && !customerName) {
+            return false
+        }
+        if (type === 'office' && !officeAddressProvided) {
+            return false
+        }
+        if (type === 'resident' && !residenceAddressProvided) {
+            return false
+        }
+        return true
+    }
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (formdata.mobileNo.length === 10 && formdata.loaction) {
+        console.log('valid', formValidation())
+        if (formValidation()) {
+            setLoading(true)
             let newDate = new Date().getTime()
             let formdat = formdata
             formdat.form = formdat.type
@@ -104,7 +119,7 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
                 datatoSubmit['assigned'] = true;
             }
             const path = `form/${formdat.pincode}/${newDate}-${Math.round(Math.random() * 100)}`;
-            update(rtRef(db, path), datatoSubmit).then(res => {
+            update(rtRef(db, path), datatoSubmit).then(() => {
                 handleToken(datatoSubmit.selected)
                 // handleCasesToday()
                 setAlertMessage('Form Sent')
@@ -113,14 +128,18 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
                 setAlertMessage('Something went Wrong check and try again')
                 console.log('Form initiation', err)
             })
+            setLoading(false)
         } else {
-            setAlertMessage('Mobile number and Location is Required')
+            setAlertMessage('All fields in red are Required')
+            setLoading(false)
         }
         // return datatoSubmit
     }
     const handleUpdateForm = () => {
-        if (formdata.mobileNo.length === 10 && formdata.loaction) {
-            let formdat = {...formdata}
+        if (formValidation()) {
+            setLoading(true)
+
+            let formdat = { ...formdata }
             formdat.form = formdat.type
             let datatoSubmit = {
                 [formdata.type]: { applicantDetails: formdat },
@@ -149,8 +168,10 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
                 setAlertMessage('Something went Wrong check and try again')
                 console.log('Form update', err)
             })
+            setLoading(false)
         } else {
-            setAlertMessage('Mobile number and Location is Required')
+            setAlertMessage('All fields in red are Required')
+            setLoading(false)
         }
     }
     const notificationSend = (fcm) => {
@@ -168,6 +189,7 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
             console.log('notification err', err)
         })
     }
+   
     const handleToken = (agent) => {
         if (formdata.pincode) {
             for (const key in agents) {
@@ -310,7 +332,10 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
         { name: 'type', value: 'resident', label: 'Resident' },
         { name: 'type', value: 'office', label: 'Office' },
     ]
-
+    if (loading) {
+        return <div className="spinner-grow text-warning" role="status">
+        </div>
+    }
     return (
         <div>
             {alertMessage && <Alert message={alertMessage} setMessage={(data) => setAlertMessage(data)} />}
@@ -318,7 +343,7 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
             <div>
                 <form className='d-flex justify-content-between flex-wrap' onSubmit={handleSubmit}>
                     <div >
-                        <label>App.Id/Lead id</label>
+                        <label className='text-danger'>App.Id/Lead id</label>
                         <Input type="text" name='appid' value={formdata['appid']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
                     <div >
@@ -334,7 +359,7 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
                         <Input type="text" name='initiationDate' value={formdata['initiationDate']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
                     <div >
-                        <label>Customer Name</label>
+                        <label className='text-danger'>Customer Name</label>
                         <Input type="text" name='customerName' value={formdata['customerName']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
                     <div >
@@ -390,7 +415,7 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
                         <Input type="text" name='loaction' value={formdata['loaction']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
                     <div >
-                        <label>Pincode</label>
+                        <label className='text-danger'>Pincode</label>
                         <Input className='formInputBoxSpacing' type="number" name='pincode' value={formdata['pincode']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
                     <div>
@@ -422,11 +447,11 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
                         <Input type="number" name='mobileNo' value={formdata['mobileNo']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
                     {formdata['type'] === 'office' && <div >
-                        <label>Office Address Provided</label>
+                        <label className='text-danger'>Office Address Provided</label>
                         <Input type="text" name='officeAddressProvided' value={formdata['officeAddressProvided']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>}
                     {formdata['type'] === 'resident' && <div >
-                        <label>Resident Address Provided</label>
+                        <label className='text-danger'>Resident Address Provided</label>
                         <Input type="text" name='residenceAddressProvided' value={formdata['residenceAddressProvided']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>}
                     <div style={{ display: 'flex' }}>
