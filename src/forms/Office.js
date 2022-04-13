@@ -135,7 +135,6 @@ const Office = () => {
         pdfMake.createPdf(pdffnc()).download(dataToSubmit.applicantDetails.customerName);
         console.log('handleSubmit', dataToSubmit)
         addDoc(collection(fdb, "forms"), dataToSubmit)
-        // .then(res => {
         // mail
         let emaillist = mainouter.emailList
         let appid = dataToSubmit.applicantDetails.appid
@@ -143,10 +142,6 @@ const Office = () => {
         handleMail(emaillist, appid, customername)
         // remove form
         handleRemoveForm();
-        // }).catch(err => {
-        //     setAlertMessage('Something went wrong check console')
-        //     console.log('form submission', err)
-        // })
 
         setLoading(false)
     }
@@ -2331,7 +2326,7 @@ const Office = () => {
                 </Collapse>
                 {images.length === images64.length && <div>
                     <button className='btn text-primary' onClick={() => { pdfMake.createPdf(pdffnc()).open() }}>View PDF</button>
-                    <button className='btn text-primary' id='downloadpdf' onClick={() => { pdfMake.createPdf(pdffnc()).download() }}>Download PDF</button>
+                    <button className='btn text-primary' id='downloadpdf' onClick={() => { pdfMake.createPdf(pdffnc()).download(formdata.customerName.replace(/ /g, '').replace(/[^a-zA-Z ]/g, "")) }}>Download PDF</button>
                 </div>}
 
             </>

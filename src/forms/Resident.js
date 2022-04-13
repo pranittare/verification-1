@@ -2516,7 +2516,7 @@ const Resident = () => {
                 {/* <PdfMakeResident data={formdata} refresh={() => { setRefresh(Math.random()) }} download={downloadPdf} initiationDate={initiationDate} setpdfViewed={()=> setpdfViewed(true)}/> */}
                 {images.length === images64.length && <div>
                     <button className='btn text-primary' onClick={() => { pdfMake.createPdf(pdffnc()).open() }}>View PDF</button>
-                    <button className='btn text-primary' id='downloadpdf' onClick={() => { pdfMake.createPdf(pdffnc()).download() }}>Download PDF</button>
+                    <button className='btn text-primary' id='downloadpdf' onClick={() => { pdfMake.createPdf(pdffnc()).download(formdata.customerName.replace(/ /g, '').replace(/[^a-zA-Z ]/g, "")) }}>Download PDF</button>
                 </div>}
             </>
             }

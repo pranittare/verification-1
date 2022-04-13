@@ -340,13 +340,16 @@ const ActiveCases = (props) => {
                                     }
                                 </td>
                                 <td>
-                                    {item.claimed ? 'Claimed' : item.assigned ? 'Assigned' : ''}
+                                    {item.claimed ? 'Claimed' : item.assigned ? 'Assigned' : 'Allocated'}
                                     <br />
-                                    <Button color='success' onClick={() => getAgents(item?.office ?
-                                        item.office?.applicantDetails?.pincode
-                                        :
-                                        item.resident?.applicantDetails?.pincode, index)}>Force</Button>
-                                    {agentList.length > 0 && currentIndex === index && <DropDownAgentsList agentList={agentList} selectedAgent={selectedAgent} setSelectedAgent={setSelectedAgent} form={item} setAlertMessage={(data) => setAlertMessage(data)} />}
+                                    {!item.claimed && <div>
+                                        <Button color='success' onClick={() => getAgents(item?.office ?
+                                            item.office?.applicantDetails?.pincode
+                                            :
+                                            item.resident?.applicantDetails?.pincode, index)}>Force</Button>
+                                        {agentList.length > 0 && currentIndex === index && <DropDownAgentsList agentList={agentList} setAgentList={()=>setAgentList([])} selectedAgent={selectedAgent} setSelectedAgent={setSelectedAgent} form={item} setAlertMessage={(data) => setAlertMessage(data)} />}
+
+                                    </div>}
                                     {/* Assigned {item?.assigned ? 'true' : 'false'}
                                     Claimed {item?.claimed ? 'true' : 'false'} */}
                                 </td>
@@ -488,6 +491,7 @@ const ActiveCases = (props) => {
 const DropDownAgentsList = ({
     selectedAgent,
     agentList,
+    setAgentList,
     setSelectedAgent,
     form,
     setAlertMessage
@@ -522,10 +526,12 @@ const DropDownAgentsList = ({
                 :
                 form.resident?.applicantDetails?.pincode
             let path = ref(realTime, `form/${pincode}/${form.key}`)
-            console.log('agent',agent, path, form)
+            console.log('agent', agent, path, form)
             update(path, dataToUpdate)
             notificationSend(agent.fcmToken)
             setAlertMessage(`Form Allocated to ${agent.userId}`)
+            setSelectedAgent(false)
+            setAgentList([])
         } else {
             alert('Check the agent if he is disabled')
         }
@@ -540,7 +546,7 @@ const DropDownAgentsList = ({
             <DropdownMenu>
                 {agentList?.filter(a => a.uniqueId !== 'Disabled').map((item, index) => {
 
-                    return <DropdownItem key={item.name} onClick={() => forceAgent(item)}>
+                    return <DropdownItem key={item.name} onClick={() => {forceAgent(item); setSelectedAgent(false)}}>
                         {item.name}
                     </DropdownItem>
                 })}

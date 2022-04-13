@@ -159,10 +159,10 @@ const AddAgent = ({ agent, allAgents }) => {
                 const forms = realForms[index];
                 if (agent.userId === forms.selected) {
                     forms.selected = false
-                    forms.clained = false
+                    forms.claimed = false
                     update(rtRef(db, `form/${forms.pincode}/${forms.key}`), {
                         selected: false,
-                        clained: false
+                        claimed: false,
                     }).then(res => {
                         setAlertMessage('Forms disabled')
                         window.location.reload()
