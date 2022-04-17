@@ -123,7 +123,7 @@ const OldCases = (props) => {
         return bank
     }
     const getProduct = (prod) => {
-        if(prod.productName) return prod.productName;
+        if (prod.productName) return prod.productName;
         return prod;
     }
     const getExcel = () => {
@@ -169,6 +169,10 @@ const OldCases = (props) => {
             pincode = item?.applicantDetails?.pincode
             history.push(`resident/${pincode}/${item.key}`)
         }
+    }
+    const getAgentName = (item) => {
+
+       return `Supervisor: ${item?.verificationDetails.productSupervisor} Agent: ${item?.verificationDetails.finalFIVerifierName}`
     }
     useEffect(() => {
         formData(props.db)
@@ -246,10 +250,13 @@ const OldCases = (props) => {
                     </thead>
                     <tbody>
                         {reset && allData && allData.length > 0 && allData.map((item, index) => {
+                            console.log('item', item)
                             return <tr key={`${item?.key}-${index + 1}`}>
                                 <td>
                                     <Link to={{ pathname: item?.applicantDetails?.form == 'office' ? `office/${item?.applicantDetails?.pincode}/${item.key}` : `resident/${item?.applicantDetails?.pincode}/${item.key}`, state: item }} className={item?.applicantDetails?.form == 'office' ? 'text-primary' : 'text-success'}>
+                                    <p type="button" data-toggle="tooltip" data-placement="top" title={`${getAgentName(item)}`}>
                                         {item?.applicantDetails?.appid}
+                                        </p>
                                     </Link>
                                 </td>
                                 <td>
@@ -264,7 +271,7 @@ const OldCases = (props) => {
                                     {item?.applicantDetails?.customerName}
                                 </td>
                                 <td>
-                                    {moment(item?.tat).format('LT')}
+                                    {moment(item.applicantDetails.initiationDate).from(item.tat1)}
                                 </td>
                                 <td>
                                     {getBank(item?.applicantDetails?.bankNBFCname)}
@@ -318,8 +325,8 @@ const OldCases = (props) => {
                                     {item?.applicantDetails?.customerName}
                                 </td>
                                 <td>
-                                    {moment(item?.tat).fromNow()}
-
+                                    {/* {moment(item?.tat).fromNow()} */}
+                                    {moment(item.applicantDetails.initiationDate).from(item.tat1)}
                                 </td>
                                 <td>
                                     {getBank(item?.applicantDetails?.bankNBFCname)}
