@@ -660,15 +660,24 @@ const Resident = () => {
         const Tpdata = TPCRef.current.getFormData();
         const Addata = ADref.current.getFormData();
         const alldata = { ...formdata, ...Addata, ...VOdata, ...Tpdata }
-        alldata.finalFIRemarks = remarksfnc(alldata)
-        // setInitiationDate(alldata.initiationDate.split('GMT')[0]);
-        alldata.newinitiationDate = alldata.initiationDate.split('GMT')[0];
         if (!alldata.overallStatus) {
             alldata.overallStatus = overallStatusCal(alldata)
         }
+        alldata.finalFIRemarks = remarksfnc(alldata)
+        // setInitiationDate(alldata.initiationDate.split('GMT')[0]);
+        alldata.newinitiationDate = alldata.initiationDate.split('GMT')[0];
         let assetSeenAtResident = alldata?.assetSeenAtResidence?.toString()
         let exteriorConditons = alldata?.exteriorConditions?.toString()
         let interiorConditions = alldata?.interiorConditions?.toString()
+        for (const key in alldata) {
+            if (Object.hasOwnProperty.call(alldata, key)) {
+                const element = alldata[key];
+                if (element === undefined) {
+                    element = ''
+                }
+            }
+        }
+        console.log('alldata', alldata)
         const documentDefinition = {
             content: [
                 {
@@ -1902,7 +1911,7 @@ const Resident = () => {
                             // ['#', 'Name', 'Status',
                             //   'Remark', 'Contact Number',
                             // ],
-                            ['1', alldata.TPCName1, alldata.TPCStatus1, alldata.TPCRemark1]
+                            ['1', alldata?.TPCName1 ? alldata?.TPCName1 : '', alldata?.TPCStatus1 ? alldata?.TPCStatus1 : '', alldata?.TPCRemark1 ? alldata?.TPCRemark1 : '']
                         ]
                     }
                 },
@@ -1937,7 +1946,7 @@ const Resident = () => {
                             // ['#', 'Name', 'Status',
                             //   'Remark', 'Contact Number',
                             // ],
-                            ['2', alldata.TPCName2, alldata.TPCStatus2, alldata.TPCRemark2]
+                            ['2', alldata?.TPCName2 ? alldata?.TPCName2 : '', alldata?.TPCStatus2 ? alldata?.TPCStatus2 : '', alldata?.TPCRemark2 ? alldata?.TPCRemark2 : '']
                         ]
                     }
                 },

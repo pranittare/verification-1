@@ -618,10 +618,10 @@ const Office = () => {
         const Tpdata = TPCRef.current.getFormData();
         const Addata = ADref.current.getFormData();
         const alldata = { ...formdata, ...Addata, ...VOdata, ...Tpdata }
-        alldata.finalFIRemarks = remarksfnc(alldata)
         if (!alldata.overallStatus) {
             alldata.overallStatus = overallStatusCal(alldata)
         }
+        alldata.finalFIRemarks = remarksfnc(alldata)
         alldata.newinitiationDate = alldata.initiationDate.split('GMT')[0];
         let assetSeenAtResident = alldata?.assetSeenAtResidence?.toString()
         let exteriorConditons = alldata?.exteriorConditions?.toString()
