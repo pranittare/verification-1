@@ -626,6 +626,14 @@ const Office = () => {
         let assetSeenAtResident = alldata?.assetSeenAtResidence?.toString()
         let exteriorConditons = alldata?.exteriorConditions?.toString()
         let interiorConditions = alldata?.interiorConditions?.toString()
+        for (const key in alldata) {
+            if (Object.hasOwnProperty.call(alldata, key)) {
+                const element = alldata[key];
+                if (element === undefined) {
+                    element = ''
+                }
+            }
+        }
         const documentDefinition = {
             content: [
                 {
