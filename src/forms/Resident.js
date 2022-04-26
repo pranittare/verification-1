@@ -146,7 +146,9 @@ const Resident = () => {
         Object.assign(dataToSubmit, mainouter)
         pdfMake.createPdf(pdffnc()).download(dataToSubmit.applicantDetails.customerName);
         console.log('handleSubmit', dataToSubmit)
-        addDoc(collection(fdb, "forms"), dataToSubmit)
+        addDoc(collection(fdb, "forms"), dataToSubmit).then(res => {
+            console.log('res', res)
+        })
         // addDoc(collection(fdb, "forms"), dataToSubmit)
         // .then(res => {
 
@@ -155,10 +157,7 @@ const Resident = () => {
         //     console.log('form submission', err)
         // })
         // mail
-        let emaillist = mainouter.emailList
-        let appid = dataToSubmit.applicantDetails.appid
-        let customername = dataToSubmit.applicantDetails.customerName
-        handleMail(emaillist, appid, customername)
+        handleMail()
         // remove form
         handleRemoveForm();
 
@@ -172,16 +171,23 @@ const Resident = () => {
             history.push('/ActiveCases')
         })
     }
-    const handleMail = (emaillist, appid, customername) => {
-        let emails = emaillist.toString().replace(/,/g, ';')
+    const handleMail = () => {
+        let email = applicantDetails.product.emailList
+        let emailstring = []
+        for (let index = 0; index < email.length; index++) {
+            const element = email[index];
+            emailstring.push(element.email + '; ')
+        }
+        let refined = JSON.stringify(emailstring).replace(/["',]/g, "")
+        let allemails = refined.replace(/[[\]]/g, '')
         const yourMessage = `Dear Sir/Maam, 
     
         Please find verification report of captioned case. 
         
         Regards, 
         Team KreDT.`
-        const subject = `${appid} - ${customername} - Residence`;
-        document.location.href = `mailto:${emails}?subject=`
+        const subject = `${applicantDetails.appid} - ${applicantDetails.customerName} - Residence`;
+        document.location.href = `mailto:${allemails}?subject=`
             + encodeURIComponent(subject)
             + "&body=" + encodeURIComponent(yourMessage);
     }
@@ -207,34 +213,34 @@ const Resident = () => {
         }
     }
     function rotateBase64Image(base64data, callback) {
-        const promise = new Promise((resolve, reject)=>{
+        const promise = new Promise((resolve, reject) => {
 
-        var canvas = document.createElement('canvas');
-        // var canvas = document.getElementById("c");
-        var ctx = canvas.getContext("2d");
-        
-        var image = new Image();
-        image.src = base64data;
-        image.onload = function() {
-            ctx.translate(image.width, image.height);
-            if (image.width > image.height) {
-                ctx.rotate(180 * Math.PI / 180);
-            }
-            ctx.drawImage(image, 0, 0); 
-            console.log('cb', canvas)
-            // window.eval(""+callback+"('"+canvas.toDataURL()+"')");
-            resolve()
-        };
-        image.onerror(reject)
-    })
-    
+            var canvas = document.createElement('canvas');
+            // var canvas = document.getElementById("c");
+            var ctx = canvas.getContext("2d");
+
+            var image = new Image();
+            image.src = base64data;
+            image.onload = function () {
+                ctx.translate(image.width, image.height);
+                if (image.width > image.height) {
+                    ctx.rotate(180 * Math.PI / 180);
+                }
+                ctx.drawImage(image, 0, 0);
+                console.log('cb', canvas)
+                // window.eval(""+callback+"('"+canvas.toDataURL()+"')");
+                resolve()
+            };
+            image.onerror(reject)
+        })
+
     }
     const toDataURL = (url, callback) => {
         let xhRequest = new XMLHttpRequest();
         xhRequest.onload = function () {
             let reader = new FileReader();
             reader.onloadend = async function () {
-            //    await rotateBase64Image(reader.result, 'callback')
+                //    await rotateBase64Image(reader.result, 'callback')
                 // callback();
                 callback(reader.result);
             }
@@ -266,6 +272,8 @@ const Resident = () => {
             }).catch((error) => {
                 // Uh-oh, an error occurred!
             });
+        stampAndMapBase64()
+
     }
     const stampAndMapBase64 = () => {
         if (stampImg) {
@@ -303,7 +311,6 @@ const Resident = () => {
                 setRefresh(Math.random())
             })
         }
-        stampAndMapBase64()
     }
     function getCookie(cname) {
         let name = cname + "=";
@@ -677,7 +684,6 @@ const Resident = () => {
                 }
             }
         }
-        console.log('alldata', alldata)
         const documentDefinition = {
             content: [
                 {
@@ -2378,7 +2384,7 @@ const Resident = () => {
                 }}
             />
             <div id='c' />
-           {alertMessage && <Alert message={alertMessage} setMessage={(data)=>setAlertMessage(data)}/>}
+            {alertMessage && <Alert message={alertMessage} setMessage={(data) => setAlertMessage(data)} />}
             <Collapse title='Applicant Details'>
                 <ApplicantDetails data={applicantDetails} outerDetails={outerDetails} id={id} ref={ADref} />
             </Collapse>
@@ -2517,15 +2523,16 @@ const Resident = () => {
                     </div>
                 </form>
                 <VerificationObserverResident data={verificationObserver} id={id} ref={verificationObserverRef} />
-                <Tpc data={verificationObserver} id={id} ref={TPCRef} overallStatus1={formdata.overallStatus} />
+                <Tpc data={verificationObserver} id={id} ref={TPCRef} overallStatus1={formdata.overallStatus} form={"resident"} />
+                <button onClick={()=>combiner()} className="btn btn-success">Recheck</button>
             </Collapse>
                 <Collapse title='Images and GeoLocation'>
-                    <Geolocation data={verificationObserver} id={id} pincode={pincode} type={'resident'} updatedRegion={(data)=>updatedRegion(data)}/>
+                    <Geolocation data={verificationObserver} id={id} pincode={pincode} type={'resident'} updatedRegion={(data) => updatedRegion(data)} />
                 </Collapse>
                 {/* <PdfMakeResident data={formdata} refresh={() => { setRefresh(Math.random()) }} download={downloadPdf} initiationDate={initiationDate} setpdfViewed={()=> setpdfViewed(true)}/> */}
                 {images.length === images64.length && <div>
                     <button className='btn text-primary' onClick={() => { pdfMake.createPdf(pdffnc()).open() }}>View PDF</button>
-                    <button className='btn text-primary' id='downloadpdf' onClick={() => { pdfMake.createPdf(pdffnc()).download(formdata.customerName.replace(/ /g, '').replace(/[^a-zA-Z ]/g, "")) }}>Download PDF</button>
+                    <button className='btn text-primary' id='downloadpdf' onClick={() => { pdfMake.createPdf(pdffnc()).download(combiner().customerName.replace(/ /g, '').replace(/[^a-zA-Z ]/g, "")) }}>Download PDF</button>
                 </div>}
             </>
             }

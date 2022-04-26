@@ -102,8 +102,9 @@ const Office = () => {
     const [addressConfirmedDropdown, setaddressConfirmedDropdown] = useState('')
     const addressConfirmedToggle = () => {
         setaddressConfirmedDropdown(!addressConfirmedDropdown);
-    }    
+    }
     const [alertMessage, setAlertMessage] = useState('');
+    const [refetch, setRefetch] = useState(false);
     const dataSplit = (alldata) => {
         let verfi = { verification: {}, applicant: {} }
         for (const key in alldata) {
@@ -136,10 +137,7 @@ const Office = () => {
         console.log('handleSubmit', dataToSubmit)
         addDoc(collection(fdb, "forms"), dataToSubmit)
         // mail
-        let emaillist = mainouter.emailList
-        let appid = dataToSubmit.applicantDetails.appid
-        let customername = dataToSubmit.applicantDetails.customerName
-        handleMail(emaillist, appid, customername)
+        handleMail()
         // remove form
         handleRemoveForm();
 
@@ -153,16 +151,23 @@ const Office = () => {
             history.push('/ActiveCases')
         })
     }
-    const handleMail = (emaillist, appid, customername) => {
-        let emails = emaillist.toString().replace(/,/g, ';')
+    const handleMail = () => {
+        let email = applicantDetails.product.emailList
+        let emailstring = []
+        for (let index = 0; index < email.length; index++) {
+            const element = email[index];
+            emailstring.push(element.email + '; ')
+        }
+        let refined = JSON.stringify(emailstring).replace(/["',]/g, "")
+        let allemails = refined.replace(/[[\]]/g, '')
         const yourMessage = `Dear Sir/Maam, 
     
-    Please find verification report of captioned case. 
-    
-    Regards, 
-    Team KreDT.`
-        const subject = `${appid} - ${customername} - Residence`;
-        document.location.href = `mailto:${emails}?subject=`
+        Please find verification report of captioned case. 
+        
+        Regards, 
+        Team KreDT.`
+        const subject = `${applicantDetails.appid} - ${applicantDetails.customerName} - Residence`;
+        document.location.href = `mailto:${allemails}?subject=`
             + encodeURIComponent(subject)
             + "&body=" + encodeURIComponent(yourMessage);
     }
@@ -195,12 +200,12 @@ const Office = () => {
                     }).catch(err => {
                         console.log('err', err)
                     })
-
                     // All the items under listRef.
                 });
             }).catch((error) => {
                 // Uh-oh, an error occurred!
             });
+        stampAndMapBase64()
     }
     const stampAndMapBase64 = () => {
         if (stampImg) {
@@ -237,7 +242,6 @@ const Office = () => {
                 setRefresh(Math.random())
             })
         }
-        stampAndMapBase64()
     }
     const handleSave = () => {
         if (dataSplit(combiner()).applicant.appid && dataSplit(combiner()).verification.visitDate) {
@@ -407,7 +411,7 @@ const Office = () => {
                 formFillRouter(data)
             } else {
                 getFormData(pincode, id)
-                .then(formsaved => {
+                    .then(formsaved => {
                         setLoading(false)
                         formFill(formsaved)
                         console.log('formsaved', formsaved)
@@ -577,6 +581,10 @@ const Office = () => {
         const Tpdata = TPCRef.current.getFormData();
         const Addata = ADref.current.getFormData();
         const alldata = { ...formdata, ...Addata, ...VOdata, ...Tpdata }
+        setTimeout(() => {
+            setRefetch(false)
+        }, 100)
+        setRefetch(true)
         alldata.finalFIRemarks = remarksfnc(alldata)
         if (!alldata.overallStatus) {
             alldata.overallStatus = overallStatusCal(alldata)
@@ -600,6 +608,7 @@ const Office = () => {
         alldata.newinitiationDate = alldata.initiationDate.split('GMT')[0];
         alldata.overallStatus = overallStatusCal(alldata)
         setFormdata(alldata);
+        
         setRefresh(Math.random());
     }
     const updatedRegion = (data) => {
@@ -623,9 +632,10 @@ const Office = () => {
         }
         alldata.finalFIRemarks = remarksfnc(alldata)
         alldata.newinitiationDate = alldata.initiationDate.split('GMT')[0];
-        let assetSeenAtResident = alldata?.assetSeenAtResidence?.toString()
-        let exteriorConditons = alldata?.exteriorConditions?.toString()
+        let assetSeenAtOffice = alldata?.assetSeenAtOffice?.toString()
+        let exteriorConditons = alldata?.exteriorCondition?.toString()
         let interiorConditions = alldata?.interiorConditions?.toString()
+        console.log('alldata', alldata)
         for (const key in alldata) {
             if (Object.hasOwnProperty.call(alldata, key)) {
                 const element = alldata[key];
@@ -1593,7 +1603,7 @@ const Office = () => {
                                 {
 
                                     border: [true, true, true, true],
-                                    text: assetSeenAtResident
+                                    text: assetSeenAtOffice
 
                                 },
 
@@ -1775,7 +1785,7 @@ const Office = () => {
                                 },
                                 {
                                     fillColor: '#ccc',
-                                    text: 'Remark /Contact Numbe'
+                                    text: 'Remark /Contact Number'
                                 },
 
                             ],
@@ -2216,7 +2226,7 @@ const Office = () => {
                     }
                 }}
             />
-           {alertMessage && <Alert message={alertMessage} setMessage={(data)=>setAlertMessage(data)}/>}
+            {alertMessage && <Alert message={alertMessage} setMessage={(data) => setAlertMessage(data)} />}
             <Collapse title='Applicant Details'>
                 <ApplicantDetails data={applicantDetails} outerDetails={outerDetails} id={id} ref={ADref} />
             </Collapse>
@@ -2272,8 +2282,8 @@ const Office = () => {
                         <DropDownComp id='office' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={personMetNameDesignation} />
 
                     </div>
-                    <div style={{display:'flex', flexDirection:'column'}}>
-                        <label style={{width:200}} className='text-truncate' >No of Yrs in present Employment/Business & Total Yrs of Exp</label>
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <label style={{ width: 200 }} className='text-truncate' >No of Yrs in present Employment/Business & Total Yrs of Exp</label>
                         <Input type="text" name='totalYearsExp' value={formdata['totalYearsExp']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
                     <div>
@@ -2326,15 +2336,16 @@ const Office = () => {
                     </div>
                 </form>
                 <VerificationObserverOffice data={verificationObserver} id={id} ref={verificationObserverRef} />
-                <Tpc data={verificationObserver} id={id} ref={TPCRef} overallStatus1={formdata.overallStatus} />
+                <Tpc data={verificationObserver} id={id} ref={TPCRef} overallStatus1={formdata.overallStatus} form={'office'} refetch={refetch}  />
+                <button onClick={()=>combiner()} className="btn btn-success">Recheck</button>
 
             </Collapse>
                 <Collapse title='Images and GeoLocation'>
-                    <Geolocation data={verificationObserver} id={id} pincode={pincode} type={'office'} updatedRegion={(data)=>updatedRegion(data)}/>
+                    <Geolocation data={verificationObserver} id={id} pincode={pincode} type={'office'} updatedRegion={(data) => updatedRegion(data)} />
                 </Collapse>
                 {images.length === images64.length && <div>
                     <button className='btn text-primary' onClick={() => { pdfMake.createPdf(pdffnc()).open() }}>View PDF</button>
-                    <button className='btn text-primary' id='downloadpdf' onClick={() => { pdfMake.createPdf(pdffnc()).download(formdata.customerName.replace(/ /g, '').replace(/[^a-zA-Z ]/g, "")) }}>Download PDF</button>
+                    <button className='btn text-primary' id='downloadpdf' onClick={() => { pdfMake.createPdf(pdffnc()).download(combiner().customerName.replace(/ /g, '').replace(/[^a-zA-Z ]/g, "")) }}>Download PDF</button>
                 </div>}
 
             </>
