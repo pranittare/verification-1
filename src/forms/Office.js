@@ -337,6 +337,7 @@ const Office = () => {
                     formd.landmark = savedForm[key]
                 }
             }
+            formsaved.office.verificationDetails.selected = formsaved.selected 
             setApplicantDetails(formsaved?.office?.applicantDetails)
             setVerificationOvserver(formsaved.office.verificationDetails)
             console.log('outer', formsaved.office)
@@ -581,10 +582,6 @@ const Office = () => {
         const Tpdata = TPCRef.current.getFormData();
         const Addata = ADref.current.getFormData();
         const alldata = { ...formdata, ...Addata, ...VOdata, ...Tpdata }
-        setTimeout(() => {
-            setRefetch(false)
-        }, 100)
-        setRefetch(true)
         alldata.finalFIRemarks = remarksfnc(alldata)
         if (!alldata.overallStatus) {
             alldata.overallStatus = overallStatusCal(alldata)
@@ -608,7 +605,7 @@ const Office = () => {
         alldata.newinitiationDate = alldata.initiationDate.split('GMT')[0];
         alldata.overallStatus = overallStatusCal(alldata)
         setFormdata(alldata);
-        
+        setRefetch(true);
         setRefresh(Math.random());
     }
     const updatedRegion = (data) => {
@@ -618,6 +615,14 @@ const Office = () => {
         region.latitude = data?.latitude
         region.longitude = data?.longitude
         setVerificationOvserver(verification)
+    }
+    const tpcFunction = () => {
+        if (refetch) {
+            return <Tpc data={formdata} ref={TPCRef} form={'office'} />
+
+        }
+
+        return <Tpc data={verificationObserver? verificationObserver : {}} ref={TPCRef} form={'office'} />
     }
     // PDF MAKE CONTENT
 
@@ -2336,9 +2341,7 @@ const Office = () => {
                     </div>
                 </form>
                 <VerificationObserverOffice data={verificationObserver} id={id} ref={verificationObserverRef} />
-                <Tpc data={verificationObserver} id={id} ref={TPCRef} overallStatus1={formdata.overallStatus} form={'office'} refetch={refetch}  />
-                <button onClick={()=>combiner()} className="btn btn-success">Recheck</button>
-
+                {tpcFunction()}
             </Collapse>
                 <Collapse title='Images and GeoLocation'>
                     <Geolocation data={verificationObserver} id={id} pincode={pincode} type={'office'} updatedRegion={(data) => updatedRegion(data)} />

@@ -110,6 +110,8 @@ const Resident = () => {
         setaddressConfirmedDropdown(!addressConfirmedDropdown);
     }
     const [alertMessage, setAlertMessage] = useState('');
+    const [refetch, setRefetch] = useState(false);
+
     const onHandleChange = (e) => {
         let form = formdata
         form[e.name] = e.value
@@ -378,6 +380,7 @@ const Resident = () => {
                     formd.landmark = savedForm[key]
                 }
             }
+            formsaved.resident.verificationDetails.selected = formsaved.selected 
             console.log('formsaved', formsaved, outer)
             setApplicantDetails(formsaved?.resident?.applicantDetails)
             setVerificationOvserver(formsaved.resident.verificationDetails)
@@ -385,6 +388,7 @@ const Resident = () => {
             setMainouter(mainout)
         }
         viewImages()
+        console.log('formd', formd)
         setFormdata(formd)
         setRefresh(Math.random())
     }
@@ -641,6 +645,14 @@ const Resident = () => {
         let overall = `${data.overallStatus ? data.overallStatus : 'NA'} |  Date: ${data.visitDate ? data.visitDate : 'NA'} |  ${data.visitedTime ? data.visitedTime : 'NA'} |  Mismatch Address: ${data.mismatchAddress ? data.mismatchAddress : 'NA'} |  Address Confirmed: ${data.addressConfirmed ? data.addressConfirmed : 'NA'} |  Person Met: ${data.personMet ? data.personMet : 'NA'} |  Person Met Name: ${data.personMetName ? data.personMetName : 'NA'} |  Residence Status: ${data.residenceStatus ? data.residenceStatus : 'NA'} |  Customer Occupation: ${data.customerOccupation ? data.customerOccupation : 'NA'} |  Gate/Door color: ${data.gateDoorColor ? data.gateDoorColor : 'NA'} |  Locality of Address: ${data.localityOfAddress ? data.localityOfAddress : 'NA'} |   Type of House: ${data.typeOfHouse ? data.typeOfHouse : 'NA'} | Accessibility/Approachability: ${data.accessibility ? data.accessibility : 'NA'} | Ease of Locating: ${data.easeofLocating ? data.easeofLocating : 'NA'} |  Customers Attitude: ${data.customerAttitude ? data.customerAttitude : 'NA'} | Distance from Station: ${data.distancefromStation ? data.distancefromStation : 'NA'} |  Negative Area: ${data.negativeArea ? data.negativeArea : 'NA'} | TPC1: ${data.TPCName1 ? data.TPCName1 : 'NA'} - ${data.TPCStatus1 ? data.TPCStatus1 : 'NA'} - ${data.TPCRemark1 ? data.TPCRemark1 : 'NA'} | TPC2: ${data.TPCName2 ? data.TPCName2 : 'NA'} - ${data.TPCStatus2 ? data.TPCStatus2 : 'NA'} - ${data.TPCRemark2 ? data.TPCRemark2 : 'NA'} | ${data.finalFIAnyRemarks ? data.finalFIAnyRemarks : 'NA'}`;
         return overall
     }
+    const tpcFunction = () => {
+        if (refetch) {
+            return <Tpc data={formdata} ref={TPCRef} form={'resident'} />
+
+        }
+
+        return <Tpc data={verificationObserver? verificationObserver : {}} ref={TPCRef} form={'resident'} />
+    }
     // PDF MAKE CONTENT
     const recheckOverride = () => {
         const VOdata = verificationObserverRef.current.getFormData();
@@ -651,6 +663,7 @@ const Resident = () => {
         alldata.newinitiationDate = alldata.initiationDate.split('GMT')[0];
         alldata.overallStatus = overallStatusCal(alldata)
         setFormdata(alldata);
+        setRefetch(true);
         setRefresh(Math.random());
     }
     const updatedRegion = (data) => {
@@ -2523,8 +2536,8 @@ const Resident = () => {
                     </div>
                 </form>
                 <VerificationObserverResident data={verificationObserver} id={id} ref={verificationObserverRef} />
-                <Tpc data={verificationObserver} id={id} ref={TPCRef} overallStatus1={formdata.overallStatus} form={"resident"} />
-                <button onClick={()=>combiner()} className="btn btn-success">Recheck</button>
+                {/* <Tpc data={formdata} ref={TPCRef} form={"resident"} /> */}
+                {tpcFunction()}
             </Collapse>
                 <Collapse title='Images and GeoLocation'>
                     <Geolocation data={verificationObserver} id={id} pincode={pincode} type={'resident'} updatedRegion={(data) => updatedRegion(data)} />

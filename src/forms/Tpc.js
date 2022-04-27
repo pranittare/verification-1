@@ -27,7 +27,7 @@ const dict = {
     overallStatus: ''
 }
 
-const Tpc = forwardRef(({ data, id, overallStatus1, form, refetch }, ref) => {
+const Tpc = forwardRef(({ data, form }, ref) => {
     let status1 = [
         { name: 'TPCStatus1', value: '', label: 'None' },
         { name: 'TPCStatus1', value: 'positive', label: 'Positive' },
@@ -60,11 +60,9 @@ const Tpc = forwardRef(({ data, id, overallStatus1, form, refetch }, ref) => {
     ]
     const remarksfnc = (data) => {
         if (form === 'office') {
-            console.log('data', data)
             let overall = `${data.overallStatus ? data.overallStatus : 'NA'} | Date: ${data.visitDate ? data.visitDate : 'NA'} | ${data.visitedTime ? data.visitedTime : 'NA'} | Mismatch Address: ${data.mismatchAddress ? data.mismatchAddress : 'NA'} | Address Confirmed: ${data.addressConfirmed ? data.addressConfirmed : 'NA'} | Person Met: ${data.personMet ? data.personMet : 'NA'} | Person Met Name: ${data.personMetName ? data.personMetName : 'NA'} | Nature of Business Details: ${data.natureofBusines ? data.natureofBusines : 'NA'} |Business Board Seen: ${data.businessBoardSeen ? data.businessBoardSeen : 'NA'} | Office Ownership: ${data.officeOwnership ? data.officeOwnership : 'NA'} |Type of Office: ${data.verificationObserver ? data.verificationObserver : 'NA'} | Locality of Office: ${data.localityofOffice ? data.localityofOffice : 'NA'} | Business Activity Level: ${data.businessActivityLevel ? data.businessActivityLevel : 'NA'} |Ease of Locating: ${data.easeofLocating ? data.easeofLocating : 'NA'} |Distance from Station: ${data.distancefromStation ? data.distancefromStation : 'NA'} |Negative Area: ${data.negativeArea ? data.negativeArea : 'NA'} |TPC1: ${data.TPCName1 ? data.TPCName1 : 'NA'} - ${data.TPCStatus1 ? data.TPCStatus1 : 'NA'} - ${data.TPCRemark1 ? data.TPCRemark1 : 'NA'} |TPC2: ${data.TPCName2 ? data.TPCName2 : 'NA'} - ${data.TPCStatus2 ? data.TPCStatus2 : 'NA'} - ${data.TPCRemark2 ? data.TPCRemark2 : 'NA'} | ${data.finalFIAnyRemarks ? data.finalFIAnyRemarks : 'NA'}`;
             return overall
         } else {
-            console.log('data1', data)
             let overall = `${data.overallStatus ? data.overallStatus : 'NA'} |  Date: ${data.visitDate ? data.visitDate : 'NA'} |  ${data.visitedTime ? data.visitedTime : 'NA'} |  Mismatch Address: ${data.mismatchAddress ? data.mismatchAddress : 'NA'} |  Address Confirmed: ${data.addressConfirmed ? data.addressConfirmed : 'NA'} |  Person Met: ${data.personMet ? data.personMet : 'NA'} |  Person Met Name: ${data.personMetName ? data.personMetName : 'NA'} |  Residence Status: ${data.residenceStatus ? data.residenceStatus : 'NA'} |  Customer Occupation: ${data.customerOccupation ? data.customerOccupation : 'NA'} |  Gate/Door color: ${data.gateDoorColor ? data.gateDoorColor : 'NA'} |  Locality of Address: ${data.localityOfAddress ? data.localityOfAddress : 'NA'} |   Type of House: ${data.typeOfHouse ? data.typeOfHouse : 'NA'} | Accessibility/Approachability: ${data.accessibility ? data.accessibility : 'NA'} | Ease of Locating: ${data.easeofLocating ? data.easeofLocating : 'NA'} |  Customers Attitude: ${data.customerAttitude ? data.customerAttitude : 'NA'} | Distance from Station: ${data.distancefromStation ? data.distancefromStation : 'NA'} |  Negative Area: ${data.negativeArea ? data.negativeArea : 'NA'} | TPC1: ${data.TPCName1 ? data.TPCName1 : 'NA'} - ${data.TPCStatus1 ? data.TPCStatus1 : 'NA'} - ${data.TPCRemark1 ? data.TPCRemark1 : 'NA'} | TPC2: ${data.TPCName2 ? data.TPCName2 : 'NA'} - ${data.TPCStatus2 ? data.TPCStatus2 : 'NA'} - ${data.TPCRemark2 ? data.TPCRemark2 : 'NA'} | ${data.finalFIAnyRemarks ? data.finalFIAnyRemarks : 'NA'}`;
             return overall
         }
@@ -100,41 +98,48 @@ const Tpc = forwardRef(({ data, id, overallStatus1, form, refetch }, ref) => {
     }
     const getCookie = (cname) => {
         let name = cname + "=";
-        let ca = document.cookie.split(';');
-        for (let i = 0; i < ca.length; i++) {
-            let c = ca[i];
-            while (c.charAt(0) === ' ') {
-                c = c.substring(1);
-            }
-            if (c.indexOf(name) === 0) {
-                return c.substring(name.length, c.length);
+        let ca = document?.cookie?.split(';');
+        if (ca.length > 0) {
+            for (let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) === ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) === 0) {
+                    return c.substring(name.length, c.length);
+                }
             }
         }
         return "";
     }
     useEffect(() => {
-        if (data) {
+        if (Object.keys(data).length > 0) {
             let form = { ...formdata }
             for (const key in data) {
                 form[key] = data[key]
             }
             form.productSupervisor = getProductSupervisor()
             form.finalFIRemarks = remarksfnc(data)
+            if (form.finalFIAgencyname === "") {
+                form.finalFIAgencyname = "KREDT"
+            }
+            if (form.finalFIVerifierName === "") {
+                form.finalFIVerifierName = data.selected
+            }
             setFormdata(form)
             setRefresh(Math.random())
         }
-        console.log('refetch', refetch)
-    }, [data, refetch])
-    useEffect(() => {
-        if (overallStatus1) {
-            let form = { ...formdata }
-            form.overallStatus = overallStatus1
-            form.finalFIRemarks = remarksfnc(form)
-            setFormdata(form)
-            setRefresh(Math.random())
+    }, [data])
+    // useEffect(() => {
+    //     if (overallStatus1) {
+    //         let form = { ...formdata }
+    //         form.overallStatus = overallStatus1
+    //         form.finalFIRemarks = remarksfnc(form)
+    //         setFormdata(form)
+    //         setRefresh(Math.random())
 
-        }
-    },[overallStatus1])
+    //     }
+    // },[overallStatus1])
     useImperativeHandle(ref, () => ({
 
         getFormData() {
