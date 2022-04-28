@@ -337,7 +337,9 @@ const Office = () => {
                     formd.landmark = savedForm[key]
                 }
             }
-            formsaved.office.verificationDetails.selected = formsaved.selected 
+            if (formsaved.selected && formsaved.office && formsaved.office.verificationDetails) {
+                formsaved.office.verificationDetails.selected = formsaved.selected
+            }
             setApplicantDetails(formsaved?.office?.applicantDetails)
             setVerificationOvserver(formsaved.office.verificationDetails)
             console.log('outer', formsaved.office)
@@ -622,7 +624,7 @@ const Office = () => {
 
         }
 
-        return <Tpc data={verificationObserver? verificationObserver : {}} ref={TPCRef} form={'office'} />
+        return <Tpc data={verificationObserver ? verificationObserver : {}} ref={TPCRef} form={'office'} />
     }
     // PDF MAKE CONTENT
 

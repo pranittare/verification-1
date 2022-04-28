@@ -380,7 +380,9 @@ const Resident = () => {
                     formd.landmark = savedForm[key]
                 }
             }
-            formsaved.resident.verificationDetails.selected = formsaved.selected 
+            if (formsaved.selected && formsaved.resident && formsaved.resident.verificationDetails) {
+                formsaved.resident.verificationDetails.selected = formsaved.selected 
+            }
             console.log('formsaved', formsaved, outer)
             setApplicantDetails(formsaved?.resident?.applicantDetails)
             setVerificationOvserver(formsaved.resident.verificationDetails)
