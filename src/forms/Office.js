@@ -626,6 +626,9 @@ const Office = () => {
 
         return <Tpc data={verificationObserver ? verificationObserver : {}} ref={TPCRef} form={'office'} />
     }
+    useEffect(() => {
+        console.log('applicantDetails',applicantDetails)
+    },[applicantDetails])
     // PDF MAKE CONTENT
 
     const pdffnc = () => {

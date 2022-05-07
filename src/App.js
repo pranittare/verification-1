@@ -16,8 +16,8 @@ import SubmittedCases from './Cases/SubmittedCases';
 import OldCases from './Cases/OldCases';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, getDocs } from 'firebase/firestore/lite';
-import { getDatabase, ref, onValue} from "firebase/database";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getDatabase, ref, onValue } from "firebase/database";
+import { getAuth, onAuthStateChanged, setPersistence, inMemoryPersistence } from "firebase/auth";
 import { connect } from 'react-redux';
 import { Button } from 'reactstrap';
 import './App.css';
@@ -94,53 +94,51 @@ function App(props) {
         setIsUser(false)
       }
     })
-  }, [])
+  }, []);
 
-  return (
-    <div className="text-center w-100" id='app'>
-      <Button className='fixed-bottom1' onClick={scrollToBottom}>{top ? 'Top' : 'Bottom'}</Button>
-      <Router >
-        <Navigation auth={auth?.currentUser} />
-        <Switch>
+  const isAuth = () => {
+    // console.log('auth', auth)
+    if (auth?.currentUser) {
+      return <>
 
-          <>
-            {/* {console.log('user', auth?.currentUser?.email)} */}
-            {auth?.currentUser?.email ? <>
+        <Route path='/' render={() => <Dashboard />} exact />
+        <Route path='/signup' render={() => <SignUp />} />
+        <Route path='/forget' render={() => <Forget />} />
+        <Route path='/total-agents' render={() => <TotalAgents />} />
+        <Route path='/active-agents' render={() => <ActiveAgents />} />
+        <Route path='/clients' render={() => <Vendor />} />
+        <Route path='/new' render={() => <Multi />} />
+        <Route path='/office' exact render={() => <Office />} />
+        <Route path='/office/:pincode/:id' render={() => <Office />} />
+        <Route path='/resident' exact render={() => <Resident />} />
+        <Route path='/resident/:pincode/:id' render={() => <Resident />} />
+        <Route path='/ActiveCases' render={() => <ActiveCases />} />
+        <Route path='/SubmittedCases' render={() => <SubmittedCases />} />
+        <Route path='/oldCases' render={() => <OldCases />} />
+        {/* <Redirect from="/login" to="/" /> */}
+      </>
+    }
+    return <>
+      <Route path='/login' render={() => <Login />} />
+      {/* <Redirect from="/" to="/login" /> */}
+    </>
+}
 
-              <Route path='/' render={() => <Dashboard />} exact />
-              <Route path='/signup' render={() => <SignUp />} />
-              <Route path='/forget' render={() => <Forget />} />
-              <Route path='/total-agents' render={() => <TotalAgents />} />
-              <Route path='/active-agents' render={() => <ActiveAgents />} />
-              <Route path='/clients' render={() => <Vendor />} />
-              <Route path='/new' render={() => <Multi />} />
-              <Route path='/office' exact render={() => <Office />} />
-              <Route path='/office/:pincode/:id' render={() => <Office />} />
-              <Route path='/resident' exact render={() => <Resident />} />
-              <Route path='/resident/:pincode/:id' render={() => <Resident />} />
-              <Route path='/ActiveCases' render={() => <ActiveCases />} />
-              <Route path='/SubmittedCases' render={() => <SubmittedCases />} />
-              <Route path='/oldCases' render={() => <OldCases />} />
-              <Redirect from="/login" to="/" />
-            </>
-              :
-              <>
-              <Route path='/login' render={() => <Login />} />
-              <Redirect from="/" to="/login" />
-              </>
-            }
+return (
+  <div className="text-center w-100" id='app'>
+    <Button className='fixed-bottom1' onClick={scrollToBottom}>{top ? 'Top' : 'Bottom'}</Button>
+    <Router >
+      <Navigation auth={auth?.currentUser} />
+      <Switch>
+          {isAuth()}
+      </Switch>
 
-
-
-          </>
-        </Switch>
-
-      </Router>
-    </div>
-  );
+    </Router>
+  </div>
+);
 }
 const mapStateToProps = (state) => {
-  
+
   return {
     query: state.data
   }

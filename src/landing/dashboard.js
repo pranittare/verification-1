@@ -12,7 +12,7 @@ import { databaseUpdateQueryCasesToday } from '../utils/query'
 import CollapseItem from '../components/Collapse';
 
 const Dashboard = ({ forms, agents }) => {
-
+    // console.log('forms', forms)
     const [casesTodayToast, setCasesTodayToast] = useState(false);
     const [casesTodayModal, setCasesToadyModal] = useState(false);
     const [casesTotalToast, setCasesTotalToast] = useState(false);
@@ -30,21 +30,25 @@ const Dashboard = ({ forms, agents }) => {
 
     const bankwise = () => {
         let bankAndForms = { bank: [], pincode: [] }
+        // console.log('form', forms)
         for (const key in forms) {
             if (Object.hasOwnProperty.call(forms, key)) {
                 const element = forms[key];
-                bankAndForms.pincode.push(element)
-                for (const pincode in element) {
-                    if (Object.hasOwnProperty.call(element, pincode)) {
-                        const formId = element[pincode];
-                        if (formId.office?.applicantDetails) {
-                            bankAndForms.bank.push({ name: formId?.office?.applicantDetails?.bankNBFCname.clientName, data: formId, id: Object.keys(element)[0] })
-                        } else if (formId.resident?.applicantDetails) {
-                            bankAndForms.bank.push({ name: formId.resident?.applicantDetails?.bankNBFCname?.clientName, data: formId, id: Object.keys(element)[0] })
+                // console.log('ele1', element)
+                    bankAndForms.pincode.push(element)
+                    for (const pincode in element) {
+                        if (Object.hasOwnProperty.call(element, pincode)) {
+                            const formId = element[pincode];
+                            if (formId.allocated) {
+                                if (formId?.office?.applicantDetails) {
+                                    bankAndForms.bank.push({ name: formId?.office?.applicantDetails?.bankNBFCname.clientName, data: formId, id: Object.keys(element)[0] })
+                                } else if (formId?.resident?.applicantDetails) {
+                                    bankAndForms.bank.push({ name: formId.resident?.applicantDetails?.bankNBFCname?.clientName, data: formId, id: Object.keys(element)[0] })
+                                }
+                            }
                         }
                     }
                 }
-            }
         }
         return bankAndForms
     }
@@ -456,7 +460,7 @@ const ModalItem = ({ item, open, close, count }) => {
                 <div>
                     {combinedData().map(item => {
                         return <ul key={item.name || item.pincode}>
-                            <li><a href={`${item?.data?.applicantDetails.form}/${item?.data?.applicantDetails.pincode}/${item.id}`} target='_blank'>{item.name ? item.name : item.pincode}
+                            <li><a href={`${item?.data?.applicantDetails.form}/${item?.data?.applicantDetails.pincode}/${item.id}`}>{item.name ? item.name : item.pincode}
                             </a>
                             </li>
                         </ul>

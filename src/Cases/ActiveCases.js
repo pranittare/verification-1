@@ -22,7 +22,16 @@ const ActiveCases = (props) => {
     const [agentsDropdown, setAgentsDropdown] = useState([]);
     const [selectedAgent, setSelectedAgent] = useState();
     const [currentIndex, setCurrentIndex] = useState();
-
+    const initialdata = {
+        appid: "",
+        initiationDate: "",
+        customerName: "",
+        tat: "",
+        bankNBFCname: "",
+        overallStatus: "",
+        pincode: ""
+    }
+    const [filterSearch, setFilterSearch] = useState(initialdata)
     const formData = (forms) => {
         const formKeys = Object.keys(forms)
         let formarray = []
@@ -48,38 +57,41 @@ const ActiveCases = (props) => {
 
     }
     const handleFilter = (e) => {
-        let data = allData
-        if (e.currentTarget.value) {
-            setAllData(data.filter(item => {
-                if (item[e.currentTarget.name]) {
-                    let rval = item[e.currentTarget.name].toLocaleLowerCase().includes(e.currentTarget.value)
-                    return rval
+        let data = { ...filterSearch }
+        data[e.currentTarget.name] = e.currentTarget.value
+        setFilterSearch(data);
+        // let data = allData
+        // if (e.currentTarget.value) {
+        //     setAllData(data.filter(item => {
+        //         if (item[e.currentTarget.name]) {
+        //             let rval = item[e.currentTarget.name].toLocaleLowerCase().includes(e.currentTarget.value)
+        //             return rval
 
-                } else {
-                    if (e.currentTarget.name === 'customerName') {
-                        if (item.office) {
-                            let rval = item.office?.applicantDetails?.customerName.toLocaleLowerCase().includes(e.currentTarget.value)
-                            return rval
-                        } else if (item.resident) {
-                            let rval = item.resident?.applicantDetails?.customerName.toLocaleLowerCase().includes(e.currentTarget.value)
-                            return rval
-                        }
-                    } else if (e.currentTarget.name === 'clientName') {
-                        console.log('office', item)
-                        if (item.office) {
-                            let rval = item.office?.applicantDetails?.bankNBFCname?.clientName.toLocaleLowerCase().includes(e.currentTarget.value)
-                            return rval
-                        } else if (item.resident) {
-                            let rval = item.resident?.applicantDetails?.bankNBFCname?.clientName.toLocaleLowerCase().includes(e.currentTarget.value)
-                            return rval
-                        }
-                    }
-                }
-            }
-            ))
-        } else {
-            formData(props.forms)
-        }
+        //         } else {
+        //             if (e.currentTarget.name === 'customerName') {
+        //                 if (item.office) {
+        //                     let rval = item.office?.applicantDetails?.customerName.toLocaleLowerCase().includes(e.currentTarget.value)
+        //                     return rval
+        //                 } else if (item.resident) {
+        //                     let rval = item.resident?.applicantDetails?.customerName.toLocaleLowerCase().includes(e.currentTarget.value)
+        //                     return rval
+        //                 }
+        //             } else if (e.currentTarget.name === 'clientName') {
+        //                 console.log('office', item)
+        //                 if (item.office) {
+        //                     let rval = item.office?.applicantDetails?.bankNBFCname?.clientName.toLocaleLowerCase().includes(e.currentTarget.value)
+        //                     return rval
+        //                 } else if (item.resident) {
+        //                     let rval = item.resident?.applicantDetails?.bankNBFCname?.clientName.toLocaleLowerCase().includes(e.currentTarget.value)
+        //                     return rval
+        //                 }
+        //             }
+        //         }
+        //     }
+        //     ))
+        // } else {
+        //     formData(props.forms)
+        // }
         setReset(Math.random())
 
     }
@@ -228,6 +240,43 @@ const ActiveCases = (props) => {
         }
         return agentname
     }
+    const filteredSearch = (item) => {
+        if (filterSearch.appid) {
+            if (item?.office?.applicantDetails) {
+                return item.office.applicantDetails.appid?.toLowerCase().includes(filterSearch.appid)
+            } else if (item?.resident?.applicantDetails) {
+                return item.resident.applicantDetails.appid?.toLowerCase().includes(filterSearch.appid)
+            }
+        }
+        if (filterSearch.bankNBFCname) {
+            if (item?.office?.applicantDetails) {
+                return item.office.applicantDetails.bankNBFCname?.clientName?.toLowerCase().includes(filterSearch.bankNBFCname.toLowerCase())
+            } else if (item?.resident?.applicantDetails) {
+                return item.resident.applicantDetails.bankNBFCname?.clientName?.toLowerCase().includes(filterSearch.bankNBFCname.toLowerCase())
+            }
+        }
+        if (filterSearch.customerName) {
+            if (item?.office?.applicantDetails) {
+                return item.office.applicantDetails.customerName?.toLowerCase().includes(filterSearch.customerName)
+            } else if (item?.resident?.applicantDetails) {
+                return item.resident.applicantDetails.customerName?.toLowerCase().includes(filterSearch.customerName)
+            }
+        }
+        if (filterSearch.pincode) {
+            if (item?.office?.applicantDetails) {
+                if (item?.office?.applicantDetails?.pincode) {
+                    return item.office?.applicantDetails?.pincode?.toString().includes(filterSearch.pincode)
+                }
+            }
+            if (item?.resident?.applicantDetails) {
+                if (item?.resident?.applicantDetails?.pincode) {
+                    return item.resident?.applicantDetails?.pincode?.toString().includes(filterSearch.pincode)
+                }
+            }
+
+        }
+        return item
+    }
     useEffect(() => {
         formData(props.forms)
         // console
@@ -285,7 +334,7 @@ const ActiveCases = (props) => {
                 sheet="tablexls"
                 buttonText="Download as XLS" />
             <div className='d-flex justify-content-around'>
-                <Input type="text" onChange={pincodeFilter} name="pincode" placeholder={'Pincode'} />
+                <Input type="text" onChange={handleFilter} name="pincode" placeholder={'Pincode'} />
                 <Input type="text" onChange={allSearch} placeholder={'Search all'} style={{ marginLeft: 50 }} />
             </div>
             <form className='d-flex justify-content-between flex-wrap' id='form'>
@@ -297,13 +346,13 @@ const ActiveCases = (props) => {
                             <th scope="col"> <Input type="text" onChange={handleFilter} name="TPCName1" placeholder={'LoginTime'} /> </th>
                             <th scope="col"> <Input type="text" onChange={handleFilter} name="customerName" placeholder={'CustomerName'} /> </th>
                             <th scope="col"> <Input type="text" onChange={handleFilter} name="TPCName1" placeholder={'TAT'} /> </th>
-                            <th scope="col"> <Input type="text" onChange={handleFilter} name="clientName" placeholder={'ClientName'} /> </th>
+                            <th scope="col"> <Input type="text" onChange={handleFilter} name="bankNBFCname" placeholder={'ClientName'} /> </th>
                             <th scope="col"> <Input type="text" onChange={handleFilter} name="TPCName1" placeholder={'Stage'} /> </th>
                             <th scope="col"> <Input type="text" onChange={handleFilter} name="TPCName1" placeholder={'Remark'} /> </th>
                         </tr>
                     </thead>
                     <tbody>
-                        {reset > 0 && allData && allData.length > 0 && allData.map((item, index) => {
+                        {reset > 0 && allData && allData.length > 0 && allData.filter(filteredSearch).map((item, index) => {
                             return <tr key={`${item.tat}-${index + 1}`} onMouseOver={() => setTooltip(index)}>
 
                                 <td >
@@ -347,7 +396,7 @@ const ActiveCases = (props) => {
                                             item.office?.applicantDetails?.pincode
                                             :
                                             item.resident?.applicantDetails?.pincode, index)}>Force</Button>
-                                        {agentList.length > 0 && currentIndex === index && <DropDownAgentsList agentList={agentList} setAgentList={()=>setAgentList([])} selectedAgent={selectedAgent} setSelectedAgent={setSelectedAgent} form={item} setAlertMessage={(data) => setAlertMessage(data)} />}
+                                        {agentList.length > 0 && currentIndex === index && <DropDownAgentsList agentList={agentList} setAgentList={() => setAgentList([])} selectedAgent={selectedAgent} setSelectedAgent={setSelectedAgent} form={item} setAlertMessage={(data) => setAlertMessage(data)} />}
 
                                     </div>}
                                     {/* Assigned {item?.assigned ? 'true' : 'false'}
@@ -546,7 +595,7 @@ const DropDownAgentsList = ({
             <DropdownMenu>
                 {agentList?.filter(a => a.uniqueId !== 'Disabled').map((item, index) => {
 
-                    return <DropdownItem key={item.name} onClick={() => {forceAgent(item); setSelectedAgent(false)}}>
+                    return <DropdownItem key={item.name} onClick={() => { forceAgent(item); setSelectedAgent(false) }}>
                         {item.name}
                     </DropdownItem>
                 })}

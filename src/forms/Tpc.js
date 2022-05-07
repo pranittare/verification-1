@@ -17,7 +17,7 @@ const dict = {
     TVRBusinessName: '',
     TVRNoofyearsinBusiness: '',
     TVRRemarks: '',
-    finalFIAgencyname: '',
+    finalFIAgencyname: 'KreDT',
     finalFIAnyRemarks: '',
     finalFIRemarks: '',
     finalFIVerifierName: '',
@@ -83,18 +83,22 @@ const Tpc = forwardRef(({ data, form }, ref) => {
     const handleSubmit = (e) => {
         e.preventDefault()
     }
-    const getProductSupervisor = () => {
+    const getProductSupervisor = (form) => {
         let email = getCookie('email');
         let supervisor = '';
-        for (const key in users) {
-            if (Object.hasOwnProperty.call(users, key)) {
-                const element = users[key];
-                if (element.userId === email) {
-                    supervisor = element.name
+        if (!form.productSupervisor) {
+            for (const key in users) {
+                if (Object.hasOwnProperty.call(users, key)) {
+                    const element = users[key];
+                    if (element.userId === email) {
+                        supervisor = element.name
+                    }
                 }
             }
+            return supervisor;
         }
-        return supervisor;
+        return form.productSupervisor
+
     }
     const getCookie = (cname) => {
         let name = cname + "=";
@@ -118,11 +122,11 @@ const Tpc = forwardRef(({ data, form }, ref) => {
             for (const key in data) {
                 form[key] = data[key]
             }
-            form.productSupervisor = getProductSupervisor()
+                form.productSupervisor = getProductSupervisor(form)
             form.finalFIRemarks = remarksfnc(data)
-            if (form.finalFIAgencyname === "") {
-                form.finalFIAgencyname = "KREDT"
-            }
+            // if (form.finalFIAgencyname === "") {
+                form.finalFIAgencyname = "KreDT"
+            // }
             if (form.finalFIVerifierName === "") {
                 form.finalFIVerifierName = data.selected
             }
@@ -244,7 +248,7 @@ const Tpc = forwardRef(({ data, form }, ref) => {
                 </div>
                 <div>
                     <label>Agency name</label>
-                    <Input type="text" name='finalFIAgencyname' value={formdata['finalFIAgencyname']} onChange={(e) => onHandleChange(e.currentTarget)} />
+                    <Input type="text" name='finalFIAgencyname' value={formdata['finalFIAgencyname']} disabled />
                 </div>
                 <div style={{ width: 200 }}>
                     <label>Standard Remarks</label>

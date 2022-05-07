@@ -23,6 +23,14 @@ const OldCases = (props) => {
         start: '',
         end: '',
     })
+    const initialdata = { appid: "",
+         initiationDate: "",
+         customerName: "",
+         tat: "",
+         bankNBFCname: "",
+         overallStatus: "" 
+        }
+    const [filterSearch, setFilterSearch] = useState(initialdata)
     const [startDate, setStartDate] = useState();
     const [endDate, setEndDate] = useState();
     const [reset, setReset] = useState(0);
@@ -51,7 +59,7 @@ const OldCases = (props) => {
         //     }
 
         // }
-        // console.log('forms', formarray)
+        console.log('forms', forms)
         setAllData(forms)
         setReset(Math.random())
 
@@ -131,33 +139,61 @@ const OldCases = (props) => {
         table.click()
     }
     const handleFilter = (e) => {
-        let data = allData
-        if (e.currentTarget.value) {
-            setAllData(data.filter(item => {
-                if (item[e.currentTarget.name]) {
-                    let rval = item[e.currentTarget.name]?.toLocaleLowerCase().includes(e.currentTarget.value)
-                    return rval
+        let data = { ...filterSearch }
+        data[e.currentTarget.name] = e.currentTarget.value
+        setFilterSearch(data);
 
-                } else {
-                    console.log('item', item);
-                    if (e.currentTarget.name === 'customerName') {
-                        let rval = item.applicantDetails?.customerName.toLocaleLowerCase().includes(e.currentTarget.value)
-                        return rval
+        // let data = { ...allData }
+        // if (e.currentTarget.value && data.length > 0) {
+        //     setAllData(data?.filter(item => {
+        //         if (item[e.currentTarget.name]) {
+        //             let rval = item[e.currentTarget.name]?.toLocaleLowerCase().includes(e.currentTarget.value)
+        //             return rval
 
-                    } else if (e.currentTarget.name === 'clientName') {
-                        console.log('office', item)
-                        let rval = item.applicantDetails?.bankNBFCname?.clientName.toLocaleLowerCase().includes(e.currentTarget.value)
-                        return rval
+        //         } else {
+        //             console.log('item', item);
+        //             if (e.currentTarget.name === 'customerName') {
+        //                 let rval = item.applicantDetails?.customerName.toLocaleLowerCase().includes(e.currentTarget.value)
+        //                 return rval
 
-                    }
-                }
-            }
-            ))
-        } else {
-            formData(props.db)
-        }
+        //             } else if (e.currentTarget.name === 'clientName') {
+        //                 console.log('office', item)
+        //                 let rval = item.applicantDetails?.bankNBFCname?.clientName.toLocaleLowerCase().includes(e.currentTarget.value)
+        //                 return rval
+
+        //             }
+        //         }
+        //     }
+        //     ))
+        // } else {
+        //     formData(props.db)
+        // }
         setReset(Math.random())
 
+    }
+    const filteredSearch = (item) => {
+        if (filterSearch.appid) {
+            let rval = item.applicantDetails.appid?.toLowerCase().includes(filterSearch.appid)
+            return rval
+        }
+        if (filterSearch.bankNBFCname) {
+            let rval = item.applicantDetails.bankNBFCname?.toLowerCase().includes(filterSearch.bankNBFCname.toLowerCase())
+            return rval
+        }
+        if (filterSearch.customerName) {
+            let rval = item.applicantDetails.customerName?.toLowerCase().includes(filterSearch.customerName)
+            return rval
+        }
+
+        return item
+        // if (filterSearch[0].appid) {
+        //     let rval = item.appid?.toLocaleLowerCase().includes(filterSearch[0].appid)
+        //     return rval
+        // }
+        // if (filterSearch[0].appid) {
+        //     let rval = item.appid?.toLocaleLowerCase().includes(filterSearch[0].appid)
+        //     return rval
+        // }
     }
     const handleViewForm = (item) => {
         console.log('handleViewForm', item)
@@ -172,7 +208,7 @@ const OldCases = (props) => {
     }
     const getAgentName = (item) => {
 
-       return `Supervisor: ${item?.verificationDetails.productSupervisor} Agent: ${item?.verificationDetails.finalFIVerifierName}`
+        return `Supervisor: ${item?.verificationDetails.productSupervisor} Agent: ${item?.verificationDetails.finalFIVerifierName}`
     }
     useEffect(() => {
         formData(props.db)
@@ -249,13 +285,12 @@ const OldCases = (props) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {reset && allData && allData.length > 0 && allData.map((item, index) => {
-                            console.log('item', item)
+                        {reset && allData && allData.length > 0 && allData.filter(filteredSearch).map((item, index) => {
                             return <tr key={`${item?.key}-${index + 1}`}>
                                 <td>
                                     <Link to={{ pathname: item?.applicantDetails?.form == 'office' ? `office/${item?.applicantDetails?.pincode}/${item.key}` : `resident/${item?.applicantDetails?.pincode}/${item.key}`, state: item }} className={item?.applicantDetails?.form == 'office' ? 'text-primary' : 'text-success'}>
-                                    <p type="button" data-toggle="tooltip" data-placement="top" title={`${getAgentName(item)}`}>
-                                        {item?.applicantDetails?.appid}
+                                        <p type="button" data-toggle="tooltip" data-placement="top" title={`${getAgentName(item)}`}>
+                                            {item?.applicantDetails?.appid}
                                         </p>
                                     </Link>
                                 </td>

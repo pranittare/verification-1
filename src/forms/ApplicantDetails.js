@@ -73,14 +73,52 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
         update(rtRef(db, path), prevCasesCount()).then()
     }
     const formValidation = () => {
-        const {mobileNo, loaction, pincode, appid, officeAddressProvided, residenceAddressProvided, customerName, type} = formdata
-        if (mobileNo.length <= 9 && mobileNo.length >= 11 && !loaction && !pincode && !appid && !customerName) {
-            return false
+        const { mobileNo, loaction, pincode, appid, officeAddressProvided, residenceAddressProvided, customerName, type, product } = formdata
+        let submission = {
+            mobileNo: false,
+            loaction: false,
+            pincode: false,
+            appid: false,
+            customerName: false,
+            type: false,
+            addressProvided: false,
+            product: false
+        };
+        if (mobileNo.length === 10) {
+            submission.mobileNo = true
         }
-        if (type === 'office' && !officeAddressProvided) {
-            return false
+        if (loaction) {
+            submission.loaction = true
         }
-        if (type === 'resident' && !residenceAddressProvided) {
+        if (pincode) {
+            submission.pincode = true
+        }
+        if (appid) {
+            submission.appid = true
+        }
+        if (customerName) {
+            submission.customerName = true
+        }
+        if (type === 'office') {
+            submission.type = true
+        }
+        if (type === 'resident') {
+            submission.type = true
+        }
+        if (officeAddressProvided) {
+            submission.addressProvided = true
+            
+        }
+        if (residenceAddressProvided) {
+            submission.addressProvided = true
+            
+        }
+        if (product) {
+            submission.product = true
+            
+        }
+        let stirngObj = JSON.stringify(submission)
+        if (stirngObj.includes('false')) {
             return false
         }
         return true
@@ -189,7 +227,7 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
             console.log('notification err', err)
         })
     }
-   
+
     const handleToken = (agent) => {
         if (formdata.pincode) {
             for (const key in agents) {
@@ -254,7 +292,7 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
     useEffect(() => {
 
         if (data) {
-            let form = formdata
+            let form = {...formdata}
             for (const key in data) {
                 form[key] = data[key]
                 if (key === 'bankNBFCname') {
@@ -267,6 +305,7 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
                     form['type'] = data['form']
                 }
             }
+            console.log('bank',form, data.bankNBFCname)
             setFormdata(form)
             setRefresh(Math.random());
             outerDetailsData()
@@ -289,16 +328,28 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
     }));
     const outerDetailsData = () => {
         if (outerDetails) {
-            let formd = formdata
+            let formd = {...formdata}
             for (const outer in outerDetails) {
                 const element = outerDetails[outer]
                 if (outer == 'selected') {
                     setSelectedAgent(element)
                 }
             }
-            setFormdata(formd);
-            setRefresh(Math.random())
+            // setFormdata(formd);
+            // setRefresh(Math.random())
         }
+    }
+    const bankName = () => {
+        if (formdata.bankNBFCname.client) {
+            return formdata.bankNBFCname.client
+        }
+        if (data.bankNBFCname.clientName) {
+            return data.bankNBFCname.clientName
+        } else if (data.bankNBFCname) {
+            return data.bankNBFCname
+        }
+        return "None"
+        
     }
     const getAgents = () => {
         let pincodeWiseAgents = []
@@ -344,6 +395,7 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
                 <form className='d-flex justify-content-between flex-wrap' onSubmit={handleSubmit}>
                     <div >
                         <label className='text-danger'>App.Id/Lead id</label>
+                        {console.log('app', formdata)}
                         <Input type="text" name='appid' value={formdata['appid']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
                     <div >
@@ -367,6 +419,7 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
                         <Dropdown toggle={toggleBankName} isOpen={dropdownBankNameOpen}>
                             <DropdownToggle caret className='text-truncate'>
                                 {formdata['bankNBFCname'].clientName ? formdata['bankNBFCname'].clientName : 'None'}
+                                {/* {bankName()} */}
                             </DropdownToggle>
                             <DropdownMenu
                             >
@@ -443,7 +496,7 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
                         <Input type="text" name='contactNo' value={formdata['contactNo']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
                     <div >
-                        <label className={formdata['mobileNo'].length > 9 ? 'text-danger' : ''}>Mobile No. ({formdata['mobileNo'].length}/10)</label>
+                        <label className={formdata['mobileNo'].length < 9 ? 'text-danger' : ''}>Mobile No. ({formdata['mobileNo'].length}/10)</label>
                         <Input type="number" name='mobileNo' value={formdata['mobileNo']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
                     {formdata['type'] === 'office' && <div >

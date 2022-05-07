@@ -18,6 +18,14 @@ const SubmittedCases = (props) => {
     const toggleBankName = () => {
         setDropdownBankNameOpen(!dropdownBankNameOpen);
     }
+    const initialdata = { appid: "",
+    initiationDate: "",
+    customerName: "",
+    tat: "",
+    bankNBFCname: "",
+    overallStatus: "" 
+   }
+const [filterSearch, setFilterSearch] = useState(initialdata)
     const [selectedBank, setSelectedBank] = useState(false);    
     const [alertMessage, setAlertMessage] = useState('');
     const formData = (forms) => {
@@ -46,39 +54,42 @@ const SubmittedCases = (props) => {
 
     }
     const handleFilter = (e) => {
-        let data = allData
-        if (e.currentTarget.value) {
-            setAllData(data.filter(item => {
-                if (item[e.currentTarget.name]) {
-                    let rval = item[e.currentTarget.name].toLocaleLowerCase().includes(e.currentTarget.value)
-                    return rval
+        let data = { ...filterSearch }
+        data[e.currentTarget.name] = e.currentTarget.value
+        setFilterSearch(data);
+        // let data = allData
+        // if (e.currentTarget.value) {
+        //     setAllData(data.filter(item => {
+        //         if (item[e.currentTarget.name]) {
+        //             let rval = item[e.currentTarget.name].toLocaleLowerCase().includes(e.currentTarget.value)
+        //             return rval
 
-                } else {
-                    console.log('item', item)
-                    if (e.currentTarget.name === 'CustomerName') {
-                        if (item.office) {
-                            let rval = item.office?.applicantDetails?.customerName.toLocaleLowerCase().includes(e.currentTarget.value)
-                            return rval
-                        } else {
-                            let rval = item.resident?.applicantDetails?.customerName.toLocaleLowerCase().includes(e.currentTarget.value)
-                            return rval
-                        }
-                    } else if (e.currentTarget.name === 'ClientName') {
-                        console.log('office', item)
-                        if (item.office) {
-                            let rval = item.office?.applicantDetails?.bankNBFCname?.clientName.toLocaleLowerCase().includes(e.currentTarget.value)
-                            return rval
-                        } else if (item.resident) {
-                            let rval = item.resident?.applicantDetails?.bankNBFCname?.clientName.toLocaleLowerCase().includes(e.currentTarget.value)
-                            return rval
-                        }
-                    }
-                }
-            }
-            ))
-        } else {
-            formData(props.forms)
-        }
+        //         } else {
+        //             console.log('item', item)
+        //             if (e.currentTarget.name === 'CustomerName') {
+        //                 if (item.office) {
+        //                     let rval = item.office?.applicantDetails?.customerName.toLocaleLowerCase().includes(e.currentTarget.value)
+        //                     return rval
+        //                 } else {
+        //                     let rval = item.resident?.applicantDetails?.customerName.toLocaleLowerCase().includes(e.currentTarget.value)
+        //                     return rval
+        //                 }
+        //             } else if (e.currentTarget.name === 'ClientName') {
+        //                 console.log('office', item)
+        //                 if (item.office) {
+        //                     let rval = item.office?.applicantDetails?.bankNBFCname?.clientName.toLocaleLowerCase().includes(e.currentTarget.value)
+        //                     return rval
+        //                 } else if (item.resident) {
+        //                     let rval = item.resident?.applicantDetails?.bankNBFCname?.clientName.toLocaleLowerCase().includes(e.currentTarget.value)
+        //                     return rval
+        //                 }
+        //             }
+        //         }
+        //     }
+        //     ))
+        // } else {
+        //     formData(props.forms)
+        // }
         setReset(Math.random())
 
     }
@@ -107,6 +118,28 @@ const SubmittedCases = (props) => {
                 return a.resident.applicantDetails?.bankNBFCname?.clientName === selectedBank
             }
         }
+        if (filterSearch.appid) {
+            if (a?.office?.applicantDetails) {
+                return a.office.applicantDetails.appid?.toLowerCase().includes(filterSearch.appid)
+            } else if (a?.resident?.applicantDetails) {
+                return a.resident.applicantDetails.appid?.toLowerCase().includes(filterSearch.appid)
+            }
+        }
+        if (filterSearch.bankNBFCname) {
+                 if (a?.office?.applicantDetails) {
+                return a.office.applicantDetails.bankNBFCname?.clientName?.toLowerCase().includes(filterSearch.bankNBFCname.toLowerCase())
+            } else if (a?.resident?.applicantDetails) {
+                return a.resident.applicantDetails.bankNBFCname?.clientName?.toLowerCase().includes(filterSearch.bankNBFCname.toLowerCase())
+            }
+        }
+        if (filterSearch.customerName) {
+                 if (a?.office?.applicantDetails) {
+                return a.office.applicantDetails.customerName?.toLowerCase().includes(filterSearch.customerName)
+            } else if (a?.resident?.applicantDetails) {
+                return a.resident.applicantDetails.customerName?.toLowerCase().includes(filterSearch.customerName)
+            }
+        }
+
         return a
     }
     const getAgentName = (item) => {
@@ -117,16 +150,16 @@ const SubmittedCases = (props) => {
     }
     const handleDelete = (item) => {
         console.log({ item })
-        let type = '';
+        // let type = '';
         let pincode;
         if (item?.office?.applicantDetails) {
-            type = 'office';
+            // type = 'office';
             pincode = item.office.applicantDetails.pincode
         } else if (item?.resident?.applicantDetails) {
-            type = 'resident';
+            // type = 'resident';
             pincode = item.resident.applicantDetails.pincode
         }
-        if (type && pincode) {
+        if (pincode) {
             const path = `form/${pincode}/${item.key}`
             console.log('path', path)
             remove(ref(db, path)).then(res => {
@@ -229,7 +262,7 @@ const SubmittedCases = (props) => {
                             <th scope="col"><Input type="text" onChange={handleFilter} name="claimedAt" placeholder={'LoginTime'} /></th>
                             <th scope="col"><Input type="text" onChange={handleFilter} name="customerName" placeholder={'CustomerName'} /></th>
                             <th scope="col"><Input type="text" onChange={handleFilter} name="tat" placeholder={'TAT'} /></th>
-                            <th scope="col"><Input type="text" onChange={handleFilter} name="clientName" placeholder={'ClientName'} /></th>
+                            <th scope="col"><Input type="text" onChange={handleFilter} name="bankNBFCname" placeholder={'ClientName'} /></th>
                             <th scope="col"><Input type="text" onChange={handleFilter} name="TPCName1" placeholder={'Stage'} /></th>
                             <th scope="col"><Input type="text" onChange={handleFilter} name="remarks" placeholder={'Remark'} /></th>
                             <th></th>
