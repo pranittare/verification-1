@@ -383,7 +383,6 @@ const Resident = () => {
             if (formsaved.selected && formsaved.resident && formsaved.resident.verificationDetails) {
                 formsaved.resident.verificationDetails.selected = formsaved.selected 
             }
-            console.log('formsaved', formsaved, outer)
             setApplicantDetails(formsaved?.resident?.applicantDetails)
             setVerificationOvserver(formsaved.resident.verificationDetails)
             setOuterDetails(outer)
@@ -443,6 +442,7 @@ const Resident = () => {
         }
         viewImages()
         setFormdata(formd)
+        console.log('old', formd)
         // if (localStorage.getItem(id)) {
         //     setFormdata(JSON.parse(localStorage.getItem(id)))
         // }
@@ -697,6 +697,9 @@ const Resident = () => {
                 if (element === undefined) {
                     element = ''
                 }
+                if (element === '') {
+                    alldata[key] = 'NA'
+                }
             }
         }
         const documentDefinition = {
@@ -841,7 +844,7 @@ const Resident = () => {
                                 {
 
                                     border: [true, true, true, true],
-                                    text: alldata?.bankNBFCname?.clientName
+                                    text: alldata?.bankNBFCname?.clientName ? alldata?.bankNBFCname?.clientName : alldata?.bankNBFCname
                                 },
                             ],
 
@@ -864,7 +867,7 @@ const Resident = () => {
                                 {
 
                                     border: [true, true, true, true],
-                                    text: alldata?.product?.productName
+                                    text: alldata?.product?.productName ? alldata?.product?.productName : alldata?.product
                                 },
                                 {
 

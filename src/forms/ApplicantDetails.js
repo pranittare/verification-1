@@ -107,15 +107,15 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
         }
         if (officeAddressProvided) {
             submission.addressProvided = true
-            
+
         }
         if (residenceAddressProvided) {
             submission.addressProvided = true
-            
+
         }
         if (product) {
             submission.product = true
-            
+
         }
         let stirngObj = JSON.stringify(submission)
         if (stirngObj.includes('false')) {
@@ -125,7 +125,7 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
     }
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log('valid', formValidation())
+        // console.log('valid', formValidation())
         if (formValidation()) {
             setLoading(true)
             let newDate = new Date().getTime()
@@ -292,7 +292,7 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
     useEffect(() => {
 
         if (data) {
-            let form = {...formdata}
+            let form = { ...formdata }
             for (const key in data) {
                 form[key] = data[key]
                 if (key === 'bankNBFCname') {
@@ -305,7 +305,7 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
                     form['type'] = data['form']
                 }
             }
-            console.log('bank',form, data.bankNBFCname)
+            console.log('bank',data)
             setFormdata(form)
             setRefresh(Math.random());
             outerDetailsData()
@@ -328,7 +328,7 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
     }));
     const outerDetailsData = () => {
         if (outerDetails) {
-            let formd = {...formdata}
+            let formd = { ...formdata }
             for (const outer in outerDetails) {
                 const element = outerDetails[outer]
                 if (outer == 'selected') {
@@ -338,18 +338,6 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
             // setFormdata(formd);
             // setRefresh(Math.random())
         }
-    }
-    const bankName = () => {
-        if (formdata.bankNBFCname.client) {
-            return formdata.bankNBFCname.client
-        }
-        if (data.bankNBFCname.clientName) {
-            return data.bankNBFCname.clientName
-        } else if (data.bankNBFCname) {
-            return data.bankNBFCname
-        }
-        return "None"
-        
     }
     const getAgents = () => {
         let pincodeWiseAgents = []
@@ -374,6 +362,12 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
         }
         return pincodeWiseAgents;
     }
+    const getBank = () => {
+        return <span> {formdata['bankNBFCname'].clientName ? formdata['bankNBFCname'].clientName : data.bankNBFCname.clientName ? data.bankNBFCname.clientName : data.bankNBFCname ? data.bankNBFCname.toString() : 'None'} </span>
+    }
+    const getProduct = () => {
+        return <span>{formdata['product'].productName ? formdata['product'].productName : data.bankNBFCname.productName ? data.bankNBFCname.productName : data.product ? data.product.toString() : 'None'}</span>
+    }
     // let mismatchAddressField = [
     //     { name: 'mismatchAddress', value: 'yes', label: 'Yes' },
     //     { name: 'mismatchAddress', value: 'no', label: 'No' }
@@ -395,7 +389,6 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
                 <form className='d-flex justify-content-between flex-wrap' onSubmit={handleSubmit}>
                     <div >
                         <label className='text-danger'>App.Id/Lead id</label>
-                        {console.log('app', formdata)}
                         <Input type="text" name='appid' value={formdata['appid']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
                     <div >
@@ -418,8 +411,7 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
                         <label>Bank/ NBFC name</label>
                         <Dropdown toggle={toggleBankName} isOpen={dropdownBankNameOpen}>
                             <DropdownToggle caret className='text-truncate'>
-                                {formdata['bankNBFCname'].clientName ? formdata['bankNBFCname'].clientName : 'None'}
-                                {/* {bankName()} */}
+                                {getBank()}
                             </DropdownToggle>
                             <DropdownMenu
                             >
@@ -444,7 +436,8 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
                         <label>Product</label>
                         <Dropdown toggle={toggleProductName} isOpen={dropdownProductNameOpen}>
                             <DropdownToggle caret className='text-truncate'>
-                                {formdata['product'].productName ? formdata['product'].productName : 'None'}
+                                {getProduct()}
+
                             </DropdownToggle>
                             <DropdownMenu
                             >

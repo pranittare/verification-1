@@ -652,6 +652,9 @@ const Office = () => {
                 if (element === undefined) {
                     element = ''
                 }
+                if (element === '') {
+                    alldata[key] = 'NA'
+                }
             }
         }
         const documentDefinition = {
@@ -794,7 +797,7 @@ const Office = () => {
                                 {
 
                                     border: [true, true, true, true],
-                                    text: alldata?.bankNBFCname?.clientName
+                                    text: alldata?.bankNBFCname?.clientName ? alldata?.bankNBFCname?.clientName : alldata?.bankNBFCname
                                 },
                             ],
 
@@ -817,7 +820,7 @@ const Office = () => {
                                 {
 
                                     border: [true, true, true, true],
-                                    text: alldata?.product?.productName
+                                    text: alldata?.product?.productName ? alldata?.product?.productName : alldata?.product
                                 },
                                 {
 

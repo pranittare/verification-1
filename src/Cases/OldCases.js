@@ -101,11 +101,6 @@ const OldCases = (props) => {
         if (start && end) {
             let data = databaseUpdateQueryRangeMultiple('tat1', start, 'tat1', end)
             data.then((res) => {
-                for (let index = 0; index < res.length; index++) {
-                    const element = res[index];
-                    console.log(element.applicantDetails?.bankNBFCname)
-                }
-                console.table('date', res)
                 setAllData(res)
             })
         }
@@ -113,7 +108,6 @@ const OldCases = (props) => {
             let data = databaseUpdateQueryRangeSingle('tat1', start)
             data.then((res) => {
                 setAllData(res)
-                console.log(res, 'res')
             })
         }
         // muted on purpose for performance issues
@@ -196,7 +190,6 @@ const OldCases = (props) => {
         // }
     }
     const handleViewForm = (item) => {
-        console.log('handleViewForm', item)
         let pincode = ''
         if (item?.applicantDetails.form == 'office') {
             pincode = item?.applicantDetails?.pincode
