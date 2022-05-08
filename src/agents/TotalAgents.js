@@ -10,39 +10,49 @@ const TotalAgents = ({ agents, rtAgents, branch }) => {
 
     const [allData, setAllData] = useState([])
     const [reset, setReset] = useState(0);
+    const initialdata = {
+        name: "",
+        mobile1: "",
+        pincode: "",
+        remarks: "",
+    }
+    const [filterSearch, setFilterSearch] = useState(initialdata)
     const getExcel = () => {
         let table = document.getElementById('test-table-xls-button')
         table.click()
     }
     const handleFilter = (e) => {
-        let data = allData
-        if (e.currentTarget.value) {
-            setAllData(data.filter(item => {
-                // console.log('item', item)
+        let data = { ...filterSearch }
+        data[e.currentTarget.name] = e.currentTarget.value
+        setFilterSearch(data);
+        // let data = allData
+        // if (e.currentTarget.value) {
+        //     setAllData(data.filter(item => {
+        //         // console.log('item', item)
 
-                if (e.currentTarget.name === 'mobile1') {
-                    let concat = `${item.mobile1}` + `${item.mobile2}`
+        //         if (e.currentTarget.name === 'mobile1') {
+        //             let concat = `${item.mobile1}` + `${item.mobile2}`
 
-                    let rval = concat.includes(e.currentTarget.value)
-                    return rval
-                }
-                if (e.currentTarget.name === 'pincode') {
-                    // secondary pincode logic
-                    let concat = item.secondaryPincodes.map(x => x.pincodes).join(' ')
-                    let concat1 = `${concat} ${item.pincode}`
-                    let rval = concat1.includes(e.currentTarget.value)
-                    return rval
-                } else {
-                    if (item[e.currentTarget.name]) {
-                        let rval = item[e.currentTarget.name].toLocaleLowerCase().includes(e.currentTarget.value)
-                        return rval
-                    }
-                }
-            }
-            ))
-        } else {
-            setAllData(agents)
-        }
+        //             let rval = concat.includes(e.currentTarget.value)
+        //             return rval
+        //         }
+        //         if (e.currentTarget.name === 'pincode') {
+        //             // secondary pincode logic
+        //             let concat = item.secondaryPincodes.map(x => x.pincodes).join(' ')
+        //             let concat1 = `${concat} ${item.pincode}`
+        //             let rval = concat1.includes(e.currentTarget.value)
+        //             return rval
+        //         } else {
+        //             if (item[e.currentTarget.name]) {
+        //                 let rval = item[e.currentTarget.name].toLocaleLowerCase().includes(e.currentTarget.value)
+        //                 return rval
+        //             }
+        //         }
+        //     }
+        //     ))
+        // } else {
+        //     setAllData(agents)
+        // }
         setReset(Math.random())
 
     }
@@ -82,6 +92,26 @@ const TotalAgents = ({ agents, rtAgents, branch }) => {
             return 'InActive';
         }
         return 'Active';
+    }
+    const filteredSearch = (item) => {
+        console.log('item', item)
+        if (filterSearch.name) {
+            return item.name?.toLowerCase().includes(filterSearch.name)
+        }
+        if (filterSearch.remarks) {
+            return item.remarks?.toLowerCase().includes(filterSearch.remarks)
+        }
+        if (filterSearch.mobile1) {
+            let mobileTotal = `${item.mobile1} ${item.mobile2}`
+            return mobileTotal.toLowerCase().includes(filterSearch.mobile1.toLowerCase())
+        }
+        if (filterSearch.pincode) {
+            let concat = item.secondaryPincodes.map(x => x.pincodes).join(' ')
+            let concat1 = `${concat} ${item.pincode}`
+            return concat1.includes(filterSearch.pincode)
+        }
+
+        return item
     }
 
     useEffect(() => {
@@ -145,7 +175,7 @@ const TotalAgents = ({ agents, rtAgents, branch }) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {reset > 0 && allData && allData.length > 0 && allData.map((item, index) => {
+                        {reset > 0 && allData && allData.length > 0 && allData.filter(filteredSearch).map((item, index) => {
                             // console.log('item', item)
                             if (item.branch === branch)
                                 return <tr key={item.name}>
