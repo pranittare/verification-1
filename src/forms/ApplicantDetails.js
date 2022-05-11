@@ -363,15 +363,34 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
         return pincodeWiseAgents;
     }
     const getBank = () => {
-        return <span> {formdata['bankNBFCname'].clientName ? formdata['bankNBFCname'].clientName : data.bankNBFCname.clientName ? data.bankNBFCname.clientName : data.bankNBFCname ? data.bankNBFCname.toString() : 'None'} </span>
+        return <span> {formdata['bankNBFCname'].clientName ? formdata['bankNBFCname'].clientName : data?.bankNBFCname?.clientName ? data?.bankNBFCname?.clientName : data?.bankNBFCname ? data?.bankNBFCname.toString() : 'None'} </span>
     }
     const getProduct = () => {
-        return <span>{formdata['product'].productName ? formdata['product'].productName : data.bankNBFCname.productName ? data.bankNBFCname.productName : data.product ? data.product.toString() : 'None'}</span>
+        return <span>{formdata['product'].productName ? formdata['product'].productName : data?.bankNBFCname?.productName ? data?.bankNBFCname?.productName : data?.product ? data?.product.toString() : 'None'}</span>
     }
     // let mismatchAddressField = [
     //     { name: 'mismatchAddress', value: 'yes', label: 'Yes' },
     //     { name: 'mismatchAddress', value: 'no', label: 'No' }
     // ]
+    // const alignItem = (onHandleChange) => {
+    //     let data = [
+    //         {label: 'App.Id/Lead id', form: 'appid'},
+    //         {label: 'Sr.No', form: 'srNo'},
+    //         {label: 'Month', form: 'month'},
+    //         {label: 'Initiation Date', form: 'initiationDate'},
+    //         {label: 'Customer Name', form: 'customerName'},
+    //         {label: 'Location', form: 'loaction'},
+    //         {label: 'Pincode', form: 'pincode'},
+    //     ]
+    //     return <div className='row'>
+    //         {data?.map((item, index) => {
+    //             return <div key={index} className='col-3'>
+    //                 <label className='text-danger'>{item.label}</label>
+    //                     <Input type="text" name='appid' value={formdata[item.form]} onChange={(e) => onHandleChange(e.currentTarget)} />
+    //             </div>
+    //         })}
+    //     </div>
+    // }
 
     let type = [
         { name: 'type', value: 'resident', label: 'Resident' },
@@ -382,10 +401,11 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
         </div>
     }
     return (
-        <div>
+        <div className='text-start'>
             {alertMessage && <Alert message={alertMessage} setMessage={(data) => setAlertMessage(data)} />}
             <h1>Applicant Details</h1>
             <div>
+                {/* {alignItem(onHandleChange)} */}
                 <form className='d-flex justify-content-between flex-wrap' onSubmit={handleSubmit}>
                     <div >
                         <label className='text-danger'>App.Id/Lead id</label>
@@ -551,5 +571,6 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
         </div>
     )
 })
+
 
 export default ApplicantDetails;

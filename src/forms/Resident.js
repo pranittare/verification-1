@@ -214,29 +214,20 @@ const Resident = () => {
             // localStorage.setItem(id, JSON.stringify(formdata))
         }
     }
-    function rotateBase64Image(base64data, callback) {
-        const promise = new Promise((resolve, reject) => {
-
-            var canvas = document.createElement('canvas');
-            // var canvas = document.getElementById("c");
-            var ctx = canvas.getContext("2d");
-
-            var image = new Image();
-            image.src = base64data;
-            image.onload = function () {
-                ctx.translate(image.width, image.height);
-                if (image.width > image.height) {
-                    ctx.rotate(180 * Math.PI / 180);
-                }
-                ctx.drawImage(image, 0, 0);
-                console.log('cb', canvas)
-                // window.eval(""+callback+"('"+canvas.toDataURL()+"')");
-                resolve()
-            };
-            image.onerror(reject)
+    const rotateBase64Image = (base64data) => {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        const image = new Image();
+        image.src = base64data;
+        return new Promise(resolve => {
+          image.onload = () => {
+            ctx.translate(image.width, image.height);
+            ctx.rotate(45 * Math.PI / 180);
+            ctx.drawImage(image, 0, 0);
+            resolve(canvas.toDataURL())
+          };
         })
-
-    }
+      }
     const toDataURL = (url, callback) => {
         let xhRequest = new XMLHttpRequest();
         xhRequest.onload = function () {
@@ -292,25 +283,29 @@ const Resident = () => {
         for (let index = 0; index < temp.length; index++) {
             const item = temp[index];
             toDataURL(item, (dataUrl) => {
-                dataImages.push({
-                    style: 'table',
-                    table: {
-                        widths: [500],
-                        body: [
-                            [
-                                {
-                                    image: dataUrl,
-                                    width: 500,
-                                    // fit: [500, 1200],
-                                    link: link
-                                },
+                // rotateBase64Image(dataUrl,(rotated) => {
+                    dataImages.push({
+                        style: 'table',
+                        table: {
+                            widths: [500],
+                            body: [
+                                [
+                                    {
+                                        image: dataUrl,
+                                        width: 500,
+                                        // height:600,
+                                        // fit: [500, 1200],
+                                        link: link
+                                    },
+                                ]
                             ]
-                        ]
+                        }
                     }
-                }
-                );
-                setImages64(dataImages);
-                setRefresh(Math.random())
+                    );
+                    setImages64(dataImages);
+                    setRefresh(Math.random())
+
+                // })
             })
         }
     }
@@ -2391,7 +2386,7 @@ const Resident = () => {
     // PDF MAKE END
 
     return (
-        <div className='mx-2 text-start'>
+        <div className='mx-2 text-start' >
             <Prompt
                 message={(location, action) => {
                     if (action === 'POP') {
@@ -2401,7 +2396,6 @@ const Resident = () => {
                     }
                 }}
             />
-            <div id='c' />
             {alertMessage && <Alert message={alertMessage} setMessage={(data) => setAlertMessage(data)} />}
             <Collapse title='Applicant Details'>
                 <ApplicantDetails data={applicantDetails} outerDetails={outerDetails} id={id} ref={ADref} />
