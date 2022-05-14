@@ -220,14 +220,14 @@ const Resident = () => {
         const image = new Image();
         image.src = base64data;
         return new Promise(resolve => {
-          image.onload = () => {
-            ctx.translate(image.width, image.height);
-            ctx.rotate(45 * Math.PI / 180);
-            ctx.drawImage(image, 0, 0);
-            resolve(canvas.toDataURL())
-          };
+            image.onload = () => {
+                ctx.translate(image.width, image.height);
+                ctx.rotate(45 * Math.PI / 180);
+                ctx.drawImage(image, 0, 0);
+                resolve(canvas.toDataURL())
+            };
         })
-      }
+    }
     const toDataURL = (url, callback) => {
         let xhRequest = new XMLHttpRequest();
         xhRequest.onload = function () {
@@ -280,51 +280,53 @@ const Resident = () => {
     }
     const getBase64ImageFromURL = (url) => {
         return new Promise((resolve, reject) => {
-          var img = new Image();
-          img.setAttribute("crossOrigin", "anonymous");
-          img.onload = () => {
-            var canvas = document.createElement("canvas");
-            canvas.width = img.width;
-            canvas.height = img.height;
-            var ctx = canvas.getContext("2d");
-            ctx.drawImage(img, 0, 0);
-            var dataURL = canvas.toDataURL("image/png");
-            resolve(dataURL);
-          };
-          img.onerror = error => {
-            reject(error);
-          };
-          img.src = url;
+            var img = new Image(300, 300);
+            img.setAttribute("crossOrigin", "anonymous");
+            img.onload = () => {
+                var canvas = document.createElement("canvas");
+                canvas.width = img.width;
+                canvas.height = img.height;
+                var ctx = canvas.getContext("2d");
+                ctx.imageSmoothingEnabled = true;
+                ctx.scale(0.3, 0.3)
+                ctx.drawImage(img, 0, 0);
+                var dataURL = canvas.toDataURL("image/png");
+                resolve(dataURL);
+            };
+            img.onerror = error => {
+                reject(error);
+            };
+            img.src = url;
         });
-      }
-    const allImagestoBase64 = async(temp) => {
+    }
+    const allImagestoBase64 = async (temp) => {
         let dataImages = []
         for (let index = 0; index < temp.length; index++) {
             const item = temp[index];
             // toDataURL(item, (dataUrl) => {
-                // rotateBase64Image(dataUrl,(rotated) => {
-                    dataImages.push({
-                        style: 'table',
-                        table: {
-                            widths: [500],
-                            body: [
-                                [
-                                    {
-                                        image: await getBase64ImageFromURL(item),
-                                        width: 500,
-                                        // height:600,
-                                        // fit: [500, 1200],
-                                        link: item
-                                    },
-                                ]
-                            ]
-                        }
-                    }
-                    );
-                    setImages64(dataImages);
-                    setRefresh(Math.random())
+            // rotateBase64Image(dataUrl,(rotated) => {
+            dataImages.push({
+                style: 'table',
+                table: {
+                    widths: [500],
+                    body: [
+                        [
+                            {
+                                image: await getBase64ImageFromURL(item),
+                                // width: 500,
+                                // height:600,
+                                // fit: [500, 1200],
+                                link: item
+                            },
+                        ]
+                    ]
+                }
+            }
+            );
+            setImages64(dataImages);
+            setRefresh(Math.random())
 
-                // })
+            // })
             // })
         }
     }
@@ -395,7 +397,7 @@ const Resident = () => {
                 }
             }
             if (formsaved.selected && formsaved.resident && formsaved.resident.verificationDetails) {
-                formsaved.resident.verificationDetails.selected = formsaved.selected 
+                formsaved.resident.verificationDetails.selected = formsaved.selected
             }
             setApplicantDetails(formsaved?.resident?.applicantDetails)
             setVerificationOvserver(formsaved.resident.verificationDetails)
@@ -667,7 +669,7 @@ const Resident = () => {
 
         }
 
-        return <Tpc data={verificationObserver? verificationObserver : {}} ref={TPCRef} form={'resident'} />
+        return <Tpc data={verificationObserver ? verificationObserver : {}} ref={TPCRef} form={'resident'} />
     }
     // PDF MAKE CONTENT
     const recheckOverride = () => {

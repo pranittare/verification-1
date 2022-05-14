@@ -186,23 +186,25 @@ const Office = () => {
     }
     const getBase64ImageFromURL = (url) => {
         return new Promise((resolve, reject) => {
-          var img = new Image();
-          img.setAttribute("crossOrigin", "anonymous");
-          img.onload = () => {
-            var canvas = document.createElement("canvas");
-            canvas.width = img.width;
-            canvas.height = img.height;
-            var ctx = canvas.getContext("2d");
-            ctx.drawImage(img, 0, 0);
-            var dataURL = canvas.toDataURL("image/png");
-            resolve(dataURL);
-          };
-          img.onerror = error => {
-            reject(error);
-          };
-          img.src = url;
+            var img = new Image(300, 300);
+            img.setAttribute("crossOrigin", "anonymous");
+            img.onload = () => {
+                var canvas = document.createElement("canvas");
+                canvas.width = img.width;
+                canvas.height = img.height;
+                var ctx = canvas.getContext("2d");
+                ctx.imageSmoothingEnabled = true;
+                ctx.scale(0.3, 0.3)
+                ctx.drawImage(img, 0, 0);
+                var dataURL = canvas.toDataURL("image/png");
+                resolve(dataURL);
+            };
+            img.onerror = error => {
+                reject(error);
+            };
+            img.src = url;
         });
-      }
+    }
     const viewImages = () => {
         const filePath = `forms/${pincode}/${id}/images`
         const storageRef1 = storageRef(storage, filePath);
@@ -241,24 +243,24 @@ const Office = () => {
         for (let index = 0; index < temp.length; index++) {
             const item = temp[index];
             // toDataURL(item, (dataUrl) => {
-                dataImages.push({
-                    style: 'table',
-                    table: {
-                        widths: [500],
-                        body: [
-                            [
-                                {
-                                    image: await getBase64ImageFromURL(item),
-                                    width: 500,
-                                    link: item
-                                },
-                            ]
+            dataImages.push({
+                style: 'table',
+                table: {
+                    widths: [500],
+                    body: [
+                        [
+                            {
+                                image: await getBase64ImageFromURL(item),
+                                // width: 500,
+                                link: item
+                            },
                         ]
-                    }
+                    ]
                 }
-                );
-                setImages64(dataImages);
-                setRefresh(Math.random())
+            }
+            );
+            setImages64(dataImages);
+            setRefresh(Math.random())
             // })
         }
     }
@@ -646,8 +648,8 @@ const Office = () => {
         return <Tpc data={verificationObserver ? verificationObserver : {}} ref={TPCRef} form={'office'} />
     }
     useEffect(() => {
-        console.log('applicantDetails',applicantDetails)
-    },[applicantDetails])
+        console.log('applicantDetails', applicantDetails)
+    }, [applicantDetails])
     // PDF MAKE CONTENT
 
     const pdffnc = () => {
