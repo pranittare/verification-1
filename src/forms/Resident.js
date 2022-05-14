@@ -146,7 +146,7 @@ const Resident = () => {
             verificationDetails: dataSplit(combiner()).verification,
         }
         Object.assign(dataToSubmit, mainouter)
-        pdfMake.createPdf(pdffnc()).download(dataToSubmit.applicantDetails.customerName);
+        pdfMake.createPdf(pdffnc()).download(dataToSubmit.applicantDetails.customerName.replace(/ /g, '').replace(/[^a-zA-Z ]/g, ""));
         console.log('handleSubmit', dataToSubmit)
         addDoc(collection(fdb, "forms"), dataToSubmit).then(res => {
             console.log('res', res)
