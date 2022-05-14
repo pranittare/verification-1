@@ -253,7 +253,7 @@ const Resident = () => {
                     let imageRef = storageRef(storage, itemRef._location.path_)
                     getDownloadURL(imageRef).then((x) => {
                         temp.push(x)
-                        allImagestoBase64(temp, x)
+                        allImagestoBase64(temp)
                         setImages(temp)
                         setRefresh(Math.random())
                     }).catch(err => {
@@ -278,7 +278,7 @@ const Resident = () => {
             });
         }
     }
-    const allImagestoBase64 = (temp, link) => {
+    const allImagestoBase64 = (temp) => {
         let dataImages = []
         for (let index = 0; index < temp.length; index++) {
             const item = temp[index];
@@ -295,7 +295,7 @@ const Resident = () => {
                                         width: 500,
                                         // height:600,
                                         // fit: [500, 1200],
-                                        link: link
+                                        link: item
                                     },
                                 ]
                             ]
@@ -697,6 +697,7 @@ const Resident = () => {
                 }
             }
         }
+        // console.log('combiner', combiner().customerName.replace(/ /g, '').replace(/[^a-zA-Z ]/g, ""))
         const documentDefinition = {
             content: [
                 {
