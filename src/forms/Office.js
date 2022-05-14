@@ -184,6 +184,25 @@ const Office = () => {
         xhRequest.responseType = 'blob';
         xhRequest.send();
     }
+    const getBase64ImageFromURL = (url) => {
+        return new Promise((resolve, reject) => {
+          var img = new Image();
+          img.setAttribute("crossOrigin", "anonymous");
+          img.onload = () => {
+            var canvas = document.createElement("canvas");
+            canvas.width = img.width;
+            canvas.height = img.height;
+            var ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0);
+            var dataURL = canvas.toDataURL("image/png");
+            resolve(dataURL);
+          };
+          img.onerror = error => {
+            reject(error);
+          };
+          img.src = url;
+        });
+      }
     const viewImages = () => {
         const filePath = `forms/${pincode}/${id}/images`
         const storageRef1 = storageRef(storage, filePath);
@@ -217,11 +236,11 @@ const Office = () => {
             });
         }
     }
-    const allImagestoBase64 = (temp) => {
+    const allImagestoBase64 = async (temp) => {
         let dataImages = []
         for (let index = 0; index < temp.length; index++) {
             const item = temp[index];
-            toDataURL(item, (dataUrl) => {
+            // toDataURL(item, (dataUrl) => {
                 dataImages.push({
                     style: 'table',
                     table: {
@@ -229,7 +248,7 @@ const Office = () => {
                         body: [
                             [
                                 {
-                                    image: dataUrl,
+                                    image: await getBase64ImageFromURL(item),
                                     width: 500,
                                     link: item
                                 },
@@ -240,7 +259,7 @@ const Office = () => {
                 );
                 setImages64(dataImages);
                 setRefresh(Math.random())
-            })
+            // })
         }
     }
     const handleSave = () => {
