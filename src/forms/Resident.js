@@ -280,7 +280,7 @@ const Resident = () => {
     }
     const getBase64ImageFromURL = (url) => {
         return new Promise((resolve, reject) => {
-            var img = new Image(300, 300);
+            var img = new Image(500, 500);
             img.setAttribute("crossOrigin", "anonymous");
             img.onload = () => {
                 var canvas = document.createElement("canvas");
@@ -288,7 +288,7 @@ const Resident = () => {
                 canvas.height = img.height;
                 var ctx = canvas.getContext("2d");
                 ctx.imageSmoothingEnabled = true;
-                ctx.scale(0.3, 0.3)
+                ctx.scale(0.5, 0.5)
                 ctx.drawImage(img, 0, 0);
                 var dataURL = canvas.toDataURL("image/png");
                 resolve(dataURL);
