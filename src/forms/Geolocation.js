@@ -181,7 +181,8 @@ const Geolocation = (props) => {
                             <div className='d-flex justify-content-center'>
                                 <img src={`https://maps.googleapis.com/maps/api/staticmap?size=300x300&maptype=hybrid&markers=${region?.latitude},${region?.longitude}&key=AIzaSyBPoGWXtGubXKV44J4D4ZsBtvY-lIBjEMU&zoom=16`}
                                     alt="" id="imagemap" />
-                                <a className='mt-3' href={`http://maps.google.com/maps?q=${region?.latitude} +, + ${region?.longitude}" target="_blank`}>
+                                {/* <a className='mt-3' target="_blank" rel="noreferrer" href={`http://maps.google.com/maps?q=${region?.latitude} +, + ${region?.longitude}"`}> */}
+                                <a className='mt-3' target="_blank" rel="noreferrer" href={`http://maps.google.com/maps/place/${region?.latitude}+,${region?.longitude}`}>
                                     <strong>
                                         Latitude: {region?.latitude}
                                         <br />
@@ -203,7 +204,8 @@ const Geolocation = (props) => {
                         <div className='d-flex justify-content-center'>
                             <img src={`https://maps.googleapis.com/maps/api/staticmap?size=300x300&maptype=hybrid&markers=${data?.region?.latitude},${data?.region?.longitude}&key=AIzaSyBPoGWXtGubXKV44J4D4ZsBtvY-lIBjEMU&zoom=16`}
                                 alt="" id="imagemap" />
-                            <a className='mt-3' href={`http://maps.google.com/maps?q=${data?.region?.latitude} +, + ${data?.region?.longitude}" target="_blank`}>
+                            {/* <a className='mt-3' target="_blank" rel="noreferrer" href={`http://maps.google.com/maps?q=${data?.region?.latitude} +, + ${data?.region?.longitude}"`}> */}
+                            <a className='mt-3' target="_blank" rel="noreferrer" href={`http://maps.google.com/maps/place/${data?.region?.latitude}+,${data?.region?.longitude}`}>
                                 <strong>
                                     Latitude: {data?.region?.latitude}
                                     <br />

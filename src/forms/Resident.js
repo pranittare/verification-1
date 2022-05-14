@@ -2372,7 +2372,9 @@ const Resident = () => {
 
                                     border: [true, true, true, true],
                                     text: `Geo Tagging \n\n Latitude: ${alldata?.region?.latitude} \n Longitude: ${alldata?.region?.longitude} \n ${alldata?.locName}`,
-                                    link: `http://maps.google.com/maps?q=${alldata?.region?.latitude} +, + ${alldata?.region?.longitude}`,
+                                    // link: `http://maps.google.com/maps?q=${alldata?.region?.latitude} +, + ${alldata?.region?.longitude}`,
+                                    link: `http://maps.google.com/maps/place/${alldata?.region?.latitude}+${alldata?.region?.longitude}`,
+                                    
                                     color: 'blue',
                                     pageBreak: 'before'
                                 },
