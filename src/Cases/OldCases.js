@@ -373,10 +373,10 @@ const OldCases = (props) => {
                                     {item?.verificationDetails?.overallStatus}
                                 </td>
                                 <td>
-                                    {moment(item?.tat).format('L')}
+                                    {moment(item?.tat1).format('L')}
                                 </td>
                                 <td>
-                                    {moment(item?.tat).format('LT')}
+                                    {moment(item?.tat1).format('LT')}
                                 </td>
                                 <td>
                                     {item?.verificationDetails?.productSupervisor}
