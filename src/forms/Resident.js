@@ -6,7 +6,7 @@ import Tpc from './Tpc';
 import Geolocation from './Geolocation';
 import Collapse from '../components/Collapse';
 import { useParams, useLocation, Prompt, useHistory } from 'react-router-dom'
-import { getDatabase, ref, remove, update } from "firebase/database";
+import { getDatabase, ref, remove, update, onValue, get, child } from "firebase/database";
 import { addDoc, collection, getFirestore } from "firebase/firestore";
 import { getFormData } from '../utils/singleForm'
 import { connect } from 'react-redux';
@@ -172,6 +172,40 @@ const Resident = () => {
             setAlertMessage('Form Removed from RT and Submitted to Cloud')
             history.push('/ActiveCases')
         })
+    }
+    const handleAgentCount = () => {
+        if (outerDetails?.agenDetails?.id) {
+
+            let path = `agents/${outerDetails?.agenDetails?.id}`
+            const agentPath = ref(getDatabase());
+            // const agentPath = ref(db, path);
+            let count = 0
+            let month = new Date().getMonth()
+            get(child(agentPath, path)).then((snapshot) => {
+                const x = snapshot.val();
+                if (x) {
+                    if (x.casesSubmitted || x.casesSubmitted === 0) {
+                        count = x.casesSubmitted + 1
+                        if (x.currentMonth !== month) {
+                            update(agentPath, { casesSubmitted: 1, currentMonth: month })
+                        } else {
+                            update(agentPath, { casesSubmitted: count, currentMonth: month })
+                        }
+                    } else {
+                        if (x.currentMonth !== month) {
+                            update(agentPath, { casesSubmitted: 1, currentMonth: month })
+                        } else {
+                            update(agentPath, { casesSubmitted: count, currentMonth: month })
+                        }
+                    }
+                }
+                console.log('handleAgentCount', x)
+
+            })
+            // onValue(agentPath, (snapshot) => {
+            // })
+        }
+
     }
     const handleMail = () => {
         let email = applicantDetails.product.emailList
@@ -405,7 +439,7 @@ const Resident = () => {
             setMainouter(mainout)
         }
         viewImages()
-        console.log('formd', formd)
+        console.log('formd', formd, outer)
         setFormdata(formd)
         setRefresh(Math.random())
     }
@@ -421,7 +455,7 @@ const Resident = () => {
                         outer[key] = element
                     }
                     if (key === 'agenDetails') {
-                        outerDetails.agenDetails = element
+                        outer.agenDetails = element
                     }
                 }
                 for (const main in mainouter) {
@@ -2374,7 +2408,7 @@ const Resident = () => {
                                     text: `Geo Tagging \n\n Latitude: ${alldata?.region?.latitude} \n Longitude: ${alldata?.region?.longitude} \n ${alldata?.locName}`,
                                     // link: `http://maps.google.com/maps?q=${alldata?.region?.latitude} +, + ${alldata?.region?.longitude}`,
                                     link: `http://maps.google.com/maps/place/${alldata?.region?.latitude}+${alldata?.region?.longitude}`,
-                                    
+
                                     color: 'blue',
                                     pageBreak: 'before'
                                 },
@@ -2425,6 +2459,7 @@ const Resident = () => {
                 <ApplicantDetails data={applicantDetails} outerDetails={outerDetails} id={id} ref={ADref} />
             </Collapse>
             {id && <> <Collapse title='Verification Details'>
+                {/* <button onClick={()=> handleAgentCount()}>handleAgentCount</button> */}
                 <h4 className='my-2'>Verification Details</h4>
                 <form className='d-flex justify-content-around flex-wrap' >
                     <div className='formInputBoxSpacing'>

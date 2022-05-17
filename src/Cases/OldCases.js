@@ -367,7 +367,7 @@ const OldCases = (props) => {
                                     {item?.applicantDetails?.pincode}
                                 </td>
                                 <td>
-                                    {item?.applicantDetails?.visitedOfficeAddress ? item?.applicantDetails?.visitedOfficeAddress : item?.applicantDetails?.visitedresidentAddress}
+                                    {item?.applicantDetails?.visitedOfficeAddress ? item?.applicantDetails?.visitedOfficeAddress : item?.applicantDetails?.officeAddressProvided ? item?.applicantDetails?.officeAddressProvided : item?.applicantDetails?.visitedresidentAddress ? item?.applicantDetails?.visitedresidentAddress : item?.applicantDetails?.residenceAddressProvided}
                                 </td>
                                 <td>
                                     {item?.verificationDetails?.overallStatus}
