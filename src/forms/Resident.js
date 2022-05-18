@@ -322,7 +322,7 @@ const Resident = () => {
                 canvas.height = img.height;
                 var ctx = canvas.getContext("2d");
                 ctx.imageSmoothingEnabled = true;
-                ctx.scale(0.5, 0.5)
+                ctx.scale(0.39, 0.39)
                 ctx.drawImage(img, 0, 0);
                 var dataURL = canvas.toDataURL("image/png");
                 resolve(dataURL);
