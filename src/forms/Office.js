@@ -166,7 +166,7 @@ const Office = () => {
         
         Regards, 
         Team KreDT.`
-        const subject = `${applicantDetails.appid} - ${applicantDetails.customerName} - Residence`;
+        const subject = `${applicantDetails.appid} - ${applicantDetails.customerName} - Office`;
         document.location.href = `mailto:${allemails}?subject=`
             + encodeURIComponent(subject)
             + "&body=" + encodeURIComponent(yourMessage);

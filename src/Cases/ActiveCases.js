@@ -10,7 +10,7 @@ import axios from 'axios';
 
 
 const ActiveCases = (props) => {
-    const { agents } = props;
+    const { agents, vendors } = props;
     const formatedDate = new Date().toDateString()
     let history = useHistory();
     const db = getDatabase();
@@ -22,6 +22,11 @@ const ActiveCases = (props) => {
     const [agentsDropdown, setAgentsDropdown] = useState([]);
     const [selectedAgent, setSelectedAgent] = useState();
     const [currentIndex, setCurrentIndex] = useState();
+    const [selectedBank, setSelectedBank] = useState(false);    
+    const [dropdownBankNameOpen, setDropdownBankNameOpen] = useState(false);
+    const toggleBankName = () => {
+        setDropdownBankNameOpen(!dropdownBankNameOpen);
+    }
     const initialdata = {
         appid: "",
         initiationDate: "",
@@ -208,21 +213,38 @@ const ActiveCases = (props) => {
     }
     const getAgents = (pincode, index) => {
         let agentsList1 = []
+        // for (const key in agents) {
+        //     if (Object.hasOwnProperty.call(agents, key)) {
+        //         const element = agents[key];
+        //         if (element.pincode === pincode) {
+        //             agentsList1.push(element)
+        //         } else {
+        //             if (element.secondary) {
+        //                 for (let index = 0; index < element.secondary.length; index++) {
+        //                     const item = element.secondary[index];
+        //                     if (item?.pincodes == pincode) {
+        //                         agentsList1.push(element)
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
         for (const key in agents) {
             if (Object.hasOwnProperty.call(agents, key)) {
                 const element = agents[key];
-                if (element.pincode === pincode) {
-                    agentsList1.push(element)
-                } else {
-                    if (element.secondary) {
-                        for (let index = 0; index < element.secondary.length; index++) {
-                            const item = element.secondary[index];
-                            if (item?.pincodes == pincode) {
-                                agentsList1.push(element)
-                            }
-                        }
+                let pincode1 = []
+                pincode1.push(JSON.stringify(element.pincode))
+                if (element.secondary && element.secondary.length > 0) {
+                    for (let index = 0; index < element.secondary.length; index++) {
+                        const element1 = element.secondary[index];
+                        pincode1.push(element1.pincodes)
                     }
                 }
+                if (pincode1.includes(pincode)) {
+                    agentsList1.push(element)
+                }
+
             }
         }
         setCurrentIndex(index)
@@ -241,6 +263,13 @@ const ActiveCases = (props) => {
         return agentname
     }
     const filteredSearch = (item) => {
+        if (selectedBank) {
+            if (item?.office?.applicantDetails) {
+                return item.office.applicantDetails?.bankNBFCname?.clientName === selectedBank
+            } else if (item?.resident?.applicantDetails) {
+                return item.resident.applicantDetails?.bankNBFCname?.clientName === selectedBank
+            }
+        }
         if (filterSearch.appid) {
             if (item?.office?.applicantDetails) {
                 return item.office.applicantDetails.appid?.toLowerCase().includes(filterSearch.appid)
@@ -317,10 +346,30 @@ const ActiveCases = (props) => {
     return (
         <div>
             {alertMessage && <Alert message={alertMessage} setMessage={(data) => setAlertMessage(data)} />}
-            <div className='d-flex justify-content-around mb-2 mt-2'>
+            <div className='d-flex justify-content-center my-2'>
 
                 <h4>Active Cases</h4>
-                <button onClick={getExcel} className='btn btn-primary'>Get Excel</button>
+            </div>
+            <div>
+            <div className='mb-1'>
+                    <Dropdown toggle={toggleBankName} isOpen={dropdownBankNameOpen}>
+                        <DropdownToggle caret>
+                            {selectedBank ? selectedBank : 'None'}
+                        </DropdownToggle>
+                        <DropdownMenu
+                        >
+                            <DropdownItem onClick={() => { setSelectedBank(false) }}>None</DropdownItem>
+                            {vendors?.map(item => {
+                                return <DropdownItem key={item.clientName} onClick={() => { setSelectedBank(item.clientName) }}
+                                    value={item.clientName}
+                                    name={item.clientName}>
+                                    {item.clientName}
+                                </DropdownItem>
+                            })}
+
+                        </DropdownMenu>
+                    </Dropdown>
+                </div>
             </div>
             <div className='d-flex sticky-top bg-white justify-content-end'>
                 <p className='text-primary me-1 ms-1'>Office</p>
@@ -333,9 +382,13 @@ const ActiveCases = (props) => {
                 filename={`Active-${formatedDate}`}
                 sheet="tablexls"
                 buttonText="Download as XLS" />
-            <div className='d-flex justify-content-around'>
+            <div className='d-flex justify-content-between'>
                 <Input type="text" onChange={handleFilter} name="pincode" placeholder={'Pincode'} />
-                <Input type="text" onChange={allSearch} placeholder={'Search all'} style={{ marginLeft: 50 }} />
+                <div>
+                <button onClick={getExcel} className='btn btn-primary mx-2' style={{width: 'max-content'}}>Get Excel</button>
+
+                </div>
+                <Input type="text" onChange={allSearch} placeholder={'Search all'} />
             </div>
             <form className='d-flex justify-content-between flex-wrap' id='form'>
                 <table className="table table-striped table-bordered">
@@ -613,7 +666,8 @@ const mapStateToProps = (state) => {
     return {
         forms: state.forms,
         branch: state.branch,
-        agents: state.agents
+        agents: state.agents,
+        vendors: state.vendors
     }
 }
 export default connect(mapStateToProps)(ActiveCases)

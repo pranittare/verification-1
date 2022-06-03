@@ -178,7 +178,7 @@ const Geolocation = (props) => {
                 <div>
                     {region.longitude &&
                         <div>
-                            <div className='d-flex justify-content-center'>
+                            <div className='d-flex'>
                                 <img src={`https://maps.googleapis.com/maps/api/staticmap?size=300x300&maptype=hybrid&markers=${region?.latitude},${region?.longitude}&key=AIzaSyBPoGWXtGubXKV44J4D4ZsBtvY-lIBjEMU&zoom=16`}
                                     alt="" id="imagemap" />
                                 {/* <a className='mt-3' target="_blank" rel="noreferrer" href={`http://maps.google.com/maps?q=${region?.latitude} +, + ${region?.longitude}"`}> */}
@@ -201,7 +201,7 @@ const Geolocation = (props) => {
                 <button className='btn btn-warning' onClick={() => setUploadMap(!uploadMap)}>Hide/Unhide</button>
                 {!uploadMap &&
                     <div>
-                        <div className='d-flex justify-content-center'>
+                        <div className='d-flex'>
                             <img src={`https://maps.googleapis.com/maps/api/staticmap?size=300x300&maptype=hybrid&markers=${data?.region?.latitude},${data?.region?.longitude}&key=AIzaSyBPoGWXtGubXKV44J4D4ZsBtvY-lIBjEMU&zoom=16`}
                                 alt="" id="imagemap" />
                             {/* <a className='mt-3' target="_blank" rel="noreferrer" href={`http://maps.google.com/maps?q=${data?.region?.latitude} +, + ${data?.region?.longitude}"`}> */}
