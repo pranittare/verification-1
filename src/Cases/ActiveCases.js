@@ -350,8 +350,7 @@ const ActiveCases = (props) => {
 
                 <h4>Active Cases</h4>
             </div>
-            <div>
-            <div className='mb-1'>
+            <div className='d-flex sticky-top bg-white justify-content-between'>
                     <Dropdown toggle={toggleBankName} isOpen={dropdownBankNameOpen}>
                         <DropdownToggle caret>
                             {selectedBank ? selectedBank : 'None'}
@@ -369,11 +368,11 @@ const ActiveCases = (props) => {
 
                         </DropdownMenu>
                     </Dropdown>
-                </div>
-            </div>
-            <div className='d-flex sticky-top bg-white justify-content-end'>
+                    <div className='d-flex'>
                 <p className='text-primary me-1 ms-1'>Office</p>
                 <p className='text-success'>Resident</p>
+
+                    </div>
             </div>
             <ReactHTMLTableToExcel
                 id="test-table-xls-button"
@@ -384,11 +383,11 @@ const ActiveCases = (props) => {
                 buttonText="Download as XLS" />
             <div className='d-flex justify-content-between'>
                 <Input type="text" onChange={handleFilter} name="pincode" placeholder={'Pincode'} />
+                <Input type="text" onChange={allSearch} placeholder={'Search all'} />
                 <div>
                 <button onClick={getExcel} className='btn btn-primary mx-2' style={{width: 'max-content'}}>Get Excel</button>
 
                 </div>
-                <Input type="text" onChange={allSearch} placeholder={'Search all'} />
             </div>
             <form className='d-flex justify-content-between flex-wrap' id='form'>
                 <table className="table table-striped table-bordered">

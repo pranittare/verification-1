@@ -380,6 +380,7 @@ const Resident = () => {
     }
     // Form data by id
     const formFill = (formsaved) => {
+        // console.log({formsaved})
         let formd = formdata
         let outer = outerDetails
         let mainout = mainouter
@@ -525,92 +526,183 @@ const Resident = () => {
     }
 
     const overallStatusCal = (allData) => {
-        let orverallstatus = ''
-
-        if (allData?.mismatchAddress == 'yes') {
-            orverallstatus = 'Not Recommended'
-            console.log('logic', orverallstatus);
-        } else if (allData?.addressConfirmed == 'no') {
-            orverallstatus = 'Not Recommended'
-            console.log('logic', orverallstatus);
-        } else if (allData?.residenceStatus == 'Multi Tenants') {
-            orverallstatus = 'Refer'
-            console.log('logic', orverallstatus);
-        } else if (allData?.residenceStatus == 'Paying Guest') {
-            orverallstatus = 'Not Recommended'
-            console.log('logic', orverallstatus);
-        } else if (allData?.residenceStatus == 'Friend Owned') {
-            orverallstatus = 'Refer'
-            console.log('logic', orverallstatus);
-        } else if (allData?.residenceStatus == 'Lodging') {
-            orverallstatus = 'Not Recommended'
-            console.log('logic', orverallstatus);
-        } else if (allData?.constructionOfResidence == 'Temporary') {
-            orverallstatus = 'Not Recommended'
-            console.log('logic', orverallstatus);
-        } else if (allData?.picturePoliticalLeader == 'yes') {
-            orverallstatus = 'Not Recommended'
-            console.log('logic', orverallstatus);
-        } else if (allData?.marketReputation == 'negative') {
-            orverallstatus = 'Not Recommended'
-            console.log('logic', orverallstatus);
-        } else if (allData?.localityOfAddress == 'Slum') {
-            orverallstatus = 'Not Recommended'
-            console.log('logic', orverallstatus);
-        } else if (allData?.typeOfHouse == 'Standing Chawl') {
-            orverallstatus = 'Refer'
-            console.log('logic', orverallstatus);
-        } else if (allData?.typeOfHouse == 'Sitting Chawl') {
-            orverallstatus = 'Refer'
-            console.log('logic', orverallstatus);
-        } else if (allData?.marketReputation == 'negative') {
-            orverallstatus = 'Not Recommended'
-            console.log('logic', orverallstatus);
-        } else if (allData?.easeofLocating == 'Not Traceable') {
-            orverallstatus = 'Not Recommended'
-            console.log('logic', orverallstatus);
-        } else if (allData?.lessThanYrAtCurrentAddress == 'yes') {
-            orverallstatus = 'Refer'
-            console.log('logic', orverallstatus);
-        } else if (allData.negativeArea == 'Slum Area') {
-            orverallstatus = 'Not Recommended'
-            console.log('logic', orverallstatus);
-        } else if (allData.negativeArea == 'Community Dominated / Slum Area') {
-            orverallstatus = 'Not Recommended'
-            console.log('logic', orverallstatus);
-        } else if (allData.TPCStatus1 == 'negative' || allData.TPCStatus2 == 'negative') {
-            orverallstatus = 'Not Recommended'
-            console.log('logic', orverallstatus);
+        if (applicantDetails.bankNBFCname.clientName === 'Indiabulls Housing Finance Ltd') {
+            let orverallstatus = ''
+    
+            if (allData?.mismatchAddress == 'yes') {
+                orverallstatus = 'Not Recommended'
+                console.log('logic', orverallstatus);
+            } else if (allData?.addressConfirmed == 'no') {
+                orverallstatus = 'CNV'
+                console.log('logic', orverallstatus);
+            } else if (allData?.residenceStatus == 'Multi Tenants') {
+                orverallstatus = 'Refer'
+                console.log('logic', orverallstatus);
+            } else if (allData?.residenceStatus == 'Paying Guest') {
+                orverallstatus = 'Not Recommended'
+                console.log('logic', orverallstatus);
+            } else if (allData?.residenceStatus == 'Friend Owned') {
+                orverallstatus = 'Not Recommended'
+                console.log('logic', orverallstatus);
+            } else if (allData?.residenceStatus == 'Lodging') {
+                orverallstatus = 'Not Recommended'
+                console.log('logic', orverallstatus);
+            } else if (allData?.constructionOfResidence == 'Temporary') {
+                orverallstatus = 'Not Recommended'
+                console.log('logic', orverallstatus);
+            } else if (allData?.picturePoliticalLeader == 'yes') {
+                orverallstatus = 'Not Recommended'
+                console.log('logic', orverallstatus);
+            } else if (allData?.marketReputation == 'negative') {
+                orverallstatus = 'Not Recommended'
+                console.log('logic', orverallstatus);
+            } else if (allData?.localityOfAddress == 'Slum') {
+                orverallstatus = 'Not Recommended'
+                console.log('logic', orverallstatus);
+            } else if (allData?.typeOfHouse == 'Standing Chawl') {
+                orverallstatus = 'Refer'
+                console.log('logic', orverallstatus);
+            } else if (allData?.typeOfHouse == 'Sitting Chawl') {
+                orverallstatus = 'Refer'
+                console.log('logic', orverallstatus);
+            } else if (allData?.marketReputation == 'negative') {
+                orverallstatus = 'Not Recommended'
+                console.log('logic', orverallstatus);
+            } else if (allData?.easeofLocating == 'Not Traceable') {
+                orverallstatus = 'Not Recommended'
+                console.log('logic', orverallstatus);
+            } else if (allData?.lessThanYrAtCurrentAddress == 'yes') {
+                orverallstatus = 'Refer'
+                console.log('logic', orverallstatus);
+            } else if (allData.negativeArea == 'Slum Area') {
+                orverallstatus = 'Not Recommended'
+                console.log('logic', orverallstatus);
+            } else if (allData.negativeArea == 'Community Dominated / Slum Area') {
+                orverallstatus = 'Not Recommended'
+                console.log('logic', orverallstatus);
+            } else if (allData.TPCStatus1 == 'negative' || allData.TPCStatus2 == 'negative') {
+                orverallstatus = 'Refer'
+                console.log('logic', orverallstatus);
+            } else {
+                if (allData?.personMet == 'no') {
+                    orverallstatus = 'Refer'
+                } else if (allData?.easeofLocating == 'Difficult to Trace') {
+                    orverallstatus = 'Refer'
+                    console.log('logic', orverallstatus);
+    
+                } else if (allData?.negativeArea == 'Community Dominated Area') {
+                    orverallstatus = 'Refer'
+                    console.log('logic', orverallstatus);
+    
+                } else if (allData?.negativeArea == 'Sitting Chawl/Standing Chawl') {
+                    orverallstatus = 'Refer'
+                    console.log('logic', orverallstatus);
+    
+                } else if (allData?.negativeArea == 'High Risk Area') {
+                    orverallstatus = 'Refer'
+                    console.log('logic', orverallstatus);
+    
+                } else if (allData?.negativeArea == 'Community Dominated/Sitting Chawl/Standing Chawl Area') {
+                    orverallstatus = 'Refer'
+                    console.log('logic', orverallstatus);
+    
+                }
+                else {
+                    orverallstatus = 'Recommended'
+    
+                }
+            }
+            return orverallstatus
+            
         } else {
-            if (allData?.personMet == 'no') {
-                orverallstatus = 'Refer'
-            } else if (allData?.easeofLocating == 'Difficult to Trace') {
+            let orverallstatus = ''
+    
+            if (allData?.mismatchAddress == 'yes') {
+                orverallstatus = 'Not Recommended'
+                console.log('logic', orverallstatus);
+            } else if (allData?.addressConfirmed == 'no') {
+                orverallstatus = 'Not Recommended'
+                console.log('logic', orverallstatus);
+            } else if (allData?.residenceStatus == 'Multi Tenants') {
                 orverallstatus = 'Refer'
                 console.log('logic', orverallstatus);
-
-            } else if (allData?.negativeArea == 'Community Dominated Area') {
+            } else if (allData?.residenceStatus == 'Paying Guest') {
+                orverallstatus = 'Not Recommended'
+                console.log('logic', orverallstatus);
+            } else if (allData?.residenceStatus == 'Friend Owned') {
                 orverallstatus = 'Refer'
                 console.log('logic', orverallstatus);
-
-            } else if (allData?.negativeArea == 'Sitting Chawl/Standing Chawl') {
+            } else if (allData?.residenceStatus == 'Lodging') {
+                orverallstatus = 'Not Recommended'
+                console.log('logic', orverallstatus);
+            } else if (allData?.constructionOfResidence == 'Temporary') {
+                orverallstatus = 'Not Recommended'
+                console.log('logic', orverallstatus);
+            } else if (allData?.picturePoliticalLeader == 'yes') {
+                orverallstatus = 'Not Recommended'
+                console.log('logic', orverallstatus);
+            } else if (allData?.marketReputation == 'negative') {
+                orverallstatus = 'Not Recommended'
+                console.log('logic', orverallstatus);
+            } else if (allData?.localityOfAddress == 'Slum') {
+                orverallstatus = 'Not Recommended'
+                console.log('logic', orverallstatus);
+            } else if (allData?.typeOfHouse == 'Standing Chawl') {
                 orverallstatus = 'Refer'
                 console.log('logic', orverallstatus);
-
-            } else if (allData?.negativeArea == 'High Risk Area') {
+            } else if (allData?.typeOfHouse == 'Sitting Chawl') {
                 orverallstatus = 'Refer'
                 console.log('logic', orverallstatus);
-
-            } else if (allData?.negativeArea == 'Community Dominated/Sitting Chawl/Standing Chawl Area') {
+            } else if (allData?.marketReputation == 'negative') {
+                orverallstatus = 'Not Recommended'
+                console.log('logic', orverallstatus);
+            } else if (allData?.easeofLocating == 'Not Traceable') {
+                orverallstatus = 'Not Recommended'
+                console.log('logic', orverallstatus);
+            } else if (allData?.lessThanYrAtCurrentAddress == 'yes') {
                 orverallstatus = 'Refer'
                 console.log('logic', orverallstatus);
-
+            } else if (allData.negativeArea == 'Slum Area') {
+                orverallstatus = 'Not Recommended'
+                console.log('logic', orverallstatus);
+            } else if (allData.negativeArea == 'Community Dominated / Slum Area') {
+                orverallstatus = 'Not Recommended'
+                console.log('logic', orverallstatus);
+            } else if (allData.TPCStatus1 == 'negative' || allData.TPCStatus2 == 'negative') {
+                orverallstatus = 'Not Recommended'
+                console.log('logic', orverallstatus);
+            } else {
+                if (allData?.personMet == 'no') {
+                    orverallstatus = 'Refer'
+                } else if (allData?.easeofLocating == 'Difficult to Trace') {
+                    orverallstatus = 'Refer'
+                    console.log('logic', orverallstatus);
+    
+                } else if (allData?.negativeArea == 'Community Dominated Area') {
+                    orverallstatus = 'Refer'
+                    console.log('logic', orverallstatus);
+    
+                } else if (allData?.negativeArea == 'Sitting Chawl/Standing Chawl') {
+                    orverallstatus = 'Refer'
+                    console.log('logic', orverallstatus);
+    
+                } else if (allData?.negativeArea == 'High Risk Area') {
+                    orverallstatus = 'Refer'
+                    console.log('logic', orverallstatus);
+    
+                } else if (allData?.negativeArea == 'Community Dominated/Sitting Chawl/Standing Chawl Area') {
+                    orverallstatus = 'Refer'
+                    console.log('logic', orverallstatus);
+    
+                }
+                else {
+                    orverallstatus = 'Recommended'
+    
+                }
             }
-            else {
-                orverallstatus = 'Recommended'
+            return orverallstatus
 
-            }
         }
-        return orverallstatus
     }
     let personMet = [
         { name: 'personMet', value: '', label: 'None' },

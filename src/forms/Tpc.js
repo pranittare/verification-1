@@ -57,6 +57,7 @@ const Tpc = forwardRef(({ data, form }, ref) => {
         { name: 'overallStatus', value: 'Recomended', label: 'Recomended' },
         { name: 'overallStatus', value: 'Refer', label: 'Refer' },
         { name: 'overallStatus', value: 'Not Recomended', label: 'Not Recomended' },
+        { name: 'overallStatus', value: 'CNV', label: 'CNV' },
     ]
     const remarksfnc = (data) => {
         if (form === 'office') {

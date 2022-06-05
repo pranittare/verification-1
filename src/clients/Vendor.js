@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import AddVendor from './AddVendor';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import { Modal, ModalHeader, ModalBody, ModalFooter, Input, Button, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
-import DropDownComp from '../components/DropDownComp'
+import DropDownComp from '../components/DropDownComp';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 const Vendor = ({ vendors }) => {
     console.log('vendors', vendors)
 
@@ -13,8 +15,6 @@ const Vendor = ({ vendors }) => {
         location: '',
         address: '',
         gstNo: '',
-        agreementDate: '',
-        renewalDate: '',
         localCost: '',
         ICGLCost: '',
         OGLCost: '',
@@ -22,7 +22,10 @@ const Vendor = ({ vendors }) => {
         contactNo: '',
         productList: [],
         newEmail: '',
-        newProduct: ''
+        newProduct: '',
+        agreementDate: new Date(),
+        renewalDate: new Date(),
+
     });
 
 
@@ -85,15 +88,14 @@ const Vendor = ({ vendors }) => {
     const toggleAddEmail = () => {
         setAddEmail(!addEmail)
     }
-
     return (
         <div>
-            <AddVendor />
+            <AddVendor setClientInfo={(data)=> setClientInfo(data)}/>
 
             <div>
                 <Modal isOpen={clientInfo}>
                     <ModalHeader>
-                        {clientInfo?.clientName}
+                        {clientInfo?.clientName ? clientInfo?.clientName : "Add Client"}
                     </ModalHeader>
                     <ModalBody>
                         <div className='row'>
@@ -126,14 +128,19 @@ const Vendor = ({ vendors }) => {
 
                                 <div>
                                     <label>Agreement Date</label>
-                                    <Input name='agreementDate' value={moment(clientInfo?.agreementDate?.seconds * 1000).format("MMM Do YYYY")} onChange={(e) => onHandleChange(e.target)} />
+                                    <DatePicker className='form-control' placeholderText='Start Date' selected={clientInfo?.agreementDate?.seconds * 1000 ? clientInfo?.agreementDate?.seconds * 1000 : new Date()} 
+                                    onChange={(date) => setClientInfo(...clientInfo, {agreementDate: date})}
+                                    />
+                                    {/* <Input name='agreementDate' value={moment(clientInfo?.agreementDate?.seconds * 1000).format("MMM Do YYYY")} onChange={(e) => onHandleChange(e.target)} /> */}
                                 </div>
                             </div>
 
                             <div className='col-6'>
                                 <div>
                                     <label>Renewal Date</label>
-                                    <Input name='renewalDate' value={moment(clientInfo?.renewalDate?.seconds * 1000).format("MMM Do YYYY")} onChange={(e) => onHandleChange(e.target)} />
+                                    <DatePicker className='form-control' placeholderText='Start Date' selected={clientInfo?.renewalDate?.seconds * 1000 ? clientInfo?.renewalDate?.seconds * 1000 : new Date()} 
+                                    onChange={(date) => setClientInfo(...clientInfo, {renewalDate: date})} />
+                                    {/* <Input name='renewalDate' value={moment(clientInfo?.renewalDate?.seconds * 1000).format("MMM Do YYYY")} onChange={(e) => onHandleChange(e.target)} /> */}
                                 </div>
 
                                 <div>
