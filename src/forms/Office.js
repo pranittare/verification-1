@@ -457,41 +457,41 @@ const Office = () => {
         if (applicantDetails.bankNBFCname.clientName === 'Indiabulls Housing Finance Ltd') {
             let orverallstatus = ''
             if (allData?.mismatchAddress == 'yes') {
-                orverallstatus = 'Not Recommended'
+                orverallstatus = 'Negative'
                 console.log('logic', orverallstatus);
             } else if (allData?.constructionOfOffice == 'Temporary') {
-                orverallstatus = 'Not Recommended'
+                orverallstatus = 'Negative'
                 console.log('logic', orverallstatus);
             } else if (allData?.picturePoliticalLeader == 'yes') {
-                orverallstatus = 'Not Recommended'
+                orverallstatus = 'Negative'
                 console.log('logic', orverallstatus);
     
             } else if (allData?.marketReputation == 'negative') {
-                orverallstatus = 'Not Recommended'
+                orverallstatus = 'Negative'
                 console.log('logic', orverallstatus);
             } else if (allData?.addressConfirmed == 'no') {
                 orverallstatus = 'CNV'
                 console.log('logic', orverallstatus);
             } else if (allData?.localityofOffice == 'Slum') {
-                orverallstatus = 'Not Recommended'
+                orverallstatus = 'Negative'
                 console.log('logic', orverallstatus);
             } else if (allData?.marketReputation == 'negative') {
-                orverallstatus = 'Not Recommended'
+                orverallstatus = 'Negative'
                 console.log('logic', orverallstatus);
             } else if (allData?.easeofLocating == 'Not Traceable') {
-                orverallstatus = 'Not Recommended'
+                orverallstatus = 'Negative'
                 console.log('logic', orverallstatus);
             } else if (allData.negativeArea == 'Slum Area') {
-                orverallstatus = 'Not Recommended'
+                orverallstatus = 'Negative'
                 console.log('logic', orverallstatus);
             } else if (allData.negativeArea == 'Community Dominated / Slum Area') {
-                orverallstatus = 'Not Recommended'
+                orverallstatus = 'Negative'
                 console.log('logic', orverallstatus);
             } else if (allData.TPCStatus1 == 'negative' || allData.TPCStatus2 == 'negative') {
                 orverallstatus = 'Refer'
                 console.log('logic', orverallstatus);
             } else if (allData.businessActivityLevel == 'No business activity') {
-                orverallstatus = 'Not Recommended'
+                orverallstatus = 'Negative'
                 console.log('logic', orverallstatus);
             } else {
                 if (allData?.verificationObserver == 'Resi cum Office') {
@@ -532,7 +532,7 @@ const Office = () => {
                     console.log('logic', orverallstatus);
                 }
                 else {
-                    orverallstatus = 'Recommended'
+                    orverallstatus = 'Positive'
                 }
             }
             console.log('orverallstatus', orverallstatus)

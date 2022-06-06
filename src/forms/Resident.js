@@ -530,7 +530,7 @@ const Resident = () => {
             let orverallstatus = ''
     
             if (allData?.mismatchAddress == 'yes') {
-                orverallstatus = 'Not Recommended'
+                orverallstatus = 'Negative'
                 console.log('logic', orverallstatus);
             } else if (allData?.addressConfirmed == 'no') {
                 orverallstatus = 'CNV'
@@ -539,25 +539,25 @@ const Resident = () => {
                 orverallstatus = 'Refer'
                 console.log('logic', orverallstatus);
             } else if (allData?.residenceStatus == 'Paying Guest') {
-                orverallstatus = 'Not Recommended'
+                orverallstatus = 'Negative'
                 console.log('logic', orverallstatus);
             } else if (allData?.residenceStatus == 'Friend Owned') {
-                orverallstatus = 'Not Recommended'
+                orverallstatus = 'Negative'
                 console.log('logic', orverallstatus);
             } else if (allData?.residenceStatus == 'Lodging') {
-                orverallstatus = 'Not Recommended'
+                orverallstatus = 'Negative'
                 console.log('logic', orverallstatus);
             } else if (allData?.constructionOfResidence == 'Temporary') {
-                orverallstatus = 'Not Recommended'
+                orverallstatus = 'Negative'
                 console.log('logic', orverallstatus);
             } else if (allData?.picturePoliticalLeader == 'yes') {
-                orverallstatus = 'Not Recommended'
+                orverallstatus = 'Negative'
                 console.log('logic', orverallstatus);
             } else if (allData?.marketReputation == 'negative') {
-                orverallstatus = 'Not Recommended'
+                orverallstatus = 'Negative'
                 console.log('logic', orverallstatus);
             } else if (allData?.localityOfAddress == 'Slum') {
-                orverallstatus = 'Not Recommended'
+                orverallstatus = 'Negative'
                 console.log('logic', orverallstatus);
             } else if (allData?.typeOfHouse == 'Standing Chawl') {
                 orverallstatus = 'Refer'
@@ -566,19 +566,19 @@ const Resident = () => {
                 orverallstatus = 'Refer'
                 console.log('logic', orverallstatus);
             } else if (allData?.marketReputation == 'negative') {
-                orverallstatus = 'Not Recommended'
+                orverallstatus = 'Negative'
                 console.log('logic', orverallstatus);
             } else if (allData?.easeofLocating == 'Not Traceable') {
-                orverallstatus = 'Not Recommended'
+                orverallstatus = 'Negative'
                 console.log('logic', orverallstatus);
             } else if (allData?.lessThanYrAtCurrentAddress == 'yes') {
                 orverallstatus = 'Refer'
                 console.log('logic', orverallstatus);
             } else if (allData.negativeArea == 'Slum Area') {
-                orverallstatus = 'Not Recommended'
+                orverallstatus = 'Negative'
                 console.log('logic', orverallstatus);
             } else if (allData.negativeArea == 'Community Dominated / Slum Area') {
-                orverallstatus = 'Not Recommended'
+                orverallstatus = 'Negative'
                 console.log('logic', orverallstatus);
             } else if (allData.TPCStatus1 == 'negative' || allData.TPCStatus2 == 'negative') {
                 orverallstatus = 'Refer'
@@ -608,7 +608,7 @@ const Resident = () => {
     
                 }
                 else {
-                    orverallstatus = 'Recommended'
+                    orverallstatus = 'Positive'
     
                 }
             }
