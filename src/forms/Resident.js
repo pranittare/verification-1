@@ -791,11 +791,11 @@ const Resident = () => {
     }
     const tpcFunction = () => {
         if (refetch) {
-            return <Tpc data={formdata} ref={TPCRef} form={'resident'} />
+            return <Tpc data={formdata} ref={TPCRef} form={'resident'} applicantDetails={applicantDetails} />
 
         }
 
-        return <Tpc data={verificationObserver ? verificationObserver : {}} ref={TPCRef} form={'resident'} />
+        return <Tpc data={verificationObserver ? verificationObserver : {}} ref={TPCRef} form={'resident'} applicantDetails={applicantDetails} />
     }
     // PDF MAKE CONTENT
     const recheckOverride = () => {

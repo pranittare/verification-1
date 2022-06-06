@@ -728,15 +728,15 @@ const Office = () => {
     }
     const tpcFunction = () => {
         if (refetch) {
-            return <Tpc data={formdata} ref={TPCRef} form={'office'} />
+            return <Tpc data={formdata} ref={TPCRef} form={'office'} applicantDetails={applicantDetails}/>
 
         }
 
-        return <Tpc data={verificationObserver ? verificationObserver : {}} ref={TPCRef} form={'office'} />
+        return <Tpc data={verificationObserver ? verificationObserver : {}} ref={TPCRef} form={'office'} applicantDetails={applicantDetails}/>
     }
-    useEffect(() => {
-        console.log('applicantDetails', applicantDetails)
-    }, [applicantDetails])
+    // useEffect(() => {
+    //     console.log('applicantDetails', applicantDetails)
+    // }, [applicantDetails])
     // PDF MAKE CONTENT
 
     const pdffnc = () => {
