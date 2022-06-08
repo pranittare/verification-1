@@ -454,7 +454,7 @@ const Office = () => {
     }
 
     const overallStatusCal = (allData) => {
-        if (applicantDetails.bankNBFCname.clientName === 'Indiabulls Housing Finance Ltd') {
+        if (applicantDetails.bankNBFCname.clientName === 'INDIABULLS') {
             let orverallstatus = ''
             if (allData?.mismatchAddress == 'yes') {
                 orverallstatus = 'Negative'

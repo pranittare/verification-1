@@ -526,19 +526,13 @@ const Resident = () => {
     }
 
     const overallStatusCal = (allData) => {
-        if (applicantDetails.bankNBFCname.clientName === 'Indiabulls Housing Finance Ltd') {
+        if (applicantDetails.bankNBFCname.clientName === 'INDIABULLS') {
             let orverallstatus = ''
     
             if (allData?.mismatchAddress == 'yes') {
                 orverallstatus = 'Negative'
                 console.log('logic', orverallstatus);
-            } else if (allData?.addressConfirmed == 'no') {
-                orverallstatus = 'CNV'
-                console.log('logic', orverallstatus);
-            } else if (allData?.residenceStatus == 'Multi Tenants') {
-                orverallstatus = 'Refer'
-                console.log('logic', orverallstatus);
-            } else if (allData?.residenceStatus == 'Paying Guest') {
+            }  else if (allData?.residenceStatus == 'Paying Guest') {
                 orverallstatus = 'Negative'
                 console.log('logic', orverallstatus);
             } else if (allData?.residenceStatus == 'Friend Owned') {
@@ -559,20 +553,11 @@ const Resident = () => {
             } else if (allData?.localityOfAddress == 'Slum') {
                 orverallstatus = 'Negative'
                 console.log('logic', orverallstatus);
-            } else if (allData?.typeOfHouse == 'Standing Chawl') {
-                orverallstatus = 'Refer'
-                console.log('logic', orverallstatus);
-            } else if (allData?.typeOfHouse == 'Sitting Chawl') {
-                orverallstatus = 'Refer'
-                console.log('logic', orverallstatus);
             } else if (allData?.marketReputation == 'negative') {
                 orverallstatus = 'Negative'
                 console.log('logic', orverallstatus);
             } else if (allData?.easeofLocating == 'Not Traceable') {
                 orverallstatus = 'Negative'
-                console.log('logic', orverallstatus);
-            } else if (allData?.lessThanYrAtCurrentAddress == 'yes') {
-                orverallstatus = 'Refer'
                 console.log('logic', orverallstatus);
             } else if (allData.negativeArea == 'Slum Area') {
                 orverallstatus = 'Negative'
@@ -580,7 +565,22 @@ const Resident = () => {
             } else if (allData.negativeArea == 'Community Dominated / Slum Area') {
                 orverallstatus = 'Negative'
                 console.log('logic', orverallstatus);
-            } else if (allData.TPCStatus1 == 'negative' || allData.TPCStatus2 == 'negative') {
+            } else if (allData?.typeOfHouse == 'Standing Chawl') {
+                orverallstatus = 'Refer'
+                console.log('logic', orverallstatus);
+            } else if (allData?.typeOfHouse == 'Sitting Chawl') {
+                orverallstatus = 'Refer'
+                console.log('logic', orverallstatus);
+            } else if (allData?.lessThanYrAtCurrentAddress == 'yes') {
+                orverallstatus = 'Refer'
+                console.log('logic', orverallstatus);
+            } else if (allData?.addressConfirmed == 'no') {
+                orverallstatus = 'CNV'
+                console.log('logic', orverallstatus);
+            } else if (allData?.residenceStatus == 'Multi Tenants') {
+                orverallstatus = 'Refer'
+                console.log('logic', orverallstatus);
+            }  else if (allData.TPCStatus1 == 'negative' || allData.TPCStatus2 == 'negative') {
                 orverallstatus = 'Refer'
                 console.log('logic', orverallstatus);
             } else {
@@ -628,11 +628,11 @@ const Resident = () => {
                 console.log('logic', orverallstatus);
             } else if (allData?.residenceStatus == 'Paying Guest') {
                 orverallstatus = 'Not Recommended'
-                console.log('logic', orverallstatus);
             } else if (allData?.residenceStatus == 'Friend Owned') {
                 orverallstatus = 'Refer'
                 console.log('logic', orverallstatus);
             } else if (allData?.residenceStatus == 'Lodging') {
+                console.log('logic', orverallstatus);
                 orverallstatus = 'Not Recommended'
                 console.log('logic', orverallstatus);
             } else if (allData?.constructionOfResidence == 'Temporary') {

@@ -54,9 +54,9 @@ const Tpc = forwardRef(({ data, form, applicantDetails }, ref) => {
 
     let overallStatus = [
         { name: 'overallStatus', value: '', label: 'None' },
-        { name: 'overallStatus', value: `${applicantDetails.bankNBFCname.clientName === 'Indiabulls Housing Finance Ltd' ?"Positive": "Recomended" }`, label: `${applicantDetails.bankNBFCname.clientName === 'Indiabulls Housing Finance Ltd' ?"Positive": "Recomended" }` },
+        { name: 'overallStatus', value: `${applicantDetails.bankNBFCname.clientName === 'INDIABULLS' ?"Positive": "Recomended" }`, label: `${applicantDetails.bankNBFCname.clientName === 'INDIABULLS' ?"Positive": "Recomended" }` },
         { name: 'overallStatus', value: 'Refer', label: 'Refer' },
-        { name: 'overallStatus', value: `${applicantDetails.bankNBFCname.clientName === 'Indiabulls Housing Finance Ltd' ?"Negative": "Not Recomended" }`, label: `${applicantDetails.bankNBFCname.clientName === 'Indiabulls Housing Finance Ltd' ?"Negative": "Not Recomended" }` },
+        { name: 'overallStatus', value: `${applicantDetails.bankNBFCname.clientName === 'INDIABULLS' ?"Negative": "Not Recomended" }`, label: `${applicantDetails.bankNBFCname.clientName === 'INDIABULLS' ?"Negative": "Not Recomended" }` },
         { name: 'overallStatus', value: 'CNV', label: 'CNV' },
     ]
     const remarksfnc = (data) => {
