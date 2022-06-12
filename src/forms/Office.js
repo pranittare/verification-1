@@ -105,6 +105,7 @@ const Office = () => {
     }
     const [alertMessage, setAlertMessage] = useState('');
     const [refetch, setRefetch] = useState(false);
+    const [oldMethodPdf, setOldMethodPdf] = useState(false);
     const dataSplit = (alldata) => {
         let verfi = { verification: {}, applicant: {} }
         for (const key in alldata) {
@@ -184,7 +185,16 @@ const Office = () => {
         xhRequest.responseType = 'blob';
         xhRequest.send();
     }
+    const toDataURLFetch = url => fetch(url)
+        .then(response => response.blob())
+        .then(blob => new Promise((resolve, reject) => {
+            const reader = new FileReader()
+            reader.onloadend = () => resolve(reader.result)
+            reader.onerror = reject
+            reader.readAsDataURL(blob)
+        }))
     const getBase64ImageFromURL = (url) => {
+        console.log('getBase64ImageFromURL')
         return new Promise((resolve, reject) => {
             var img = new Image(500, 500);
             img.setAttribute("crossOrigin", "anonymous");
@@ -243,22 +253,41 @@ const Office = () => {
         for (let index = 0; index < temp.length; index++) {
             const item = temp[index];
             // toDataURL(item, (dataUrl) => {
-            dataImages.push({
-                style: 'table',
-                table: {
-                    widths: [500],
-                    body: [
-                        [
-                            {
-                                image: await getBase64ImageFromURL(item),
-                                // width: 500,
-                                link: item
-                            },
+            if (oldMethodPdf) {
+                dataImages.push({
+                    style: 'table',
+                    table: {
+                        widths: [500],
+                        body: [
+                            [
+                                {
+                                    image: await toDataURLFetch(item),
+                                    width: 500,
+                                    link: item
+                                },
+                            ]
                         ]
-                    ]
+                    }
                 }
+                );
+            } else {
+                dataImages.push({
+                    style: 'table',
+                    table: {
+                        widths: [500],
+                        body: [
+                            [
+                                {
+                                    image: await getBase64ImageFromURL(item),
+                                    // width: 500,
+                                    link: item
+                                },
+                            ]
+                        ]
+                    }
+                }
+                );
             }
-            );
             setImages64(dataImages);
             setRefresh(Math.random())
             // })
@@ -465,7 +494,7 @@ const Office = () => {
             } else if (allData?.picturePoliticalLeader == 'yes') {
                 orverallstatus = 'Negative'
                 console.log('logic', orverallstatus);
-    
+
             } else if (allData?.marketReputation == 'negative') {
                 orverallstatus = 'Negative'
                 console.log('logic', orverallstatus);
@@ -549,7 +578,7 @@ const Office = () => {
             } else if (allData?.picturePoliticalLeader == 'yes') {
                 orverallstatus = 'Not Recommended'
                 console.log('logic', orverallstatus);
-    
+
             } else if (allData?.marketReputation == 'negative') {
                 orverallstatus = 'Not Recommended'
                 console.log('logic', orverallstatus);
@@ -728,11 +757,11 @@ const Office = () => {
     }
     const tpcFunction = () => {
         if (refetch) {
-            return <Tpc data={formdata} ref={TPCRef} form={'office'} applicantDetails={applicantDetails}/>
+            return <Tpc data={formdata} ref={TPCRef} form={'office'} applicantDetails={applicantDetails} />
 
         }
 
-        return <Tpc data={verificationObserver ? verificationObserver : {}} ref={TPCRef} form={'office'} applicantDetails={applicantDetails}/>
+        return <Tpc data={verificationObserver ? verificationObserver : {}} ref={TPCRef} form={'office'} applicantDetails={applicantDetails} />
     }
     // useEffect(() => {
     //     console.log('applicantDetails', applicantDetails)
@@ -2466,6 +2495,11 @@ const Office = () => {
                 {images.length === images64.length && <div>
                     <button className='btn text-primary' onClick={() => { pdfMake.createPdf(pdffnc()).open() }}>View PDF</button>
                     <button className='btn text-primary' id='downloadpdf' onClick={() => { pdfMake.createPdf(pdffnc()).download(combiner().customerName.replace(/ /g, '').replace(/[^a-zA-Z ]/g, "")) }}>Download PDF</button>
+                    <Button onClick={() => {
+                        if (pdffnc()) {
+                            setOldMethodPdf(!oldMethodPdf)    
+                        }
+                        }}>{oldMethodPdf ? "Change to Old Method" : "Change to New Method"}</Button>
                 </div>}
 
             </>

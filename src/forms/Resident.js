@@ -111,6 +111,7 @@ const Resident = () => {
     }
     const [alertMessage, setAlertMessage] = useState('');
     const [refetch, setRefetch] = useState(false);
+    const [oldMethodPdf, setOldMethodPdf] = useState(false);
 
     const onHandleChange = (e) => {
         let form = formdata
@@ -277,6 +278,14 @@ const Resident = () => {
         xhRequest.responseType = 'blob';
         xhRequest.send();
     }
+    const toDataURLFetch = url => fetch(url)
+        .then(response => response.blob())
+        .then(blob => new Promise((resolve, reject) => {
+            const reader = new FileReader()
+            reader.onloadend = () => resolve(reader.result)
+            reader.onerror = reject
+            reader.readAsDataURL(blob)
+        }))
     const viewImages = () => {
         const filePath = `forms/${pincode}/${id}/images`
         const storageRef1 = storageRef(storage, filePath);
@@ -338,29 +347,43 @@ const Resident = () => {
         for (let index = 0; index < temp.length; index++) {
             const item = temp[index];
             // toDataURL(item, (dataUrl) => {
-            // rotateBase64Image(dataUrl,(rotated) => {
-            dataImages.push({
-                style: 'table',
-                table: {
-                    widths: [500],
-                    body: [
-                        [
-                            {
-                                image: await getBase64ImageFromURL(item),
-                                // width: 500,
-                                // height:600,
-                                // fit: [500, 1200],
-                                link: item
-                            },
+            if (oldMethodPdf) {
+                dataImages.push({
+                    style: 'table',
+                    table: {
+                        widths: [500],
+                        body: [
+                            [
+                                {
+                                    image: await toDataURLFetch(item),
+                                    width: 500,
+                                    link: item
+                                },
+                            ]
                         ]
-                    ]
+                    }
                 }
+                );
+            } else {
+                dataImages.push({
+                    style: 'table',
+                    table: {
+                        widths: [500],
+                        body: [
+                            [
+                                {
+                                    image: await getBase64ImageFromURL(item),
+                                    // width: 500,
+                                    link: item
+                                },
+                            ]
+                        ]
+                    }
+                }
+                );
             }
-            );
             setImages64(dataImages);
             setRefresh(Math.random())
-
-            // })
             // })
         }
     }
@@ -2696,6 +2719,11 @@ const Resident = () => {
                 {images.length === images64.length && <div>
                     <button className='btn text-primary' onClick={() => { pdfMake.createPdf(pdffnc()).open() }}>View PDF</button>
                     <button className='btn text-primary' id='downloadpdf' onClick={() => { pdfMake.createPdf(pdffnc()).download(combiner().customerName.replace(/ /g, '').replace(/[^a-zA-Z ]/g, "")) }}>Download PDF</button>
+                    <Button onClick={() => {
+                        if (pdffnc()) {
+                            setOldMethodPdf(!oldMethodPdf)    
+                        }
+                        }}>{oldMethodPdf ? "Change to Old Method" : "Change to New Method"}</Button>
                 </div>}
             </>
             }
