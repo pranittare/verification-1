@@ -151,16 +151,26 @@ const AddAgent = ({ agent, allAgents }) => {
     const handleDisable = () => {
         let agent = formdata
         let realAgents = rtA
-        let realForms = rtF
+        // let realForms = rtF
+        let temp = [];
+        for (let index = 0; index < rtF.length; index++) {
+            const element = rtF[index];
+            for (const key in element) {
+                if (Object.hasOwnProperty.call(element, key)) {
+                    const element1 = element[key];
+                    temp.push(element1)
+                }
+            }
+        }
+
         for (let index = 0; index < realAgents.length; index++) {
             const agents = realAgents[index];
-
-            for (let index = 0; index < realForms.length; index++) {
-                const forms = realForms[index];
-                if (agent.userId === forms.selected) {
-                    forms.selected = false
-                    forms.claimed = false
-                    update(rtRef(db, `form/${forms.pincode}/${forms.key}`), {
+            for (let j = 0; j < temp.length; j++) {
+                const element = temp[j];
+                if (element.selected === agent.userId && element.key) {
+                    element.selected = false
+                    element.claimed = false
+                    update(rtRef(db, `form/${element.pincode}/${element.key}`), {
                         selected: false,
                         claimed: false,
                     }).then(res => {
