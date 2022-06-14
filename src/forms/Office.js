@@ -105,6 +105,7 @@ const Office = () => {
     }
     const [alertMessage, setAlertMessage] = useState('');
     const [refetch, setRefetch] = useState(false);
+    const [showSubmit, setShowSubmit] = useState(true);
     const dataSplit = (alldata) => {
         let verfi = { verification: {}, applicant: {} }
         for (const key in alldata) {
@@ -421,6 +422,7 @@ const Office = () => {
             setOuterDetails(outer)
             setMainouter(mainout)
         }
+        setShowSubmit(false);
         viewImages()
         setFormdata(formd)
         setRefresh(Math.random())
@@ -2383,11 +2385,13 @@ const Office = () => {
 
             </>
             }
-            {!loading ? <>
+            {!loading ? <div className='d-flex'>
                 <Button color='link' onClick={recheckOverride}>Recheck</Button>
-                <Button color='warning' onClick={handleSave}>Save</Button>
-                <Button color='primary' onClick={handleSubmit}>Submit</Button>
-            </> :
+                {showSubmit && <div> <Button className='mx-1' color='warning' onClick={handleSave}>Save</Button>
+                    <Button color='primary' onClick={handleSubmit}>Submit</Button>
+                </div>
+                }
+            </div> :
                 <div className="spinner-grow text-warning" role="status">
                 </div>
             }

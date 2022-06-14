@@ -111,6 +111,7 @@ const Resident = () => {
     }
     const [alertMessage, setAlertMessage] = useState('');
     const [refetch, setRefetch] = useState(false);
+    const [showSubmit, setShowSubmit] = useState(true);
 
     const onHandleChange = (e) => {
         let form = formdata
@@ -490,6 +491,7 @@ const Resident = () => {
             setOuterDetails(outer)
             setMainouter(mainout)
         }
+        setShowSubmit(false);
         viewImages()
         setFormdata(formd)
         console.log('old', formd)
@@ -2607,11 +2609,11 @@ const Resident = () => {
                 </div>}
             </>
             }
-            {!loading ? <>
+            {!loading ? <div className='d-flex'>
                 <Button color='link' onClick={recheckOverride}>Recheck</Button>
-                <Button className='mx-2' color='warning' onClick={handleSave}>Save</Button>
-                <Button color='primary' onClick={handleSubmit}>Submit</Button>
-            </>
+              {showSubmit && <div>  <Button className='mx-2' color='warning' onClick={handleSave}>Save</Button>
+                <Button color='primary' onClick={handleSubmit}>Submit</Button> </div>}
+                </div>
                 :
                 <div className="spinner-grow text-warning" role="status">
                 </div>
