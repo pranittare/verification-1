@@ -47,6 +47,7 @@ function App(props) {
       // console.log(`${update}`, data)
       let val = update.toString().toUpperCase()
       props.dispatch({ type: val, data: data })
+      // console.log(`${update}`, data)
       // updateStarCount(postElement, data);
     });
   }

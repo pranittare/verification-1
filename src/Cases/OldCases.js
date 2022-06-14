@@ -320,6 +320,7 @@ const OldCases = (props) => {
                             <th scope="col">ApplicationID</th>
                             <th scope="col">Login Date</th>
                             <th scope="col">Login Time</th>
+                            <th scope="col">Type</th>
                             <th scope="col">CustomerName</th>
                             <th scope="col">TAT</th>
                             <th scope="col">ClientName</th>
@@ -332,7 +333,8 @@ const OldCases = (props) => {
                             <th scope="col">Product Supervisor</th>
                             <th scope="col">Agent Name</th>
                             <th scope="col">Remarks</th>
-                            <th scope="col">Type</th>
+                            <th scope="col">Standard Remarks</th>
+                            <th scope="col">Final Remarks</th>
                             <th scope="col">Mobile No</th>
                             <th scope="col">Contact No</th>
                         </tr>
@@ -349,6 +351,7 @@ const OldCases = (props) => {
                                 <td>
                                     {moment(item?.applicantDetails?.initiationDate).format('LT')}
                                 </td>
+                                <td>{item.applicantDetails.form}</td>
                                 <td>
                                     {item?.applicantDetails?.customerName}
                                 </td>
@@ -388,7 +391,14 @@ const OldCases = (props) => {
                                     {item?.applicantDetails?.remarks}
 
                                 </td>
-                                <td>{item.applicantDetails.form}</td>
+                                <td>
+                                    {item?.verificationDetails?.finalFIAnyRemarks}
+
+                                </td>
+                                <td>
+                                    {item?.verificationDetails?.finalFIRemarks}
+
+                                </td>
                                 <td>{item.applicantDetails.mobileNo}</td>
                                 <td>{item.applicantDetails.contactNo}</td>
                             </tr>

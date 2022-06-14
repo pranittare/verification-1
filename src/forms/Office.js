@@ -106,6 +106,7 @@ const Office = () => {
     const [alertMessage, setAlertMessage] = useState('');
     const [refetch, setRefetch] = useState(false);
     const [showSubmit, setShowSubmit] = useState(true);
+    const [oldMethodPdf, setOldMethodPdf] = useState(false);
     const dataSplit = (alldata) => {
         let verfi = { verification: {}, applicant: {} }
         for (const key in alldata) {
@@ -167,7 +168,7 @@ const Office = () => {
         
         Regards, 
         Team KreDT.`
-        const subject = `${applicantDetails.appid} - ${applicantDetails.customerName} - Residence`;
+        const subject = `${applicantDetails.appid} - ${applicantDetails.customerName} - Office`;
         document.location.href = `mailto:${allemails}?subject=`
             + encodeURIComponent(subject)
             + "&body=" + encodeURIComponent(yourMessage);
@@ -185,7 +186,16 @@ const Office = () => {
         xhRequest.responseType = 'blob';
         xhRequest.send();
     }
+    const toDataURLFetch = url => fetch(url)
+        .then(response => response.blob())
+        .then(blob => new Promise((resolve, reject) => {
+            const reader = new FileReader()
+            reader.onloadend = () => resolve(reader.result)
+            reader.onerror = reject
+            reader.readAsDataURL(blob)
+        }))
     const getBase64ImageFromURL = (url) => {
+        console.log('getBase64ImageFromURL')
         return new Promise((resolve, reject) => {
             var img = new Image(500, 500);
             img.setAttribute("crossOrigin", "anonymous");
@@ -244,22 +254,41 @@ const Office = () => {
         for (let index = 0; index < temp.length; index++) {
             const item = temp[index];
             // toDataURL(item, (dataUrl) => {
-            dataImages.push({
-                style: 'table',
-                table: {
-                    widths: [500],
-                    body: [
-                        [
-                            {
-                                image: await getBase64ImageFromURL(item),
-                                // width: 500,
-                                link: item
-                            },
+            if (oldMethodPdf) {
+                dataImages.push({
+                    style: 'table',
+                    table: {
+                        widths: [500],
+                        body: [
+                            [
+                                {
+                                    image: await toDataURLFetch(item),
+                                    width: 500,
+                                    link: item
+                                },
+                            ]
                         ]
-                    ]
+                    }
                 }
+                );
+            } else {
+                dataImages.push({
+                    style: 'table',
+                    table: {
+                        widths: [500],
+                        body: [
+                            [
+                                {
+                                    image: await getBase64ImageFromURL(item),
+                                    // width: 500,
+                                    link: item
+                                },
+                            ]
+                        ]
+                    }
+                }
+                );
             }
-            );
             setImages64(dataImages);
             setRefresh(Math.random())
             // })
@@ -456,88 +485,175 @@ const Office = () => {
     }
 
     const overallStatusCal = (allData) => {
-        let orverallstatus = ''
-        if (allData?.mismatchAddress == 'yes') {
-            orverallstatus = 'Not Recommended'
-            console.log('logic', orverallstatus);
-        } else if (allData?.constructionOfOffice == 'Temporary') {
-            orverallstatus = 'Not Recommended'
-            console.log('logic', orverallstatus);
-        } else if (allData?.picturePoliticalLeader == 'yes') {
-            orverallstatus = 'Not Recommended'
-            console.log('logic', orverallstatus);
+        if (applicantDetails.bankNBFCname.clientName === 'INDIABULLS') {
+            let orverallstatus = ''
+            if (allData?.mismatchAddress == 'yes') {
+                orverallstatus = 'Negative'
+                console.log('logic', orverallstatus);
+            } else if (allData?.constructionOfOffice == 'Temporary') {
+                orverallstatus = 'Negative'
+                console.log('logic', orverallstatus);
+            } else if (allData?.picturePoliticalLeader == 'yes') {
+                orverallstatus = 'Negative'
+                console.log('logic', orverallstatus);
 
-        } else if (allData?.marketReputation == 'negative') {
-            orverallstatus = 'Not Recommended'
-            console.log('logic', orverallstatus);
-        } else if (allData?.addressConfirmed == 'no') {
-            orverallstatus = 'Not Recommended'
-            console.log('logic', orverallstatus);
-        } else if (allData?.localityofOffice == 'Slum') {
-            orverallstatus = 'Not Recommended'
-            console.log('logic', orverallstatus);
-        } else if (allData?.marketReputation == 'negative') {
-            orverallstatus = 'Not Recommended'
-            console.log('logic', orverallstatus);
-        } else if (allData?.easeofLocating == 'Not Traceable') {
-            orverallstatus = 'Not Recommended'
-            console.log('logic', orverallstatus);
-        } else if (allData.negativeArea == 'Slum Area') {
-            orverallstatus = 'Not Recommended'
-            console.log('logic', orverallstatus);
-        } else if (allData.negativeArea == 'Community Dominated / Slum Area') {
-            orverallstatus = 'Not Recommended'
-            console.log('logic', orverallstatus);
-        } else if (allData.TPCStatus1 == 'negative' || allData.TPCStatus2 == 'negative') {
-            orverallstatus = 'Not Recommended'
-            console.log('logic', orverallstatus);
-        } else if (allData.businessActivityLevel == 'No business activity') {
-            orverallstatus = 'Not Recommended'
-            console.log('logic', orverallstatus);
+            } else if (allData?.marketReputation == 'negative') {
+                orverallstatus = 'Negative'
+                console.log('logic', orverallstatus);
+            } else if (allData?.addressConfirmed == 'no') {
+                orverallstatus = 'CNV'
+                console.log('logic', orverallstatus);
+            } else if (allData?.localityofOffice == 'Slum') {
+                orverallstatus = 'Negative'
+                console.log('logic', orverallstatus);
+            } else if (allData?.marketReputation == 'negative') {
+                orverallstatus = 'Negative'
+                console.log('logic', orverallstatus);
+            } else if (allData?.easeofLocating == 'Not Traceable') {
+                orverallstatus = 'Negative'
+                console.log('logic', orverallstatus);
+            } else if (allData.negativeArea == 'Slum Area') {
+                orverallstatus = 'Negative'
+                console.log('logic', orverallstatus);
+            } else if (allData.negativeArea == 'Community Dominated / Slum Area') {
+                orverallstatus = 'Negative'
+                console.log('logic', orverallstatus);
+            } else if (allData.TPCStatus1 == 'negative' || allData.TPCStatus2 == 'negative') {
+                orverallstatus = 'Refer'
+                console.log('logic', orverallstatus);
+            } else if (allData.businessActivityLevel == 'No business activity') {
+                orverallstatus = 'Negative'
+                console.log('logic', orverallstatus);
+            } else {
+                if (allData?.verificationObserver == 'Resi cum Office') {
+                    orverallstatus = 'Refer'
+                    console.log('logic', orverallstatus);
+                } else if (allData?.easeofLocating == 'Difficult to Trace') {
+                    orverallstatus = 'Refer'
+                    console.log('logic', orverallstatus);
+                } else if (allData?.verificationObserver == 'Shed') {
+                    orverallstatus = 'Refer'
+                    console.log('logic', orverallstatus);
+                } else if (allData?.verificationObserver == 'Shared Office') {
+                    orverallstatus = 'Refer'
+                    console.log('logic', orverallstatus);
+                } else if (allData?.businessBoardSeen == 'no') {
+                    orverallstatus = 'Refer'
+                    console.log('logic', orverallstatus);
+                } else if (allData?.personMet == 'no') {
+                    orverallstatus = 'Refer'
+                    console.log('logic', orverallstatus);
+                } else if (allData?.lessThanYrAtCurrentAddress == 'yes') {
+                    orverallstatus = 'Refer'
+                    console.log('logic', orverallstatus);
+                } else if (allData?.businessActivityLevel == 'Low') {
+                    orverallstatus = 'Refer'
+                    console.log('logic', orverallstatus);
+                } else if (allData?.negativeArea == 'Community Dominated Area') {
+                    orverallstatus = 'Refer'
+                    console.log('logic', orverallstatus);
+                } else if (allData?.negativeArea == 'Sitting Chawl/Standing Chawl') {
+                    orverallstatus = 'Refer'
+                    console.log('logic', orverallstatus);
+                } else if (allData?.negativeArea == 'High Risk Area') {
+                    orverallstatus = 'Refer'
+                    console.log('logic', orverallstatus);
+                } else if (allData?.negativeArea == 'Community Dominated/Sitting Chawl/Standing Chawl Area') {
+                    orverallstatus = 'Refer'
+                    console.log('logic', orverallstatus);
+                }
+                else {
+                    orverallstatus = 'Positive'
+                }
+            }
+            console.log('orverallstatus', orverallstatus)
+            return orverallstatus
+
         } else {
-            if (allData?.verificationObserver == 'Resi cum Office') {
-                orverallstatus = 'Refer'
+            let orverallstatus = ''
+            if (allData?.mismatchAddress == 'yes') {
+                orverallstatus = 'Not Recommended'
                 console.log('logic', orverallstatus);
-            } else if (allData?.easeofLocating == 'Difficult to Trace') {
-                orverallstatus = 'Refer'
+            } else if (allData?.constructionOfOffice == 'Temporary') {
+                orverallstatus = 'Not Recommended'
                 console.log('logic', orverallstatus);
-            } else if (allData?.verificationObserver == 'Shed') {
-                orverallstatus = 'Refer'
+            } else if (allData?.picturePoliticalLeader == 'yes') {
+                orverallstatus = 'Not Recommended'
                 console.log('logic', orverallstatus);
-            } else if (allData?.verificationObserver == 'Shared Office') {
-                orverallstatus = 'Refer'
+
+            } else if (allData?.marketReputation == 'negative') {
+                orverallstatus = 'Not Recommended'
                 console.log('logic', orverallstatus);
-            } else if (allData?.businessBoardSeen == 'no') {
-                orverallstatus = 'Refer'
+            } else if (allData?.addressConfirmed == 'no') {
+                orverallstatus = 'Not Recommended'
                 console.log('logic', orverallstatus);
-            } else if (allData?.personMet == 'no') {
-                orverallstatus = 'Refer'
+            } else if (allData?.localityofOffice == 'Slum') {
+                orverallstatus = 'Not Recommended'
                 console.log('logic', orverallstatus);
-            } else if (allData?.lessThanYrAtCurrentAddress == 'yes') {
-                orverallstatus = 'Refer'
+            } else if (allData?.marketReputation == 'negative') {
+                orverallstatus = 'Not Recommended'
                 console.log('logic', orverallstatus);
-            } else if (allData?.businessActivityLevel == 'Low') {
-                orverallstatus = 'Refer'
+            } else if (allData?.easeofLocating == 'Not Traceable') {
+                orverallstatus = 'Not Recommended'
                 console.log('logic', orverallstatus);
-            } else if (allData?.negativeArea == 'Community Dominated Area') {
-                orverallstatus = 'Refer'
+            } else if (allData.negativeArea == 'Slum Area') {
+                orverallstatus = 'Not Recommended'
                 console.log('logic', orverallstatus);
-            } else if (allData?.negativeArea == 'Sitting Chawl/Standing Chawl') {
-                orverallstatus = 'Refer'
+            } else if (allData.negativeArea == 'Community Dominated / Slum Area') {
+                orverallstatus = 'Not Recommended'
                 console.log('logic', orverallstatus);
-            } else if (allData?.negativeArea == 'High Risk Area') {
-                orverallstatus = 'Refer'
+            } else if (allData.TPCStatus1 == 'negative' || allData.TPCStatus2 == 'negative') {
+                orverallstatus = 'Not Recommended'
                 console.log('logic', orverallstatus);
-            } else if (allData?.negativeArea == 'Community Dominated/Sitting Chawl/Standing Chawl Area') {
-                orverallstatus = 'Refer'
+            } else if (allData.businessActivityLevel == 'No business activity') {
+                orverallstatus = 'Not Recommended'
                 console.log('logic', orverallstatus);
+            } else {
+                if (allData?.verificationObserver == 'Resi cum Office') {
+                    orverallstatus = 'Refer'
+                    console.log('logic', orverallstatus);
+                } else if (allData?.easeofLocating == 'Difficult to Trace') {
+                    orverallstatus = 'Refer'
+                    console.log('logic', orverallstatus);
+                } else if (allData?.verificationObserver == 'Shed') {
+                    orverallstatus = 'Refer'
+                    console.log('logic', orverallstatus);
+                } else if (allData?.verificationObserver == 'Shared Office') {
+                    orverallstatus = 'Refer'
+                    console.log('logic', orverallstatus);
+                } else if (allData?.businessBoardSeen == 'no') {
+                    orverallstatus = 'Refer'
+                    console.log('logic', orverallstatus);
+                } else if (allData?.personMet == 'no') {
+                    orverallstatus = 'Refer'
+                    console.log('logic', orverallstatus);
+                } else if (allData?.lessThanYrAtCurrentAddress == 'yes') {
+                    orverallstatus = 'Refer'
+                    console.log('logic', orverallstatus);
+                } else if (allData?.businessActivityLevel == 'Low') {
+                    orverallstatus = 'Refer'
+                    console.log('logic', orverallstatus);
+                } else if (allData?.negativeArea == 'Community Dominated Area') {
+                    orverallstatus = 'Refer'
+                    console.log('logic', orverallstatus);
+                } else if (allData?.negativeArea == 'Sitting Chawl/Standing Chawl') {
+                    orverallstatus = 'Refer'
+                    console.log('logic', orverallstatus);
+                } else if (allData?.negativeArea == 'High Risk Area') {
+                    orverallstatus = 'Refer'
+                    console.log('logic', orverallstatus);
+                } else if (allData?.negativeArea == 'Community Dominated/Sitting Chawl/Standing Chawl Area') {
+                    orverallstatus = 'Refer'
+                    console.log('logic', orverallstatus);
+                }
+                else {
+                    orverallstatus = 'Recommended'
+                }
             }
-            else {
-                orverallstatus = 'Recommended'
-            }
+            console.log('orverallstatus', orverallstatus)
+            return orverallstatus
+
         }
-        console.log('orverallstatus', orverallstatus)
-        return orverallstatus
 
     }
     let addressConfirmed = [
@@ -643,15 +759,15 @@ const Office = () => {
     }
     const tpcFunction = () => {
         if (refetch) {
-            return <Tpc data={formdata} ref={TPCRef} form={'office'} />
+            return <Tpc data={formdata} ref={TPCRef} form={'office'} applicantDetails={applicantDetails} />
 
         }
 
-        return <Tpc data={verificationObserver ? verificationObserver : {}} ref={TPCRef} form={'office'} />
+        return <Tpc data={verificationObserver ? verificationObserver : {}} ref={TPCRef} form={'office'} applicantDetails={applicantDetails} />
     }
-    useEffect(() => {
-        console.log('applicantDetails', applicantDetails)
-    }, [applicantDetails])
+    // useEffect(() => {
+    //     console.log('applicantDetails', applicantDetails)
+    // }, [applicantDetails])
     // PDF MAKE CONTENT
 
     const pdffnc = () => {
@@ -2381,6 +2497,11 @@ const Office = () => {
                 {images.length === images64.length && <div>
                     <button className='btn text-primary' onClick={() => { pdfMake.createPdf(pdffnc()).open() }}>View PDF</button>
                     <button className='btn text-primary' id='downloadpdf' onClick={() => { pdfMake.createPdf(pdffnc()).download(combiner().customerName.replace(/ /g, '').replace(/[^a-zA-Z ]/g, "")) }}>Download PDF</button>
+                    <Button onClick={() => {
+                        if (pdffnc()) {
+                            setOldMethodPdf(!oldMethodPdf)    
+                        }
+                        }}>{oldMethodPdf ? "Change to Old Method" : "Change to New Method"}</Button>
                 </div>}
 
             </>

@@ -151,23 +151,32 @@ const AddAgent = ({ agent, allAgents }) => {
     const handleDisable = () => {
         let agent = formdata
         let realAgents = rtA
-        let realForms = rtF
+        // let realForms = rtF
+        let temp = [];
+        for (let index = 0; index < rtF.length; index++) {
+            const element = rtF[index];
+            for (const key in element) {
+                if (Object.hasOwnProperty.call(element, key)) {
+                    const element1 = element[key];
+                    temp.push(element1)
+                }
+            }
+        }
         for (let index = 0; index < realAgents.length; index++) {
             const agents = realAgents[index];
-
-            for (let index = 0; index < realForms.length; index++) {
-                const forms = realForms[index];
-                if (agent.userId === forms.selected) {
-                    forms.selected = false
-                    forms.claimed = false
-                    update(rtRef(db, `form/${forms.pincode}/${forms.key}`), {
+            for (let j = 0; j < temp.length; j++) {
+                const element = temp[j];
+                if (element.selected === agent.userId && element.key) {
+                    element.selected = false
+                    element.claimed = false
+                    update(rtRef(db, `form/${element.pincode}/${element.key}`), {
                         selected: false,
                         claimed: false,
                     }).then(res => {
-                        setAlertMessage('Forms disabled')
-                        window.location.reload()
+                        alert('Forms disabled Please Reload the page')
+                        // window.location.reload()
                     }).catch(err => {
-                        setAlertMessage('Forms were not disabled check log')
+                        alert('Forms were not disabled check log')
                         console.log('Disable Agent 1', err)
                     })
                 }
@@ -178,8 +187,9 @@ const AddAgent = ({ agent, allAgents }) => {
         }
     }
     const disableRealTimeAgentSingle = (key) => {
+        console.log('key', key)
         update(rtRef(db, `agents/${key}`), { uniqueId: 'Disabled', isLoggedIn: false, onCase: false, myForms: 0 }).then(res => {
-            setAlertMessage('Agent Disabled')
+            alertMessage('Agent Disabled')
         }).catch(err => {
             setAlertMessage('Agent was not disabled check log')
             console.log('Disable Agent 2', err)
@@ -192,10 +202,10 @@ const AddAgent = ({ agent, allAgents }) => {
             const agents = realAgents[index];
             if (agent.userId === agents.userId) {
                 update(rtRef(db, `agents/${agents.key}`), { uniqueId: null }).then(res => {
-                    setAlertMessage('Agent Enabled')
+                    alert('Agent Enabled')
                     window.location.reload()
                 }).catch(err => {
-                    setAlertMessage('Agent was not enabled check log')
+                    // alert('Agent was not enabled check log')
                     console.log('Agent Enabled', err)
                 })
             }

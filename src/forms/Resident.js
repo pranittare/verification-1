@@ -112,6 +112,7 @@ const Resident = () => {
     const [alertMessage, setAlertMessage] = useState('');
     const [refetch, setRefetch] = useState(false);
     const [showSubmit, setShowSubmit] = useState(true);
+    const [oldMethodPdf, setOldMethodPdf] = useState(false);
 
     const onHandleChange = (e) => {
         let form = formdata
@@ -278,6 +279,14 @@ const Resident = () => {
         xhRequest.responseType = 'blob';
         xhRequest.send();
     }
+    const toDataURLFetch = url => fetch(url)
+        .then(response => response.blob())
+        .then(blob => new Promise((resolve, reject) => {
+            const reader = new FileReader()
+            reader.onloadend = () => resolve(reader.result)
+            reader.onerror = reject
+            reader.readAsDataURL(blob)
+        }))
     const viewImages = () => {
         const filePath = `forms/${pincode}/${id}/images`
         const storageRef1 = storageRef(storage, filePath);
@@ -339,29 +348,43 @@ const Resident = () => {
         for (let index = 0; index < temp.length; index++) {
             const item = temp[index];
             // toDataURL(item, (dataUrl) => {
-            // rotateBase64Image(dataUrl,(rotated) => {
-            dataImages.push({
-                style: 'table',
-                table: {
-                    widths: [500],
-                    body: [
-                        [
-                            {
-                                image: await getBase64ImageFromURL(item),
-                                // width: 500,
-                                // height:600,
-                                // fit: [500, 1200],
-                                link: item
-                            },
+            if (oldMethodPdf) {
+                dataImages.push({
+                    style: 'table',
+                    table: {
+                        widths: [500],
+                        body: [
+                            [
+                                {
+                                    image: await toDataURLFetch(item),
+                                    width: 500,
+                                    link: item
+                                },
+                            ]
                         ]
-                    ]
+                    }
                 }
+                );
+            } else {
+                dataImages.push({
+                    style: 'table',
+                    table: {
+                        widths: [500],
+                        body: [
+                            [
+                                {
+                                    image: await getBase64ImageFromURL(item),
+                                    // width: 500,
+                                    link: item
+                                },
+                            ]
+                        ]
+                    }
+                }
+                );
             }
-            );
             setImages64(dataImages);
             setRefresh(Math.random())
-
-            // })
             // })
         }
     }
@@ -381,6 +404,7 @@ const Resident = () => {
     }
     // Form data by id
     const formFill = (formsaved) => {
+        // console.log({formsaved})
         let formd = formdata
         let outer = outerDetails
         let mainout = mainouter
@@ -527,92 +551,183 @@ const Resident = () => {
     }
 
     const overallStatusCal = (allData) => {
-        let orverallstatus = ''
-
-        if (allData?.mismatchAddress == 'yes') {
-            orverallstatus = 'Not Recommended'
-            console.log('logic', orverallstatus);
-        } else if (allData?.addressConfirmed == 'no') {
-            orverallstatus = 'Not Recommended'
-            console.log('logic', orverallstatus);
-        } else if (allData?.residenceStatus == 'Multi Tenants') {
-            orverallstatus = 'Refer'
-            console.log('logic', orverallstatus);
-        } else if (allData?.residenceStatus == 'Paying Guest') {
-            orverallstatus = 'Not Recommended'
-            console.log('logic', orverallstatus);
-        } else if (allData?.residenceStatus == 'Friend Owned') {
-            orverallstatus = 'Refer'
-            console.log('logic', orverallstatus);
-        } else if (allData?.residenceStatus == 'Lodging') {
-            orverallstatus = 'Not Recommended'
-            console.log('logic', orverallstatus);
-        } else if (allData?.constructionOfResidence == 'Temporary') {
-            orverallstatus = 'Not Recommended'
-            console.log('logic', orverallstatus);
-        } else if (allData?.picturePoliticalLeader == 'yes') {
-            orverallstatus = 'Not Recommended'
-            console.log('logic', orverallstatus);
-        } else if (allData?.marketReputation == 'negative') {
-            orverallstatus = 'Not Recommended'
-            console.log('logic', orverallstatus);
-        } else if (allData?.localityOfAddress == 'Slum') {
-            orverallstatus = 'Not Recommended'
-            console.log('logic', orverallstatus);
-        } else if (allData?.typeOfHouse == 'Standing Chawl') {
-            orverallstatus = 'Refer'
-            console.log('logic', orverallstatus);
-        } else if (allData?.typeOfHouse == 'Sitting Chawl') {
-            orverallstatus = 'Refer'
-            console.log('logic', orverallstatus);
-        } else if (allData?.marketReputation == 'negative') {
-            orverallstatus = 'Not Recommended'
-            console.log('logic', orverallstatus);
-        } else if (allData?.easeofLocating == 'Not Traceable') {
-            orverallstatus = 'Not Recommended'
-            console.log('logic', orverallstatus);
-        } else if (allData?.lessThanYrAtCurrentAddress == 'yes') {
-            orverallstatus = 'Refer'
-            console.log('logic', orverallstatus);
-        } else if (allData.negativeArea == 'Slum Area') {
-            orverallstatus = 'Not Recommended'
-            console.log('logic', orverallstatus);
-        } else if (allData.negativeArea == 'Community Dominated / Slum Area') {
-            orverallstatus = 'Not Recommended'
-            console.log('logic', orverallstatus);
-        } else if (allData.TPCStatus1 == 'negative' || allData.TPCStatus2 == 'negative') {
-            orverallstatus = 'Not Recommended'
-            console.log('logic', orverallstatus);
+        if (applicantDetails.bankNBFCname.clientName === 'INDIABULLS') {
+            let orverallstatus = ''
+    
+            if (allData?.mismatchAddress == 'yes') {
+                orverallstatus = 'Negative'
+                console.log('logic', orverallstatus);
+            }  else if (allData?.residenceStatus == 'Paying Guest') {
+                orverallstatus = 'Negative'
+                console.log('logic', orverallstatus);
+            } else if (allData?.residenceStatus == 'Friend Owned') {
+                orverallstatus = 'Negative'
+                console.log('logic', orverallstatus);
+            } else if (allData?.residenceStatus == 'Lodging') {
+                orverallstatus = 'Negative'
+                console.log('logic', orverallstatus);
+            } else if (allData?.constructionOfResidence == 'Temporary') {
+                orverallstatus = 'Negative'
+                console.log('logic', orverallstatus);
+            } else if (allData?.picturePoliticalLeader == 'yes') {
+                orverallstatus = 'Negative'
+                console.log('logic', orverallstatus);
+            } else if (allData?.marketReputation == 'negative') {
+                orverallstatus = 'Negative'
+                console.log('logic', orverallstatus);
+            } else if (allData?.localityOfAddress == 'Slum') {
+                orverallstatus = 'Negative'
+                console.log('logic', orverallstatus);
+            } else if (allData?.marketReputation == 'negative') {
+                orverallstatus = 'Negative'
+                console.log('logic', orverallstatus);
+            } else if (allData?.easeofLocating == 'Not Traceable') {
+                orverallstatus = 'Negative'
+                console.log('logic', orverallstatus);
+            } else if (allData.negativeArea == 'Slum Area') {
+                orverallstatus = 'Negative'
+                console.log('logic', orverallstatus);
+            } else if (allData.negativeArea == 'Community Dominated / Slum Area') {
+                orverallstatus = 'Negative'
+                console.log('logic', orverallstatus);
+            } else if (allData?.typeOfHouse == 'Standing Chawl') {
+                orverallstatus = 'Refer'
+                console.log('logic', orverallstatus);
+            } else if (allData?.typeOfHouse == 'Sitting Chawl') {
+                orverallstatus = 'Refer'
+                console.log('logic', orverallstatus);
+            } else if (allData?.lessThanYrAtCurrentAddress == 'yes') {
+                orverallstatus = 'Refer'
+                console.log('logic', orverallstatus);
+            } else if (allData?.addressConfirmed == 'no') {
+                orverallstatus = 'CNV'
+                console.log('logic', orverallstatus);
+            } else if (allData?.residenceStatus == 'Multi Tenants') {
+                orverallstatus = 'Refer'
+                console.log('logic', orverallstatus);
+            }  else if (allData.TPCStatus1 == 'negative' || allData.TPCStatus2 == 'negative') {
+                orverallstatus = 'Refer'
+                console.log('logic', orverallstatus);
+            } else {
+                if (allData?.personMet == 'no') {
+                    orverallstatus = 'Refer'
+                } else if (allData?.easeofLocating == 'Difficult to Trace') {
+                    orverallstatus = 'Refer'
+                    console.log('logic', orverallstatus);
+    
+                } else if (allData?.negativeArea == 'Community Dominated Area') {
+                    orverallstatus = 'Refer'
+                    console.log('logic', orverallstatus);
+    
+                } else if (allData?.negativeArea == 'Sitting Chawl/Standing Chawl') {
+                    orverallstatus = 'Refer'
+                    console.log('logic', orverallstatus);
+    
+                } else if (allData?.negativeArea == 'High Risk Area') {
+                    orverallstatus = 'Refer'
+                    console.log('logic', orverallstatus);
+    
+                } else if (allData?.negativeArea == 'Community Dominated/Sitting Chawl/Standing Chawl Area') {
+                    orverallstatus = 'Refer'
+                    console.log('logic', orverallstatus);
+    
+                }
+                else {
+                    orverallstatus = 'Positive'
+    
+                }
+            }
+            return orverallstatus
+            
         } else {
-            if (allData?.personMet == 'no') {
-                orverallstatus = 'Refer'
-            } else if (allData?.easeofLocating == 'Difficult to Trace') {
+            let orverallstatus = ''
+    
+            if (allData?.mismatchAddress == 'yes') {
+                orverallstatus = 'Not Recommended'
+                console.log('logic', orverallstatus);
+            } else if (allData?.addressConfirmed == 'no') {
+                orverallstatus = 'Not Recommended'
+                console.log('logic', orverallstatus);
+            } else if (allData?.residenceStatus == 'Multi Tenants') {
                 orverallstatus = 'Refer'
                 console.log('logic', orverallstatus);
-
-            } else if (allData?.negativeArea == 'Community Dominated Area') {
+            } else if (allData?.residenceStatus == 'Paying Guest') {
+                orverallstatus = 'Not Recommended'
+            } else if (allData?.residenceStatus == 'Friend Owned') {
                 orverallstatus = 'Refer'
                 console.log('logic', orverallstatus);
-
-            } else if (allData?.negativeArea == 'Sitting Chawl/Standing Chawl') {
+            } else if (allData?.residenceStatus == 'Lodging') {
+                console.log('logic', orverallstatus);
+                orverallstatus = 'Not Recommended'
+                console.log('logic', orverallstatus);
+            } else if (allData?.constructionOfResidence == 'Temporary') {
+                orverallstatus = 'Not Recommended'
+                console.log('logic', orverallstatus);
+            } else if (allData?.picturePoliticalLeader == 'yes') {
+                orverallstatus = 'Not Recommended'
+                console.log('logic', orverallstatus);
+            } else if (allData?.marketReputation == 'negative') {
+                orverallstatus = 'Not Recommended'
+                console.log('logic', orverallstatus);
+            } else if (allData?.localityOfAddress == 'Slum') {
+                orverallstatus = 'Not Recommended'
+                console.log('logic', orverallstatus);
+            } else if (allData?.typeOfHouse == 'Standing Chawl') {
                 orverallstatus = 'Refer'
                 console.log('logic', orverallstatus);
-
-            } else if (allData?.negativeArea == 'High Risk Area') {
+            } else if (allData?.typeOfHouse == 'Sitting Chawl') {
                 orverallstatus = 'Refer'
                 console.log('logic', orverallstatus);
-
-            } else if (allData?.negativeArea == 'Community Dominated/Sitting Chawl/Standing Chawl Area') {
+            } else if (allData?.marketReputation == 'negative') {
+                orverallstatus = 'Not Recommended'
+                console.log('logic', orverallstatus);
+            } else if (allData?.easeofLocating == 'Not Traceable') {
+                orverallstatus = 'Not Recommended'
+                console.log('logic', orverallstatus);
+            } else if (allData?.lessThanYrAtCurrentAddress == 'yes') {
                 orverallstatus = 'Refer'
                 console.log('logic', orverallstatus);
-
+            } else if (allData.negativeArea == 'Slum Area') {
+                orverallstatus = 'Not Recommended'
+                console.log('logic', orverallstatus);
+            } else if (allData.negativeArea == 'Community Dominated / Slum Area') {
+                orverallstatus = 'Not Recommended'
+                console.log('logic', orverallstatus);
+            } else if (allData.TPCStatus1 == 'negative' || allData.TPCStatus2 == 'negative') {
+                orverallstatus = 'Not Recommended'
+                console.log('logic', orverallstatus);
+            } else {
+                if (allData?.personMet == 'no') {
+                    orverallstatus = 'Refer'
+                } else if (allData?.easeofLocating == 'Difficult to Trace') {
+                    orverallstatus = 'Refer'
+                    console.log('logic', orverallstatus);
+    
+                } else if (allData?.negativeArea == 'Community Dominated Area') {
+                    orverallstatus = 'Refer'
+                    console.log('logic', orverallstatus);
+    
+                } else if (allData?.negativeArea == 'Sitting Chawl/Standing Chawl') {
+                    orverallstatus = 'Refer'
+                    console.log('logic', orverallstatus);
+    
+                } else if (allData?.negativeArea == 'High Risk Area') {
+                    orverallstatus = 'Refer'
+                    console.log('logic', orverallstatus);
+    
+                } else if (allData?.negativeArea == 'Community Dominated/Sitting Chawl/Standing Chawl Area') {
+                    orverallstatus = 'Refer'
+                    console.log('logic', orverallstatus);
+    
+                }
+                else {
+                    orverallstatus = 'Recommended'
+    
+                }
             }
-            else {
-                orverallstatus = 'Recommended'
+            return orverallstatus
 
-            }
         }
-        return orverallstatus
     }
     let personMet = [
         { name: 'personMet', value: '', label: 'None' },
@@ -701,11 +816,11 @@ const Resident = () => {
     }
     const tpcFunction = () => {
         if (refetch) {
-            return <Tpc data={formdata} ref={TPCRef} form={'resident'} />
+            return <Tpc data={formdata} ref={TPCRef} form={'resident'} applicantDetails={applicantDetails} />
 
         }
 
-        return <Tpc data={verificationObserver ? verificationObserver : {}} ref={TPCRef} form={'resident'} />
+        return <Tpc data={verificationObserver ? verificationObserver : {}} ref={TPCRef} form={'resident'} applicantDetails={applicantDetails} />
     }
     // PDF MAKE CONTENT
     const recheckOverride = () => {
@@ -2606,6 +2721,11 @@ const Resident = () => {
                 {images.length === images64.length && <div>
                     <button className='btn text-primary' onClick={() => { pdfMake.createPdf(pdffnc()).open() }}>View PDF</button>
                     <button className='btn text-primary' id='downloadpdf' onClick={() => { pdfMake.createPdf(pdffnc()).download(combiner().customerName.replace(/ /g, '').replace(/[^a-zA-Z ]/g, "")) }}>Download PDF</button>
+                    <Button onClick={() => {
+                        if (pdffnc()) {
+                            setOldMethodPdf(!oldMethodPdf)    
+                        }
+                        }}>{oldMethodPdf ? "Change to Old Method" : "Change to New Method"}</Button>
                 </div>}
             </>
             }
