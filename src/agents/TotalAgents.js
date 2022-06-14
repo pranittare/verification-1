@@ -94,7 +94,7 @@ const TotalAgents = ({ agents, rtAgents, branch }) => {
         return 'Active';
     }
     const filteredSearch = (item) => {
-        console.log('item', item)
+        // console.log('item', item)
         if (filterSearch.name) {
             return item.name?.toLowerCase().includes(filterSearch.name)
         }

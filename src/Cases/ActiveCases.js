@@ -34,7 +34,8 @@ const ActiveCases = (props) => {
         tat: "",
         bankNBFCname: "",
         overallStatus: "",
-        pincode: ""
+        pincode: "",
+        selectedBank: ""
     }
     const [filterSearch, setFilterSearch] = useState(initialdata)
     const formData = (forms) => {
@@ -64,6 +65,7 @@ const ActiveCases = (props) => {
     const handleFilter = (e) => {
         let data = { ...filterSearch }
         data[e.currentTarget.name] = e.currentTarget.value
+        console.log('e', e.currentTarget, data)
         setFilterSearch(data);
         // let data = allData
         // if (e.currentTarget.value) {
@@ -262,12 +264,20 @@ const ActiveCases = (props) => {
         }
         return agentname
     }
+
     const filteredSearch = (item) => {
-        if (selectedBank) {
+        // if (filterSearch.selectedBank) {
+        //     if (item?.office?.applicantDetails) {
+        //         return item.office.applicantDetails?.bankNBFCname?.clientName?.toLowerCase() === filterSearch.selectedBank?.toLowerCase()
+        //     } else if (item?.resident?.applicantDetails) {
+        //         return item.resident.applicantDetails?.bankNBFCname?.clientName?.toLowerCase() === filterSearch.selectedBank?.toLowerCase()
+        //     }
+        // }
+        if (filterSearch.customerName) {
             if (item?.office?.applicantDetails) {
-                return item.office.applicantDetails?.bankNBFCname?.clientName === selectedBank
+                return item.office.applicantDetails.customerName?.toLowerCase().includes(filterSearch.customerName)
             } else if (item?.resident?.applicantDetails) {
-                return item.resident.applicantDetails?.bankNBFCname?.clientName === selectedBank
+                return item.resident.applicantDetails.customerName?.toLowerCase().includes(filterSearch.customerName)
             }
         }
         if (filterSearch.appid) {
@@ -284,13 +294,7 @@ const ActiveCases = (props) => {
                 return item.resident.applicantDetails.bankNBFCname?.clientName?.toLowerCase().includes(filterSearch.bankNBFCname.toLowerCase())
             }
         }
-        if (filterSearch.customerName) {
-            if (item?.office?.applicantDetails) {
-                return item.office.applicantDetails.customerName?.toLowerCase().includes(filterSearch.customerName)
-            } else if (item?.resident?.applicantDetails) {
-                return item.resident.applicantDetails.customerName?.toLowerCase().includes(filterSearch.customerName)
-            }
-        }
+     
         if (filterSearch.pincode) {
             if (item?.office?.applicantDetails) {
                 if (item?.office?.applicantDetails?.pincode) {
@@ -339,6 +343,7 @@ const ActiveCases = (props) => {
             }
         }, 5000)
     }, [])
+
     // useEffect(() => {
 
     // }[document.getElementById('form')])
@@ -352,16 +357,16 @@ const ActiveCases = (props) => {
             </div>
             <div className='d-flex sticky-top bg-white justify-content-between'>
                     <Dropdown toggle={toggleBankName} isOpen={dropdownBankNameOpen}>
-                        <DropdownToggle caret>
-                            {selectedBank ? selectedBank : 'None'}
+                        <DropdownToggle caret style={{minWidth: 'max-content'}}>
+                            {filterSearch.bankNBFCname ? filterSearch.bankNBFCname : 'None'}
                         </DropdownToggle>
                         <DropdownMenu
                         >
-                            <DropdownItem onClick={() => { setSelectedBank(false) }}>None</DropdownItem>
+                            <DropdownItem name={'bankNBFCname'} value={''} onClick={(e) => {handleFilter(e)}}>None</DropdownItem>
                             {vendors?.map(item => {
-                                return <DropdownItem key={item.clientName} onClick={() => { setSelectedBank(item.clientName) }}
+                                return <DropdownItem key={item.clientName} onClick={(e) => {handleFilter(e)}}
                                     value={item.clientName}
-                                    name={item.clientName}>
+                                    name={'bankNBFCname'}>
                                     {item.clientName}
                                 </DropdownItem>
                             })}
@@ -369,7 +374,7 @@ const ActiveCases = (props) => {
                         </DropdownMenu>
                     </Dropdown>
                     <div className='d-flex'>
-                <p className='text-primary me-1 ms-1'>Office</p>
+                <p className='text-primary mx-1'>Office</p>
                 <p className='text-success'>Resident</p>
 
                     </div>

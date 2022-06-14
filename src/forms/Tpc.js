@@ -54,9 +54,9 @@ const Tpc = forwardRef(({ data, form, applicantDetails }, ref) => {
 
     let overallStatus = [
         { name: 'overallStatus', value: '', label: 'None' },
-        { name: 'overallStatus', value: `${applicantDetails.bankNBFCname.clientName === 'INDIABULLS' ?"Positive": "Recomended" }`, label: `${applicantDetails.bankNBFCname.clientName === 'INDIABULLS' ?"Positive": "Recomended" }` },
+        { name: 'overallStatus', value: `${applicantDetails.bankNBFCname.clientName === 'INDIABULLS' ? "Positive" : "Recomended"}`, label: `${applicantDetails.bankNBFCname.clientName === 'INDIABULLS' ? "Positive" : "Recomended"}` },
         { name: 'overallStatus', value: 'Refer', label: 'Refer' },
-        { name: 'overallStatus', value: `${applicantDetails.bankNBFCname.clientName === 'INDIABULLS' ?"Negative": "Not Recomended" }`, label: `${applicantDetails.bankNBFCname.clientName === 'INDIABULLS' ?"Negative": "Not Recomended" }` },
+        { name: 'overallStatus', value: `${applicantDetails.bankNBFCname.clientName === 'INDIABULLS' ? "Negative" : "Not Recomended"}`, label: `${applicantDetails.bankNBFCname.clientName === 'INDIABULLS' ? "Negative" : "Not Recomended"}` },
         { name: 'overallStatus', value: 'CNV', label: 'CNV' },
     ]
     const remarksfnc = (data) => {
@@ -77,7 +77,7 @@ const Tpc = forwardRef(({ data, form, applicantDetails }, ref) => {
         form[e.name] = e.value
         if (e.name == 'overallStatus') {
             form.finalFIRemarks = remarksfnc(form)
-        } 
+        }
         setFormdata(form)
         setRefresh(Math.random())
     }
@@ -99,7 +99,6 @@ const Tpc = forwardRef(({ data, form, applicantDetails }, ref) => {
             return supervisor;
         }
         return form.productSupervisor
-
     }
     const getCookie = (cname) => {
         let name = cname + "=";
@@ -123,10 +122,10 @@ const Tpc = forwardRef(({ data, form, applicantDetails }, ref) => {
             for (const key in data) {
                 form[key] = data[key]
             }
-                form.productSupervisor = getProductSupervisor(form)
+            form.productSupervisor = getProductSupervisor(form)
             form.finalFIRemarks = remarksfnc(data)
             // if (form.finalFIAgencyname === "") {
-                form.finalFIAgencyname = "KreDT"
+            form.finalFIAgencyname = "KreDT"
             // }
             if (form.finalFIVerifierName === "") {
                 form.finalFIVerifierName = data.selected
@@ -264,14 +263,14 @@ const Tpc = forwardRef(({ data, form, applicantDetails }, ref) => {
                     <img src={companyStamp} style={{ width: 150 }} alt='' />
                 </div>
                 <div className='d-flex'>
-                <div className='mx-3'>
-                    <label>Verifier Name</label>
-                    <Input type="text" name='finalFIVerifierName' value={formdata['finalFIVerifierName']} onChange={(e) => onHandleChange(e.currentTarget)} />
-                </div>
-                <div>
-                    <label>Product Supervisor</label>
-                    <Input type="text" name='productSupervisor' value={formdata['productSupervisor']} onChange={(e) => onHandleChange(e.currentTarget)} />
-                </div>
+                    <div className='mx-3'>
+                        <label>Verifier Name</label>
+                        <Input type="text" name='finalFIVerifierName' value={formdata['finalFIVerifierName']} onChange={(e) => onHandleChange(e.currentTarget)} />
+                    </div>
+                    <div>
+                        <label>Product Supervisor</label>
+                        <Input type="text" name='productSupervisor' value={formdata['productSupervisor']} onChange={(e) => onHandleChange(e.currentTarget)} />
+                    </div>
 
                 </div>
                 <div className='d-none'>

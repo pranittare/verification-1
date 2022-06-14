@@ -240,8 +240,9 @@ const [filterSearch, setFilterSearch] = useState(initialdata)
                     </Dropdown>
                 </div>
                 <div className='d-flex'>
-
-                    <p className='text-primary me-1 ms-1'>Office</p>
+                    <p className='mx-1'>Saved</p>
+                    <p className='bg-warning rounded' style={{height: 24, width: 24}} />
+                    <p className='text-primary mx-1'>Office</p>
                     <p className='text-success'>Resident</p>
                 </div>
             </div>
@@ -299,7 +300,7 @@ const [filterSearch, setFilterSearch] = useState(initialdata)
                                     }
 
                                 </td>
-                                <td>
+                                <td className={item?.office?.verificationDetails?.productSupervisor ? 'bg-warning' : item?.resident?.verificationDetails?.productSupervisor ? 'bg-warning' : ''}>
                                     {
                                         item?.office ?
                                             item.office?.applicantDetails?.customerName
