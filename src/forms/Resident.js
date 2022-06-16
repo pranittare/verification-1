@@ -553,11 +553,11 @@ const Resident = () => {
     const overallStatusCal = (allData) => {
         if (applicantDetails.bankNBFCname.clientName === 'INDIABULLS') {
             let orverallstatus = ''
-    
+
             if (allData?.mismatchAddress == 'yes') {
                 orverallstatus = 'Negative'
                 console.log('logic', orverallstatus);
-            }  else if (allData?.residenceStatus == 'Paying Guest') {
+            } else if (allData?.residenceStatus == 'Paying Guest') {
                 orverallstatus = 'Negative'
                 console.log('logic', orverallstatus);
             } else if (allData?.residenceStatus == 'Friend Owned') {
@@ -605,7 +605,7 @@ const Resident = () => {
             } else if (allData?.residenceStatus == 'Multi Tenants') {
                 orverallstatus = 'Refer'
                 console.log('logic', orverallstatus);
-            }  else if (allData.TPCStatus1 == 'negative' || allData.TPCStatus2 == 'negative') {
+            } else if (allData.TPCStatus1 == 'negative' || allData.TPCStatus2 == 'negative') {
                 orverallstatus = 'Refer'
                 console.log('logic', orverallstatus);
             } else {
@@ -614,34 +614,34 @@ const Resident = () => {
                 } else if (allData?.easeofLocating == 'Difficult to Trace') {
                     orverallstatus = 'Refer'
                     console.log('logic', orverallstatus);
-    
+
                 } else if (allData?.negativeArea == 'Community Dominated Area') {
                     orverallstatus = 'Refer'
                     console.log('logic', orverallstatus);
-    
+
                 } else if (allData?.negativeArea == 'Sitting Chawl/Standing Chawl') {
                     orverallstatus = 'Refer'
                     console.log('logic', orverallstatus);
-    
+
                 } else if (allData?.negativeArea == 'High Risk Area') {
                     orverallstatus = 'Refer'
                     console.log('logic', orverallstatus);
-    
+
                 } else if (allData?.negativeArea == 'Community Dominated/Sitting Chawl/Standing Chawl Area') {
                     orverallstatus = 'Refer'
                     console.log('logic', orverallstatus);
-    
+
                 }
                 else {
                     orverallstatus = 'Positive'
-    
+
                 }
             }
             return orverallstatus
-            
+
         } else {
             let orverallstatus = ''
-    
+
             if (allData?.mismatchAddress == 'yes') {
                 orverallstatus = 'Not Recommended'
                 console.log('logic', orverallstatus);
@@ -702,27 +702,27 @@ const Resident = () => {
                 } else if (allData?.easeofLocating == 'Difficult to Trace') {
                     orverallstatus = 'Refer'
                     console.log('logic', orverallstatus);
-    
+
                 } else if (allData?.negativeArea == 'Community Dominated Area') {
                     orverallstatus = 'Refer'
                     console.log('logic', orverallstatus);
-    
+
                 } else if (allData?.negativeArea == 'Sitting Chawl/Standing Chawl') {
                     orverallstatus = 'Refer'
                     console.log('logic', orverallstatus);
-    
+
                 } else if (allData?.negativeArea == 'High Risk Area') {
                     orverallstatus = 'Refer'
                     console.log('logic', orverallstatus);
-    
+
                 } else if (allData?.negativeArea == 'Community Dominated/Sitting Chawl/Standing Chawl Area') {
                     orverallstatus = 'Refer'
                     console.log('logic', orverallstatus);
-    
+
                 }
                 else {
                     orverallstatus = 'Recommended'
-    
+
                 }
             }
             return orverallstatus
@@ -2723,17 +2723,17 @@ const Resident = () => {
                     <button className='btn text-primary' id='downloadpdf' onClick={() => { pdfMake.createPdf(pdffnc()).download(combiner().customerName.replace(/ /g, '').replace(/[^a-zA-Z ]/g, "")) }}>Download PDF</button>
                     <Button onClick={() => {
                         if (pdffnc()) {
-                            setOldMethodPdf(!oldMethodPdf)    
+                            setOldMethodPdf(!oldMethodPdf)
                         }
-                        }}>{oldMethodPdf ? "Change to Old Method" : "Change to New Method"}</Button>
+                    }}>{oldMethodPdf ? "Change to Old Method" : "Change to New Method"}</Button>
                 </div>}
             </>
             }
             {!loading ? <div className='d-flex'>
                 <Button color='link' onClick={recheckOverride}>Recheck</Button>
-              {showSubmit && <div>  <Button className='mx-2' color='warning' onClick={handleSave}>Save</Button>
-                <Button color='primary' onClick={handleSubmit}>Submit</Button> </div>}
-                </div>
+                <Button className='mx-2' color='warning' onClick={handleSave}>Save</Button>
+                {showSubmit && <Button color='primary' onClick={handleSubmit}>Submit</Button>}
+            </div>
                 :
                 <div className="spinner-grow text-warning" role="status">
                 </div>

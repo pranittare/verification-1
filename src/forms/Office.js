@@ -2499,19 +2499,17 @@ const Office = () => {
                     <button className='btn text-primary' id='downloadpdf' onClick={() => { pdfMake.createPdf(pdffnc()).download(combiner().customerName.replace(/ /g, '').replace(/[^a-zA-Z ]/g, "")) }}>Download PDF</button>
                     <Button onClick={() => {
                         if (pdffnc()) {
-                            setOldMethodPdf(!oldMethodPdf)    
+                            setOldMethodPdf(!oldMethodPdf)
                         }
-                        }}>{oldMethodPdf ? "Change to Old Method" : "Change to New Method"}</Button>
+                    }}>{oldMethodPdf ? "Change to Old Method" : "Change to New Method"}</Button>
                 </div>}
 
             </>
             }
             {!loading ? <div className='d-flex'>
                 <Button color='link' onClick={recheckOverride}>Recheck</Button>
-                {showSubmit && <div> <Button className='mx-1' color='warning' onClick={handleSave}>Save</Button>
-                    <Button color='primary' onClick={handleSubmit}>Submit</Button>
-                </div>
-                }
+                <Button className='mx-1' color='warning' onClick={handleSave}>Save</Button>
+                {showSubmit && <Button color='primary' onClick={handleSubmit}>Submit</Button>}
             </div> :
                 <div className="spinner-grow text-warning" role="status">
                 </div>
