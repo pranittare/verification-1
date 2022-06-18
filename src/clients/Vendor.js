@@ -2,12 +2,15 @@ import React, { useState } from 'react'
 import AddVendor from './AddVendor';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import { Modal, ModalHeader, ModalBody, ModalFooter, Input, Button, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
+import { Modal, ModalHeader, ModalBody, ModalFooter, Input, Button, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Progress } from 'reactstrap';
 import DropDownComp from '../components/DropDownComp';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { addDoc, collection, deleteDoc, doc, getFirestore, updateDoc } from "firebase/firestore"
+import { getStorage, ref as refStorage, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 const Vendor = ({ vendors }) => {
-    console.log('vendors', vendors)
+    const storage = getStorage();
+    const fdb = getFirestore();
 
     const [clientInfo, setClientInfo] = useState({
         vendorCode: '',
@@ -25,16 +28,30 @@ const Vendor = ({ vendors }) => {
         newProduct: '',
         agreementDate: new Date(),
         renewalDate: new Date(),
+        key: ''
 
     });
 
 
     const [addProduct, setAddProduct] = useState(false);
     const [addEmail, setAddEmail] = useState(false);
+    const [gstWarning, setGstWarning] = useState(false);
+    const [progress, setProgress] = useState(0);
+    const [getUrlDetails, setUrlDetails] = useState('');
+    const [loading, setLoading] = useState(false);
+    const regex = new RegExp('^([0][1-9]|[1-2][0-9]|[3][0-7])([a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}[1-9a-zA-Z]{1}[zZ]{1}[0-9a-zA-Z]{1})+$')
 
     const onHandleChange = (e) => {
         let clientForm = { ...clientInfo }
         clientForm[e.name] = e.value
+        if (e.name === 'gstNo') {
+            setGstWarning(regex.test(e.value))
+        }
+        setClientInfo(clientForm)
+    }
+    const onHandleDateChange = (name, data) => {
+        let clientForm = { ...clientInfo }
+        clientForm[name] = { seconds: data.getTime() / 1000 }
         setClientInfo(clientForm)
     }
     const onHandleChangeProduct = (e, index) => {
@@ -49,7 +66,11 @@ const Vendor = ({ vendors }) => {
     }
     const addProductFnc = () => {
         let form = { ...clientInfo }
+        if (!form.productList) {
+            form.productList = []
+        }
         form.productList.push({ productName: form.newProduct, emailList: [] })
+        form.newProduct = ''
         setClientInfo(form)
         setAddProduct(false)
         setAddEmail(false)
@@ -57,6 +78,7 @@ const Vendor = ({ vendors }) => {
     const addEmailfnc = (index) => {
         let form = { ...clientInfo }
         form.productList[index].emailList.push({ email: form.newEmail })
+        form.newEmail = ''
         setClientInfo(form)
         setAddProduct(false)
         setAddEmail(false)
@@ -88,9 +110,92 @@ const Vendor = ({ vendors }) => {
     const toggleAddEmail = () => {
         setAddEmail(!addEmail)
     }
+    const getDownloadURLFile = (vendorCode, storageReference) => {
+        const filePath = `vendors/${vendorCode}`;
+        let storageRef = refStorage(storage, filePath)
+        if (storageReference) {
+            storageRef = storageReference
+        }
+        getDownloadURL(storageRef).then((downloadURL) => {
+            setUrlDetails(downloadURL)
+        }).catch((err) => {
+            alert(err.message)
+        })
+    }
+    const handleUploadFile = (event, vendorCode) => {
+        const file = event.target.files[0];
+        const filePath = `vendors/${vendorCode}`;
+        const storageRef = refStorage(storage, filePath);
+        const uploadTask = uploadBytesResumable(storageRef, file);
+
+        // Register three observers:
+        // 1. 'state_changed' observer, called any time the state changes
+        // 2. Error observer, called on failure
+        // 3. Completion observer, called on successful completion
+        uploadTask.on('state_changed',
+            (snapshot) => {
+                // Observe state change events such as progress, pause, and resume
+                // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+                setProgress((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+                console.log('Upload is ' + progress + '% done');
+                switch (snapshot.state) {
+                    case 'paused':
+                        console.log('Upload is paused');
+                        break;
+                    case 'running':
+                        console.log('Upload is running');
+                        break;
+                    default: console.log('default');
+                }
+            },
+            (error) => {
+                // Handle unsuccessful uploads
+            },
+            () => {
+                // Handle successful uploads on complete
+                // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+                getDownloadURLFile(vendorCode, uploadTask.snapshot.ref)
+            }
+        )
+
+    }
+    const addVendorToDB = (data) => {
+        if (data) {
+            setLoading(true)
+            console.log('data', data)
+            if (data.key) {
+                const clientUpdateRef = doc(fdb, "vendors", data.key)
+                updateDoc(clientUpdateRef, data).then(res => {
+                    console.log('res update', res)
+                })
+            } else {
+                addDoc(collection(fdb, "vendors"), data).then(res => {
+                    console.log('res', res)
+                    window.reload()
+                }).catch(() => {
+                    setLoading(false)
+                })
+            }
+            setLoading(false)
+        }
+    }
+    const [deleteModal, setDeleteModal] = useState(false)
+    const handleDeleteClient = () => {
+        if (deleteModal.key) {
+            const clientUpdateRef = doc(fdb, "vendors", deleteModal.key)
+            deleteDoc(clientUpdateRef).then(res => {
+                console.log('res update', res)
+                setDeleteModal(false)
+                window.reload()
+            })
+        }
+    }
+
     return (
         <div>
-            <AddVendor setClientInfo={(data)=> setClientInfo(data)}/>
+            <div className='d-flex my-2'>
+            <AddVendor setClientInfo={(data) => setClientInfo(data)} />
+            </div>
 
             <div>
                 <Modal isOpen={clientInfo}>
@@ -122,14 +227,14 @@ const Vendor = ({ vendors }) => {
                                 </div>
 
                                 <div>
-                                    <label>GST No.</label>
+                                    <label className={!gstWarning ? 'text-danger' : ''}>GST No.{!gstWarning && ' Enter Valid Number'} </label>
                                     <Input name='gstNo' value={clientInfo.gstNo} onChange={(e) => onHandleChange(e.target)} />
                                 </div>
 
                                 <div>
                                     <label>Agreement Date</label>
-                                    <DatePicker className='form-control' placeholderText='Start Date' selected={clientInfo?.agreementDate?.seconds * 1000 ? clientInfo?.agreementDate?.seconds * 1000 : new Date()} 
-                                    onChange={(date) => setClientInfo(...clientInfo, {agreementDate: date})}
+                                    <DatePicker className='form-control' placeholderText='Start Date' selected={clientInfo?.agreementDate?.seconds * 1000 ? clientInfo?.agreementDate?.seconds * 1000 : new Date()}
+                                        onChange={(date) => onHandleDateChange('agreementDate', date)}
                                     />
                                     {/* <Input name='agreementDate' value={moment(clientInfo?.agreementDate?.seconds * 1000).format("MMM Do YYYY")} onChange={(e) => onHandleChange(e.target)} /> */}
                                 </div>
@@ -138,8 +243,9 @@ const Vendor = ({ vendors }) => {
                             <div className='col-6'>
                                 <div>
                                     <label>Renewal Date</label>
-                                    <DatePicker className='form-control' placeholderText='Start Date' selected={clientInfo?.renewalDate?.seconds * 1000 ? clientInfo?.renewalDate?.seconds * 1000 : new Date()} 
-                                    onChange={(date) => setClientInfo(...clientInfo, {renewalDate: date})} />
+                                    <DatePicker className='form-control' placeholderText='Start Date' selected={clientInfo?.renewalDate?.seconds * 1000 ? clientInfo?.renewalDate?.seconds * 1000 : new Date()}
+                                        onChange={(date) => onHandleDateChange('renewalDate', date)}
+                                    />
                                     {/* <Input name='renewalDate' value={moment(clientInfo?.renewalDate?.seconds * 1000).format("MMM Do YYYY")} onChange={(e) => onHandleChange(e.target)} /> */}
                                 </div>
 
@@ -218,15 +324,22 @@ const Vendor = ({ vendors }) => {
                                 </div>
                                 <br />
                                 <p>Upload Docs</p>
-                                <Button>Choose File</Button>
+                                <input type='file' onChange={(event) => handleUploadFile(event, clientInfo.vendorCode)} />
+                                {(progress > 0 && progress !== 100) && <Progress value={progress} />}
+                                <br />
+                                {!getUrlDetails ? <Button onClick={() => getDownloadURLFile(clientInfo.vendorCode)}>Check for Files</Button>
+                                    :
+                                    <a href={getUrlDetails} target='_blank' rel="noreferrer">Download File</a>
+                                }
                             </div>
 
                         </div>
 
                     </ModalBody>
                     <ModalFooter>
-                        <Button color='primary' onClick={() => console.log('form', clientInfo)}> Add </Button>
-                        <Button color='danger' onClick={() => toggle()}> Cancel </Button>
+                        {!loading && <Button color='primary' onClick={() => addVendorToDB(clientInfo)}> Add </Button>}
+                        <Button color='danger' onClick={() => { toggle(); setGstWarning(false) }}> Cancel </Button>
+                        <Button onClick={() => setUrlDetails(false)}>Recheck Download</Button>
                     </ModalFooter>
                 </Modal>
             </div>
@@ -248,7 +361,7 @@ const Vendor = ({ vendors }) => {
                             <th scope="row">{index + 1}</th>
                             <td>
                                 {/* {{item.agreementDate.seconds * 1000 | date:'mediumDate'}}  */}
-                                {moment(item.agreementDate.seconds * 1000).format("MMM Do YYYY")}
+                                {moment(item?.agreementDate?.seconds * 1000).format("MMM Do YYYY")}
                             </td>
                             <td>
                                 <Button color='link' data-toggle="modal"
@@ -263,27 +376,20 @@ const Vendor = ({ vendors }) => {
                                 {item.location}
                             </td>
                             <td>
-                                <Button className="btn btn-danger" data-toggle="modal" data-target="#deleteModal" >X</Button>
-                                <div className="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-                                    aria-hidden="true" data-backdrop="false">
-                                    <div className="modal-dialog">
-                                        <div className="modal-content">
-                                            <div className="modal-header">
-                                                <h5 className="modal-title" id="exampleModalLabel">Are You Sure you want to Delete
-                                                    {/* {{itemdata?.vendorCode}} */}
-                                                </h5>
-                                            </div>
-                                            <div className="modal-footer">
-                                                <Button type="Button" className="btn btn-secondary" data-dismiss="modal">No</Button>
-                                                <Button type="Button" className="btn btn-danger">Yes</Button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                <Button className="btn btn-danger" type='button' onClick={() => setDeleteModal(item)}>X</Button>
+
+
                             </td>
                         </tr>
                     })}
 
+                    <Modal isOpen={deleteModal}>
+                        <ModalHeader>Are You Sure you want to Delete</ModalHeader>
+                        <ModalFooter>
+                            <Button onClick={() => handleDeleteClient()} color='danger'>Yes</Button>
+                            <Button onClick={() => setDeleteModal(false)}>No</Button>
+                        </ModalFooter>
+                    </Modal>
                 </tbody>
             </table>
         </div>

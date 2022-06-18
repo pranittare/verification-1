@@ -172,6 +172,7 @@ const Resident = () => {
         const remref = ref(db, path);
         remove(remref).then(res => {
             setAlertMessage('Form Removed from RT and Submitted to Cloud')
+            // handleAgentCount()
             history.push('/ActiveCases')
         })
     }
@@ -186,24 +187,32 @@ const Resident = () => {
             get(child(agentPath, path)).then((snapshot) => {
                 const x = snapshot.val();
                 if (x) {
-                    if (x.casesSubmitted || x.casesSubmitted === 0) {
-                        count = x.casesSubmitted + 1
-                        if (x.currentMonth !== month) {
-                            update(agentPath, { casesSubmitted: 1, currentMonth: month })
-                        } else {
-                            update(agentPath, { casesSubmitted: count, currentMonth: month })
-                        }
-                    } else {
-                        if (x.currentMonth !== month) {
-                            update(agentPath, { casesSubmitted: 1, currentMonth: month })
-                        } else {
-                            update(agentPath, { casesSubmitted: count, currentMonth: month })
-                        }
-                    }
+                    // if (x.casesSubmitted || x.casesSubmitted === 0) {
+                    count = x.casesSubmitted ? x.casesSubmitted : 0 + 1
+                    // agentMonth = x.currentMonth
+                    // if (x.currentMonth !== month) {
+                    //     update(agentPath, { casesSubmitted: 1, currentMonth: month })
+                    // } else {
+                    //     update(agentPath, { casesSubmitted: count, currentMonth: month })
+                    // }
+                    // }
+                    // else {
+                    //     if (x.currentMonth !== month) {
+                    //         update(agentPath, { casesSubmitted: 1, currentMonth: month })
+                    //     } else {
+                    //         update(agentPath, { casesSubmitted: count, currentMonth: month })
+                    //     }
+                    // }
                 }
                 console.log('handleAgentCount', x)
 
             })
+            // if (agentMonth !== month) {
+            //     update(agentPath, { casesSubmitted: 1, currentMonth: month })
+            // } else {
+            update(agentPath, { casesSubmitted: count, currentMonth: month })
+            // }
+
             // onValue(agentPath, (snapshot) => {
             // })
         }
