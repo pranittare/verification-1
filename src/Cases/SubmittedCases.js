@@ -8,7 +8,7 @@ import { getDatabase, remove, ref } from "firebase/database";
 import Alert from '../components/Alert';
 
 const SubmittedCases = (props) => {
-    const { vendors } = props;
+    const { vendors, agents } = props;
     const db = getDatabase();
     let history = useHistory();
     const [allData, setAllData] = useState([])
@@ -178,6 +178,18 @@ const [filterSearch, setFilterSearch] = useState(initialdata)
         } else {
             setAlertMessage('problem found delete from backend!');
         }
+    }
+    const getAgentFullName = (item) => {
+        let agentname = ''
+        for (const key in agents) {
+            if (Object.hasOwnProperty.call(agents, key)) {
+                const element = agents[key];
+                if (element.userId === item.selected) {
+                    agentname = element.name
+                }
+            }
+        }
+        return agentname
     }
     useEffect(() => {
         formData(props.forms)
@@ -351,6 +363,7 @@ const [filterSearch, setFilterSearch] = useState(initialdata)
                             <th scope="col">ClientName</th>
                             <th scope="col">Stage</th>
                             <th scope="col">Remark</th>
+                            <th scope="col">Agent Name</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -409,6 +422,9 @@ const [filterSearch, setFilterSearch] = useState(initialdata)
                                     }
 
                                 </td>
+                                <td>
+                                    {getAgentFullName(item)}
+                                </td>
                             </tr>
 
                         })}
@@ -422,7 +438,8 @@ const mapStateToProps = (state) => {
     return {
         forms: state.forms,
         branch: state.branch,
-        vendors: state.vendors
+        vendors: state.vendors,
+        agents: state.agents
     }
 }
 export default connect(mapStateToProps)(SubmittedCases)
