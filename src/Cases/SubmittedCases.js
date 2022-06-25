@@ -18,15 +18,16 @@ const SubmittedCases = (props) => {
     const toggleBankName = () => {
         setDropdownBankNameOpen(!dropdownBankNameOpen);
     }
-    const initialdata = { appid: "",
-    initiationDate: "",
-    customerName: "",
-    tat: "",
-    bankNBFCname: "",
-    overallStatus: "" 
-   }
-const [filterSearch, setFilterSearch] = useState(initialdata)
-    const [selectedBank, setSelectedBank] = useState(false);    
+    const initialdata = {
+        appid: "",
+        initiationDate: "",
+        customerName: "",
+        tat: "",
+        bankNBFCname: "",
+        overallStatus: ""
+    }
+    const [filterSearch, setFilterSearch] = useState(initialdata)
+    const [selectedBank, setSelectedBank] = useState(false);
     const [alertMessage, setAlertMessage] = useState('');
     const formData = (forms) => {
         let formarray = []
@@ -126,14 +127,14 @@ const [filterSearch, setFilterSearch] = useState(initialdata)
             }
         }
         if (filterSearch.bankNBFCname) {
-                 if (a?.office?.applicantDetails) {
+            if (a?.office?.applicantDetails) {
                 return a.office.applicantDetails.bankNBFCname?.clientName?.toLowerCase().includes(filterSearch.bankNBFCname.toLowerCase())
             } else if (a?.resident?.applicantDetails) {
                 return a.resident.applicantDetails.bankNBFCname?.clientName?.toLowerCase().includes(filterSearch.bankNBFCname.toLowerCase())
             }
         }
         if (filterSearch.customerName) {
-                 if (a?.office?.applicantDetails) {
+            if (a?.office?.applicantDetails) {
                 return a.office.applicantDetails.customerName?.toLowerCase().includes(filterSearch.customerName)
             } else if (a?.resident?.applicantDetails) {
                 return a.resident.applicantDetails.customerName?.toLowerCase().includes(filterSearch.customerName)
@@ -158,25 +159,28 @@ const [filterSearch, setFilterSearch] = useState(initialdata)
         } else if (item?.resident?.applicantDetails) {
             // type = 'resident';
             pincode = item.resident.applicantDetails.pincode
-        }
-        if (pincode) {
-            const path = `form/${pincode}/${item.key}`
-            console.log('path', path)
-            remove(ref(db, path)).then(res => {
-                setAlertMessage('Case Removed');
-                setReset(Math.random());
-            })
-        } else if (item.pincode && item.key) {
-            pincode = item.pincode
-            const path = `form/${pincode}/${item.key}`
-            console.log('path', path)
-            remove(ref(db, path)).then(res => {
-                setAlertMessage('Case Removed');
-                setReset(Math.random());
-            })
+        };
+        let text = "Are you sure you want to Delete?"
+        if (window.confirm(text) === true) {
+            if (pincode) {
+                const path = `form/${pincode}/${item.key}`
+                console.log('path', path)
+                remove(ref(db, path)).then(res => {
+                    setAlertMessage('Case Removed');
+                    setReset(Math.random());
+                })
+            } else if (item.pincode && item.key) {
+                pincode = item.pincode
+                const path = `form/${pincode}/${item.key}`
+                console.log('path', path)
+                remove(ref(db, path)).then(res => {
+                    setAlertMessage('Case Removed');
+                    setReset(Math.random());
+                })
 
-        } else {
-            setAlertMessage('problem found delete from backend!');
+            } else {
+                setAlertMessage('problem found delete from backend!');
+            }
         }
     }
     const getAgentFullName = (item) => {
@@ -226,7 +230,7 @@ const [filterSearch, setFilterSearch] = useState(initialdata)
     }, [])
     return (
         <div>
-           {alertMessage && <Alert message={alertMessage} setMessage={(data)=>setAlertMessage(data)}/>}
+            {alertMessage && <Alert message={alertMessage} setMessage={(data) => setAlertMessage(data)} />}
             <div className='d-flex justify-content-around mb-2 mt-2'>
                 <h4>Submitted Cases</h4>
                 <button onClick={getExcel} className='btn btn-primary'>Get Excel</button>
@@ -253,7 +257,7 @@ const [filterSearch, setFilterSearch] = useState(initialdata)
                 </div>
                 <div className='d-flex'>
                     <p className='mx-1'>Saved</p>
-                    <p className='bg-warning rounded' style={{height: 24, width: 24}} />
+                    <p className='bg-warning rounded' style={{ height: 24, width: 24 }} />
                     <p className='text-primary mx-1'>Office</p>
                     <p className='text-success'>Resident</p>
                 </div>
@@ -345,7 +349,7 @@ const [filterSearch, setFilterSearch] = useState(initialdata)
 
                                 </td>
                                 <td>
-                                    <Button color='danger' onClick={()=>handleDelete(item)}>X</Button>
+                                    <Button color='danger' onClick={() => handleDelete(item)}>X</Button>
                                 </td>
                             </tr>
                         })}

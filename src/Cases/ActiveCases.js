@@ -22,7 +22,7 @@ const ActiveCases = (props) => {
     const [agentsDropdown, setAgentsDropdown] = useState([]);
     const [selectedAgent, setSelectedAgent] = useState();
     const [currentIndex, setCurrentIndex] = useState();
-    const [selectedBank, setSelectedBank] = useState(false);    
+    const [selectedBank, setSelectedBank] = useState(false);
     const [dropdownBankNameOpen, setDropdownBankNameOpen] = useState(false);
     const toggleBankName = () => {
         setDropdownBankNameOpen(!dropdownBankNameOpen);
@@ -193,24 +193,27 @@ const ActiveCases = (props) => {
             type = 'resident';
             pincode = item.resident.applicantDetails.pincode
         }
-        if (type && pincode) {
-            const path = `form/${pincode}/${item.key}`
-            console.log('path', path)
-            remove(ref(db, path)).then(res => {
-                setAlertMessage('Case Removed');
-                setReset(Math.random());
-            })
-        } else if (item.pincode && item.key) {
-            pincode = item.pincode
-            const path = `form/${pincode}/${item.key}`
-            console.log('path', path)
-            remove(ref(db, path)).then(res => {
-                setAlertMessage('Case Removed');
-                setReset(Math.random());
-            })
+        let text = "Are you sure you want to Delete?"
+        if (window.confirm(text) === true) {
+            if (type && pincode) {
+                const path = `form/${pincode}/${item.key}`
+                console.log('path', path)
+                remove(ref(db, path)).then(res => {
+                    setAlertMessage('Case Removed');
+                    setReset(Math.random());
+                })
+            } else if (item.pincode && item.key) {
+                pincode = item.pincode
+                const path = `form/${pincode}/${item.key}`
+                console.log('path', path)
+                remove(ref(db, path)).then(res => {
+                    setAlertMessage('Case Removed');
+                    setReset(Math.random());
+                })
 
-        } else {
-            setAlertMessage('problem found delete from backend!');
+            } else {
+                setAlertMessage('problem found delete from backend!');
+            }
         }
     }
     const getAgents = (pincode, index) => {
@@ -294,7 +297,7 @@ const ActiveCases = (props) => {
                 return item.resident.applicantDetails.bankNBFCname?.clientName?.toLowerCase().includes(filterSearch.bankNBFCname.toLowerCase())
             }
         }
-     
+
         if (filterSearch.pincode) {
             if (item?.office?.applicantDetails) {
                 if (item?.office?.applicantDetails?.pincode) {
@@ -356,28 +359,28 @@ const ActiveCases = (props) => {
                 <h4>Active Cases</h4>
             </div>
             <div className='d-flex sticky-top bg-white justify-content-between'>
-                    <Dropdown toggle={toggleBankName} isOpen={dropdownBankNameOpen}>
-                        <DropdownToggle caret style={{minWidth: 'max-content'}}>
-                            {filterSearch.bankNBFCname ? filterSearch.bankNBFCname : 'None'}
-                        </DropdownToggle>
-                        <DropdownMenu
-                        >
-                            <DropdownItem name={'bankNBFCname'} value={''} onClick={(e) => {handleFilter(e)}}>None</DropdownItem>
-                            {vendors?.map(item => {
-                                return <DropdownItem key={item.clientName} onClick={(e) => {handleFilter(e)}}
-                                    value={item.clientName}
-                                    name={'bankNBFCname'}>
-                                    {item.clientName}
-                                </DropdownItem>
-                            })}
+                <Dropdown toggle={toggleBankName} isOpen={dropdownBankNameOpen}>
+                    <DropdownToggle caret style={{ minWidth: 'max-content' }}>
+                        {filterSearch.bankNBFCname ? filterSearch.bankNBFCname : 'None'}
+                    </DropdownToggle>
+                    <DropdownMenu
+                    >
+                        <DropdownItem name={'bankNBFCname'} value={''} onClick={(e) => { handleFilter(e) }}>None</DropdownItem>
+                        {vendors?.map(item => {
+                            return <DropdownItem key={item.clientName} onClick={(e) => { handleFilter(e) }}
+                                value={item.clientName}
+                                name={'bankNBFCname'}>
+                                {item.clientName}
+                            </DropdownItem>
+                        })}
 
-                        </DropdownMenu>
-                    </Dropdown>
-                    <div className='d-flex'>
-                <p className='text-primary mx-1'>Office</p>
-                <p className='text-success'>Resident</p>
+                    </DropdownMenu>
+                </Dropdown>
+                <div className='d-flex'>
+                    <p className='text-primary mx-1'>Office</p>
+                    <p className='text-success'>Resident</p>
 
-                    </div>
+                </div>
             </div>
             <ReactHTMLTableToExcel
                 id="test-table-xls-button"
@@ -390,7 +393,7 @@ const ActiveCases = (props) => {
                 <Input type="text" onChange={handleFilter} name="pincode" placeholder={'Pincode'} />
                 <Input type="text" onChange={allSearch} placeholder={'Search all'} />
                 <div>
-                <button onClick={getExcel} className='btn btn-primary mx-2' style={{width: 'max-content'}}>Get Excel</button>
+                    <button onClick={getExcel} className='btn btn-primary mx-2' style={{ width: 'max-content' }}>Get Excel</button>
 
                 </div>
             </div>
