@@ -201,6 +201,7 @@ const AddAgent = ({ agent, allAgents }) => {
         for (let index = 0; index < realAgents.length; index++) {
             const agents = realAgents[index];
             if (agent.userId === agents.userId) {
+                console.log('agent', agent, agents)
                 update(rtRef(db, `agents/${agents.key}`), { uniqueId: null }).then(res => {
                     alert('Agent Enabled')
                     window.location.reload()
@@ -326,11 +327,21 @@ const AddAgent = ({ agent, allAgents }) => {
         let realAgents = rtA;
         for (let index = 0; index < realAgents.length; index++) {
             const agents = realAgents[index];
+            // console.log('agents', agents)
             if (agent1.userId?.toString().toLowerCase() == agents.userId?.toString().toLowerCase()) {
                 agentkeyRt = agents.key
             }
         }
+        // if (realTimeAgentKey() || realTimeAgentKey() === 'undefined') {
+        //     fixAgent()       
+        // }
         return agentkeyRt
+    }
+    const fixAgent = () => {
+        // copy data from Firestore DB 
+        update(rtRef(db, `agents/${agent.key}`), commonAddUpdate('rt')).then(res => {
+            alert("Agent fixed but manual cleanup required from backend")
+        })
 
     }
     const handleUpdateUser = () => {
@@ -344,7 +355,7 @@ const AddAgent = ({ agent, allAgents }) => {
                 update(rtRef(db, `agents/${realTimeAgentKey()}`), commonAddUpdate('rt'))
                     .then(res => {
                         setAlertMessage('Update Successfull')
-                        window.location.reload()
+                        // window.location.reload()
                     })
                     .catch(err => {
                         setAlertMessage('Error Occured retry')
@@ -436,7 +447,7 @@ const AddAgent = ({ agent, allAgents }) => {
     }, [])
     return (
         <div>
-           {alertMessage && <Alert message={alertMessage} setMessage={(data)=>setAlertMessage(data)}/>}
+            {alertMessage && <Alert message={alertMessage} setMessage={(data) => setAlertMessage(data)} />}
             <Button color={agent ? "link" : "danger"} onClick={toggle}>{agent ? agent.name : 'Add Agent'}</Button>
             <Modal isOpen={modal} toggle={toggle} >
                 <ModalHeader toggle={toggle}>Modal title</ModalHeader>
@@ -519,7 +530,14 @@ const AddAgent = ({ agent, allAgents }) => {
                             <div >
                                 <label>Password</label>
                                 <Input type="text" name='password' value={formdata['password']} onChange={(e) => onHandleChange(e.currentTarget)} />
-                                <label>{realTimeAgentKey()}</label>
+                                {/* {realTimeAgentKey() || realTimeAgentKey() == 'undefined'  ? */}
+                                    <label>
+                                        {realTimeAgentKey()}
+                                    </label>
+                                    :
+                                {/* // } */}
+                                <Button onClick={fixAgent}>Fix Agent</Button>
+
                             </div>
                         </div>
                         <div className='col-12'>
