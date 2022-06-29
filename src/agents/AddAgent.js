@@ -530,14 +530,9 @@ const AddAgent = ({ agent, allAgents }) => {
                             <div >
                                 <label>Password</label>
                                 <Input type="text" name='password' value={formdata['password']} onChange={(e) => onHandleChange(e.currentTarget)} />
-                                {/* {realTimeAgentKey() || realTimeAgentKey() == 'undefined'  ? */}
-                                    <label>
-                                        {realTimeAgentKey()}
-                                    </label>
-                                    :
-                                {/* // } */}
-                                <Button onClick={fixAgent}>Fix Agent</Button>
-
+                                <label>
+                                    {realTimeAgentKey()}
+                                </label>
                             </div>
                         </div>
                         <div className='col-12'>
@@ -563,6 +558,7 @@ const AddAgent = ({ agent, allAgents }) => {
                     </div>}
                 </ModalBody>
                 <ModalFooter>
+                    <Button onClick={fixAgent}>Fix Agent</Button>
                     <Button color="secondary" onClick={toggle}>Cancel</Button>
                     {updateField ? formdata['name'] ? <Button color="warning" onClick={handleUpdateUser}>Update User</Button> : agent?.name && <Button color="warning" onClick={handleAddUser}>Add User</Button> : <Button color="warning" onClick={handleAddUser}>Add User</Button>}
                 </ModalFooter>
