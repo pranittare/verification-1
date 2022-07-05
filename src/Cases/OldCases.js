@@ -97,14 +97,14 @@ const OldCases = (props) => {
     }
     const search2 = () => {
         let start = Math.round((new Date(startDate)).getTime());
-        let end = Math.round((new Date(endDate)).getTime());
+        let end = endDate ? Math.round((new Date(endDate)).getTime()) : "";
         if (start && end) {
             let data = databaseUpdateQueryRangeMultiple('tat1', start, 'tat1', end)
             data.then((res) => {
                 setAllData(res)
             })
         }
-        if (start) {
+        if (start && !end) {
             let data = databaseUpdateQueryRangeSingle('tat1', start)
             data.then((res) => {
                 setAllData(res)
