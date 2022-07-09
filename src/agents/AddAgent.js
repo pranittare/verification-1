@@ -9,6 +9,7 @@ import moment from 'moment';
 import { connect, useSelector } from 'react-redux';
 import DropDownComp from '../components/DropDownComp';
 import Alert from '../components/Alert';
+import { useHistory } from 'react-router-dom';
 
 const AddAgent = ({ agent, allAgents }) => {
 
@@ -19,7 +20,7 @@ const AddAgent = ({ agent, allAgents }) => {
     const [endDate, setEndDate] = useState(new Date());
     const [rtA, setRta] = useState([])
     const [rtF, setRtf] = useState([])
-    const [updateField, setUpdateField] = useState(true)
+    const [updateField, setUpdateField] = useState(false)
     const db = getDatabase();
     const fdb = getFirestore();
     let branches = [
@@ -68,6 +69,7 @@ const AddAgent = ({ agent, allAgents }) => {
         setModal(!modal)
     };
     const [alertMessage, setAlertMessage] = useState('');
+    const history = useHistory()
 
     const addOrUpdate = (form) => {
         // let form = formdata
@@ -315,6 +317,8 @@ const AddAgent = ({ agent, allAgents }) => {
         addDoc(doc(fdb, `agents`), commonAddUpdate())
             .then(res => {
                 setAlertMessage('Total user update Successfull')
+                alert("Register user here")
+                history.push('/signup')
             })
             .catch(err => {
                 setAlertMessage('Total user update Error')
@@ -339,7 +343,7 @@ const AddAgent = ({ agent, allAgents }) => {
     }
     const fixAgent = () => {
         // copy data from Firestore DB 
-        update(rtRef(db, `agents/${agent.key}`), commonAddUpdate('rt')).then(res => {
+        update(rtRef(db, `agents/${realTimeAgentKey()}`), commonAddUpdate('rt')).then(res => {
             alert("Agent fixed but manual cleanup required from backend")
         })
 

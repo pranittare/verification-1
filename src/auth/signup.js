@@ -68,17 +68,33 @@ function SignUp({ agentsTotal, agentsActive, usersTotal }) {
             //         // Signed in 
             //         // Add user info to database everything
             //         const user = userCredential.user;
-            let data = {
-                userId: agentId,
-                password: agentPassword,
-                pincode: primaryPincode,
-                name: agentName,
-                created: new Date().toDateString(),
-                lastUpdated: '',
-                branch: branches,
-                secondary: secondaryPincode
-            }
-            console.log('data', data)
+            createUser(userId, userPassword).then(res => {
+                let data = {
+                    userId: agentId,
+                    password: agentPassword,
+                    pincode: primaryPincode,
+                    name: agentName,
+                    created: new Date().toDateString(),
+                    lastUpdated: '',
+                    branch: branches,
+                    secondary: secondaryPincode
+                }
+                console.log('data', data)
+                setAlertMessage(`User created ${res.user.email}`)
+                set(ref(db, `users/${res.user.uid}`), data).then(res => {
+                    setAlertMessage('Real time Database Updated')
+                    setTimeout(() => {
+                        history.push('/')
+                    }, 2000)
+                }).catch(err => {
+                    setAlertMessage('Something went Wrong check log and database')
+                    console.log('err create user', err)
+                })
+            }).catch(err => {
+                setAlertMessage('User registration Error')
+                console.log('user Registration', err)
+            })
+
             //         // ...
             //     })
             //     .catch((error) => {
@@ -117,9 +133,11 @@ function SignUp({ agentsTotal, agentsActive, usersTotal }) {
                     branch: branches,
                     // branch: this.form.value.branch
                 }
-
-                set(ref(db, 'users/'), data).then(res => {
+                set(ref(db, `users/${res.user.uid}`), data).then(res => {
                     setAlertMessage('Real time Database Updated')
+                    setTimeout(() => {
+                        history.push('/')
+                    }, 2000)
                 }).catch(err => {
                     setAlertMessage('Something went Wrong check log and database')
                     console.log('err create user', err)
@@ -204,7 +222,7 @@ function SignUp({ agentsTotal, agentsActive, usersTotal }) {
 
     return (
         <div>
-           {alertMessage && <Alert message={alertMessage} setMessage={(data)=>setAlertMessage(data)}/>}
+            {alertMessage && <Alert message={alertMessage} setMessage={(data) => setAlertMessage(data)} />}
             SignUp
             <div className='d-flex justify-content-around'>
                 <FormGroup check>
