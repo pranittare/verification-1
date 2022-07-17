@@ -1,15 +1,13 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import { connect } from 'react-redux'
 import {
     Button,
     Toast,
-    ToastHeader,
     ToastBody,
     Modal,
     ModalBody
 } from 'reactstrap';
 import { databaseUpdateQueryCasesToday } from '../utils/query'
-import CollapseItem from '../components/Collapse';
 
 const Dashboard = ({ forms, agents }) => {
     // console.log('forms', forms)
@@ -22,13 +20,13 @@ const Dashboard = ({ forms, agents }) => {
     const [unclaimedCasesToast, setUnclaimedCasesToast] = useState(false);
     const [unclaimedCasesModal, setUnclaimedCasesModal] = useState(false);
     const [oldcasesModal, setOldcasesModal] = useState(false);
+    const [bankwise, setBankWise] = useState({bank: [], pincode: []})
     // const [activeAgentsToast, setActiveAgentsToast] = useState(false)
     // const [activeAgentsModal, setActiveAgentsModal] = useState(false)
-    const [tatToast, setTatToast] = useState(false)
     const [tatModal, setTatModal] = useState(false)
     const [oldcases, setOldCases] = useState([]);
 
-    const bankwise = () => {
+    const bankwise1 = () => {
         let bankAndForms = { bank: [], pincode: [] }
         // console.log('form', forms)
         for (const key in forms) {
@@ -50,7 +48,8 @@ const Dashboard = ({ forms, agents }) => {
                     }
                 }
         }
-        return bankAndForms
+        setBankWise(bankAndForms)
+        // return bankAndForms
     }
     function uniqueArray2(arr, name) {
         var a = [];
@@ -94,18 +93,18 @@ const Dashboard = ({ forms, agents }) => {
             setOldCases(data)
         })
     }
-    const casesToday = () => {
+    const casesToday = useMemo(() => {
         let casesT = []
         let currentDate = new Date().getDate()
-        let bankname = uniqueArray2(bankwise().bank, 'name')
+        let bankname = uniqueArray2(bankwise.bank, 'name')
         for (let index = 0; index < bankname.length; index++) {
             const element = bankname[index];
             casesT.push({ name: element, data: [] })
         }
         for (let i = 0; i < casesT.length; i++) {
             const bank = casesT[i];
-            for (let index = 0; index < bankwise().bank.length; index++) {
-                const element = bankwise().bank[index];
+            for (let index = 0; index < bankwise.bank.length; index++) {
+                const element = bankwise.bank[index];
                 const casedate = new Date(element.data.tat)
                 if (bank.name === element.name && casedate.getDate() == currentDate) {
                     bank.data.push(element)
@@ -123,10 +122,10 @@ const Dashboard = ({ forms, agents }) => {
             }
         }
         return casesT
-    }
-    const casesTotal = () => {
+    }, [bankwise, oldcases])
+    const casesTotal = useMemo(() => {
         let casesT = []
-        let bankname = uniqueArray2(bankwise().bank, 'name')
+        let bankname = uniqueArray2(bankwise.bank, 'name')
         for (let index = 0; index < bankname.length; index++) {
             const element = bankname[index];
             casesT.push({ name: element, data: [] })
@@ -134,8 +133,8 @@ const Dashboard = ({ forms, agents }) => {
         // console.log('bankname', bankname)
         for (let i = 0; i < casesT.length; i++) {
             const bank = casesT[i];
-            for (let index = 0; index < bankwise().bank.length; index++) {
-                const element = bankwise().bank[index];
+            for (let index = 0; index < bankwise.bank.length; index++) {
+                const element = bankwise.bank[index];
                 if (bank.name === element.name) {
                     bank.data.push(element)
                 }
@@ -143,10 +142,10 @@ const Dashboard = ({ forms, agents }) => {
 
         }
         return casesT
-    }
-    const submittedCases = () => {
+    }, [bankwise])
+    const submittedCases = useMemo(() => {
         let casesT = []
-        let bankname = uniqueArray2(bankwise().bank, 'name')
+        let bankname = uniqueArray2(bankwise.bank, 'name')
         for (let index = 0; index < bankname.length; index++) {
             const element = bankname[index];
             casesT.push({ name: element, data: [] })
@@ -154,8 +153,8 @@ const Dashboard = ({ forms, agents }) => {
         // console.log('bankname', bankname)
         for (let i = 0; i < casesT.length; i++) {
             const bank = casesT[i];
-            for (let index = 0; index < bankwise().bank.length; index++) {
-                const element = bankwise().bank[index];
+            for (let index = 0; index < bankwise.bank.length; index++) {
+                const element = bankwise.bank[index];
                 if (bank.name === element.name && element.data.submitted) {
                     bank.data.push(element)
                 }
@@ -163,8 +162,8 @@ const Dashboard = ({ forms, agents }) => {
 
         }
         return casesT
-    }
-    const unClaimedCases = () => {
+    },[bankwise])
+    const unClaimedCases = useMemo(() => {
         let unClaimed = []
         let singleUnclaimed = []
         let uniqpincodes = uniqueObject(forms)
@@ -172,8 +171,8 @@ const Dashboard = ({ forms, agents }) => {
             const element = uniqpincodes[index];
             unClaimed.push({ pincodes: element, data: [], total: 0 })
         }
-        for (let index = 0; index < bankwise().pincode.length; index++) {
-            const element = bankwise().pincode[index];
+        for (let index = 0; index < bankwise.pincode.length; index++) {
+            const element = bankwise.pincode[index];
             for (const key in element) {
                 if (Object.hasOwnProperty.call(element, key)) {
                     const single = element[key];
@@ -210,7 +209,7 @@ const Dashboard = ({ forms, agents }) => {
             element.total = total
         }
         return unClaimed
-    }
+    }, [bankwise])
     // const activeAgents = () => {
     //     let activeAgents = []
     //     let uniqpincodes = uniqueObject2(agents, 'pincode');
@@ -233,7 +232,7 @@ const Dashboard = ({ forms, agents }) => {
     //     }
     //     return activeAgents
     // }
-    const tat = () => {
+    const tat = useMemo(() => {
         const tat = [{ time: 'Within 4 hrs -', data: [] }, { time: '4 hrs to 8 Hr -', data: [] }, { time: '8 Hr to 12 Hr -', data: [] }, { time: '12 Hr to 24 Hr -', data: [] }, { time: 'Above 24 Hr -', data: [] }]
         const currentTime = new Date().getTime();
         for (const key in forms) {
@@ -259,23 +258,22 @@ const Dashboard = ({ forms, agents }) => {
             }
         }
         return tat
-    }
-    const getTotal = (item) => {
+    }, [forms])
+    const GetTotal = ({data}) => {
         let total = 0
-        for (let index = 0; index < item?.length; index++) {
-            const element = item[index];
+        for (let index = 0; index < data?.length; index++) {
+            const element = data[index];
             total += element.data.length
         }
-        return total
+        return <>{total}</>
     }
     useEffect(() => {
-        console.log('bankwise', bankwise())
+        bankwise1()
     }, [forms])
-
     return (
         <div className='row bg-light pt-2'>
             <div className="col-6">
-                Cases Today ({getTotal(casesToday())})
+                Cases Today (<GetTotal data={casesToday} />)
                 <div className='mb-1'>
                     Old Cases ({oldcases.length}) <Button color='link' type='button' onClick={() => setOldcasesModal(!oldcasesModal)}>View</Button>
                 </div>
@@ -300,7 +298,7 @@ const Dashboard = ({ forms, agents }) => {
                     <br />
                     <Toast isOpen={casesTodayToast} className='w-100'>
                         <ToastBody >
-                            {casesToday()?.map((item, index) => (
+                            {casesToday?.map((item, index) => (
                                 <div key={item.name}>
                                     <Button color='link'  onClick={() => setCasesToadyModal({ count: index, state: true })}>{item.name} - <span className='text-danger'>({item.data.length})</span></Button>
 
@@ -312,7 +310,7 @@ const Dashboard = ({ forms, agents }) => {
                 </div>
             </div>
             <div className="col-6">
-                Total Cases ({getTotal(casesTotal())})
+                Total Cases (<GetTotal data={casesTotal} />)
                 <div>
                     <Button
                         color='danger'
@@ -324,7 +322,7 @@ const Dashboard = ({ forms, agents }) => {
                     <br />
                     <Toast isOpen={casesTotalToast} className='w-100'>
                         <ToastBody >
-                            {casesTotal()?.map((item, index) => (
+                            {casesTotal?.map((item, index) => (
                                 <div key={item.name}>
                                     <Button color='link' onClick={() => setCasesTotalModal({ count: index, state: true })}>{item.name} - <span className='text-danger'>({item.data.length})</span></Button>
 
@@ -336,7 +334,7 @@ const Dashboard = ({ forms, agents }) => {
                 </div>
             </div>
             <div className="col-6">
-                Unclaimed cases ({unClaimedCases()[2]?.total})
+                Unclaimed cases ({unClaimedCases[2]?.total})
                 <div>
                     <Button
                         color='danger'
@@ -348,7 +346,7 @@ const Dashboard = ({ forms, agents }) => {
                     <br />
                     <Toast isOpen={unclaimedCasesToast} className='w-100'>
                         <ToastBody>
-                            {unClaimedCases().map((item, index) => {
+                            {unClaimedCases.map((item, index) => {
                                 if (item.data.length > 0)
                                     return <div key={item.tat}>
                                         <Button color='link' key={item?.tat} onClick={() => setUnclaimedCasesModal({ count: index, state: true })}>{item?.pincodes} - <span className='text-danger'>({item.data.length})</span></Button>
@@ -361,7 +359,7 @@ const Dashboard = ({ forms, agents }) => {
                 </div>
             </div>
             <div className="col-6">
-                Submited Cases ({getTotal(submittedCases())})
+                Submited Cases (<GetTotal data={submittedCases} />)
                 <div>
                     <Button
                         color='primary'
@@ -373,7 +371,7 @@ const Dashboard = ({ forms, agents }) => {
                     <br />
                     <Toast isOpen={submittedCasesToast} className='w-100'>
                         <ToastBody >
-                            {submittedCases()?.map((item, index) => (
+                            {submittedCases?.map((item, index) => (
                                 <div key={item.name}>
                                     <Button color='link' onClick={() => setSubmittedCasesModal({ count: index, state: true })}>{item.name} - <span className='text-danger'>({item.data.length})</span></Button>
 
@@ -397,8 +395,8 @@ const Dashboard = ({ forms, agents }) => {
                 <button onClick={() => console.log('activeAgents', activeAgents())}>Test</button>
             </div> */}
             <div className="col-12">
-                TAT ({getTotal(tat())})
-                {tat().map((item, index) => {
+                TAT (<GetTotal data={tat} />)
+                {tat.map((item, index) => {
                     return <div key={item.time}>
                         <button className='btn text-success' onClick={() => setTatModal({ count: index, state: true })}>{item?.time}{item?.data.length}</button>
                         <ModalItem item={item} open={tatModal} count={index} close={() => setTatModal(false)} />
@@ -472,33 +470,33 @@ const ModalItem = ({ item, open, close, count }) => {
     )
 }
 
-const AgentItem = ({ item, open, close, count }) => {
-    const agentData = () => {
-        let agent = [];
-        for (let index = 0; index < item.data.length; index++) {
-            const element = item.data[index];
-            if (element.isLoggedIn) {
-                agent.push(element)
-            }
-        }
-        return agent
-    }
-    return (
-        <Modal isOpen={open.state && open.count === count} toggle={() => close(!open.state)}>
-            <ModalBody>
-                <div>
-                    {agentData().map(item => {
-                        return <div key={item.name}>
-                            <a href={`${item?.data?.applicantDetails.form}/${item?.data?.applicantDetails.pincode}/${item.id}`} target='_blank'>{item.name} -- {JSON.stringify(item.onCase)}
-                            </a>
-                        </div>
-                    })}
-                </div>
+// const AgentItem = ({ item, open, close, count }) => {
+//     const agentData = () => {
+//         let agent = [];
+//         for (let index = 0; index < item.data.length; index++) {
+//             const element = item.data[index];
+//             if (element.isLoggedIn) {
+//                 agent.push(element)
+//             }
+//         }
+//         return agent
+//     }
+//     return (
+//         <Modal isOpen={open.state && open.count === count} toggle={() => close(!open.state)}>
+//             <ModalBody>
+//                 <div>
+//                     {agentData().map(item => {
+//                         return <div key={item.name}>
+//                             <a href={`${item?.data?.applicantDetails.form}/${item?.data?.applicantDetails.pincode}/${item.id}`} target='_blank'>{item.name} -- {JSON.stringify(item.onCase)}
+//                             </a>
+//                         </div>
+//                     })}
+//                 </div>
 
-            </ModalBody>
-        </Modal>
-    )
-}
+//             </ModalBody>
+//         </Modal>
+//     )
+// }
 const mapStateToProps = (state) => {
     return {
         users: state.data,

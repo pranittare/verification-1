@@ -1,5 +1,4 @@
-import React, { useState } from 'react'
-import AddVendor from './AddVendor';
+import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux';
 import moment from 'moment';
 import { Modal, ModalHeader, ModalBody, ModalFooter, Input, Button, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Progress } from 'reactstrap';
@@ -40,7 +39,7 @@ const Vendor = ({ vendors }) => {
     const [getUrlDetails, setUrlDetails] = useState('');
     const [loading, setLoading] = useState(false);
     const regex = new RegExp('^([0][1-9]|[1-2][0-9]|[3][0-7])([a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}[1-9a-zA-Z]{1}[zZ]{1}[0-9a-zA-Z]{1})+$')
-
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const onHandleChange = (e) => {
         let clientForm = { ...clientInfo }
         clientForm[e.name] = e.value
@@ -102,7 +101,8 @@ const Vendor = ({ vendors }) => {
     }
 
     const toggle = () => {
-        setClientInfo(false);
+        // setClientInfo(false);
+        setIsModalOpen(false)
     }
     const toggleAddProduct = () => {
         setAddProduct(!addProduct)
@@ -194,11 +194,12 @@ const Vendor = ({ vendors }) => {
     return (
         <div>
             <div className='d-flex my-2'>
-            <AddVendor setClientInfo={(data) => setClientInfo(data)} />
+                <button className='btn btn-primary' onClick={() => setIsModalOpen(true)}>Add Vendor</button>
             </div>
 
+
             <div>
-                <Modal isOpen={clientInfo}>
+                <Modal isOpen={isModalOpen}>
                     <ModalHeader>
                         {clientInfo?.clientName ? clientInfo?.clientName : "Add Client"}
                     </ModalHeader>
@@ -337,7 +338,7 @@ const Vendor = ({ vendors }) => {
 
                     </ModalBody>
                     <ModalFooter>
-                        {!loading && <Button color='primary' onClick={() => addVendorToDB(clientInfo)}> Add </Button>}
+                        {!loading && <Button color='primary' onClick={() => addVendorToDB(clientInfo)}> Add/Save </Button>}
                         <Button color='danger' onClick={() => { toggle(); setGstWarning(false) }}> Cancel </Button>
                         <Button onClick={() => setUrlDetails(false)}>Recheck Download</Button>
                     </ModalFooter>
@@ -365,7 +366,7 @@ const Vendor = ({ vendors }) => {
                             </td>
                             <td>
                                 <Button color='link' data-toggle="modal"
-                                    data-target="#exampleModal" onClick={() => setClientInfo(item)} >
+                                    data-target="#exampleModal" onClick={() => {setClientInfo(item); setIsModalOpen(true)}} >
                                     {item.clientName}
                                 </Button>
                             </td>

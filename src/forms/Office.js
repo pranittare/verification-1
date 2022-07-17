@@ -25,6 +25,7 @@ const Office = () => {
     let data = useLocation()?.state
     const fdb = getFirestore();
     const history = useHistory();
+    const [submitClicked, setSubmitClicked] = useState(false)
     const [formdata, setFormdata] = useState({
         visitDate: '',
         visitedTime: '',
@@ -148,6 +149,7 @@ const Office = () => {
     const handleRemoveForm = () => {
         let path = `form/${pincode}/${id}`
         const remref = ref(db, path);
+        setSubmitClicked(true)
         remove(remref).then(res => {
             setAlertMessage('Form Removed from RT and Submitted to Cloud')
             history.push('/ActiveCases')
@@ -480,9 +482,11 @@ const Office = () => {
 
     }, [id, pincode])
     const clearWatcher = () => {
-        update(ref(db, `form/${pincode}/${id}`), {
-            watcherEmail: '',
-        });
+        if (!submitClicked) {
+            update(ref(db, `form/${pincode}/${id}`), {
+                watcherEmail: '',
+            });
+        }
     }
 
     const overallStatusCal = (allData) => {
@@ -758,7 +762,7 @@ const Office = () => {
         region.longitude = data?.longitude
         setVerificationOvserver(verification)
     }
-    const tpcFunction = () => {
+    const TpcFunction = () => {
         if (refetch) {
             return <Tpc data={formdata} ref={TPCRef} form={'office'} applicantDetails={applicantDetails} />
 
@@ -2490,7 +2494,7 @@ const Office = () => {
                     </div>
                 </form>
                 <VerificationObserverOffice data={verificationObserver} id={id} ref={verificationObserverRef} />
-                {tpcFunction()}
+                <TpcFunction />
             </Collapse>
                 <Collapse title='Images and GeoLocation'>
                     <Geolocation data={verificationObserver} id={id} pincode={pincode} type={'office'} updatedRegion={(data) => updatedRegion(data)} />

@@ -305,7 +305,7 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
                     form['type'] = data['form']
                 }
             }
-            console.log('bank',data)
+            console.log('bank', data)
             setFormdata(form)
             setRefresh(Math.random());
             outerDetailsData()
@@ -346,6 +346,16 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
                 if (Object.hasOwnProperty.call(agents, key)) {
                     const element = agents[key];
                     let pincode = []
+                    // if (element.pincode == formdata.pincode) {
+                    //     pincodeWiseAgents.push(element)
+                    // } else if (element.secondary && element.secondary.length > 0) {
+                    //     for (let index = 0; index < element.secondary.length; index++) {
+                    //         const element1 = element.secondary[index];
+                    //         if (element1.pincodes == formdata.pincode) {
+                    //             pincodeWiseAgents.push(element)
+                    //         }
+                    //     }
+                    // }
                     pincode.push(JSON.stringify(element.pincode))
                     if (element.secondary && element.secondary.length > 0) {
                         for (let index = 0; index < element.secondary.length; index++) {
@@ -400,6 +410,7 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
         return <div className="spinner-grow text-warning" role="status">
         </div>
     }
+ 
     return (
         <div className='text-start'>
             {alertMessage && <Alert message={alertMessage} setMessage={(data) => setAlertMessage(data)} />}
@@ -492,7 +503,6 @@ const ApplicantDetails = forwardRef(({ applicantDetail, data, getData, outerDeta
                             </DropdownToggle>
                             <DropdownMenu>
                                 {getAgents()?.filter(a => a.uniqueId !== 'Disabled').map((item, index) => {
-
                                     return <DropdownItem key={item.name} onClick={() => { setSelectedAgent(item.name); setSelectedAgentId(item.userId) }}>
                                         {item.name}
                                     </DropdownItem>

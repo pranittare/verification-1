@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { InputGroup, Input, Button, Label, FormGroup } from 'reactstrap';
+import { InputGroup, Input, Button, Label, FormGroup, InputGroupAddon, InputGroupText } from 'reactstrap';
 import DropDownComp from '../components/DropDownComp';
 import { useHistory } from 'react-router-dom'
 import { connect } from 'react-redux';
@@ -10,7 +10,7 @@ import Alert from '../components/Alert';
 function SignUp({ agentsTotal, agentsActive, usersTotal }) {
     const db = getDatabase();
     let history = useHistory()
-    const [dropdownOpen, setOpen] = useState(false);
+    const [manualCheckMsg, setManualCheckMsg] = useState('');
     const [refresh, setRefresh] = useState(0)
     const [selector, setSelector] = useState('agent')
     const [formdata, setFormdata] = useState({
@@ -28,8 +28,6 @@ function SignUp({ agentsTotal, agentsActive, usersTotal }) {
         agentBranches: ''
     })
     const [alertMessage, setAlertMessage] = useState('');
-
-    const toggle = () => setOpen(!dropdownOpen);
 
     const onHandleChange = (e) => {
         // name
@@ -57,18 +55,7 @@ function SignUp({ agentsTotal, agentsActive, usersTotal }) {
             setAlertMessage('Please Select branch')
         }
         if (selector === 'agent') {
-            // console.log(
-            //     agentId,
-            //     agentPassword,
-            //     primaryPincode,
-            // )
-            // history.push('/')
-            // createUserWithEmailAndPassword(auth, agentId, agentPassword)
-            //     .then((userCredential) => {
-            //         // Signed in 
-            //         // Add user info to database everything
-            //         const user = userCredential.user;
-            createUser(userId, userPassword).then(res => {
+            createUser(agentId, agentPassword).then(res => {
                 let data = {
                     userId: agentId,
                     password: agentPassword,
@@ -81,7 +68,7 @@ function SignUp({ agentsTotal, agentsActive, usersTotal }) {
                 }
                 console.log('data', data)
                 setAlertMessage(`User created ${res.user.email}`)
-                set(ref(db, `users/${res.user.uid}`), data).then(res => {
+                set(ref(db, `agents/${res.user.uid}`), data).then(res => {
                     setAlertMessage('Real time Database Updated')
                     setTimeout(() => {
                         history.push('/')
@@ -94,33 +81,8 @@ function SignUp({ agentsTotal, agentsActive, usersTotal }) {
                 setAlertMessage('User registration Error')
                 console.log('user Registration', err)
             })
-
-            //         // ...
-            //     })
-            //     .catch((error) => {
-            //         const errorCode = error.code;
-            //         const errorMessage = error.message;
-            //         setAlertMessage('Something went Wrong')
-            //         console.log('err', errorCode, errorMessage)
-            //         // ..
-            //     });
-
         }
         else {
-            // console.log(
-            //     userId,
-            //     name,
-            //     userPassword,
-            //     pincode,
-            //     level,
-            //     branches,
-            // )
-            // history.push('/')
-            // createUserWithEmailAndPassword(auth, userId, userPassword)
-            // .then((userCredential) => {
-            //     // Signed in 
-            //     // Add user info to database everything
-            //     const user = userCredential.user;
             createUser(userId, userPassword).then(res => {
                 setAlertMessage(`User created ${res.user.email}`)
                 let data = {
@@ -146,20 +108,6 @@ function SignUp({ agentsTotal, agentsActive, usersTotal }) {
                 setAlertMessage('User registration Error')
                 console.log('user Registration', err)
             })
-
-
-            // console.log('data', data)
-
-            //     // ...
-            // })
-            // .catch((error) => {
-            //     const errorCode = error.code;
-            //     const errorMessage = error.message;
-            //     setAlertMessage('Something went Wrong')
-            //     console.log('err', errorCode, errorMessage)
-            //     // ..
-            // });
-
         }
     }
 
@@ -185,7 +133,7 @@ function SignUp({ agentsTotal, agentsActive, usersTotal }) {
                     setAlertMessage(`Agent Name found ${element.name}`)
                     if (element.secondaryPincodes?.length > 0) {
                         console.log('element', element)
-                        let form = formdata
+                        let form = {...formdata}
                         form.agentName = element.name
                         console.log('form', form)
                         form.secondaryPincode = element.secondaryPincodes
@@ -217,6 +165,18 @@ function SignUp({ agentsTotal, agentsActive, usersTotal }) {
                 }
             }
         }
+    }
+    const manualCheck  = () => {
+        let msg = 'Agent Not found'
+        if (agentsTotal?.length > 0) {
+            for (let index = 0; index < agentsTotal.length; index++) {
+                const element = agentsTotal[index];
+                if (element.userId === formdata.agentId) {
+                    msg = 'Agent Found'
+                }
+            }
+        }
+        setManualCheckMsg(msg)
     }
     // const 
 
@@ -260,6 +220,9 @@ function SignUp({ agentsTotal, agentsActive, usersTotal }) {
                             onChange={(e) => onHandleChange(e.currentTarget)}
                             disabled={selector !== 'agent'}
                         />
+                        <InputGroupAddon>
+                                <Button onClick={manualCheck}>Check</Button>
+                        </InputGroupAddon>
                     </InputGroup>
 
                     <Label id="basic-addon1">Password</Label>
@@ -289,7 +252,12 @@ function SignUp({ agentsTotal, agentsActive, usersTotal }) {
                             disabled={selector !== 'agent'}
                         />
                     </InputGroup>
-
+                    <div>
+                        <Label className='text-danger'>Note</Label>
+                        <div className='card p-2'>
+                            {manualCheckMsg}
+                        </div>
+                    </div>
                 </div>
                 <div>
                     <Label id="basic-addon2">User Id</Label>
@@ -367,14 +335,13 @@ function SignUp({ agentsTotal, agentsActive, usersTotal }) {
 
             </div>
             <div>
-                <Button color='primary' onClick={() => (onHandleSubmit())}>Submit</Button>
+                <Button color='primary' onClick={onHandleSubmit}>Submit</Button>
             </div>
         </div>
     );
 }
 
 const mapStateToProps = (state) => {
-    console.log('state', state);
     return {
         agentsTotal: state.fagents,
         agentsActive: state.agents,

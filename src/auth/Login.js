@@ -5,26 +5,23 @@ import { connect } from 'react-redux';
 import { signInUser } from '../utils/signInUser';
 
 function Login(props) {
-
-  useEffect(() => {
-    console.log('redux', props)
-  }, [])
-
   let history = useHistory()
-
   const [userId, setUserId] = useState('')
   const [password, setPassword] = useState('')
   const [branch, setBranch] = useState('branch-1')
   const [dropdownOpen, setDropdownOpen] = useState(false);
-
-  const toggle = () => setDropdownOpen(prevState => !prevState);
-
+  let branches = [
+    { name: 'branches', value: 'branch-1', label: 'Branch-1' },
+    { name: 'branches', value: 'nashik', label: 'Nashik' },
+    { name: 'branches', value: 'pune', label: 'Pune' },
+  ]  
+  const toggle = () => setDropdownOpen(!dropdownOpen);
   const onHandleSubmit = () => {
     signInUser(userId, password).then(res => {
       // console.log(res.user.email)
       props.dispatch({type: 'BRANCH', data: branch})
-      setUserId('')
-      setPassword('')
+      // setUserId('')
+      // setPassword('')
       setTimeout(()=> {
         history.push('/')
 
@@ -35,11 +32,10 @@ function Login(props) {
       alert(errorMessage)
     })
   }
-  let branches = [
-    { name: 'branches', value: 'branch-1', label: 'Branch-1' },
-    { name: 'branches', value: 'nashik', label: 'Nashik' },
-    { name: 'branches', value: 'pune', label: 'Pune' },
-  ]
+
+  useEffect(() => {
+    console.log('redux', props)
+  }, [])
 
   return (
     <div className='text-center container'>
@@ -82,15 +78,15 @@ function Login(props) {
         </Dropdown>
         <br />
 
-        <Button color='primary' type='button' onClick={() => (onHandleSubmit())}>Submit</Button>
+        <Button color='primary' type='button' onClick={onHandleSubmit}>Submit</Button>
       </div>
     </div>
   );
 }
 
-const mapStateToProps = (state) => {
-  return {
-    userData: state.data
-  }
-}
-export default connect(mapStateToProps)(Login);
+// const mapStateToProps = (state) => {
+//   return {
+//     userData: state.data
+//   }
+// }
+export default connect()(Login);

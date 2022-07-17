@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { Input, Button, Dropdown, DropdownMenu, DropdownItem, DropdownToggle } from 'reactstrap'
+import { Input, Button, Dropdown, DropdownMenu, DropdownItem, DropdownToggle, Table } from 'reactstrap'
 import ApplicantDetails from './ApplicantDetails'
 import VerificationObserverResident from './VerificationObserverResident';
 import Tpc from './Tpc';
@@ -26,6 +26,7 @@ const Resident = () => {
     let data = useLocation()?.state
     const history = useHistory();
     const storage = getStorage();
+    const [submitClicked, setSubmitClicked] = useState(false)
 
     const [applicantDetails, setApplicantDetails] = useState({
         appid: '',
@@ -170,6 +171,7 @@ const Resident = () => {
     const handleRemoveForm = () => {
         let path = `form/${pincode}/${id}`
         const remref = ref(db, path);
+        setSubmitClicked(true)
         remove(remref).then(res => {
             setAlertMessage('Form Removed from RT and Submitted to Cloud')
             // handleAgentCount()
@@ -555,9 +557,11 @@ const Resident = () => {
 
     }, [id, pincode])
     const clearWatcher = () => {
-        update(ref(db, `form/${pincode}/${id}`), {
-            watcherEmail: '',
-        });
+        if (!submitClicked) {
+            update(ref(db, `form/${pincode}/${id}`), {
+                watcherEmail: '',
+            });
+        }
     }
 
     const overallStatusCal = (allData) => {
@@ -824,7 +828,7 @@ const Resident = () => {
         let overall = `${data.overallStatus ? data.overallStatus : 'NA'} |  Date: ${data.visitDate ? data.visitDate : 'NA'} |  ${data.visitedTime ? data.visitedTime : 'NA'} |  Mismatch Address: ${data.mismatchAddress ? data.mismatchAddress : 'NA'} |  Address Confirmed: ${data.addressConfirmed ? data.addressConfirmed : 'NA'} |  Person Met: ${data.personMet ? data.personMet : 'NA'} |  Person Met Name: ${data.personMetName ? data.personMetName : 'NA'} |  Residence Status: ${data.residenceStatus ? data.residenceStatus : 'NA'} |  Customer Occupation: ${data.customerOccupation ? data.customerOccupation : 'NA'} |  Gate/Door color: ${data.gateDoorColor ? data.gateDoorColor : 'NA'} |  Locality of Address: ${data.localityOfAddress ? data.localityOfAddress : 'NA'} |   Type of House: ${data.typeOfHouse ? data.typeOfHouse : 'NA'} | Accessibility/Approachability: ${data.accessibility ? data.accessibility : 'NA'} | Ease of Locating: ${data.easeofLocating ? data.easeofLocating : 'NA'} |  Customers Attitude: ${data.customerAttitude ? data.customerAttitude : 'NA'} | Distance from Station: ${data.distancefromStation ? data.distancefromStation : 'NA'} |  Negative Area: ${data.negativeArea ? data.negativeArea : 'NA'} | TPC1: ${data.TPCName1 ? data.TPCName1 : 'NA'} - ${data.TPCStatus1 ? data.TPCStatus1 : 'NA'} - ${data.TPCRemark1 ? data.TPCRemark1 : 'NA'} | TPC2: ${data.TPCName2 ? data.TPCName2 : 'NA'} - ${data.TPCStatus2 ? data.TPCStatus2 : 'NA'} - ${data.TPCRemark2 ? data.TPCRemark2 : 'NA'} | ${data.finalFIAnyRemarks ? data.finalFIAnyRemarks : 'NA'}`;
         return overall
     }
-    const tpcFunction = () => {
+    const TpcFunction = () => {
         if (refetch) {
             return <Tpc data={formdata} ref={TPCRef} form={'resident'} applicantDetails={applicantDetails} />
 
@@ -2588,6 +2592,34 @@ const Resident = () => {
             {id && <> <Collapse title='Verification Details'>
                 {/* <button onClick={()=> handleAgentCount()}>handleAgentCount</button> */}
                 <h4 className='my-2'>Verification Details</h4>
+                {/* <Table bordered>
+                    <thead>
+                        <tr>
+                            <th>Visit Date</th>
+                            <th>Visited Time</th>
+                            <th>Address Confirmed</th>
+                            <th>LandMark</th>
+                            <th>Person Met</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><Input type="text" name='visitDate' value={formdata['visitDate']} onChange={(e) => onHandleChange(e.currentTarget)} /></td>
+                            <td><Input type="text" name='visitedTime' value={formdata['visitedTime']} onChange={(e) => onHandleChange(e.currentTarget)} /></td>
+                            <td>  <Dropdown isOpen={addressConfirmedDropdown} toggle={addressConfirmedToggle}>
+                            <DropdownToggle>
+                                {formdata.addressConfirmed}
+                            </DropdownToggle>
+                            <DropdownMenu>
+                                <DropdownItem name='addressConfirmed' value='no' onClick={(e) => onHandleChange(e.currentTarget)}>No</DropdownItem>
+                                <DropdownItem name='addressConfirmed' value='yes' onClick={(e) => onHandleChange(e.currentTarget)}>Yes</DropdownItem>
+                            </DropdownMenu>
+                        </Dropdown></td>
+                            <td><Input type="text" name='landmark' value={formdata['landmark']} onChange={(e) => onHandleChange(e.currentTarget)} /></td>
+                            <td><DropDownComp id='resident' onHandleChange={(e) => onHandleChange(e)} formdata={formdata} dropDowmArry={personMet} /></td>
+                        </tr>
+                    </tbody>
+                </Table> */}
                 <form className='d-flex justify-content-around flex-wrap' >
                     <div className='formInputBoxSpacing'>
                         <label>Visit Date</label>
@@ -2722,7 +2754,7 @@ const Resident = () => {
                 </form>
                 <VerificationObserverResident data={verificationObserver} id={id} ref={verificationObserverRef} />
                 {/* <Tpc data={formdata} ref={TPCRef} form={"resident"} /> */}
-                {tpcFunction()}
+                <TpcFunction />
             </Collapse>
                 <Collapse title='Images and GeoLocation'>
                     <Geolocation data={verificationObserver} id={id} pincode={pincode} type={'resident'} updatedRegion={(data) => updatedRegion(data)} />

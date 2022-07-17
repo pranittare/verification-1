@@ -21,14 +21,16 @@ const Navigation = ({ auth }) => {
                     <DropdownItem><Link className="nav-link" to='/total-agents'>Total Agents</Link></DropdownItem>
                     <DropdownItem divider></DropdownItem>
                     <DropdownItem><Link className="nav-link" to='/clients'>Clients</Link></DropdownItem>
+                    <DropdownItem divider></DropdownItem>
+                    <DropdownItem><Link className="nav-link" to='/Cleanup'>Cleanup</Link></DropdownItem>
                 </DropdownMenu>}
             </Dropdown>
             {/* <button className='btn' onClick={toggle}>exp</button> */}
             <div className='d-flex'>
                 <Link to='/' className="nav-link active" aria-current="page">Prahar</Link>
             </div>
+                {!auth && <Link className="nav-link" to='/login'>Login</Link>}
             {auth && <div className='d-flex'>
-                <Link className="nav-link" to='/login'>Login</Link>
                 <Link className="nav-link" to='/signup'>Signup</Link>
                 <Link className="nav-link" to='/new'>New</Link>
                 <Logout email={auth?.email} />

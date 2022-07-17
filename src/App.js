@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import Login from './auth/login'
-import SignUp from './auth/signup'
-import Forget from './auth/forget'
+import Login from './auth/Login'
+import SignUp from './auth/Signup'
+import Forget from './auth/Forget'
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
-import Navigation from './header/navigation';
-import Dashboard from './landing/dashboard';
+import Navigation from './header/Navigation';
+import Dashboard from './landing/Dashboard';
 import TotalAgents from './agents/TotalAgents'
 import ActiveAgents from './agents/ActiveAgents';
 import Vendor from './clients/Vendor';
@@ -20,6 +20,7 @@ import { getDatabase, ref, onValue } from "firebase/database";
 import { getAuth, onAuthStateChanged, setPersistence, inMemoryPersistence } from "firebase/auth";
 import { connect } from 'react-redux';
 import { Button } from 'reactstrap';
+import Cleanup from './Cleanup/Cleanup'
 import './App.css';
 const firebaseConfig = {
   apiKey: "AIzaSyB9c5BdRrl55U04wioeaP5uMTclzu9trgM",
@@ -116,6 +117,7 @@ function App(props) {
         <Route path='/ActiveCases' render={() => <ActiveCases />} />
         <Route path='/SubmittedCases' render={() => <SubmittedCases />} />
         <Route path='/oldCases' render={() => <OldCases />} />
+        <Route path={'/Cleanup'} render={() => <Cleanup />}/>
         {/* <Redirect from="/login" to="/" /> */}
       </>
     }

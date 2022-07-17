@@ -226,7 +226,7 @@ const Geolocation = (props) => {
                 <div className='d-flex justify-content-between flex-wrap'>
                     {images?.map((item, index) => {
                         return <div key={item} >
-                            <a href={item} target='_blank'><img src={item} /></a>
+                            <a href={item} target='_blank' rel="noreferrer"><img src={item} alt=""/></a>
                             <button onClick={() => handleDeleteImage(item, index)} className='btn btn-danger'>X</button>
                         </div>
                     })}

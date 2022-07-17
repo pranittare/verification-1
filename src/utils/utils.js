@@ -41,7 +41,6 @@ export const combinedData = (agents, forms) => {
         }
 
     }
-    console.log('fnc started', allCombined)
     return allCombined
 
 }

@@ -14,7 +14,7 @@ const ActiveCases = (props) => {
     const formatedDate = new Date().toDateString()
     let history = useHistory();
     const db = getDatabase();
-    const [allData, setAllData] = useState([])
+    const [allData, setAllData] = useState([]);
     const [reset, setReset] = useState(0);
     const [tooltip, setTooltip] = useState();
     const [alertMessage, setAlertMessage] = useState('');
@@ -412,7 +412,7 @@ const ActiveCases = (props) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {reset > 0 && allData && allData.length > 0 && allData.filter(filteredSearch).map((item, index) => {
+                        {allData && allData.length > 0 && allData.filter(filteredSearch).map((item, index) => {
                             return <tr key={`${item.tat}-${index + 1}`} onMouseOver={() => setTooltip(index)}>
 
                                 <td >
@@ -475,7 +475,8 @@ const ActiveCases = (props) => {
                                     <button className='btn btn-danger' type='button' onClick={() => handleDelete(item)}>X</button>
                                 </td>
                             </tr>
-                        })}
+                        })
+                    }
 
                     </tbody>
                 </table>

@@ -151,7 +151,7 @@ const ActiveAgents = (props) => {
                                     <th>{index + 1}</th>
                                     <td>
                                         <a href={`http://maps.google.com/maps/search/?api=1&query=${item?.location?.coords?.latitude},${item?.location?.coords?.longitude}`}
-                                            target="_blank" className="text-primary">
+                                            target="_blank" rel="noreferrer" className="text-primary">
                                             {item.name}
                                         </a>
                                         <hr />

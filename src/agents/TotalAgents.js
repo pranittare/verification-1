@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { connect } from 'react-redux';
-import { Input } from 'reactstrap'
+import { Input, Button } from 'reactstrap'
 import moment from 'moment';
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import AddAgent from './AddAgent';
@@ -21,6 +21,7 @@ const TotalAgents = ({ agents, rtAgents, branch }) => {
         let table = document.getElementById('test-table-xls-button')
         table.click()
     }
+    const [add, setAdd] = useState(false);
     const handleFilter = (e) => {
         let data = { ...filterSearch }
         data[e.currentTarget.name] = e.currentTarget.value
@@ -85,13 +86,30 @@ const TotalAgents = ({ agents, rtAgents, branch }) => {
                 obj[element.pincodes] = element.pincodes
             }
         }
-        return dup;
+        return dup.toString();
     }
-    const agentStatus = (item) => {
-        if (item.uniqueId === 'Disabled') {
-            return 'InActive';
+    const AgentStatus = ({ item }) => {
+        for (const key in rtAgents) {
+            if (Object.hasOwnProperty.call(rtAgents, key)) {
+                const rtElement = rtAgents[key];
+                if (item.userId === rtElement.userId) {
+                    if (rtElement.uniqueId === 'Disabled') {
+                        return <p className='text-danger'>Not Active</p>
+                    }
+                    return <p className='text-success'>Active</p>
+                }
+
+            }
         }
-        return 'Active';
+        return null
+    }
+    const handleModal = (status, item) => {
+        console.log('handle', status, item)
+        // if (status === 'add') {
+        //     return <AddAgent allAgents={allData} add={'add'} />
+        // }
+        return <AddAgent allAgents={item ? item : allData} add={item ? 'update' :'add'} />
+
     }
     const filteredSearch = (item) => {
         // console.log('item', item)
@@ -150,7 +168,8 @@ const TotalAgents = ({ agents, rtAgents, branch }) => {
 
                 <h4>Total Agents</h4>
                 <button onClick={getExcel} className='btn btn-primary'>Get Excel</button>
-                <AddAgent allAgents={allData} />
+                {/* <Button onClick={()=>handleModal('add')}>Add Agent</Button> */}
+                <AddAgent allAgents={allData} add={'add'} />
             </div>
             <ReactHTMLTableToExcel
                 id="test-table-xls-button"
@@ -159,127 +178,128 @@ const TotalAgents = ({ agents, rtAgents, branch }) => {
                 filename={`Active-${formatedDate}`}
                 sheet="tablexls"
                 buttonText="Download as XLS" />
-            <form className='d-flex justify-content-between flex-wrap'>
-                <table className="table table-striped table-bordered">
-                    <thead>
-                        <tr>
-                            <th scope="col"> <Input type="text" name="srno" placeholder={'Sr.No'} /> </th>
-                            <th scope="col"> <Input type="text" onChange={handleFilter} name="name" placeholder={'Name of Agent'} /> </th>
-                            <th scope="col"> <Input type="text" onChange={handleFilter} name="mobile1" placeholder={'Mobile No.'} /> </th>
-                            <th scope="col"> <Input type="text" onChange={handleFilter} name="pincode" placeholder={'Pincode'} /> </th>
-                            <th scope="col"> <Input type="text" onChange={handleFilter} name="status" placeholder={'Status'} /> </th>
-                            <th scope="col"> <Input type="text" name="kycUpdateDate" placeholder={'KYC Update'} /> </th>
-                            <th scope="col"> <Input type="text" name="kycreneweddate" placeholder={'KYC Renewe'} /> </th>
-                            <th scope="col"> <Input type="text" onChange={handleFilter} name="remarks" placeholder={'Remarks'} /> </th>
+            {/* <form className='d-flex justify-content-between flex-wrap'> */}
+            <table className="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col"> <Input type="text" name="srno" placeholder={'Sr.No'} /> </th>
+                        <th scope="col"> <Input type="text" onChange={handleFilter} name="name" placeholder={'Name of Agent'} /> </th>
+                        <th scope="col"> <Input type="text" onChange={handleFilter} name="mobile1" placeholder={'Mobile No.'} /> </th>
+                        <th scope="col"> <Input type="text" onChange={handleFilter} name="pincode" placeholder={'Pincode'} /> </th>
+                        <th scope="col"> <Input type="text" onChange={handleFilter} name="status" placeholder={'Status'} /> </th>
+                        <th scope="col"> <Input type="text" name="kycUpdateDate" placeholder={'KYC Update'} /> </th>
+                        <th scope="col"> <Input type="text" name="kycreneweddate" placeholder={'KYC Renewe'} /> </th>
+                        <th scope="col"> <Input type="text" onChange={handleFilter} name="remarks" placeholder={'Remarks'} /> </th>
 
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {reset > 0 && allData && allData.length > 0 && allData.filter(filteredSearch).map((item, index) => {
-                            // console.log('item', item)
-                            if (item.branch === branch)
-                                return <tr key={item.name}>
-                                    <th>{index + 1}</th>
-                                    <td >
-                                        <AddAgent agent={item} />
-                                    </td>
-                                    <td>
-                                        {item.mobile1}
-                                        <hr />
-                                        {item.mobile2}
-                                    </td>
-                                    <td>
-                                        {item.pincode}
-                                        {item.secondaryPincodes &&
-                                            <div>
-                                                <hr />
-                                                {item.secondaryPincodes.map((item1, index1) => {
-                                                    return <div key={item1.pincodes + '-' + index1}>
-                                                        {item1.pincodes}
-                                                    </div>
-                                                })}
-                                                {findDuplicate(item.secondaryPincodes).length > 0 && <div className='text-danger'>
-                                                    Duplicate :{findDuplicate(item.secondaryPincodes).toString()}
-                                                </div>}
-                                            </div>
-                                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    {reset > 0 && allData && allData.length > 0 && allData.filter(filteredSearch).map((item, index) => {
+                        // console.log('item', item)
+                        if (item.branch === branch)
+                            return <tr key={item.name}>
+                                <th>{index + 1}</th>
+                                <td >
+                                    {/* <Button color={item.name ? "link" : "danger"} onClick={()=>handleModal('update', item)}>{item.name}</Button> */}
+                                    <AddAgent agent={item} add={'update'}  />
+                                </td>
+                                <td>
+                                    {item.mobile1}
+                                    <hr />
+                                    {item.mobile2}
+                                </td>
+                                <td>
+                                    {item.pincode}
+                                    {item.secondaryPincodes &&
+                                        <div>
+                                            <hr />
+                                            {item.secondaryPincodes.map((item1, index1) => {
+                                                return <div key={item1.pincodes + '-' + index1}>
+                                                    {item1.pincodes}
+                                                </div>
+                                            })}
+                                            {findDuplicate(item.secondaryPincodes) && <div className='text-danger'>
+                                                Duplicate :{findDuplicate(item.secondaryPincodes)}
+                                            </div>}
+                                        </div>
+                                    }
 
-                                    </td>
-                                    <td>
-                                        {agentStatus(item)}
-                                    </td>
-                                    <td>
-                                        {moment(item.kycUpdateDate.seconds * 1000).format('ll')}
-                                    </td>
-                                    <td>
-                                        {moment(item.kycreneweddate.seconds * 1000).format('ll')}
-                                    </td>
-                                    <td>
-                                        {item.remarks}
-                                    </td>
-                                </tr>
-                        })
+                                </td>
+                                <td>
+                                    <AgentStatus item={item} />
+                                </td>
+                                <td>
+                                    {moment(item.kycUpdateDate.seconds * 1000).format('ll')}
+                                </td>
+                                <td>
+                                    {moment(item.kycreneweddate.seconds * 1000).format('ll')}
+                                </td>
+                                <td>
+                                    {item.remarks}
+                                </td>
+                            </tr>
+                    })
+                    }
+                </tbody>
+            </table>
+            <table className="table table-striped table-bordered d-none" id='html-table'>
+                <thead>
+                    <tr>
+                        <th scope="col">Sr.No</th>
+                        <th scope="col"> Name of Agent</th>
+                        <th scope="col"> Mobile No</th>
+                        <th scope="col"> Pincode</th>
+                        <th scope="col"> Status</th>
+                        <th scope="col"> KYC Update</th>
+                        <th scope="col"> KYC Renewe</th>
+                        <th scope="col"> Remarks</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    {reset > 0 && allData && allData.length > 0 && allData.map((item, index) => {
+                        if (item.branch === branch) {
+                            return <tr key={`${item.userId}-${item.agentCode}-${index}`}>
+                                <th>{index + 1}</th>
+                                <td>
+                                    {item.name}
+                                </td>
+                                <td>
+                                    {item.mobile1}
+                                    <hr />
+                                    {item.mobile2}
+                                </td>
+                                <td>
+                                    {item.pincode}
+                                    {item.secondaryPincodes &&
+                                        <div>
+                                            {item.secondaryPincodes.map((item1, index1) => {
+                                                return <div key={item1.pincodes}>{item1.pincodes}</div>
+                                            })}
+                                        </div>
+                                    }
+
+                                </td>
+                                <td>
+                                    <AgentStatus item={item} />
+                                </td>
+                                <td>
+                                    {moment(item.kycUpdateDate.seconds * 1000).format('ll')}
+                                </td>
+                                <td>
+                                    {moment(item.kycreneweddate.seconds * 1000).format('ll')}
+                                </td>
+                                <td>
+                                    {item.remarks}
+                                </td>
+                            </tr>
+
                         }
-                    </tbody>
-                </table>
-                <table className="table table-striped table-bordered d-none" id='html-table'>
-                    <thead>
-                        <tr>
-                            <th scope="col">Sr.No</th>
-                            <th scope="col"> Name of Agent</th>
-                            <th scope="col"> Mobile No</th>
-                            <th scope="col"> Pincode</th>
-                            <th scope="col"> Status</th>
-                            <th scope="col"> KYC Update</th>
-                            <th scope="col"> KYC Renewe</th>
-                            <th scope="col"> Remarks</th>
-
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {reset > 0 && allData && allData.length > 0 && allData.map((item, index) => {
-                            if (item.branch === branch) {
-                                return <tr key={`${item.userId}-${item.agentCode}-${index}`}>
-                                    <th>{index + 1}</th>
-                                    <td>
-                                        {item.name}
-                                    </td>
-                                    <td>
-                                        {item.mobile1}
-                                        <hr />
-                                        {item.mobile2}
-                                    </td>
-                                    <td>
-                                        {item.pincode}
-                                        {item.secondaryPincodes &&
-                                            <div>
-                                                {item.secondaryPincodes.map((item1, index1) => {
-                                                    return <div key={item1.pincodes}>{item1.pincodes}</div>
-                                                })}
-                                            </div>
-                                        }
-
-                                    </td>
-                                    <td>
-                                        {agentStatus(item)}
-                                    </td>
-                                    <td>
-                                        {moment(item.kycUpdateDate.seconds * 1000).format('ll')}
-                                    </td>
-                                    <td>
-                                        {moment(item.kycreneweddate.seconds * 1000).format('ll')}
-                                    </td>
-                                    <td>
-                                        {item.remarks}
-                                    </td>
-                                </tr>
-
-                            }
-                        })
-                        }
-                    </tbody>
-                </table>
-            </form>
+                    })
+                    }
+                </tbody>
+            </table>
+            {/* </form> */}
         </div>
     )
 }
