@@ -31,7 +31,7 @@ const Navigation = ({ auth }) => {
             </div>
                 {!auth && <Link className="nav-link" to='/login'>Login</Link>}
             {auth && <div className='d-flex'>
-                <Link className="nav-link" to='/signup'>Signup</Link>
+                {/* <Link className="nav-link" to='/signup'>Signup</Link> */}
                 <Link className="nav-link" to='/new'>New</Link>
                 <Logout email={auth?.email} />
 
