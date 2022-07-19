@@ -762,7 +762,7 @@ const Office = () => {
         region.longitude = data?.longitude
         setVerificationOvserver(verification)
     }
-    const TpcFunction = () => {
+    const tpcFunction = () => {
         if (refetch) {
             return <Tpc data={formdata} ref={TPCRef} form={'office'} applicantDetails={applicantDetails} />
 
@@ -2494,7 +2494,8 @@ const Office = () => {
                     </div>
                 </form>
                 <VerificationObserverOffice data={verificationObserver} id={id} ref={verificationObserverRef} />
-                <TpcFunction />
+                {/* <TpcFunction /> */}
+                {tpcFunction()}
             </Collapse>
                 <Collapse title='Images and GeoLocation'>
                     <Geolocation data={verificationObserver} id={id} pincode={pincode} type={'office'} updatedRegion={(data) => updatedRegion(data)} />
