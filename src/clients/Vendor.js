@@ -84,10 +84,10 @@ const Vendor = ({ vendors }) => {
 
     }
     const [product, setProduct] = useState();
-    const [productDropdown, setProductDropdown] = useState(false);
-    const toggleProduct = () => {
-        setProductDropdown(!productDropdown);
-    }
+    // const [productDropdown, setProductDropdown] = useState(false);
+    // const toggleProduct = () => {
+    //     setProductDropdown(!productDropdown);
+    // }
     const onHandleDeleteEmail = (emailIndex, productIndex) => {
         let form = { ...clientInfo }
         form.productList[productIndex].emailList.splice(emailIndex, 1)
@@ -285,7 +285,18 @@ const Vendor = ({ vendors }) => {
                                         <Button color='primary' outline style={{ border: 'none', fontSize: '25px' }} onClick={addProductFnc}>+</Button>
                                     </div>
                                 </div>}
-                                <Dropdown className='mt-2' isOpen={productDropdown}>
+                                <div className='overflow-auto' style={{ maxHeight: 300 }}>
+                                {clientInfo?.productList?.map((item, index) => {
+                                            return <div key={item?.productName}>
+                                                <div className='d-flex my-2'>
+                                                    <Input value={item?.productName} onClick={() => setProduct({ item, index })} name={item?.productName} onChange={(e) => onHandleChangeProduct(e.target, index)} />
+                                                    <Button color='danger' outline style={{ border: 'none' }} onClick={() => onHandleDeleteProduct(index)}>X</Button>
+                                                </div>
+                                            </div>
+                                        })}
+
+                                </div>
+                                {/* <Dropdown className='mt-2' isOpen={productDropdown}>
                                     <DropdownToggle onClick={toggleProduct} color='primary'>
                                         {product ? product.item.productName : 'None'}
                                     </DropdownToggle>
@@ -300,7 +311,7 @@ const Vendor = ({ vendors }) => {
                                         })}
 
                                     </DropdownMenu>
-                                </Dropdown>
+                                </Dropdown> */}
                                 {product && <div>
                                     <Button color='success' onClick={toggleAddEmail} className='my-2'>Add Email</Button>
                                     {addEmail && <div>

@@ -10,6 +10,7 @@ import { connect, useSelector } from 'react-redux';
 import DropDownComp from '../components/DropDownComp';
 import Alert from '../components/Alert';
 import { useHistory } from 'react-router-dom';
+// import uuid from 'react-uuid'
 
 const AddAgent = ({ agent, allAgents, add }) => {
     const [modal, setModal] = useState(false);
@@ -265,7 +266,7 @@ const AddAgent = ({ agent, allAgents, add }) => {
         let { name, password, userId, pincodes, branch, pincode,
             address, location, mobile1, mobile2, kycUpdateDate, kycreneweddate, remarks
         } = formdata
-        // console.log('formdata', kycUpdateDate, kycreneweddate);
+        console.log('formdata', kycUpdateDate, kycreneweddate);
         let secondary = pincodes?.split(',')
         let secondaryPincodes = []
         for (let index = 0; index < secondary?.length; index++) {
@@ -300,8 +301,8 @@ const AddAgent = ({ agent, allAgents, add }) => {
                 location: location,
                 mobile1: mobile1,
                 mobile2: mobile2,
-                kycUpdateDate: new Date(kycUpdateDate),
-                kycreneweddate: new Date(kycreneweddate),
+                kycUpdateDate: kycUpdateDate?.seconds ? Timestamp.fromDate(new Date(kycUpdateDate.seconds * 1000)) : Timestamp.fromDate(new Date(kycUpdateDate)),
+                kycreneweddate: kycreneweddate?.seconds ? Timestamp.fromDate(new Date(kycreneweddate.seconds * 1000)) : Timestamp.fromDate(new Date(kycreneweddate)),
                 remarks: remarks,
             }
             return data
@@ -359,7 +360,7 @@ const AddAgent = ({ agent, allAgents, add }) => {
                     .then(res => {
                         setAlertMessage('Update Successfull')
                         alert('Update Successfull')
-                        // window.location.reload()
+                        window.location.reload()
                     })
                     .catch(err => {
                         setAlertMessage('Error Occured retry')
@@ -416,7 +417,7 @@ const AddAgent = ({ agent, allAgents, add }) => {
     }, [realTimeforms])
 
     useEffect(() => {
-        console.log('add', add, allAgents)
+        // console.log('add', add, allAgents)
         if (agent && modal) {
             let form = formdata
             // console.log('agent', agent);
@@ -464,7 +465,7 @@ const AddAgent = ({ agent, allAgents, add }) => {
             <Modal isOpen={modal} toggle={toggle} >
                 <ModalHeader toggle={toggle}>{agent ? 'Update Agent' : 'Add Agent'}</ModalHeader>
                 <ModalBody>
-                    {console.log('form', formdata)}
+                    {/* {console.log('form', formdata)} */}
                     {refresh > 0 && <div className='row'>
                         <div className='col-4'>
                             <button className='btn btn-primary' type='button' onClick={handleEnable}>Enable</button>
@@ -514,7 +515,7 @@ const AddAgent = ({ agent, allAgents, add }) => {
                                 <Input type="text" name='mobile2' value={formdata['mobile2']} onChange={(e) => onHandleChange(e.currentTarget)} />
                             </div>
                             <div >
-                                <label>KYC Updated Date</label>
+                                <label className='text-danger'>KYC Updated Date</label>
                                 {agent && <>  <button className='btn btn-link' onClick={() => handleKyc(1)}>Edit</button>
                                     <br /> </>}
                                     <DatePicker className='form-control' selected={formdata['kycUpdateDate'] ? timeFormatter(formdata['kycUpdateDate']) : startDate} onChange={(date) => {
@@ -533,11 +534,11 @@ const AddAgent = ({ agent, allAgents, add }) => {
                                 {/* <Input type="text" name='kycUpdateDate' value={formdata['kycUpdateDate']} onChange={(e) => onHandleChange(e.currentTarget)} /> */}
                             </div>
                             <div >
-                                <label>KYC Renewal date</label>
+                                <label className='text-danger'>KYC Renewal date</label>
                                 {agent && <> <button className='btn btn-link' onClick={() => handleKyc(2)}>Edit</button>
                                     <br /> </>}
                                     <DatePicker className='form-control' selected={formdata['kycreneweddate'] ? timeFormatter(formdata['kycreneweddate']) : endDate} onChange={(date) => {
-                                    console.log('date',date)
+                                    console.log('date',date, Timestamp.fromDate(new Date(date)))
                                     setFormdata(state => { return { ...formdata, kycreneweddate: date} })
                                     setEndDate(date)
                                     // console.log('date', date)
