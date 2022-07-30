@@ -6,10 +6,13 @@ import { connect } from 'react-redux';
 import { createUser } from '../utils/createUser'
 import { getDatabase, ref, set } from "firebase/database";
 import Alert from '../components/Alert';
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 
 function SignUp({ agentsTotal, agentsActive, usersTotal }) {
     const db = getDatabase();
-    let history = useHistory()
+    let history = useHistory();
+    const auth = getAuth();
+    const [currentUser, setCurrentUser] = useState(null);
     const [manualCheckMsg, setManualCheckMsg] = useState('');
     const [refresh, setRefresh] = useState(0)
     const [selector, setSelector] = useState('agent')
@@ -70,9 +73,11 @@ function SignUp({ agentsTotal, agentsActive, usersTotal }) {
                 setAlertMessage(`User created ${res.user.email}`)
                 set(ref(db, `agents/${res.user.uid}`), data).then(res => {
                     setAlertMessage('Real time Database Updated')
-                    setTimeout(() => {
-                        history.push('/')
-                    }, 2000)
+                    signInWithEmailAndPassword(auth, currentUser, '123456').then(res => {
+                        setTimeout(() => {
+                            history.push('/')
+                        }, 2000)
+                    })
                 }).catch(err => {
                     setAlertMessage('Something went Wrong check log and database')
                     console.log('err create user', err)
@@ -97,9 +102,11 @@ function SignUp({ agentsTotal, agentsActive, usersTotal }) {
                 }
                 set(ref(db, `users/${res.user.uid}`), data).then(res => {
                     setAlertMessage('Real time Database Updated')
-                    setTimeout(() => {
-                        history.push('/')
-                    }, 2000)
+                    signInWithEmailAndPassword(auth, currentUser, '123456').then(res => {
+                        setTimeout(() => {
+                            history.push('/')
+                        }, 2000)
+                    })
                 }).catch(err => {
                     setAlertMessage('Something went Wrong check log and database')
                     console.log('err create user', err)
@@ -178,6 +185,23 @@ function SignUp({ agentsTotal, agentsActive, usersTotal }) {
         }
         setManualCheckMsg(msg)
     }
+    function getCookie(cname) {
+        let name = cname + "=";
+        let ca = document.cookie.split(';');
+        for (let i = 0; i < ca.length; i++) {
+            let c = ca[i];
+            while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return "";
+    }
+    useEffect(() => {
+        setCurrentUser(getCookie('email'))
+    },[])
     // const 
 
     return (
