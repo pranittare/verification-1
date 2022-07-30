@@ -10,7 +10,7 @@ import { connect, useSelector } from 'react-redux';
 import DropDownComp from '../components/DropDownComp';
 import Alert from '../components/Alert';
 import { useHistory } from 'react-router-dom';
-// import uuid from 'react-uuid'
+import uuid from 'react-uuid'
 
 const AddAgent = ({ agent, allAgents, add }) => {
     const [modal, setModal] = useState(false);
@@ -254,12 +254,12 @@ const AddAgent = ({ agent, allAgents, add }) => {
         let agentcode;
         for (let index = 0; index < agents.length; index++) {
             const element = agents[index];
-            if (agent.agentCode === element.agentCode) {
+            if (agent.userId === element.userId) {
                 agentcode = element.key;
             }
         }
-        deleteKyc();
         deleteDocuments(agentcode);
+        deleteKyc();
 
     }
     const commonAddUpdate = (db) => {

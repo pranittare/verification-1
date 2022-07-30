@@ -4,6 +4,7 @@ import { Input, Button } from 'reactstrap'
 import moment from 'moment';
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import AddAgent from './AddAgent';
+import uuid from 'react-uuid';
 
 const TotalAgents = ({ agents, rtAgents, branch }) => {
     const formatedDate = new Date().toDateString()
@@ -136,7 +137,7 @@ const TotalAgents = ({ agents, rtAgents, branch }) => {
         // console.log('agents', props.agents)
         setAllData(combineData())
         setReset(Math.random())
-        console.log('props', combineData())
+        // console.log('props', combineData())
     }, [agents, rtAgents])
 
     // Duplicate entries
@@ -196,7 +197,7 @@ const TotalAgents = ({ agents, rtAgents, branch }) => {
                 <tbody>
                     {reset > 0 && allData && allData.length > 0 && allData.filter(filteredSearch).map((item, index) => {
                         // console.log('item', item)
-                        if (item.branch === branch)
+                        // if (item.branch === branch)
                             return <tr key={item.name}>
                                 <th>{index + 1}</th>
                                 <td >
@@ -214,7 +215,7 @@ const TotalAgents = ({ agents, rtAgents, branch }) => {
                                         <div>
                                             <hr />
                                             {item.secondaryPincodes.map((item1, index1) => {
-                                                return <div key={item1.pincodes + '-' + index1}>
+                                                return <div key={uuid()}>
                                                     {item1.pincodes}
                                                 </div>
                                             })}

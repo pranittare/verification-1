@@ -98,16 +98,21 @@ const OldCases = (props) => {
     const search2 = () => {
         let start = Math.round((new Date(startDate)).getTime());
         let end = endDate ? Math.round((new Date(endDate)).getTime()) : "";
+        console.log('search2', start, end)
         if (start && end) {
             let data = databaseUpdateQueryRangeMultiple('tat1', start, 'tat1', end)
             data.then((res) => {
                 setAllData(res)
+            }).catch((err) => {
+                console.log('err', err)
             })
         }
         if (start && !end) {
             let data = databaseUpdateQueryRangeSingle('tat1', start)
             data.then((res) => {
                 setAllData(res)
+            }).catch((err) => {
+                console.log('err2', err)
             })
         }
         // muted on purpose for performance issues
@@ -346,7 +351,7 @@ const OldCases = (props) => {
                                     {item?.applicantDetails?.appid}
                                 </td>
                                 <td>
-                                    {moment(item?.applicantDetails?.initiationDate).format('L')}
+                                    {moment(item?.applicantDetails?.initiationDate).format('MMMM Do YYYY, h:mm:ss a')}
                                 </td>
                                 <td>
                                     {moment(item?.applicantDetails?.initiationDate).format('LT')}
@@ -376,7 +381,7 @@ const OldCases = (props) => {
                                     {item?.verificationDetails?.overallStatus}
                                 </td>
                                 <td>
-                                    {moment(item?.tat1).format('L')}
+                                    {moment(item?.tat1).format('MMMM Do YYYY, h:mm:ss a')}
                                 </td>
                                 <td>
                                     {moment(item?.tat1).format('LT')}

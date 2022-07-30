@@ -5,7 +5,7 @@ import { Modal, ModalHeader, ModalBody, ModalFooter, Input, Button, Dropdown, Dr
 import DropDownComp from '../components/DropDownComp';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { addDoc, collection, deleteDoc, doc, getFirestore, updateDoc } from "firebase/firestore"
+import { addDoc, collection, deleteDoc, doc, getFirestore, updateDoc, Timestamp } from "firebase/firestore"
 import { getStorage, ref as refStorage, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 const Vendor = ({ vendors }) => {
     const storage = getStorage();
@@ -161,17 +161,23 @@ const Vendor = ({ vendors }) => {
     }
     const addVendorToDB = (data) => {
         if (data) {
+            let form = {...data}
             setLoading(true)
+            form.agreementDate = form.agreementDate.seconds ? Timestamp.fromDate(new Date(form.agreementDate.seconds * 1000)) : Timestamp.fromDate(new Date(form.agreementDate))
+            form.renewalDate = form.renewalDate.seconds ? Timestamp.fromDate(new Date(form.renewalDate.seconds * 1000)) : Timestamp.fromDate(new Date(form.renewalDate))
             console.log('data', data)
-            if (data.key) {
-                const clientUpdateRef = doc(fdb, "vendors", data.key)
-                updateDoc(clientUpdateRef, data).then(res => {
+            
+            if (form.key) {
+                const clientUpdateRef = doc(fdb, `vendors/${form.key}`)
+                updateDoc(clientUpdateRef, form).then(res => {
                     console.log('res update', res)
+                    window.location.reload()
+                    setLoading(false)
                 })
             } else {
-                addDoc(collection(fdb, "vendors"), data).then(res => {
+                addDoc(collection(fdb, "vendors"), form).then(res => {
                     console.log('res', res)
-                    window.reload()
+                    window.location.reload()
                 }).catch(() => {
                     setLoading(false)
                 })
@@ -186,7 +192,7 @@ const Vendor = ({ vendors }) => {
             deleteDoc(clientUpdateRef).then(res => {
                 console.log('res update', res)
                 setDeleteModal(false)
-                window.reload()
+                window.location.reload()
             })
         }
     }
@@ -286,14 +292,14 @@ const Vendor = ({ vendors }) => {
                                     </div>
                                 </div>}
                                 <div className='overflow-auto' style={{ maxHeight: 300 }}>
-                                {clientInfo?.productList?.map((item, index) => {
-                                            return <div key={item?.productName}>
-                                                <div className='d-flex my-2'>
-                                                    <Input value={item?.productName} onClick={() => setProduct({ item, index })} name={item?.productName} onChange={(e) => onHandleChangeProduct(e.target, index)} />
-                                                    <Button color='danger' outline style={{ border: 'none' }} onClick={() => onHandleDeleteProduct(index)}>X</Button>
-                                                </div>
+                                    {clientInfo?.productList?.map((item, index) => {
+                                        return <div key={item?.productName}>
+                                            <div className='d-flex my-2'>
+                                                <Input value={item?.productName} onClick={() => setProduct({ item, index })} name={item?.productName} onChange={(e) => onHandleChangeProduct(e.target, index)} />
+                                                <Button color='danger' outline style={{ border: 'none' }} onClick={() => onHandleDeleteProduct(index)}>X</Button>
                                             </div>
-                                        })}
+                                        </div>
+                                    })}
 
                                 </div>
                                 {/* <Dropdown className='mt-2' isOpen={productDropdown}>
@@ -377,7 +383,7 @@ const Vendor = ({ vendors }) => {
                             </td>
                             <td>
                                 <Button color='link' data-toggle="modal"
-                                    data-target="#exampleModal" onClick={() => {setClientInfo(item); setIsModalOpen(true)}} >
+                                    data-target="#exampleModal" onClick={() => { setClientInfo(item); setIsModalOpen(true) }} >
                                     {item.clientName}
                                 </Button>
                             </td>
