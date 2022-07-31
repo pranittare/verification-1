@@ -351,7 +351,7 @@ const OldCases = (props) => {
                                     {item?.applicantDetails?.appid}
                                 </td>
                                 <td>
-                                    {moment(item?.applicantDetails?.initiationDate).format('MMMM Do YYYY, h:mm:ss a')}
+                                    {moment(item?.applicantDetails?.initiationDate).format('L LTS')}
                                 </td>
                                 <td>
                                     {moment(item?.applicantDetails?.initiationDate).format('LT')}
@@ -381,7 +381,7 @@ const OldCases = (props) => {
                                     {item?.verificationDetails?.overallStatus}
                                 </td>
                                 <td>
-                                    {moment(item?.tat1).format('MMMM Do YYYY, h:mm:ss a')}
+                                    {moment(item?.tat1).format('L LTS')}
                                 </td>
                                 <td>
                                     {moment(item?.tat1).format('LT')}

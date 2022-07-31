@@ -495,9 +495,6 @@ const Office = () => {
             if (allData?.mismatchAddress == 'yes') {
                 orverallstatus = 'Negative'
                 console.log('logic', orverallstatus);
-            } else if (allData?.constructionOfOffice == 'Temporary') {
-                orverallstatus = 'Negative'
-                console.log('logic', orverallstatus);
             } else if (allData?.picturePoliticalLeader == 'yes') {
                 orverallstatus = 'Negative'
                 console.log('logic', orverallstatus);
@@ -515,7 +512,7 @@ const Office = () => {
                 orverallstatus = 'Negative'
                 console.log('logic', orverallstatus);
             } else if (allData?.easeofLocating == 'Not Traceable') {
-                orverallstatus = 'Negative'
+                orverallstatus = 'CNV'
                 console.log('logic', orverallstatus);
             } else if (allData.negativeArea == 'Slum Area') {
                 orverallstatus = 'Negative'
@@ -523,20 +520,21 @@ const Office = () => {
             } else if (allData.negativeArea == 'Community Dominated / Slum Area') {
                 orverallstatus = 'Negative'
                 console.log('logic', orverallstatus);
-            } else if (allData.TPCStatus1 == 'negative' || allData.TPCStatus2 == 'negative') {
-                orverallstatus = 'Refer'
-                console.log('logic', orverallstatus);
             } else if (allData.businessActivityLevel == 'No business activity') {
                 orverallstatus = 'Negative'
                 console.log('logic', orverallstatus);
+            } else if (allData?.negativeArea == 'Community Dominated / Slum Area') {
+                orverallstatus = 'Negative'
+                console.log('logic', orverallstatus);
+
             } else {
-                if (allData?.verificationObserver == 'Resi cum Office') {
+                if (allData?.verificationObserver == 'Shed') {
                     orverallstatus = 'Refer'
                     console.log('logic', orverallstatus);
-                } else if (allData?.easeofLocating == 'Difficult to Trace') {
+                } else if (allData?.constructionOfOffice == 'Temporary') {
                     orverallstatus = 'Refer'
                     console.log('logic', orverallstatus);
-                } else if (allData?.verificationObserver == 'Shed') {
+                } else if (allData.TPCStatus1 == 'negative' || allData.TPCStatus2 == 'negative') {
                     orverallstatus = 'Refer'
                     console.log('logic', orverallstatus);
                 } else if (allData?.verificationObserver == 'Shared Office') {
@@ -557,13 +555,7 @@ const Office = () => {
                 } else if (allData?.negativeArea == 'Community Dominated Area') {
                     orverallstatus = 'Refer'
                     console.log('logic', orverallstatus);
-                } else if (allData?.negativeArea == 'Sitting Chawl/Standing Chawl') {
-                    orverallstatus = 'Refer'
-                    console.log('logic', orverallstatus);
                 } else if (allData?.negativeArea == 'High Risk Area') {
-                    orverallstatus = 'Refer'
-                    console.log('logic', orverallstatus);
-                } else if (allData?.negativeArea == 'Community Dominated/Sitting Chawl/Standing Chawl Area') {
                     orverallstatus = 'Refer'
                     console.log('logic', orverallstatus);
                 }
