@@ -269,7 +269,7 @@ const Tpc = forwardRef(({ data, form, applicantDetails }, ref) => {
                     </div>
                     <div>
                         <label>Product Supervisor</label>
-                        <Input type="text" name='productSupervisor' value={formdata['productSupervisor']} onChange={(e) => onHandleChange(e.currentTarget)} />
+                        <Input disabled type="text" name='productSupervisor' value={formdata['productSupervisor']} onChange={(e) => onHandleChange(e.currentTarget)} />
                     </div>
 
                 </div>

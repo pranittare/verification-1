@@ -580,28 +580,15 @@ const Resident = () => {
             } else if (allData?.marketReputation == 'negative') {
                 orverallstatus = 'Negative'
                 console.log('logic', orverallstatus);
-            } else if (allData?.localityOfAddress == 'Slum') {
-                orverallstatus = 'Negative'
-                console.log('logic', orverallstatus);
             } else if (allData?.marketReputation == 'negative') {
                 orverallstatus = 'Negative'
                 console.log('logic', orverallstatus);
             } else if (allData?.easeofLocating == 'Not Traceable') {
                 orverallstatus = 'CNV'
                 console.log('logic', orverallstatus);
-            } else if (allData.negativeArea == 'Slum Area') {
-                orverallstatus = 'Negative'
-                console.log('logic', orverallstatus);
-            } else if (allData.negativeArea == 'Community Dominated / Slum Area') {
-                orverallstatus = 'Negative'
-                console.log('logic', orverallstatus);
             } else if (allData?.addressConfirmed == 'no') {
                 orverallstatus = 'CNV'
                 console.log('logic', orverallstatus);
-            } else if (allData?.negativeArea == 'Community Dominated / Slum Area') {
-                orverallstatus = 'Negative'
-                console.log('logic', orverallstatus);
-
             } else {
                 if (allData?.personMet == 'no') {
                     orverallstatus = 'Refer'
@@ -612,9 +599,6 @@ const Resident = () => {
                     orverallstatus = 'Refer'
                     console.log('logic', orverallstatus);
                 } else if (allData?.residenceStatus == 'Lodging') {
-                    orverallstatus = 'Refer'
-                    console.log('logic', orverallstatus);
-                } else if (allData?.lessThanYrAtCurrentAddress == 'yes') {
                     orverallstatus = 'Refer'
                     console.log('logic', orverallstatus);
                 } else if (allData?.constructionOfResidence == 'Temporary') {
@@ -634,6 +618,9 @@ const Resident = () => {
                     orverallstatus = 'Refer'
                     console.log('logic', orverallstatus);
 
+                } else if (allData.negativeArea == 'Community Dominated / Slum Area') {
+                    orverallstatus = 'Refer'
+                    console.log('logic', orverallstatus);
                 }
                 else {
                     orverallstatus = 'Positive'

@@ -505,28 +505,15 @@ const Office = () => {
             } else if (allData?.addressConfirmed == 'no') {
                 orverallstatus = 'CNV'
                 console.log('logic', orverallstatus);
-            } else if (allData?.localityofOffice == 'Slum') {
-                orverallstatus = 'Negative'
-                console.log('logic', orverallstatus);
             } else if (allData?.marketReputation == 'negative') {
                 orverallstatus = 'Negative'
                 console.log('logic', orverallstatus);
             } else if (allData?.easeofLocating == 'Not Traceable') {
                 orverallstatus = 'CNV'
                 console.log('logic', orverallstatus);
-            } else if (allData.negativeArea == 'Slum Area') {
-                orverallstatus = 'Negative'
-                console.log('logic', orverallstatus);
-            } else if (allData.negativeArea == 'Community Dominated / Slum Area') {
-                orverallstatus = 'Negative'
-                console.log('logic', orverallstatus);
             } else if (allData.businessActivityLevel == 'No business activity') {
                 orverallstatus = 'Negative'
                 console.log('logic', orverallstatus);
-            } else if (allData?.negativeArea == 'Community Dominated / Slum Area') {
-                orverallstatus = 'Negative'
-                console.log('logic', orverallstatus);
-
             } else {
                 if (allData?.verificationObserver == 'Shed') {
                     orverallstatus = 'Refer'
@@ -546,9 +533,6 @@ const Office = () => {
                 } else if (allData?.personMet == 'no') {
                     orverallstatus = 'Refer'
                     console.log('logic', orverallstatus);
-                } else if (allData?.lessThanYrAtCurrentAddress == 'yes') {
-                    orverallstatus = 'Refer'
-                    console.log('logic', orverallstatus);
                 } else if (allData?.businessActivityLevel == 'Low') {
                     orverallstatus = 'Refer'
                     console.log('logic', orverallstatus);
@@ -556,6 +540,9 @@ const Office = () => {
                     orverallstatus = 'Refer'
                     console.log('logic', orverallstatus);
                 } else if (allData?.negativeArea == 'High Risk Area') {
+                    orverallstatus = 'Refer'
+                    console.log('logic', orverallstatus);
+                } else if (allData.negativeArea == 'Community Dominated / Slum Area') {
                     orverallstatus = 'Refer'
                     console.log('logic', orverallstatus);
                 }
