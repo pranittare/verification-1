@@ -334,6 +334,7 @@ const OldCases = (props) => {
                             <th scope="col">Address</th>
                             <th scope="col">Status</th>
                             <th scope="col">Submitted Date</th>
+                            <th scope="col">Visited Date</th>
                             <th scope="col">Submitted Time</th>
                             <th scope="col">Product Supervisor</th>
                             <th scope="col">Agent Name</th>
@@ -382,6 +383,9 @@ const OldCases = (props) => {
                                 </td>
                                 <td>
                                     {moment(item?.tat1).format('L LTS')}
+                                </td>
+                                <td>
+                                    {moment(item?.verificationDetails?.VisitDate).format('L LTS')}
                                 </td>
                                 <td>
                                     {moment(item?.tat1).format('LT')}

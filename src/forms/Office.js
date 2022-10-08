@@ -505,9 +505,6 @@ const Office = () => {
             } else if (allData?.addressConfirmed == 'no') {
                 orverallstatus = 'CNV'
                 console.log('logic', orverallstatus);
-            } else if (allData?.marketReputation == 'negative') {
-                orverallstatus = 'Negative'
-                console.log('logic', orverallstatus);
             } else if (allData?.easeofLocating == 'Not Traceable') {
                 orverallstatus = 'CNV'
                 console.log('logic', orverallstatus);

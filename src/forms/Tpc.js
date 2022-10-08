@@ -58,6 +58,7 @@ const Tpc = forwardRef(({ data, form, applicantDetails }, ref) => {
         { name: 'overallStatus', value: 'Refer', label: 'Refer' },
         { name: 'overallStatus', value: `${applicantDetails.bankNBFCname.clientName === 'INDIABULLS' ? "Negative" : "Not Recomended"}`, label: `${applicantDetails.bankNBFCname.clientName === 'INDIABULLS' ? "Negative" : "Not Recomended"}` },
         { name: 'overallStatus', value: 'CNV', label: 'CNV' },
+        { name: 'overallStatus', value: 'FRAUD', label: 'FRAUD' },
     ]
     const remarksfnc = (data) => {
         if (form === 'office') {
