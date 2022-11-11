@@ -550,6 +550,84 @@ const Office = () => {
             console.log('orverallstatus', orverallstatus)
             return orverallstatus
 
+        } else if (applicantDetails.bankNBFCname.clientName === 'HERO FINCORP LIMITED') {
+            let orverallstatus = ''
+            if (allData?.mismatchAddress == 'yes') {
+                orverallstatus = 'Not Recommended'
+                console.log('logic', orverallstatus);
+            } else if (allData?.constructionOfOffice == 'Temporary') {
+                orverallstatus = 'Not Recommended'
+                console.log('logic', orverallstatus);
+            } else if (allData?.picturePoliticalLeader == 'yes') {
+                orverallstatus = 'Not Recommended'
+                console.log('logic', orverallstatus);
+
+            } else if (allData?.marketReputation == 'negative') {
+                orverallstatus = 'Not Recommended'
+                console.log('logic', orverallstatus);
+            } else if (allData?.addressConfirmed == 'no') {
+                orverallstatus = 'Not Recommended'
+                console.log('logic', orverallstatus);
+            } else if (allData?.localityofOffice == 'Slum') {
+                orverallstatus = 'Not Recommended'
+                console.log('logic', orverallstatus);
+            } else if (allData?.marketReputation == 'negative') {
+                orverallstatus = 'Not Recommended'
+                console.log('logic', orverallstatus);
+            } else if (allData?.easeofLocating == 'Not Traceable') {
+                orverallstatus = 'Not Recommended'
+                console.log('logic', orverallstatus);
+            } else if (allData.negativeArea == 'Slum Area') {
+                orverallstatus = 'Not Recommended'
+                console.log('logic', orverallstatus);
+            } else if (allData.negativeArea == 'Community Dominated / Slum Area') {
+                orverallstatus = 'Not Recommended'
+                console.log('logic', orverallstatus);
+            } else if (allData.TPCStatus1 == 'negative' || allData.TPCStatus2 == 'negative') {
+                orverallstatus = 'Not Recommended'
+                console.log('logic', orverallstatus);
+            } else if (allData.businessActivityLevel == 'No business activity') {
+                orverallstatus = 'Not Recommended'
+                console.log('logic', orverallstatus);
+            } else {
+                if (allData?.verificationObserver == 'Resi cum Office') {
+                    orverallstatus = 'Refer'
+                    console.log('logic', orverallstatus);
+                } else if (allData?.easeofLocating == 'Difficult to Trace') {
+                    orverallstatus = 'Refer'
+                    console.log('logic', orverallstatus);
+                } else if (allData?.verificationObserver == 'Shed') {
+                    orverallstatus = 'Refer'
+                    console.log('logic', orverallstatus);
+                } else if (allData?.verificationObserver == 'Shared Office') {
+                    orverallstatus = 'Refer'
+                    console.log('logic', orverallstatus);
+                } else if (allData?.businessBoardSeen == 'no') {
+                    orverallstatus = 'Refer'
+                    console.log('logic', orverallstatus);
+                } else if (allData?.personMet == 'no') {
+                    orverallstatus = 'Refer'
+                    console.log('logic', orverallstatus);
+                } else if (allData?.businessActivityLevel == 'Low') {
+                    orverallstatus = 'Refer'
+                    console.log('logic', orverallstatus);
+                } else if (allData?.negativeArea == 'Community Dominated Area') {
+                    orverallstatus = 'Refer'
+                    console.log('logic', orverallstatus);
+                } else if (allData?.negativeArea == 'High Risk Area') {
+                    orverallstatus = 'Refer'
+                    console.log('logic', orverallstatus);
+                } else if (allData?.negativeArea == 'Community Dominated/Sitting Chawl/Standing Chawl Area') {
+                    orverallstatus = 'Refer'
+                    console.log('logic', orverallstatus);
+                }
+                else {
+                    orverallstatus = 'Recommended'
+                }
+            }
+            console.log('orverallstatus', orverallstatus)
+            return orverallstatus
+
         } else {
             let orverallstatus = ''
             if (allData?.mismatchAddress == 'yes') {
